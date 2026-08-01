@@ -5,7 +5,7 @@
 import { grafica, limiti } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
 
-export function creaGestoreProiettili(nemici, effetti) {
+export function creaGestoreProiettili(truppe, effetti) {
   const elenco = creaPool(limiti.proiettili_massimi, () => ({
     attivo: false,
     x: 0,
@@ -34,7 +34,7 @@ export function creaGestoreProiettili(nemici, effetti) {
 
   function colpisci(proiettile, bersaglio) {
     if (proiettile.raggioArea > 0) {
-      nemici.colpisciArea(
+      truppe.colpisciArea(
         bersaglio.x,
         bersaglio.y,
         proiettile.raggioArea * proiettile.raggioArea,
@@ -44,7 +44,7 @@ export function creaGestoreProiettili(nemici, effetti) {
       )
       effetti.esplosione(bersaglio.x, bersaglio.y, proiettile.raggioArea)
     } else {
-      nemici.applicaDanno(bersaglio, proiettile.danno)
+      truppe.applicaDanno(bersaglio, proiettile.danno)
       effetti.impatto(proiettile.x, proiettile.y)
     }
   }
