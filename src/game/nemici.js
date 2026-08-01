@@ -22,7 +22,9 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
     velocita: 0,
     raggio: 0,
     riduzioneDanno: 0,
-    oro: 0
+    oro: 0,
+    // millisecondi residui del lampo bianco dopo un colpo subito
+    lampoMs: 0
   }))
 
   let attivi = 0
@@ -47,15 +49,19 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
     nemico.raggio = nemicoOndata.dimensione
     nemico.riduzioneDanno = nemicoOndata.riduzione_danno
     nemico.oro = Math.round(nemicoOndata.oro_rilasciato * moltiplicatoreOro)
+    nemico.lampoMs = 0
     posizionaSuPercorso(percorso, nemico)
     attivi++
   }
 
-  function aggiorna(passoSecondi) {
+  function aggiorna(passoMs, passoSecondi) {
     for (let i = 0; i < elenco.length; i++) {
       const nemico = elenco[i]
       if (!nemico.attivo) {
         continue
+      }
+      if (nemico.lampoMs > 0) {
+        nemico.lampoMs -= passoMs
       }
       nemico.distanza += nemico.velocita * passoSecondi
       if (nemico.distanza >= percorso.lunghezzaTotale) {
@@ -74,11 +80,12 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
       return
     }
     nemico.vita -= effettivo
+    nemico.lampoMs = grafica.effetti.lampo_colpo_ms
     if (nemico.vita <= 0) {
       nemico.vita = 0
       nemico.attivo = false
       attivi--
-      alUcciso(nemico.oro)
+      alUcciso(nemico.oro, nemico.x, nemico.y)
     }
   }
 
@@ -128,7 +135,8 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
 
       ctx.beginPath()
       ctx.arc(nemico.x, nemico.y, nemico.raggio, 0, Math.PI * 2)
-      ctx.fillStyle = stile.colore
+      // il lampo bianco del colpo copre il colore per qualche centesimo
+      ctx.fillStyle = nemico.lampoMs > 0 ? grafica.effetti.colore_lampo : stile.colore
       ctx.fill()
       ctx.lineWidth = stile.spessore_bordo
       ctx.strokeStyle = stile.colore_bordo

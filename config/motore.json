@@ -8,7 +8,9 @@
     "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo.",
     "nemici_massimi": 150,
     "proiettili_massimi": 200,
-    "comandi_massimi": 8
+    "comandi_massimi": 8,
+    "effetti_massimi": 48,
+    "popup_massimi": 24
   },
   "anteprima": {
     "_nota": "Cosa e' disponibile finche' non ci sono le altre mappe e le altre torri.",
@@ -93,6 +95,37 @@
       "colore": "#c9524a",
       "colore_bordo": "#f2d0a4",
       "spessore_bordo": 3
+    },
+    "effetti": {
+      "_nota": "Feedback visivi. Durate in millisecondi, distanze in pixel logici.",
+      "lampo_colpo_ms": 90,
+      "colore_lampo": "#ffffffcc",
+      "impatto": {
+        "durata_ms": 140,
+        "raggio_massimo": 14,
+        "colore": "#ffe9a8",
+        "spessore": 3
+      },
+      "morte": {
+        "durata_ms": 240,
+        "raggio_massimo": 30,
+        "colore": "#f2d0a4",
+        "spessore": 3
+      },
+      "popup_oro": {
+        "durata_ms": 750,
+        "salita": 48,
+        "dimensione_testo": 24,
+        "colore": "#ffd76a",
+        "colore_contorno": "#000000aa",
+        "spessore_contorno": 4
+      },
+      "onda_piazzamento": {
+        "durata_ms": 380,
+        "raggio_massimo": 72,
+        "colore": "#e6edf5",
+        "spessore": 4
+      }
     },
     "barra_vita": {
       "larghezza": 40,
