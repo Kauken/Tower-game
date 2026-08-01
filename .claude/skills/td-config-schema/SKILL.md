@@ -30,6 +30,10 @@ Una sinergia non nomina mai un potenziamento specifico: solo tag.
 ## economia.json
 Oro iniziale, oro per ondata, vite iniziali, ricompense boss, conversione in cristalli a fine partita, costi del mercante.
 
+## motore.json
+Valori tecnici e di aspetto, non di bilanciamento: `simulazione` (passo fisso in ms, passi massimi per frame), `anteprima` (cosa mostrare finche' non esistono le ondate), `grafica` (colori, spessori e forme di terreno, percorso, caselle ed entita').
+L'agente `bilanciatore` non tocca questo file.
+
 ## Regole di modifica
 
 - Non rinominare mai un `id` esistente: si spezzano i riferimenti incrociati e i salvataggi.
