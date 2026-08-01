@@ -29,3 +29,11 @@ L'autore non sa programmare e lavora dal telefono. Quindi:
 ## Pubblicazione
 
 Ogni merge su `main` fa partire il workflow che pubblica su GitHub Pages.
+
+## Strumenti disponibili
+
+Agenti: `bilanciatore` (solo config), `revisore-mobile` (prestazioni e touch), `designer-contenuti` (nuovi potenziamenti), `collaudo` (verifica finale), `cacciatore-bug` (diagnosi), `rifinitore` (sensazione di gioco).
+
+Skill richiamabili: `/richiesta` (trasforma una richiesta vaga in specifica), `/punto N` (esegue il punto N della roadmap).
+
+Quando una richiesta arriva vaga o descritta per sensazioni, applica `richiesta` prima di eseguire. Consulta sempre `td-glossario` per capire cosa intende l'autore.
