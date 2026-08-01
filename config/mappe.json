@@ -1,36 +1,26 @@
 {
-  "_nota": "Valori provvisori, da tarare. Coordinate logiche: la mappa e' 720x1280 e viene scalata per riempire lo schermo del telefono.",
+  "_nota": "Valori provvisori, da tarare. Coordinate logiche: la mappa e' 720x1280 e viene scalata per riempire lo schermo. La corsia va dalla fortezza nemica (alto) a quella del giocatore (basso).",
   "area": {
     "larghezza": 720,
     "altezza": 1280
   },
   "mappe": [
     {
-      "id": "valle_del_confine",
-      "nome": "Valle del confine",
+      "id": "corsia_del_confine",
+      "nome": "Corsia del confine",
       "percorso": [
-        { "x": -40, "y": 200 },
-        { "x": 560, "y": 200 },
-        { "x": 560, "y": 480 },
-        { "x": 160, "y": 480 },
-        { "x": 160, "y": 800 },
-        { "x": 600, "y": 800 },
-        { "x": 600, "y": 1060 },
-        { "x": 100, "y": 1060 },
-        { "x": 100, "y": 1320 }
+        { "x": 360, "y": 130 },
+        { "x": 360, "y": 1150 }
       ],
+      "larghezza_corsia": 110,
+      "scarti_corsia": [-32, 0, 32, -16, 16],
+      "fortezza_nemica": { "x": 360, "y": 65, "larghezza": 220, "altezza": 100 },
+      "fortezza_giocatore": { "x": 360, "y": 1215, "larghezza": 220, "altezza": 100 },
       "caselle": [
-        { "x": 100, "y": 100, "tipo": "normale" },
-        { "x": 300, "y": 320, "tipo": "normale" },
-        { "x": 460, "y": 320, "tipo": "normale" },
-        { "x": 300, "y": 620, "tipo": "normale" },
-        { "x": 460, "y": 620, "tipo": "normale" },
-        { "x": 280, "y": 920, "tipo": "normale" },
-        { "x": 460, "y": 920, "tipo": "normale" },
-        { "x": 240, "y": 1180, "tipo": "normale" },
-        { "x": 420, "y": 1180, "tipo": "normale" },
-        { "x": 620, "y": 620, "tipo": "altura" },
-        { "x": 100, "y": 320, "tipo": "mana" }
+        { "x": 250, "y": 720, "tipo": "normale" },
+        { "x": 470, "y": 720, "tipo": "altura" },
+        { "x": 250, "y": 960, "tipo": "mana" },
+        { "x": 470, "y": 960, "tipo": "normale" }
       ],
       "bonus_slot": {
         "altura": {

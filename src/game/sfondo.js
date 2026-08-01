@@ -21,21 +21,32 @@ function tracciaPercorso(ctx, punti) {
   }
 }
 
-function disegnaPercorso(ctx, punti) {
+function disegnaPercorso(ctx, mappa) {
   const stile = grafica.percorso
+  const larghezza = mappa.larghezza_corsia
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
 
-  // prima il bordo piu' spesso, poi il sentiero sopra: da' il senso di solco
-  tracciaPercorso(ctx, punti)
+  // prima il bordo piu' spesso, poi la corsia sopra: da' il senso di solco
+  tracciaPercorso(ctx, mappa.percorso)
   ctx.strokeStyle = stile.colore_bordo
-  ctx.lineWidth = stile.spessore_bordo
+  ctx.lineWidth = larghezza + stile.bordo_extra
   ctx.stroke()
 
-  tracciaPercorso(ctx, punti)
+  tracciaPercorso(ctx, mappa.percorso)
   ctx.strokeStyle = stile.colore
-  ctx.lineWidth = stile.spessore
+  ctx.lineWidth = larghezza
   ctx.stroke()
+}
+
+function disegnaFortezza(ctx, blocco, stile) {
+  const sinistra = blocco.x - blocco.larghezza / 2
+  const alto = blocco.y - blocco.altezza / 2
+  ctx.fillStyle = stile.colore
+  ctx.fillRect(sinistra, alto, blocco.larghezza, blocco.altezza)
+  ctx.lineWidth = stile.spessore_bordo
+  ctx.strokeStyle = stile.colore_bordo
+  ctx.strokeRect(sinistra, alto, blocco.larghezza, blocco.altezza)
 }
 
 function tracciaForma(ctx, forma, x, y, meta) {
@@ -75,6 +86,8 @@ function disegnaCaselle(ctx, caselle) {
 export function disegnaSfondo(ctx, mappa) {
   ctx.clearRect(0, 0, area.larghezza, area.altezza)
   disegnaTerreno(ctx)
-  disegnaPercorso(ctx, mappa.percorso)
+  disegnaPercorso(ctx, mappa)
+  disegnaFortezza(ctx, mappa.fortezza_nemica, grafica.fortezza_nemica)
+  disegnaFortezza(ctx, mappa.fortezza_giocatore, grafica.fortezza_giocatore)
   disegnaCaselle(ctx, mappa.caselle)
 }

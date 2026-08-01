@@ -5,20 +5,13 @@ function secondi(millisecondi) {
   return (millisecondi / 1000).toFixed(1).replace('.', ',')
 }
 
-function Riga({ etichetta, valore }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        fontSize: interfaccia.testo_normale,
-        color: interfaccia.colore_testo
-      }}
-    >
-      <span style={{ color: interfaccia.colore_testo_debole }}>{etichetta}</span>
-      <span>{valore}</span>
-    </div>
-  )
+// Una sola riga di numeri: il pannello deve coprire meno campo possibile.
+function rigaStatistiche(torre) {
+  if (torre.attacco === 'potenziamento') {
+    return `${torre.descrizione} Raggio ${Math.round(torre.raggio)}.`
+  }
+  const danno = Math.round(torre.dannoEffettivo ?? torre.danno)
+  return `Danno ${danno} · un colpo ogni ${secondi(torre.cadenzaMs)} s · raggio ${Math.round(torre.raggio)}`
 }
 
 function Pulsante({ testo, colore, onClick, spento }) {
@@ -77,15 +70,15 @@ function ScelteTorre({ torri, sceltaId, oro, onScegli }) {
               fontSize: interfaccia.testo_normale,
               fontFamily: 'inherit',
               touchAction: 'manipulation',
-              textAlign: 'left',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               paddingLeft: interfaccia.spaziatura,
               paddingRight: interfaccia.spaziatura
             }}
           >
-            <div style={{ fontWeight: 600 }}>{torre.nome}</div>
-            <div style={{ color: interfaccia.colore_testo_debole }}>
-              {torre.costo} oro
-            </div>
+            <span style={{ fontWeight: 600 }}>{torre.nome}</span>
+            <span style={{ color: interfaccia.colore_testo_debole }}>{torre.costo}</span>
           </button>
         )
       })}
@@ -93,8 +86,8 @@ function ScelteTorre({ torri, sceltaId, oro, onScegli }) {
   )
 }
 
-// Pannello di conferma: primo tocco sulla casella lo apre, il pulsante
-// costruisce. Mai costruire al primo tocco.
+// Pannello di conferma, compatto: primo tocco sulla casella lo apre, il
+// pulsante costruisce. Mai costruire al primo tocco.
 export default function PannelloConferma({ selezione, oro, onCostruisci, onAnnulla }) {
   const [sceltaId, impostaSceltaId] = useState(null)
 
@@ -120,74 +113,44 @@ export default function PannelloConferma({ selezione, oro, onCostruisci, onAnnul
     color: interfaccia.colore_testo
   }
 
-  const bonus =
-    selezione.descrizioneBonus && selezione.tipoCasella !== 'normale' ? (
-      <div
-        style={{
-          fontSize: interfaccia.testo_normale,
-          color: interfaccia.colore_testo_debole
-        }}
-      >
-        {selezione.descrizioneBonus}
-      </div>
-    ) : null
+  const stileRiga = {
+    fontSize: interfaccia.testo_normale,
+    color: interfaccia.colore_testo_debole
+  }
 
-  // casella con una torre gia' costruita: solo le sue statistiche
+  // casella con una torre gia' costruita: nome, numeri, chiudi
   if (selezione.costruita) {
     return (
       <div style={stilePannello}>
         <div style={{ fontSize: interfaccia.testo_titolo, fontWeight: 700 }}>
           {selezione.nome}
         </div>
-        {bonus}
-        {selezione.attacco === 'potenziamento' ? (
-          <Riga etichetta="Effetto" valore={selezione.descrizione} />
-        ) : (
-          <>
-            <Riga etichetta="Danno" valore={Math.round(selezione.dannoEffettivo)} />
-            <Riga etichetta="Un colpo ogni" valore={secondi(selezione.cadenzaMs) + ' s'} />
-          </>
-        )}
-        <Riga etichetta="Raggio" valore={Math.round(selezione.raggio)} />
-        <div style={{ display: 'flex', gap: interfaccia.spaziatura }}>
-          <Pulsante
-            testo="Chiudi"
-            colore={interfaccia.colore_pulsante_secondario}
-            onClick={onAnnulla}
-          />
-        </div>
+        <div style={stileRiga}>{rigaStatistiche(selezione)}</div>
+        <Pulsante
+          testo="Chiudi"
+          colore={interfaccia.colore_pulsante_secondario}
+          onClick={onAnnulla}
+        />
       </div>
     )
   }
 
-  // casella libera: griglia di scelta + statistiche della torre scelta
+  // casella libera: griglia di scelta + una riga di numeri
   const torre = selezione.torri.find((voce) => voce.id === sceltaId) || selezione.torri[0]
   const oroInsufficiente = oro < torre.costo
 
   return (
     <div style={stilePannello}>
-      {bonus}
       <ScelteTorre
         torri={selezione.torri}
         sceltaId={torre.id}
         oro={oro}
         onScegli={impostaSceltaId}
       />
-      <div
-        style={{
-          fontSize: interfaccia.testo_normale,
-          color: interfaccia.colore_testo_debole
-        }}
-      >
-        {torre.descrizione}
+      <div style={stileRiga}>
+        {rigaStatistiche(torre)}
+        {selezione.tipoCasella !== 'normale' ? ` — ${selezione.descrizioneBonus}` : ''}
       </div>
-      {torre.attacco !== 'potenziamento' ? (
-        <>
-          <Riga etichetta="Danno" valore={Math.round(torre.danno)} />
-          <Riga etichetta="Un colpo ogni" valore={secondi(torre.cadenzaMs) + ' s'} />
-        </>
-      ) : null}
-      <Riga etichetta="Raggio" valore={Math.round(torre.raggio)} />
       <div style={{ display: 'flex', gap: interfaccia.spaziatura }}>
         <Pulsante
           testo="Annulla"

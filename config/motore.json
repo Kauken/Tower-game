@@ -7,6 +7,7 @@
   "limiti": {
     "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo.",
     "nemici_massimi": 150,
+    "alleati_massimi": 100,
     "proiettili_massimi": 200,
     "comandi_massimi": 8,
     "effetti_massimi": 48,
@@ -14,7 +15,7 @@
   },
   "anteprima": {
     "_nota": "Cosa e' disponibile finche' non ci sono le altre mappe.",
-    "mappa_id": "valle_del_confine"
+    "mappa_id": "corsia_del_confine"
   },
   "interfaccia": {
     "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
@@ -24,7 +25,7 @@
     "raggio_angoli": 14,
     "testo_titolo": 20,
     "testo_normale": 15,
-    "colore_pannello": "#161b22f5",
+    "colore_pannello": "#161b22e0",
     "colore_bordo_pannello": "#3a4550",
     "colore_testo": "#e8e3d5",
     "colore_testo_debole": "#9fa89b",
@@ -45,10 +46,10 @@
       "spessore_bordo": 4
     },
     "percorso": {
+      "_nota": "La larghezza della corsia sta nella mappa (larghezza_corsia); qui solo l'aspetto.",
       "colore": "#6b5a3e",
       "colore_bordo": "#41372645",
-      "spessore": 48,
-      "spessore_bordo": 60
+      "bordo_extra": 14
     },
     "caselle": {
       "lato": 56,
@@ -103,6 +104,32 @@
       "colore_bordo": "#f2d0a4",
       "colore_bordo_rallentato": "#7fa8ff",
       "spessore_bordo": 3
+    },
+    "alleato": {
+      "colore": "#5f9e6e",
+      "colore_bordo": "#e6f5e9",
+      "colore_bordo_rallentato": "#7fa8ff",
+      "spessore_bordo": 3
+    },
+    "fortezza_nemica": {
+      "colore": "#5a2f2f",
+      "colore_bordo": "#c9524a",
+      "spessore_bordo": 4
+    },
+    "fortezza_giocatore": {
+      "colore": "#2f4a38",
+      "colore_bordo": "#8fd6a0",
+      "spessore_bordo": 4
+    },
+    "barra_fortezza": {
+      "larghezza": 170,
+      "altezza": 12,
+      "distanza": 14,
+      "colore_fondo": "#00000099",
+      "colore_pieno": "#7fd67f",
+      "colore_pieno_nemica": "#d9705f",
+      "colore_bordo": "#0b0f0b",
+      "spessore_bordo": 2
     },
     "effetti": {
       "_nota": "Feedback visivi. Durate in millisecondi, distanze in pixel logici.",

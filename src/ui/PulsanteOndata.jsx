@@ -1,7 +1,7 @@
 import React from 'react'
 import { interfaccia } from '../game/config.js'
 
-// Fra un'ondata e l'altra il gioco aspetta: si riparte solo quando il
+// Fra un assalto e l'altro il gioco aspetta: si riparte solo quando il
 // giocatore e' pronto. Su telefono l'interruzione e' la norma.
 export default function PulsanteOndata({ prossimaOndata, onChiama }) {
   return (
@@ -21,7 +21,7 @@ export default function PulsanteOndata({ prossimaOndata, onChiama }) {
         touchAction: 'manipulation'
       }}
     >
-      Chiama l'ondata {prossimaOndata}
+      Chiama l'assalto {prossimaOndata}
     </button>
   )
 }

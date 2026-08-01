@@ -1,52 +1,57 @@
-// Le ondate: quanti nemici escono e con che ritmo. Tutto da una formula in
-// ondate.json, mai un elenco scritto a mano ondata per ondata.
+// Gli assalti: quante truppe escono per parte e con che ritmo. Tutto da
+// formule in ondate.json e alleati.json, mai elenchi scritti a mano.
 
-import { schemaOndata } from './config.js'
+import { schemaOndata, squadra } from './config.js'
 
-export function quantitaOndata(numeroOndata) {
-  return (
-    schemaOndata.quantita_base +
-    schemaOndata.quantita_aggiunta_per_ondata * (numeroOndata - 1)
-  )
+function quantita(schema, numeroOndata) {
+  return schema.quantita_base + schema.quantita_aggiunta_per_ondata * (numeroOndata - 1)
 }
 
-// Ondata dopo ondata i nemici escono piu' fitti, fino a un limite.
-export function intervalloOndata(numeroOndata) {
-  const intervallo =
-    schemaOndata.intervallo_uscita_ms -
-    schemaOndata.riduzione_intervallo_per_ondata_ms * (numeroOndata - 1)
-  return Math.max(schemaOndata.intervallo_minimo_ms, intervallo)
+function intervallo(schema, numeroOndata) {
+  const valore =
+    schema.intervallo_uscita_ms -
+    schema.riduzione_intervallo_per_ondata_ms * (numeroOndata - 1)
+  return Math.max(schema.intervallo_minimo_ms, valore)
 }
 
-export function creaGestoreOndate(gestoreNemici) {
-  let daGenerare = 0
-  let attesa = 0
-  let intervallo = 0
+export function creaGestoreOndate(truppe) {
+  const nemici = { daGenerare: 0, attesa: 0, intervallo: 0 }
+  const alleati = { daGenerare: 0, attesa: 0, intervallo: 0 }
   let inCorso = false
 
   function avvia(numeroOndata) {
-    daGenerare = quantitaOndata(numeroOndata)
-    intervallo = intervalloOndata(numeroOndata)
-    attesa = 0
+    nemici.daGenerare = quantita(schemaOndata, numeroOndata)
+    nemici.intervallo = intervallo(schemaOndata, numeroOndata)
+    nemici.attesa = 0
+    alleati.daGenerare = quantita(squadra, numeroOndata)
+    alleati.intervallo = intervallo(squadra, numeroOndata)
+    alleati.attesa = 0
     inCorso = true
   }
 
-  // Restituisce true nel passo esatto in cui l'ondata si e' conclusa:
-  // tutti usciti e nessuno piu' vivo in campo.
+  function generaParte(parte, passoMs, genera, numeroOndata) {
+    if (parte.daGenerare <= 0) {
+      return
+    }
+    parte.attesa -= passoMs
+    if (parte.attesa <= 0) {
+      genera(numeroOndata)
+      parte.daGenerare--
+      parte.attesa = parte.intervallo
+    }
+  }
+
+  // Restituisce true nel passo esatto in cui l'assalto si conclude: tutti i
+  // nemici usciti e nessuno piu' vivo. Gli alleati superstiti continuano a
+  // marciare anche dopo: e' la spinta verso la fortezza nemica.
   function aggiorna(passoMs, numeroOndata) {
     if (!inCorso) {
       return false
     }
-    if (daGenerare > 0) {
-      attesa -= passoMs
-      if (attesa <= 0) {
-        gestoreNemici.genera(numeroOndata)
-        daGenerare--
-        attesa = intervallo
-      }
-      return false
-    }
-    if (gestoreNemici.quantiAttivi() === 0) {
+    generaParte(nemici, passoMs, truppe.generaNemico, numeroOndata)
+    generaParte(alleati, passoMs, truppe.generaAlleato, numeroOndata)
+
+    if (nemici.daGenerare <= 0 && truppe.quantiNemiciAttivi() === 0) {
       inCorso = false
       return true
     }
@@ -54,8 +59,8 @@ export function creaGestoreOndate(gestoreNemici) {
   }
 
   function ferma() {
-    daGenerare = 0
-    attesa = 0
+    nemici.daGenerare = 0
+    alleati.daGenerare = 0
     inCorso = false
   }
 

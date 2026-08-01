@@ -1,13 +1,14 @@
-// Lo stato della partita: oro, vite, numero di ondata e fase.
+// Lo stato della partita: oro, vita delle due fortezze, assalto e fase.
 // Tutti i valori e le curve arrivano da economia.json.
 
 import { economia } from './config.js'
 
-// fase: 'pausa' (fra un'ondata e l'altra) | 'ondata' | 'sconfitta'
+// fase: 'pausa' (fra un assalto e l'altro) | 'ondata' | 'vittoria' | 'sconfitta'
 export function creaStatoPartita() {
   const stato = {
     oro: 0,
-    vite: 0,
+    fortezza: 0,
+    fortezzaNemica: 0,
     ondata: 0,
     fase: 'pausa'
   }
@@ -17,12 +18,13 @@ export function creaStatoPartita() {
 
 export function reimposta(stato) {
   stato.oro = economia.partita.oro_iniziale
-  stato.vite = economia.partita.vite_iniziali
+  stato.fortezza = economia.partita.vita_fortezza
+  stato.fortezzaNemica = economia.partita.vita_fortezza_nemica
   stato.ondata = 0
   stato.fase = 'pausa'
 }
 
-// Oro regalato dal completamento di un'ondata: cresce ondata dopo ondata.
+// Oro regalato dal completamento di un assalto: cresce assalto dopo assalto.
 export function ricompensaOndata(numeroOndata) {
   const ricompense = economia.ricompense
   return Math.round(
@@ -43,11 +45,20 @@ export function incassa(stato, oro) {
   stato.oro += oro
 }
 
-// Un nemico e' arrivato in fondo: si perde una vita, e a zero e' finita.
-export function perdiVita(stato) {
-  stato.vite--
-  if (stato.vite <= 0) {
-    stato.vite = 0
+// Un nemico ha raggiunto la tua fortezza: a zero e' finita.
+export function danniAllaFortezza(stato, danno) {
+  stato.fortezza -= danno
+  if (stato.fortezza <= 0) {
+    stato.fortezza = 0
     stato.fase = 'sconfitta'
+  }
+}
+
+// Un tuo minion ha raggiunto la fortezza nemica: a zero hai vinto.
+export function danniAllaFortezzaNemica(stato, danno) {
+  stato.fortezzaNemica -= danno
+  if (stato.fortezzaNemica <= 0) {
+    stato.fortezzaNemica = 0
+    stato.fase = 'vittoria'
   }
 }

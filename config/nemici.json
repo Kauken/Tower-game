@@ -1,12 +1,16 @@
 {
-  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. Velocita in pixel logici al secondo, dimensione in pixel logici (raggio).",
+  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. Velocita in pixel logici al secondo, dimensione in pixel logici (raggio), tempi in millisecondi. Dal pivot i nemici combattono: hanno danno, cadenza e raggio d'ingaggio.",
   "nemici": [
     {
       "id": "fante",
       "nome": "Fante",
       "vita_base": 30,
       "velocita": 95,
+      "danno": 6,
+      "cadenza_ms": 900,
+      "raggio_ingaggio": 34,
       "riduzione_danno": 0,
+      "danno_fortezza": 1,
       "oro_rilasciato": 4,
       "dimensione": 14
     },
@@ -15,7 +19,11 @@
       "nome": "Ratto nero",
       "vita_base": 14,
       "velocita": 190,
+      "danno": 4,
+      "cadenza_ms": 600,
+      "raggio_ingaggio": 30,
       "riduzione_danno": 0,
+      "danno_fortezza": 1,
       "oro_rilasciato": 3,
       "dimensione": 10
     },
@@ -24,7 +32,11 @@
       "nome": "Golem di pietra",
       "vita_base": 160,
       "velocita": 52,
+      "danno": 18,
+      "cadenza_ms": 1600,
+      "raggio_ingaggio": 40,
       "riduzione_danno": 4,
+      "danno_fortezza": 3,
       "oro_rilasciato": 18,
       "dimensione": 22
     },
@@ -33,15 +45,19 @@
       "nome": "Sciame di goblin",
       "vita_base": 20,
       "velocita": 120,
+      "danno": 3,
+      "cadenza_ms": 500,
+      "raggio_ingaggio": 28,
       "riduzione_danno": 0,
+      "danno_fortezza": 1,
       "oro_rilasciato": 2,
       "dimensione": 11
     }
   ],
   "scalatura": {
-    "_nota": "Crescita per ondata. valore = base * (moltiplicatore ^ (ondata - 1)). Con 1.21 l'ondata 18 vale circa 27 volte la prima.",
+    "_nota": "Crescita per assalto. valore = base * (moltiplicatore ^ (assalto - 1)). Con 1.21 l'assalto 18 vale circa 27 volte il primo.",
     "vita_per_ondata": 1.21,
     "oro_per_ondata": 1.06,
-    "riduzione_danno_per_ondata": 0.15
+    "danno_per_ondata": 1.15
   }
 }
