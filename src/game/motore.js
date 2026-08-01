@@ -3,7 +3,15 @@
 // Le azioni dell'interfaccia entrano da una coda di comandi, mai come
 // chiamate dirette: cosi' React non puo' toccare il gioco a meta' di un passo.
 
-import { area, grafica, limiti, mappaAttiva, simulazione } from './config.js'
+import {
+  area,
+  elencoTorri,
+  grafica,
+  limiti,
+  mappaAttiva,
+  simulazione,
+  torrePerId
+} from './config.js'
 import { preparaPercorso } from './percorso.js'
 import { disegnaSfondo } from './sfondo.js'
 import { adattaCanvas, aCoordinateLogiche } from './schermo.js'
@@ -11,7 +19,7 @@ import { creaPool, primoLibero } from './pool.js'
 import { creaGestoreNemici } from './nemici.js'
 import { creaGestoreProiettili } from './proiettili.js'
 import { creaGestoreEffetti } from './effetti.js'
-import { creaGestoreTorri, statisticheSuCasella } from './torri.js'
+import { creaGestoreTorri, statisticheTorre } from './torri.js'
 import { creaGestoreOndate } from './ondate.js'
 import {
   creaStatoPartita,
@@ -44,15 +52,17 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     },
     () => perdiVita(partita)
   )
-  const proiettili = creaGestoreProiettili(nemici.applicaDanno, effetti.impatto)
-  const torri = creaGestoreTorri(nemici, proiettili)
+  const proiettili = creaGestoreProiettili(nemici, effetti)
+  const torri = creaGestoreTorri(nemici, proiettili, effetti)
   const ondate = creaGestoreOndate(nemici)
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
     tipo: '',
     x: 0,
-    y: 0
+    y: 0,
+    // per il comando costruisci: quale torre
+    testo: ''
   }))
 
   // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
@@ -68,7 +78,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   let casellaScelta = NESSUNA
   let avvisaSelezione = null
 
-  function accodaComando(tipo, x, y) {
+  function accodaComando(tipo, x, y, testo) {
     const comando = primoLibero(comandi)
     if (!comando) {
       return
@@ -77,10 +87,11 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     comando.tipo = tipo
     comando.x = x
     comando.y = y
+    comando.testo = testo
   }
 
   // Chiamata solo quando la selezione cambia (un tocco), mai a ogni frame:
-  // qui creare un oggetto per React e' legittimo.
+  // qui creare oggetti per React e' legittimo.
   function notificaSelezione() {
     if (!avvisaSelezione) {
       return
@@ -90,9 +101,26 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
     const casella = mappaAttiva.caselle[casellaScelta]
-    const statistiche = statisticheSuCasella(casella)
-    statistiche.costruita = torri.torreSuCasella(casellaScelta) !== null
-    avvisaSelezione(statistiche)
+    const torre = torri.torreSuCasella(casellaScelta)
+
+    if (torre) {
+      // casella occupata: le statistiche della torre che c'e' sopra,
+      // col danno effettivo (aura dell'Obelisco compresa)
+      const statistiche = statisticheTorre(torrePerId(torre.id), casella)
+      statistiche.costruita = true
+      statistiche.dannoEffettivo = torre.danno
+      avvisaSelezione(statistiche)
+      return
+    }
+
+    // casella libera: le statistiche di tutte le torri su questa casella,
+    // per il pannello di scelta
+    avvisaSelezione({
+      costruita: false,
+      tipoCasella: casella.tipo,
+      descrizioneBonus: statisticheTorre(elencoTorri[0], casella).descrizioneBonus,
+      torri: elencoTorri.map((definizione) => statisticheTorre(definizione, casella))
+    })
   }
 
   function casellaVicinaA(x, y) {
@@ -111,19 +139,19 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     return migliore
   }
 
-  function costruisciSuScelta() {
+  function costruisciSuScelta(torreId) {
     if (casellaScelta === NESSUNA) {
       return
     }
+    const definizione = torrePerId(torreId)
     const casella = mappaAttiva.caselle[casellaScelta]
-    const statistiche = statisticheSuCasella(casella)
-    if (!puoPagare(partita, statistiche.costo)) {
+    if (!puoPagare(partita, definizione.costo)) {
       return
     }
-    if (!torri.piazza(casellaScelta)) {
+    if (!torri.piazza(casellaScelta, definizione)) {
       return
     }
-    paga(partita, statistiche.costo)
+    paga(partita, definizione.costo)
     effetti.ondaPiazzamento(casella.x, casella.y)
     // resta selezionata: cosi' si vede subito il raggio della torre nuova
     notificaSelezione()
@@ -152,7 +180,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
         casellaScelta = casellaVicinaA(comando.x, comando.y)
         notificaSelezione()
       } else if (comando.tipo === 'costruisci') {
-        costruisciSuScelta()
+        costruisciSuScelta(comando.testo)
       } else if (comando.tipo === 'annulla') {
         casellaScelta = NESSUNA
         notificaSelezione()
@@ -265,23 +293,23 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   function tocca(xSchermo, ySchermo) {
     const punto = aCoordinateLogiche(canvasGioco, area, xSchermo, ySchermo)
-    accodaComando('tocco', punto.x, punto.y)
+    accodaComando('tocco', punto.x, punto.y, '')
   }
 
-  function costruisci() {
-    accodaComando('costruisci', 0, 0)
+  function costruisci(torreId) {
+    accodaComando('costruisci', 0, 0, torreId)
   }
 
   function annulla() {
-    accodaComando('annulla', 0, 0)
+    accodaComando('annulla', 0, 0, '')
   }
 
   function chiamaOndata() {
-    accodaComando('chiamaOndata', 0, 0)
+    accodaComando('chiamaOndata', 0, 0, '')
   }
 
   function riparti() {
-    accodaComando('ricomincia', 0, 0)
+    accodaComando('ricomincia', 0, 0, '')
   }
 
   function impostaAscoltatoreSelezione(ascoltatore) {

@@ -13,9 +13,8 @@
     "popup_massimi": 24
   },
   "anteprima": {
-    "_nota": "Cosa e' disponibile finche' non ci sono le altre mappe e le altre torri.",
-    "mappa_id": "valle_del_confine",
-    "torre_id": "balestriere"
+    "_nota": "Cosa e' disponibile finche' non ci sono le altre mappe.",
+    "mappa_id": "valle_del_confine"
   },
   "interfaccia": {
     "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
@@ -31,6 +30,7 @@
     "colore_testo_debole": "#9fa89b",
     "colore_pulsante": "#3f6b46",
     "colore_pulsante_secondario": "#2a313a",
+    "colore_scelto": "#f2d0a4",
     "colore_pulsante_spento": "#252a30",
     "colore_pulsante_testo": "#ffffff",
     "colore_pulsante_testo_spento": "#6b7280",
@@ -80,6 +80,13 @@
       "raggio_cima": 9,
       "colore_cima": "#e6edf5"
     },
+    "torri_aspetto": {
+      "_nota": "Colori per distinguere le torri a colpo d'occhio. Il resto viene dal blocco torre.",
+      "balestriere": { "colore": "#8a9ab0", "colore_cima": "#e6edf5" },
+      "catapulta": { "colore": "#a0764a", "colore_cima": "#f2d0a4" },
+      "cappella_del_gelo": { "colore": "#5b7fb5", "colore_cima": "#cfe4ff" },
+      "obelisco": { "colore": "#6b5a8a", "colore_cima": "#d9c9f2" }
+    },
     "raggio_azione": {
       "colore_riempimento": "#e6edf518",
       "colore_bordo": "#e6edf5aa",
@@ -94,6 +101,7 @@
     "nemico": {
       "colore": "#c9524a",
       "colore_bordo": "#f2d0a4",
+      "colore_bordo_rallentato": "#7fa8ff",
       "spessore_bordo": 3
     },
     "effetti": {
@@ -125,6 +133,16 @@
         "raggio_massimo": 72,
         "colore": "#e6edf5",
         "spessore": 4
+      },
+      "esplosione": {
+        "durata_ms": 260,
+        "colore": "#ffb35c",
+        "spessore": 4
+      },
+      "impulso_gelo": {
+        "durata_ms": 420,
+        "colore": "#9cc7ff",
+        "spessore": 3
       }
     },
     "barra_vita": {

@@ -7,7 +7,7 @@ A lavoro finito il punto si segna **FATTO**.
 1. Canvas + percorso + caselle + nemico che cammina — **FATTO**
 2. Piazzamento del Balestriere + proiettili + morte del nemico — **FATTO**
 3. Sistema ondate + oro + vite — **FATTO**
-4. Le altre 3 torri e i 2 slot speciali
+4. Le altre 3 torri e i 2 slot speciali — **FATTO**
 5. Negozio di fine ondata + schermata "3 carte, ne scegli 1"
 6. Sistema tag + prime 6 regole di sinergia
 7. Reliquie globali

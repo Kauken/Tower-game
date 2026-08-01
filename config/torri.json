@@ -1,5 +1,5 @@
 {
-  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. Distanze in pixel logici (mappa 720x1280), tempi in millisecondi.",
+  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. Distanze in pixel logici (mappa 720x1280), tempi in millisecondi. attacco: proiettile | proiettile_area | impulso | potenziamento.",
   "torri": [
     {
       "id": "balestriere",
@@ -9,6 +9,7 @@
       "cadenza_ms": 700,
       "raggio": 150,
       "tipo_bersaglio": "singolo",
+      "attacco": "proiettile",
       "descrizione": "Tiro rapido su un solo nemico. Affidabile, senza sorprese.",
       "velocita_proiettile": 420
     },
@@ -20,6 +21,8 @@
       "cadenza_ms": 1800,
       "raggio": 210,
       "tipo_bersaglio": "area",
+      "attacco": "proiettile_area",
+      "raggio_area": 80,
       "descrizione": "Colpo lento che danneggia tutti i nemici vicini al punto d'impatto.",
       "velocita_proiettile": 280
     },
@@ -31,6 +34,11 @@
       "cadenza_ms": 1200,
       "raggio": 130,
       "tipo_bersaglio": "area",
+      "attacco": "impulso",
+      "rallentamento": {
+        "fattore_velocita": 0.55,
+        "durata_ms": 1300
+      },
       "descrizione": "Danno minimo, ma rallenta i nemici che restano nel suo raggio.",
       "velocita_proiettile": 340
     },
@@ -42,6 +50,10 @@
       "cadenza_ms": 0,
       "raggio": 180,
       "tipo_bersaglio": "nessuno",
+      "attacco": "potenziamento",
+      "aura": {
+        "moltiplicatore_danno": 1.35
+      },
       "descrizione": "Non attacca: rafforza le torri costruite nel suo raggio.",
       "velocita_proiettile": 0
     }

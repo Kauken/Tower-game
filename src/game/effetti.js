@@ -40,7 +40,9 @@ export function creaGestoreEffetti() {
   // il font si costruisce una volta sola, non a ogni frame
   const fontPopup = 'bold ' + stile.popup_oro.dimensione_testo + 'px system-ui, sans-serif'
 
-  function accendiAnello(x, y, blocco) {
+  // raggio: se assente si usa quello del blocco di stile. Serve agli effetti
+  // che seguono il raggio reale di una torre (esplosione, impulso di gelo).
+  function accendiAnello(x, y, blocco, raggio) {
     const anello = primoLibero(anelli)
     if (!anello) {
       return
@@ -50,21 +52,29 @@ export function creaGestoreEffetti() {
     anello.y = y
     anello.tempoMs = 0
     anello.durataMs = blocco.durata_ms
-    anello.raggioMassimo = blocco.raggio_massimo
+    anello.raggioMassimo = raggio > 0 ? raggio : blocco.raggio_massimo
     anello.colore = blocco.colore
     anello.spessore = blocco.spessore
   }
 
   function impatto(x, y) {
-    accendiAnello(x, y, stile.impatto)
+    accendiAnello(x, y, stile.impatto, 0)
   }
 
   function morte(x, y) {
-    accendiAnello(x, y, stile.morte)
+    accendiAnello(x, y, stile.morte, 0)
   }
 
   function ondaPiazzamento(x, y) {
-    accendiAnello(x, y, stile.onda_piazzamento)
+    accendiAnello(x, y, stile.onda_piazzamento, 0)
+  }
+
+  function esplosione(x, y, raggio) {
+    accendiAnello(x, y, stile.esplosione, raggio)
+  }
+
+  function impulsoGelo(x, y, raggio) {
+    accendiAnello(x, y, stile.impulso_gelo, raggio)
   }
 
   function popupOro(x, y, oro) {
@@ -150,5 +160,15 @@ export function creaGestoreEffetti() {
     }
   }
 
-  return { impatto, morte, ondaPiazzamento, popupOro, aggiorna, disegna, svuota }
+  return {
+    impatto,
+    morte,
+    ondaPiazzamento,
+    esplosione,
+    impulsoGelo,
+    popupOro,
+    aggiorna,
+    disegna,
+    svuota
+  }
 }

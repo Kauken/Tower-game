@@ -1,21 +1,23 @@
 // I proiettili: pool preallocato, inseguono il nemico che li ha fatti partire.
+// Un proiettile con raggioArea > 0 esplode all'impatto e danneggia tutti i
+// nemici vicini (Catapulta); a 0 colpisce solo il bersaglio (Balestriere).
 
 import { grafica, limiti } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
 
-// alImpatto(x, y) accende l'effetto visivo del colpo a segno.
-export function creaGestoreProiettili(applicaDanno, alImpatto) {
+export function creaGestoreProiettili(nemici, effetti) {
   const elenco = creaPool(limiti.proiettili_massimi, () => ({
     attivo: false,
     x: 0,
     y: 0,
     velocita: 0,
     danno: 0,
+    raggioArea: 0,
     bersaglio: null,
     generazioneBersaglio: 0
   }))
 
-  function spara(x, y, bersaglio, danno, velocita) {
+  function spara(x, y, bersaglio, danno, velocita, raggioArea) {
     const proiettile = primoLibero(elenco)
     if (!proiettile) {
       return
@@ -25,8 +27,26 @@ export function creaGestoreProiettili(applicaDanno, alImpatto) {
     proiettile.y = y
     proiettile.danno = danno
     proiettile.velocita = velocita
+    proiettile.raggioArea = raggioArea
     proiettile.bersaglio = bersaglio
     proiettile.generazioneBersaglio = bersaglio.generazione
+  }
+
+  function colpisci(proiettile, bersaglio) {
+    if (proiettile.raggioArea > 0) {
+      nemici.colpisciArea(
+        bersaglio.x,
+        bersaglio.y,
+        proiettile.raggioArea * proiettile.raggioArea,
+        proiettile.danno,
+        1,
+        0
+      )
+      effetti.esplosione(bersaglio.x, bersaglio.y, proiettile.raggioArea)
+    } else {
+      nemici.applicaDanno(bersaglio, proiettile.danno)
+      effetti.impatto(proiettile.x, proiettile.y)
+    }
   }
 
   function aggiorna(passoSecondi) {
@@ -54,8 +74,7 @@ export function creaGestoreProiettili(applicaDanno, alImpatto) {
 
       // colpito se lo tocca, o se in questo passo lo supererebbe
       if (distanzaQuadrata <= contatto * contatto || distanzaQuadrata <= passo * passo) {
-        applicaDanno(bersaglio, proiettile.danno)
-        alImpatto(proiettile.x, proiettile.y)
+        colpisci(proiettile, bersaglio)
         proiettile.attivo = false
         proiettile.bersaglio = null
         continue
