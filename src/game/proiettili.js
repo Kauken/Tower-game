@@ -84,5 +84,12 @@ export function creaGestoreProiettili(applicaDanno) {
     }
   }
 
-  return { spara, aggiorna, disegna }
+  function svuota() {
+    for (let i = 0; i < elenco.length; i++) {
+      elenco[i].attivo = false
+      elenco[i].bersaglio = null
+    }
+  }
+
+  return { spara, aggiorna, disegna, svuota }
 }

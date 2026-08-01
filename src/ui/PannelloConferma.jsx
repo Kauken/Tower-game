@@ -21,18 +21,21 @@ function Riga({ etichetta, valore }) {
   )
 }
 
-function Pulsante({ testo, colore, onClick }) {
+function Pulsante({ testo, colore, onClick, spento }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={spento}
       style={{
         flex: 1,
         minHeight: interfaccia.altezza_minima_tocco,
         border: 'none',
         borderRadius: interfaccia.raggio_angoli,
-        background: colore,
-        color: interfaccia.colore_pulsante_testo,
+        background: spento ? interfaccia.colore_pulsante_spento : colore,
+        color: spento
+          ? interfaccia.colore_pulsante_testo_spento
+          : interfaccia.colore_pulsante_testo,
         fontSize: interfaccia.testo_normale,
         fontWeight: 600,
         fontFamily: 'inherit',
@@ -46,20 +49,17 @@ function Pulsante({ testo, colore, onClick }) {
 
 // Pannello di conferma: primo tocco sulla casella lo apre, il pulsante
 // costruisce. Mai costruire al primo tocco.
-export default function PannelloConferma({ selezione, onCostruisci, onAnnulla }) {
+export default function PannelloConferma({ selezione, oro, onCostruisci, onAnnulla }) {
   if (!selezione) {
     return null
   }
 
   const costruita = selezione.costruita
+  const oroInsufficiente = oro < selezione.costo
 
   return (
     <div
       style={{
-        position: 'absolute',
-        left: interfaccia.spaziatura,
-        right: interfaccia.spaziatura,
-        bottom: `calc(${interfaccia.spaziatura}px + env(safe-area-inset-bottom))`,
         padding: interfaccia.spaziatura,
         display: 'flex',
         flexDirection: 'column',
@@ -105,9 +105,10 @@ export default function PannelloConferma({ selezione, onCostruisci, onAnnulla })
               onClick={onAnnulla}
             />
             <Pulsante
-              testo="Costruisci"
+              testo={oroInsufficiente ? 'Oro insufficiente' : 'Costruisci'}
               colore={interfaccia.colore_pulsante}
               onClick={onCostruisci}
+              spento={oroInsufficiente}
             />
           </>
         )}

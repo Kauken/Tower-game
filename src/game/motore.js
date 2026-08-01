@@ -11,6 +11,16 @@ import { creaPool, primoLibero } from './pool.js'
 import { creaGestoreNemici } from './nemici.js'
 import { creaGestoreProiettili } from './proiettili.js'
 import { creaGestoreTorri, statisticheSuCasella } from './torri.js'
+import { creaGestoreOndate } from './ondate.js'
+import {
+  creaStatoPartita,
+  incassa,
+  paga,
+  perdiVita,
+  puoPagare,
+  reimposta,
+  ricompensaOndata
+} from './partita.js'
 
 const NESSUNA = -1
 
@@ -21,9 +31,16 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   const raggioToccoQuadrato =
     grafica.caselle.raggio_tocco * grafica.caselle.raggio_tocco
 
-  const nemici = creaGestoreNemici(percorso)
+  const partita = creaStatoPartita()
+
+  const nemici = creaGestoreNemici(
+    percorso,
+    (oro) => incassa(partita, oro),
+    () => perdiVita(partita)
+  )
   const proiettili = creaGestoreProiettili(nemici.applicaDanno)
   const torri = creaGestoreTorri(nemici, proiettili)
+  const ondate = creaGestoreOndate(nemici)
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
@@ -32,14 +49,16 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     y: 0
   }))
 
+  // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
+  // aggiornato sul posto, non ricreato.
+  const vetrina = { oro: 0, vite: 0, ondata: 0, fase: 'pausa' }
+
   let ctxSfondo = null
   let ctxGioco = null
   let ultimoTempo = 0
   let accumulato = 0
   let richiesta = 0
 
-  // -1 = niente selezionato. Se sulla casella c'e' una torre e' "torre",
-  // altrimenti e' la conferma di costruzione.
   let casellaScelta = NESSUNA
   let avvisaSelezione = null
 
@@ -86,6 +105,33 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     return migliore
   }
 
+  function costruisciSuScelta() {
+    if (casellaScelta === NESSUNA) {
+      return
+    }
+    const casella = mappaAttiva.caselle[casellaScelta]
+    const statistiche = statisticheSuCasella(casella)
+    if (!puoPagare(partita, statistiche.costo)) {
+      return
+    }
+    if (!torri.piazza(casellaScelta)) {
+      return
+    }
+    paga(partita, statistiche.costo)
+    // resta selezionata: cosi' si vede subito il raggio della torre nuova
+    notificaSelezione()
+  }
+
+  function ricomincia() {
+    ondate.ferma()
+    nemici.svuota()
+    proiettili.svuota()
+    torri.svuota()
+    reimposta(partita)
+    casellaScelta = NESSUNA
+    notificaSelezione()
+  }
+
   function eseguiComandi() {
     for (let i = 0; i < comandi.length; i++) {
       const comando = comandi[i]
@@ -98,14 +144,18 @@ export function creaMotore(canvasSfondo, canvasGioco) {
         casellaScelta = casellaVicinaA(comando.x, comando.y)
         notificaSelezione()
       } else if (comando.tipo === 'costruisci') {
-        if (casellaScelta !== NESSUNA) {
-          torri.piazza(casellaScelta)
-          // resta selezionata: cosi' si vede subito il raggio della torre nuova
-          notificaSelezione()
-        }
+        costruisciSuScelta()
       } else if (comando.tipo === 'annulla') {
         casellaScelta = NESSUNA
         notificaSelezione()
+      } else if (comando.tipo === 'chiamaOndata') {
+        if (partita.fase === 'pausa') {
+          partita.ondata++
+          partita.fase = 'ondata'
+          ondate.avvia(partita.ondata)
+        }
+      } else if (comando.tipo === 'ricomincia') {
+        ricomincia()
       }
     }
   }
@@ -119,9 +169,23 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   function aggiorna() {
     eseguiComandi()
-    nemici.aggiorna(simulazione.passo_ms, passoSecondi)
+
+    // a partita persa il campo si ferma: resta solo la schermata di sconfitta
+    if (partita.fase === 'sconfitta') {
+      return
+    }
+
+    nemici.aggiorna(passoSecondi)
     torri.aggiorna(simulazione.passo_ms)
     proiettili.aggiorna(passoSecondi)
+
+    if (partita.fase === 'ondata') {
+      const conclusa = ondate.aggiorna(simulazione.passo_ms, partita.ondata)
+      if (conclusa) {
+        incassa(partita, ricompensaOndata(partita.ondata))
+        partita.fase = 'pausa'
+      }
+    }
   }
 
   function disegnaSelezione() {
@@ -177,7 +241,16 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     richiesta = 0
   }
 
-  // --- comandi dall'interfaccia ---
+  // --- comunicazione con l'interfaccia ---
+
+  // L'interfaccia legge, non chiede: nessun oggetto nuovo a ogni lettura.
+  function leggiStato() {
+    vetrina.oro = partita.oro
+    vetrina.vite = partita.vite
+    vetrina.ondata = partita.ondata
+    vetrina.fase = partita.fase
+    return vetrina
+  }
 
   function tocca(xSchermo, ySchermo) {
     const punto = aCoordinateLogiche(canvasGioco, area, xSchermo, ySchermo)
@@ -192,6 +265,14 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     accodaComando('annulla', 0, 0)
   }
 
+  function chiamaOndata() {
+    accodaComando('chiamaOndata', 0, 0)
+  }
+
+  function riparti() {
+    accodaComando('ricomincia', 0, 0)
+  }
+
   function impostaAscoltatoreSelezione(ascoltatore) {
     avvisaSelezione = ascoltatore
   }
@@ -200,9 +281,12 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     avvia,
     ferma,
     ridimensiona,
+    leggiStato,
     tocca,
     costruisci,
     annulla,
+    chiamaOndata,
+    riparti,
     impostaAscoltatoreSelezione
   }
 }
