@@ -1,0 +1,47 @@
+{
+  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. Velocita in pixel logici al secondo, dimensione in pixel logici (raggio).",
+  "nemici": [
+    {
+      "id": "fante",
+      "nome": "Fante",
+      "vita_base": 30,
+      "velocita": 55,
+      "riduzione_danno": 0,
+      "oro_rilasciato": 4,
+      "dimensione": 14
+    },
+    {
+      "id": "ratto_nero",
+      "nome": "Ratto nero",
+      "vita_base": 14,
+      "velocita": 110,
+      "riduzione_danno": 0,
+      "oro_rilasciato": 3,
+      "dimensione": 10
+    },
+    {
+      "id": "golem_di_pietra",
+      "nome": "Golem di pietra",
+      "vita_base": 160,
+      "velocita": 30,
+      "riduzione_danno": 4,
+      "oro_rilasciato": 18,
+      "dimensione": 22
+    },
+    {
+      "id": "sciame_di_goblin",
+      "nome": "Sciame di goblin",
+      "vita_base": 20,
+      "velocita": 70,
+      "riduzione_danno": 0,
+      "oro_rilasciato": 2,
+      "dimensione": 11
+    }
+  ],
+  "scalatura": {
+    "_nota": "Crescita per ondata. valore = base * (moltiplicatore ^ (ondata - 1)). Con 1.21 l'ondata 18 vale circa 27 volte la prima.",
+    "vita_per_ondata": 1.21,
+    "oro_per_ondata": 1.06,
+    "riduzione_danno_per_ondata": 0.15
+  }
+}

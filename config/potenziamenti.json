@@ -1,0 +1,50 @@
+{
+  "_nota": "Solo struttura e pochi esempi: il pool vero si costruisce con l'agente designer-contenuti. Valori provvisori.",
+  "tag_validi": ["FUOCO", "GELO", "FULMINE", "VELENO", "SACRO", "ORO", "AREA", "RAPIDITA"],
+  "rarita_valide": ["comune", "raro", "leggendario"],
+  "potenziamenti": [
+    {
+      "id": "punte_incendiarie",
+      "nome": "Punte incendiarie",
+      "famiglia": "modulo",
+      "tag": ["FUOCO"],
+      "rarita": "comune",
+      "descrizione": "I colpi lasciano una bruciatura che continua a fare danno.",
+      "effetto": {
+        "tipo": "danno_nel_tempo",
+        "bersaglio": "torre_equipaggiata",
+        "danno_per_secondo": 3,
+        "durata_ms": 3000
+      }
+    },
+    {
+      "id": "campana_di_brina",
+      "nome": "Campana di brina",
+      "famiglia": "reliquia",
+      "tag": ["GELO", "AREA"],
+      "rarita": "raro",
+      "descrizione": "Ogni nemico colpito rallenta anche quelli che gli stanno attorno.",
+      "effetto": {
+        "tipo": "rallentamento_contagioso",
+        "bersaglio": "globale",
+        "raggio": 60,
+        "riduzione_velocita": 0.25,
+        "durata_ms": 1500
+      }
+    },
+    {
+      "id": "decima_del_tesoriere",
+      "nome": "Decima del tesoriere",
+      "famiglia": "consumabile",
+      "tag": ["ORO"],
+      "rarita": "comune",
+      "descrizione": "Per tre ondate ogni nemico ucciso lascia oro extra.",
+      "effetto": {
+        "tipo": "oro_extra",
+        "bersaglio": "globale",
+        "oro_aggiuntivo_per_uccisione": 2,
+        "ondate_durata": 3
+      }
+    }
+  ]
+}
