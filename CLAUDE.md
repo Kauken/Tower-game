@@ -18,6 +18,7 @@ L'autore non sa programmare e lavora dal telefono. Quindi:
 4. **Mobile prima di tutto.** Verticale, aree toccabili di almeno 44 px, niente `:hover`, niente doppio click, rispetto delle safe area.
 5. **Prima di dichiarare finito**, esegui `npm run build`. Se fallisce, non hai finito.
 6. **Non toccare i valori di bilanciamento** di tua iniziativa quando ti viene chiesta una funzionalità. Bilanciare è un compito separato, con il suo agente.
+7. **"Fai il punto N"** significa il punto N della lista in `docs/ROADMAP.md`: a lavoro finito segnalo come FATTO in quel file.
 
 ## Comandi
 
