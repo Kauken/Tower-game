@@ -6,19 +6,18 @@
   },
   "limiti": {
     "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo.",
-    "nemici_massimi": 60,
-    "proiettili_massimi": 120,
+    "nemici_massimi": 150,
+    "proiettili_massimi": 200,
     "comandi_massimi": 8
   },
   "anteprima": {
-    "_nota": "Cosa mostrare finche' non esistono le ondate vere.",
+    "_nota": "Cosa e' disponibile finche' non ci sono le altre mappe e le altre torri.",
     "mappa_id": "valle_del_confine",
-    "nemico_id": "fante",
-    "torre_id": "balestriere",
-    "intervallo_generazione_ms": 2200
+    "torre_id": "balestriere"
   },
   "interfaccia": {
-    "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44.",
+    "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
+    "aggiornamenti_al_secondo": 10,
     "altezza_minima_tocco": 52,
     "spaziatura": 12,
     "raggio_angoli": 14,
@@ -30,7 +29,11 @@
     "colore_testo_debole": "#9fa89b",
     "colore_pulsante": "#3f6b46",
     "colore_pulsante_secondario": "#2a313a",
-    "colore_pulsante_testo": "#ffffff"
+    "colore_pulsante_spento": "#252a30",
+    "colore_pulsante_testo": "#ffffff",
+    "colore_pulsante_testo_spento": "#6b7280",
+    "colore_sconfitta": "#0d0f14f2",
+    "colore_allarme": "#d9705f"
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",

@@ -1,0 +1,11 @@
+{
+  "_nota": "Composizione delle ondate. La quantita' e il ritmo di uscita si ricavano da una formula, mai scritti a mano ondata per ondata. Per ora esiste un solo tipo di nemico: gli altri arrivano ai punti successivi. Valori provvisori.",
+  "schema_ondata": {
+    "nemico_id": "fante",
+    "quantita_base": 6,
+    "quantita_aggiunta_per_ondata": 2,
+    "intervallo_uscita_ms": 900,
+    "riduzione_intervallo_per_ondata_ms": 25,
+    "intervallo_minimo_ms": 350
+  }
+}

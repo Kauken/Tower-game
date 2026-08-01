@@ -95,6 +95,13 @@ export function creaGestoreTorri(gestoreNemici, gestoreProiettili) {
     }
   }
 
+  function svuota() {
+    for (let i = 0; i < elenco.length; i++) {
+      elenco[i].attivo = false
+      elenco[i].indiceCasella = -1
+    }
+  }
+
   function disegnaRaggio(ctx, torre) {
     const stile = grafica.raggio_azione
     ctx.beginPath()
@@ -128,5 +135,5 @@ export function creaGestoreTorri(gestoreNemici, gestoreProiettili) {
     }
   }
 
-  return { piazza, aggiorna, disegna, disegnaRaggio, torreSuCasella }
+  return { piazza, aggiorna, disegna, disegnaRaggio, torreSuCasella, svuota }
 }

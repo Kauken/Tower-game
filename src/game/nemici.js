@@ -1,10 +1,13 @@
 // I nemici: pool preallocato, avanzamento sul percorso, barra vita e morte.
+// Chi li fa uscire e' il gestore delle ondate, non questo file.
 
-import { anteprima, grafica, limiti, nemicoAnteprima } from './config.js'
+import { grafica, limiti, nemicoOndata, scalatura } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
 import { posizionaSuPercorso } from './percorso.js'
 
-export function creaGestoreNemici(percorso) {
+// alUcciso e alTraguardo sono i due modi in cui un nemico esce di scena:
+// il primo paga oro, il secondo toglie una vita.
+export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
   const elenco = creaPool(limiti.nemici_massimi, () => ({
     attivo: false,
     // cambia a ogni riuso: serve ai proiettili per accorgersi che il nemico
@@ -18,35 +21,37 @@ export function creaGestoreNemici(percorso) {
     vitaMassima: 0,
     velocita: 0,
     raggio: 0,
-    riduzioneDanno: 0
+    riduzioneDanno: 0,
+    oro: 0
   }))
 
-  let attesaGenerazione = 0
+  let attivi = 0
 
-  function genera() {
+  function genera(numeroOndata) {
     const nemico = primoLibero(elenco)
     if (!nemico) {
       return
     }
+    // vita e oro crescono ondata dopo ondata, con la curva di nemici.json
+    const esponente = numeroOndata - 1
+    const moltiplicatoreVita = Math.pow(scalatura.vita_per_ondata, esponente)
+    const moltiplicatoreOro = Math.pow(scalatura.oro_per_ondata, esponente)
+
     nemico.attivo = true
     nemico.generazione++
     nemico.distanza = 0
     nemico.segmento = 0
-    nemico.vitaMassima = nemicoAnteprima.vita_base
+    nemico.vitaMassima = nemicoOndata.vita_base * moltiplicatoreVita
     nemico.vita = nemico.vitaMassima
-    nemico.velocita = nemicoAnteprima.velocita
-    nemico.raggio = nemicoAnteprima.dimensione
-    nemico.riduzioneDanno = nemicoAnteprima.riduzione_danno
+    nemico.velocita = nemicoOndata.velocita
+    nemico.raggio = nemicoOndata.dimensione
+    nemico.riduzioneDanno = nemicoOndata.riduzione_danno
+    nemico.oro = Math.round(nemicoOndata.oro_rilasciato * moltiplicatoreOro)
     posizionaSuPercorso(percorso, nemico)
+    attivi++
   }
 
-  function aggiorna(passoMs, passoSecondi) {
-    attesaGenerazione += passoMs
-    if (attesaGenerazione >= anteprima.intervallo_generazione_ms) {
-      attesaGenerazione -= anteprima.intervallo_generazione_ms
-      genera()
-    }
-
+  function aggiorna(passoSecondi) {
     for (let i = 0; i < elenco.length; i++) {
       const nemico = elenco[i]
       if (!nemico.attivo) {
@@ -54,8 +59,9 @@ export function creaGestoreNemici(percorso) {
       }
       nemico.distanza += nemico.velocita * passoSecondi
       if (nemico.distanza >= percorso.lunghezzaTotale) {
-        // arrivato in fondo: per ora sparisce e basta (le vite sono il punto 3)
         nemico.attivo = false
+        attivi--
+        alTraguardo()
         continue
       }
       posizionaSuPercorso(percorso, nemico)
@@ -71,6 +77,8 @@ export function creaGestoreNemici(percorso) {
     if (nemico.vita <= 0) {
       nemico.vita = 0
       nemico.attivo = false
+      attivi--
+      alUcciso(nemico.oro)
     }
   }
 
@@ -92,6 +100,19 @@ export function creaGestoreNemici(percorso) {
       }
     }
     return migliore
+  }
+
+  function quantiAttivi() {
+    return attivi
+  }
+
+  function svuota() {
+    for (let i = 0; i < elenco.length; i++) {
+      elenco[i].attivo = false
+      // cambia generazione: i proiettili in volo non inseguono un fantasma
+      elenco[i].generazione++
+    }
+    attivi = 0
   }
 
   function disegna(ctx) {
@@ -130,5 +151,13 @@ export function creaGestoreNemici(percorso) {
     }
   }
 
-  return { aggiorna, disegna, applicaDanno, bersaglioPiuAvanti }
+  return {
+    genera,
+    aggiorna,
+    disegna,
+    applicaDanno,
+    bersaglioPiuAvanti,
+    quantiAttivi,
+    svuota
+  }
 }
