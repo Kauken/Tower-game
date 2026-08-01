@@ -39,11 +39,12 @@ export const nemicoOndata = cercaPerId(
   'nemici.json'
 )
 
-export const torreAnteprima = cercaPerId(
-  torri.torri,
-  motore.anteprima.torre_id,
-  'torri.json'
-)
+// Tutte le torri piazzabili, nell'ordine del file: e' l'ordine del pannello.
+export const elencoTorri = torri.torri
+
+export function torrePerId(id) {
+  return cercaPerId(torri.torri, id, 'torri.json')
+}
 
 // I bonus di altura e vena di mana. Se un tipo di casella non ha un blocco
 // dedicato non si rompe niente: vale il blocco "normale".

@@ -79,7 +79,7 @@ Con 9+2 caselle e un tetto di 5–6 torri, il giocatore **non può riempire tutt
 
 Nel file di configurazione ogni mappa è un elenco di caselle con coordinate e tipo (`normale` / `altura` / `mana`). Aggiungere una mappa nuova = aggiungere un blocco JSON, non scrivere codice.
 
-`[DA DECIDERE]` Si possono vendere o spostare le torri durante la partita? (Consiglio: vendita sì, a rimborso parziale; spostamento no, altrimenti gli slot speciali perdono peso.)
+**Deciso (2026-08):** vendita sì, a rimborso parziale del 60%; spostamento no, altrimenti gli slot speciali perdono peso. La vendita si costruisce insieme al negozio (punto 5 della roadmap).
 
 ---
 
@@ -257,7 +257,6 @@ Un sistema alla volta, testando dopo ognuno. Non chiedere mai "fammi il gioco".
 
 ## 15. Punti aperti rimasti
 
-- `[DA DECIDERE]` Vendita e spostamento torri
 - `[DA DECIDERE]` Spostamento moduli e cosa succede se la torre viene venduta
 - `[DA DECIDERE]` Abilità del boss
 - `[DA DECIDERE]` I 4 profili personaggio

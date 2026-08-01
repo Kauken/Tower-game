@@ -24,7 +24,10 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
     riduzioneDanno: 0,
     oro: 0,
     // millisecondi residui del lampo bianco dopo un colpo subito
-    lampoMs: 0
+    lampoMs: 0,
+    // rallentamento della Cappella del Gelo: fattore e tempo residuo
+    rallentaFattore: 1,
+    rallentaMs: 0
   }))
 
   let attivi = 0
@@ -50,6 +53,8 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
     nemico.riduzioneDanno = nemicoOndata.riduzione_danno
     nemico.oro = Math.round(nemicoOndata.oro_rilasciato * moltiplicatoreOro)
     nemico.lampoMs = 0
+    nemico.rallentaFattore = 1
+    nemico.rallentaMs = 0
     posizionaSuPercorso(percorso, nemico)
     attivi++
   }
@@ -63,7 +68,12 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
       if (nemico.lampoMs > 0) {
         nemico.lampoMs -= passoMs
       }
-      nemico.distanza += nemico.velocita * passoSecondi
+      let velocita = nemico.velocita
+      if (nemico.rallentaMs > 0) {
+        nemico.rallentaMs -= passoMs
+        velocita *= nemico.rallentaFattore
+      }
+      nemico.distanza += velocita * passoSecondi
       if (nemico.distanza >= percorso.lunghezzaTotale) {
         nemico.attivo = false
         attivi--
@@ -87,6 +97,35 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
       attivi--
       alUcciso(nemico.oro, nemico.x, nemico.y)
     }
+  }
+
+  // Colpisce tutti i nemici entro un raggio: e' l'attacco della Catapulta e
+  // l'impulso della Cappella del Gelo. fattoreRallenta 1 = nessun rallentamento.
+  // Restituisce quanti nemici ha toccato.
+  function colpisciArea(x, y, raggioQuadrato, danno, fattoreRallenta, durataRallentaMs) {
+    let toccati = 0
+    for (let i = 0; i < elenco.length; i++) {
+      const nemico = elenco[i]
+      if (!nemico.attivo) {
+        continue
+      }
+      const dx = nemico.x - x
+      const dy = nemico.y - y
+      if (dx * dx + dy * dy > raggioQuadrato) {
+        continue
+      }
+      toccati++
+      if (fattoreRallenta < 1) {
+        nemico.rallentaFattore = fattoreRallenta
+        if (durataRallentaMs > nemico.rallentaMs) {
+          nemico.rallentaMs = durataRallentaMs
+        }
+      }
+      if (danno > 0) {
+        applicaDanno(nemico, danno)
+      }
+    }
+    return toccati
   }
 
   // Bersaglio: il nemico piu' avanti sul percorso dentro il raggio della torre.
@@ -139,7 +178,9 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
       ctx.fillStyle = nemico.lampoMs > 0 ? grafica.effetti.colore_lampo : stile.colore
       ctx.fill()
       ctx.lineWidth = stile.spessore_bordo
-      ctx.strokeStyle = stile.colore_bordo
+      // il bordo diventa azzurro quando il nemico e' rallentato
+      ctx.strokeStyle =
+        nemico.rallentaMs > 0 ? stile.colore_bordo_rallentato : stile.colore_bordo
       ctx.stroke()
 
       const sinistra = nemico.x - mezzaBarra
@@ -164,6 +205,7 @@ export function creaGestoreNemici(percorso, alUcciso, alTraguardo) {
     aggiorna,
     disegna,
     applicaDanno,
+    colpisciArea,
     bersaglioPiuAvanti,
     quantiAttivi,
     svuota

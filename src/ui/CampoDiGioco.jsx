@@ -62,8 +62,8 @@ export default function CampoDiGioco() {
     motoreRef.current.tocca(evento.clientX, evento.clientY)
   }, [])
 
-  const costruisci = useCallback(() => {
-    motoreRef.current.costruisci()
+  const costruisci = useCallback((torreId) => {
+    motoreRef.current.costruisci(torreId)
   }, [])
 
   const annulla = useCallback(() => {
