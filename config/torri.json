@@ -9,7 +9,8 @@
       "cadenza_ms": 700,
       "raggio": 150,
       "tipo_bersaglio": "singolo",
-      "descrizione": "Tiro rapido su un solo nemico. Affidabile, senza sorprese."
+      "descrizione": "Tiro rapido su un solo nemico. Affidabile, senza sorprese.",
+      "velocita_proiettile": 420
     },
     {
       "id": "catapulta",
@@ -19,7 +20,8 @@
       "cadenza_ms": 1800,
       "raggio": 210,
       "tipo_bersaglio": "area",
-      "descrizione": "Colpo lento che danneggia tutti i nemici vicini al punto d'impatto."
+      "descrizione": "Colpo lento che danneggia tutti i nemici vicini al punto d'impatto.",
+      "velocita_proiettile": 280
     },
     {
       "id": "cappella_del_gelo",
@@ -29,7 +31,8 @@
       "cadenza_ms": 1200,
       "raggio": 130,
       "tipo_bersaglio": "area",
-      "descrizione": "Danno minimo, ma rallenta i nemici che restano nel suo raggio."
+      "descrizione": "Danno minimo, ma rallenta i nemici che restano nel suo raggio.",
+      "velocita_proiettile": 340
     },
     {
       "id": "obelisco",
@@ -39,7 +42,8 @@
       "cadenza_ms": 0,
       "raggio": 180,
       "tipo_bersaglio": "nessuno",
-      "descrizione": "Non attacca: rafforza le torri costruite nel suo raggio."
+      "descrizione": "Non attacca: rafforza le torri costruite nel suo raggio.",
+      "velocita_proiettile": 0
     }
   ]
 }

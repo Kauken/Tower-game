@@ -2,7 +2,7 @@
 // Gira una volta sola all'avvio e poi solo se cambia la mappa o la dimensione
 // della finestra. Mai dentro il ciclo di gioco.
 
-import { area, grafica } from './config.js'
+import { area, aspettoCasella, grafica } from './config.js'
 
 function disegnaTerreno(ctx) {
   const terreno = grafica.terreno
@@ -63,7 +63,7 @@ function disegnaCaselle(ctx, caselle) {
 
   for (let i = 0; i < caselle.length; i++) {
     const casella = caselle[i]
-    const aspetto = stile[casella.tipo]
+    const aspetto = aspettoCasella(casella.tipo)
     tracciaForma(ctx, aspetto.forma, casella.x, casella.y, meta)
     ctx.fillStyle = aspetto.colore
     ctx.fill()
