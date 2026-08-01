@@ -4,10 +4,33 @@
     "passo_ms": 16.67,
     "passi_massimi_per_frame": 5
   },
+  "limiti": {
+    "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo.",
+    "nemici_massimi": 60,
+    "proiettili_massimi": 120,
+    "comandi_massimi": 8
+  },
   "anteprima": {
     "_nota": "Cosa mostrare finche' non esistono le ondate vere.",
     "mappa_id": "valle_del_confine",
-    "nemico_id": "fante"
+    "nemico_id": "fante",
+    "torre_id": "balestriere",
+    "intervallo_generazione_ms": 2200
+  },
+  "interfaccia": {
+    "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44.",
+    "altezza_minima_tocco": 52,
+    "spaziatura": 12,
+    "raggio_angoli": 14,
+    "testo_titolo": 20,
+    "testo_normale": 15,
+    "colore_pannello": "#161b22f5",
+    "colore_bordo_pannello": "#3a4550",
+    "colore_testo": "#e8e3d5",
+    "colore_testo_debole": "#9fa89b",
+    "colore_pulsante": "#3f6b46",
+    "colore_pulsante_secondario": "#2a313a",
+    "colore_pulsante_testo": "#ffffff"
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",
@@ -25,6 +48,9 @@
     "caselle": {
       "lato": 56,
       "spessore_bordo": 4,
+      "raggio_tocco": 62,
+      "colore_selezione": "#f2d0a4",
+      "spessore_selezione": 5,
       "normale": {
         "forma": "quadrato",
         "colore": "#2f3a33",
@@ -41,10 +67,38 @@
         "colore_bordo": "#7fa8ff"
       }
     },
+    "torre": {
+      "raggio": 22,
+      "colore": "#8a9ab0",
+      "colore_bordo": "#e6edf5",
+      "spessore_bordo": 3,
+      "raggio_cima": 9,
+      "colore_cima": "#e6edf5"
+    },
+    "raggio_azione": {
+      "colore_riempimento": "#e6edf518",
+      "colore_bordo": "#e6edf5aa",
+      "spessore_bordo": 2
+    },
+    "proiettile": {
+      "raggio": 6,
+      "colore": "#ffe9a8",
+      "colore_bordo": "#ffffff",
+      "spessore_bordo": 2
+    },
     "nemico": {
       "colore": "#c9524a",
       "colore_bordo": "#f2d0a4",
       "spessore_bordo": 3
+    },
+    "barra_vita": {
+      "larghezza": 40,
+      "altezza": 7,
+      "distanza_sopra": 12,
+      "colore_fondo": "#00000099",
+      "colore_pieno": "#7fd67f",
+      "colore_bordo": "#0b0f0b",
+      "spessore_bordo": 2
     }
   }
 }

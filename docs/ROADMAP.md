@@ -5,7 +5,7 @@ Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
 1. Canvas + percorso + caselle + nemico che cammina — **FATTO**
-2. Piazzamento del Balestriere + proiettili + morte del nemico
+2. Piazzamento del Balestriere + proiettili + morte del nemico — **FATTO**
 3. Sistema ondate + oro + vite
 4. Le altre 3 torri e i 2 slot speciali
 5. Negozio di fine ondata + schermata "3 carte, ne scegli 1"

@@ -2,7 +2,7 @@
   "_nota": "Valori provvisori, da tarare con l'agente bilanciatore.",
   "partita": {
     "ondate_totali": 18,
-    "vite_iniziali": 20,
+    "vite_iniziali": 10,
     "oro_iniziale": 130
   },
   "ricompense": {
