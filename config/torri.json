@@ -1,0 +1,45 @@
+{
+  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. Distanze in pixel logici (mappa 720x1280), tempi in millisecondi.",
+  "torri": [
+    {
+      "id": "balestriere",
+      "nome": "Balestriere",
+      "costo": 50,
+      "danno": 8,
+      "cadenza_ms": 700,
+      "raggio": 150,
+      "tipo_bersaglio": "singolo",
+      "descrizione": "Tiro rapido su un solo nemico. Affidabile, senza sorprese."
+    },
+    {
+      "id": "catapulta",
+      "nome": "Catapulta",
+      "costo": 110,
+      "danno": 22,
+      "cadenza_ms": 1800,
+      "raggio": 210,
+      "tipo_bersaglio": "area",
+      "descrizione": "Colpo lento che danneggia tutti i nemici vicini al punto d'impatto."
+    },
+    {
+      "id": "cappella_del_gelo",
+      "nome": "Cappella del Gelo",
+      "costo": 90,
+      "danno": 3,
+      "cadenza_ms": 1200,
+      "raggio": 130,
+      "tipo_bersaglio": "area",
+      "descrizione": "Danno minimo, ma rallenta i nemici che restano nel suo raggio."
+    },
+    {
+      "id": "obelisco",
+      "nome": "Obelisco",
+      "costo": 140,
+      "danno": 0,
+      "cadenza_ms": 0,
+      "raggio": 180,
+      "tipo_bersaglio": "nessuno",
+      "descrizione": "Non attacca: rafforza le torri costruite nel suo raggio."
+    }
+  ]
+}

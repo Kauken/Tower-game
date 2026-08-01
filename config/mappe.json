@@ -1,0 +1,57 @@
+{
+  "_nota": "Valori provvisori, da tarare. Coordinate logiche: la mappa e' 720x1280 e viene scalata per riempire lo schermo del telefono.",
+  "area": {
+    "larghezza": 720,
+    "altezza": 1280
+  },
+  "mappe": [
+    {
+      "id": "valle_del_confine",
+      "nome": "Valle del confine",
+      "percorso": [
+        { "x": -40, "y": 200 },
+        { "x": 560, "y": 200 },
+        { "x": 560, "y": 480 },
+        { "x": 160, "y": 480 },
+        { "x": 160, "y": 800 },
+        { "x": 600, "y": 800 },
+        { "x": 600, "y": 1060 },
+        { "x": 100, "y": 1060 },
+        { "x": 100, "y": 1320 }
+      ],
+      "caselle": [
+        { "x": 100, "y": 100, "tipo": "normale" },
+        { "x": 300, "y": 320, "tipo": "normale" },
+        { "x": 460, "y": 320, "tipo": "normale" },
+        { "x": 300, "y": 620, "tipo": "normale" },
+        { "x": 460, "y": 620, "tipo": "normale" },
+        { "x": 280, "y": 920, "tipo": "normale" },
+        { "x": 460, "y": 920, "tipo": "normale" },
+        { "x": 240, "y": 1180, "tipo": "normale" },
+        { "x": 420, "y": 1180, "tipo": "normale" },
+        { "x": 620, "y": 620, "tipo": "altura" },
+        { "x": 100, "y": 320, "tipo": "mana" }
+      ],
+      "bonus_slot": {
+        "altura": {
+          "descrizione": "Posizione sopraelevata: la torre vede piu' lontano.",
+          "moltiplicatore_raggio": 1.3,
+          "moltiplicatore_danno": 1,
+          "moltiplicatore_cadenza": 1
+        },
+        "mana": {
+          "descrizione": "Vena di mana: la torre spara piu' spesso.",
+          "moltiplicatore_raggio": 1,
+          "moltiplicatore_danno": 1,
+          "moltiplicatore_cadenza": 0.75
+        },
+        "normale": {
+          "descrizione": "Terreno comune, nessun bonus.",
+          "moltiplicatore_raggio": 1,
+          "moltiplicatore_danno": 1,
+          "moltiplicatore_cadenza": 1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore.",
+  "partita": {
+    "ondate_totali": 18,
+    "vite_iniziali": 20,
+    "oro_iniziale": 130
+  },
+  "ricompense": {
+    "oro_base_per_ondata": 25,
+    "oro_per_ondata_crescita": 1.12,
+    "oro_ondata_boss": 120,
+    "ondate_boss": [6, 12, 18],
+    "bonus_vita_intatta": 15
+  },
+  "cristalli": {
+    "_nota": "Valuta permanente fra una partita e l'altra.",
+    "per_ondata_superata": 2,
+    "per_ondata_boss": 10,
+    "bonus_vittoria": 40
+  },
+  "mercante": {
+    "costo_rimescolo_carte": 20,
+    "costo_carta_extra": 45,
+    "costo_riparazione_vita": 60,
+    "vite_riparate": 3,
+    "rimborso_vendita_torre": 0.6
+  }
+}
