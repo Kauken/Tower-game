@@ -1,8 +1,9 @@
 import React from 'react'
 import { interfaccia } from '../game/config.js'
 
-// Occupa tutto lo schermo: a partita persa non si tocca piu' il campo.
-export default function SchermataSconfitta({ ondata, onRicomincia }) {
+// Fine della partita, vinta o persa: occupa tutto lo schermo.
+export default function SchermataFine({ esito, ondata, onRicomincia }) {
+  const vittoria = esito === 'vittoria'
   return (
     <div
       style={{
@@ -23,13 +24,15 @@ export default function SchermataSconfitta({ ondata, onRicomincia }) {
         style={{
           fontSize: interfaccia.testo_titolo,
           fontWeight: 700,
-          color: interfaccia.colore_allarme
+          color: vittoria ? interfaccia.colore_pulsante : interfaccia.colore_allarme
         }}
       >
-        Sconfitta
+        {vittoria ? 'Vittoria!' : 'Sconfitta'}
       </div>
       <div style={{ fontSize: interfaccia.testo_normale }}>
-        Sei arrivato all'ondata {ondata}.
+        {vittoria
+          ? `La fortezza nemica è caduta all'assalto ${ondata}.`
+          : `La tua fortezza è caduta all'assalto ${ondata}.`}
       </div>
       <button
         type="button"
@@ -49,7 +52,7 @@ export default function SchermataSconfitta({ ondata, onRicomincia }) {
           touchAction: 'manipulation'
         }}
       >
-        Ricomincia
+        {vittoria ? 'Nuova partita' : 'Ricomincia'}
       </button>
     </div>
   )

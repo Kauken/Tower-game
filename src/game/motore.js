@@ -1,10 +1,11 @@
 // Ciclo di gioco: passo fisso di simulazione, disegno alla frequenza dello
-// schermo. Dentro aggiorna() e disegna() non si crea nessun oggetto nuovo.
-// Le azioni dell'interfaccia entrano da una coda di comandi, mai come
-// chiamate dirette: cosi' React non puo' toccare il gioco a meta' di un passo.
+// schermo. Dentro aggiorna() e disegna() non si creano oggetti nuovi, con
+// un'eccezione dichiarata: la notifica di selezione verso React, che scatta
+// solo su un tocco. Le azioni dell'interfaccia entrano da una coda di comandi.
 
 import {
   area,
+  economia,
   elencoTorri,
   grafica,
   limiti,
@@ -16,16 +17,17 @@ import { preparaPercorso } from './percorso.js'
 import { disegnaSfondo } from './sfondo.js'
 import { adattaCanvas, aCoordinateLogiche } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
-import { creaGestoreNemici } from './nemici.js'
+import { creaGestoreTruppe } from './truppe.js'
 import { creaGestoreProiettili } from './proiettili.js'
-import { creaGestoreEffetti } from './effetti.js'
 import { creaGestoreTorri, statisticheTorre } from './torri.js'
 import { creaGestoreOndate } from './ondate.js'
+import { creaGestoreEffetti } from './effetti.js'
 import {
   creaStatoPartita,
+  danniAllaFortezza,
+  danniAllaFortezzaNemica,
   incassa,
   paga,
-  perdiVita,
   puoPagare,
   reimposta,
   ricompensaOndata
@@ -41,20 +43,25 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     grafica.caselle.raggio_tocco * grafica.caselle.raggio_tocco
 
   const partita = creaStatoPartita()
-
   const effetti = creaGestoreEffetti()
-  const nemici = creaGestoreNemici(
-    percorso,
-    (oro, x, y) => {
-      incassa(partita, oro)
+
+  const truppe = creaGestoreTruppe(percorso, {
+    allaMorte: (fazione, oro, x, y) => {
       effetti.morte(x, y)
-      effetti.popupOro(x, y, oro)
+      if (fazione === 'nemico') {
+        incassa(partita, oro)
+        if (oro > 0) {
+          effetti.popupOro(x, y, oro)
+        }
+      }
     },
-    () => perdiVita(partita)
-  )
-  const proiettili = creaGestoreProiettili(nemici, effetti)
-  const torri = creaGestoreTorri(nemici, proiettili, effetti)
-  const ondate = creaGestoreOndate(nemici)
+    allaFortezzaGiocatore: (danno) => danniAllaFortezza(partita, danno),
+    allaFortezzaNemica: (danno) => danniAllaFortezzaNemica(partita, danno)
+  })
+
+  const proiettili = creaGestoreProiettili(truppe, effetti)
+  const torri = creaGestoreTorri(truppe, proiettili, effetti)
+  const ondate = creaGestoreOndate(truppe)
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
@@ -67,7 +74,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
   // aggiornato sul posto, non ricreato.
-  const vetrina = { oro: 0, vite: 0, ondata: 0, fase: 'pausa' }
+  const vetrina = { oro: 0, fortezza: 0, fortezzaNemica: 0, ondata: 0, fase: 'pausa' }
 
   let ctxSfondo = null
   let ctxGioco = null
@@ -104,8 +111,6 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     const torre = torri.torreSuCasella(casellaScelta)
 
     if (torre) {
-      // casella occupata: le statistiche della torre che c'e' sopra,
-      // col danno effettivo (aura dell'Obelisco compresa)
       const statistiche = statisticheTorre(torrePerId(torre.id), casella)
       statistiche.costruita = true
       statistiche.dannoEffettivo = torre.danno
@@ -113,8 +118,6 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
 
-    // casella libera: le statistiche di tutte le torri su questa casella,
-    // per il pannello di scelta
     avvisaSelezione({
       costruita: false,
       tipoCasella: casella.tipo,
@@ -159,7 +162,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   function ricomincia() {
     ondate.ferma()
-    nemici.svuota()
+    truppe.svuota()
     proiettili.svuota()
     torri.svuota()
     effetti.svuota()
@@ -206,19 +209,19 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   function aggiorna() {
     eseguiComandi()
 
-    // a partita persa il campo si ferma: resta solo la schermata di sconfitta
-    if (partita.fase === 'sconfitta') {
+    // a partita chiusa il campo si ferma: resta la schermata finale
+    if (partita.fase === 'sconfitta' || partita.fase === 'vittoria') {
       return
     }
 
-    nemici.aggiorna(simulazione.passo_ms, passoSecondi)
+    truppe.aggiorna(simulazione.passo_ms, passoSecondi)
     torri.aggiorna(simulazione.passo_ms)
     proiettili.aggiorna(passoSecondi)
     effetti.aggiorna(simulazione.passo_ms)
 
     if (partita.fase === 'ondata') {
-      const conclusa = ondate.aggiorna(simulazione.passo_ms, partita.ondata)
-      if (conclusa) {
+      const concluso = ondate.aggiorna(simulazione.passo_ms, partita.ondata)
+      if (concluso) {
         incassa(partita, ricompensaOndata(partita.ondata))
         partita.fase = 'pausa'
       }
@@ -242,14 +245,47 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     ctxGioco.stroke()
   }
 
+  function disegnaBarraFortezza(ctx, blocco, vita, vitaMassima, sopra, colorePieno) {
+    const barra = grafica.barra_fortezza
+    const sinistra = blocco.x - barra.larghezza / 2
+    const alto = sopra
+      ? blocco.y - blocco.altezza / 2 - barra.distanza - barra.altezza
+      : blocco.y + blocco.altezza / 2 + barra.distanza
+    ctx.fillStyle = barra.colore_fondo
+    ctx.fillRect(sinistra, alto, barra.larghezza, barra.altezza)
+    ctx.fillStyle = colorePieno
+    ctx.fillRect(sinistra, alto, (barra.larghezza * vita) / vitaMassima, barra.altezza)
+    ctx.lineWidth = barra.spessore_bordo
+    ctx.strokeStyle = barra.colore_bordo
+    ctx.strokeRect(sinistra, alto, barra.larghezza, barra.altezza)
+  }
+
   function disegna() {
     ctxGioco.clearRect(0, 0, area.larghezza, area.altezza)
     disegnaSelezione()
     torri.disegna(ctxGioco)
-    nemici.disegna(ctxGioco)
+    truppe.disegna(ctxGioco)
     proiettili.disegna(ctxGioco)
     // gli effetti sopra tutto: sono brevi e non coprono niente a lungo
     effetti.disegna(ctxGioco)
+
+    const barra = grafica.barra_fortezza
+    disegnaBarraFortezza(
+      ctxGioco,
+      mappaAttiva.fortezza_nemica,
+      partita.fortezzaNemica,
+      economia.partita.vita_fortezza_nemica,
+      false,
+      barra.colore_pieno_nemica
+    )
+    disegnaBarraFortezza(
+      ctxGioco,
+      mappaAttiva.fortezza_giocatore,
+      partita.fortezza,
+      economia.partita.vita_fortezza,
+      true,
+      barra.colore_pieno
+    )
   }
 
   function frame(tempo) {
@@ -285,7 +321,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   // L'interfaccia legge, non chiede: nessun oggetto nuovo a ogni lettura.
   function leggiStato() {
     vetrina.oro = partita.oro
-    vetrina.vite = partita.vite
+    vetrina.fortezza = partita.fortezza
+    vetrina.fortezzaNemica = partita.fortezzaNemica
     vetrina.ondata = partita.ondata
     vetrina.fase = partita.fase
     return vetrina

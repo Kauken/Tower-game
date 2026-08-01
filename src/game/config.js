@@ -3,6 +3,7 @@
 
 import mappe from '../../config/mappe.json'
 import nemici from '../../config/nemici.json'
+import alleati from '../../config/alleati.json'
 import torri from '../../config/torri.json'
 import ondate from '../../config/ondate.json'
 import economiaJson from '../../config/economia.json'
@@ -10,8 +11,10 @@ import motore from '../../config/motore.json'
 
 export const area = mappe.area
 export const economia = economiaJson
-export const scalatura = nemici.scalatura
+export const scalaturaNemici = nemici.scalatura
+export const scalaturaAlleati = alleati.scalatura
 export const schemaOndata = ondate.schema_ondata
+export const squadra = alleati.squadra
 export const simulazione = motore.simulazione
 export const limiti = motore.limiti
 export const anteprima = motore.anteprima
@@ -32,11 +35,18 @@ export const mappaAttiva = cercaPerId(
   'mappe.json'
 )
 
-// Il nemico dell'ondata: per ora ce n'e' uno solo, lo dice ondate.json
+// Il nemico degli assalti: per ora ce n'e' uno solo, lo dice ondate.json
 export const nemicoOndata = cercaPerId(
   nemici.nemici,
   ondate.schema_ondata.nemico_id,
   'nemici.json'
+)
+
+// Il minion alleato della squadra
+export const alleatoSquadra = cercaPerId(
+  alleati.alleati,
+  alleati.squadra.alleato_id,
+  'alleati.json'
 )
 
 // Tutte le torri piazzabili, nell'ordine del file: e' l'ordine del pannello.

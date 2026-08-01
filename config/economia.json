@@ -1,8 +1,8 @@
 {
   "_nota": "Valori provvisori, da tarare con l'agente bilanciatore.",
   "partita": {
-    "ondate_totali": 18,
-    "vite_iniziali": 10,
+    "vita_fortezza": 15,
+    "vita_fortezza_nemica": 15,
     "oro_iniziale": 130
   },
   "ricompense": {

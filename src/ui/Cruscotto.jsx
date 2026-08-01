@@ -19,8 +19,8 @@ function Voce({ etichetta, valore, colore }) {
   )
 }
 
-// Oro, vite e ondata: sempre a schermo, in alto, in posizione fissa.
-export default function Cruscotto({ oro, vite, ondata }) {
+// Oro, vita delle due fortezze e numero dell'assalto: sempre a schermo.
+export default function Cruscotto({ oro, fortezza, fortezzaNemica, ondata }) {
   return (
     <div
       style={{
@@ -40,11 +40,12 @@ export default function Cruscotto({ oro, vite, ondata }) {
     >
       <Voce etichetta="Oro" valore={oro} colore={interfaccia.colore_testo} />
       <Voce
-        etichetta="Vite"
-        valore={vite}
-        colore={vite > 0 ? interfaccia.colore_testo : interfaccia.colore_allarme}
+        etichetta="Fortezza"
+        valore={fortezza}
+        colore={fortezza > 0 ? interfaccia.colore_testo : interfaccia.colore_allarme}
       />
-      <Voce etichetta="Ondata" valore={ondata} colore={interfaccia.colore_testo} />
+      <Voce etichetta="Nemica" valore={fortezzaNemica} colore={interfaccia.colore_allarme} />
+      <Voce etichetta="Assalto" valore={ondata} colore={interfaccia.colore_testo} />
     </div>
   )
 }

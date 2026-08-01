@@ -1,0 +1,31 @@
+{
+  "_nota": "I minion del giocatore. Valori provvisori, da tarare. Velocita in pixel logici al secondo, tempi in millisecondi.",
+  "alleati": [
+    {
+      "id": "milite",
+      "nome": "Milite",
+      "vita_base": 34,
+      "velocita": 90,
+      "danno": 7,
+      "cadenza_ms": 800,
+      "raggio_ingaggio": 34,
+      "riduzione_danno": 0,
+      "danno_fortezza": 1,
+      "dimensione": 13
+    }
+  ],
+  "squadra": {
+    "_nota": "Quanti minion escono per assalto e con che ritmo. Crescono con le stesse regole dei nemici.",
+    "alleato_id": "milite",
+    "quantita_base": 5,
+    "quantita_aggiunta_per_ondata": 2,
+    "intervallo_uscita_ms": 1000,
+    "riduzione_intervallo_per_ondata_ms": 25,
+    "intervallo_minimo_ms": 400
+  },
+  "scalatura": {
+    "_nota": "Crescita per assalto dei minion alleati: tengono il passo dei nemici.",
+    "vita_per_ondata": 1.21,
+    "danno_per_ondata": 1.15
+  }
+}

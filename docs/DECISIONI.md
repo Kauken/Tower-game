@@ -12,6 +12,7 @@ Regola: quando una decisione viene presa, si sposta in "Decise" con data e motiv
 
 ## Decise
 
+- 2026-08: **PIVOT — battaglia a corsie con minion propri.** Scelta dell'autore, opzione B senza prototipo: due eserciti che si scontrano lungo una corsia verticale, torri solo nella metà del giocatore, sempre in combattimento. Comandi attivi pochi e con ricarica (niente MMO); potenziamenti alla Vampire Survivors / Binding of Isaac che cambiano come si spara; carte-patto con bonus e malus insieme. GDD riscritto in v0.3, roadmap rifatta.
 - 2026-08: **Vendita sì, spostamento no.** Vendita a rimborso parziale (60%, `rimborso_vendita_torre` in economia.json); niente spostamento, altrimenti gli slot speciali perdono peso. Scelta come da raccomandazione GDD, autorizzata dall'autore con mandato "procedi"; si costruisce col negozio (punto 5). Reversibile se al playtest non convince.
 - 2026-08: Ambientazione fantasy/medievale.
 - 2026-08: Piazzamento misto: 9 caselle normali + 2 slot speciali (altura +raggio, mana +cadenza).
