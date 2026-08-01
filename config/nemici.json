@@ -5,7 +5,7 @@
       "id": "fante",
       "nome": "Fante",
       "vita_base": 30,
-      "velocita": 55,
+      "velocita": 95,
       "riduzione_danno": 0,
       "oro_rilasciato": 4,
       "dimensione": 14
@@ -14,7 +14,7 @@
       "id": "ratto_nero",
       "nome": "Ratto nero",
       "vita_base": 14,
-      "velocita": 110,
+      "velocita": 190,
       "riduzione_danno": 0,
       "oro_rilasciato": 3,
       "dimensione": 10
@@ -23,7 +23,7 @@
       "id": "golem_di_pietra",
       "nome": "Golem di pietra",
       "vita_base": 160,
-      "velocita": 30,
+      "velocita": 52,
       "riduzione_danno": 4,
       "oro_rilasciato": 18,
       "dimensione": 22
@@ -32,7 +32,7 @@
       "id": "sciame_di_goblin",
       "nome": "Sciame di goblin",
       "vita_base": 20,
-      "velocita": 70,
+      "velocita": 120,
       "riduzione_danno": 0,
       "oro_rilasciato": 2,
       "dimensione": 11

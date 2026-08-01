@@ -10,6 +10,7 @@ import { adattaCanvas, aCoordinateLogiche } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
 import { creaGestoreNemici } from './nemici.js'
 import { creaGestoreProiettili } from './proiettili.js'
+import { creaGestoreEffetti } from './effetti.js'
 import { creaGestoreTorri, statisticheSuCasella } from './torri.js'
 import { creaGestoreOndate } from './ondate.js'
 import {
@@ -33,12 +34,17 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   const partita = creaStatoPartita()
 
+  const effetti = creaGestoreEffetti()
   const nemici = creaGestoreNemici(
     percorso,
-    (oro) => incassa(partita, oro),
+    (oro, x, y) => {
+      incassa(partita, oro)
+      effetti.morte(x, y)
+      effetti.popupOro(x, y, oro)
+    },
     () => perdiVita(partita)
   )
-  const proiettili = creaGestoreProiettili(nemici.applicaDanno)
+  const proiettili = creaGestoreProiettili(nemici.applicaDanno, effetti.impatto)
   const torri = creaGestoreTorri(nemici, proiettili)
   const ondate = creaGestoreOndate(nemici)
 
@@ -118,6 +124,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
     paga(partita, statistiche.costo)
+    effetti.ondaPiazzamento(casella.x, casella.y)
     // resta selezionata: cosi' si vede subito il raggio della torre nuova
     notificaSelezione()
   }
@@ -127,6 +134,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     nemici.svuota()
     proiettili.svuota()
     torri.svuota()
+    effetti.svuota()
     reimposta(partita)
     casellaScelta = NESSUNA
     notificaSelezione()
@@ -175,9 +183,10 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
 
-    nemici.aggiorna(passoSecondi)
+    nemici.aggiorna(simulazione.passo_ms, passoSecondi)
     torri.aggiorna(simulazione.passo_ms)
     proiettili.aggiorna(passoSecondi)
+    effetti.aggiorna(simulazione.passo_ms)
 
     if (partita.fase === 'ondata') {
       const conclusa = ondate.aggiorna(simulazione.passo_ms, partita.ondata)
@@ -211,6 +220,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     torri.disegna(ctxGioco)
     nemici.disegna(ctxGioco)
     proiettili.disegna(ctxGioco)
+    // gli effetti sopra tutto: sono brevi e non coprono niente a lungo
+    effetti.disegna(ctxGioco)
   }
 
   function frame(tempo) {

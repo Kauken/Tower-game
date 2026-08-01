@@ -37,3 +37,11 @@ Agenti: `bilanciatore` (solo config), `revisore-mobile` (prestazioni e touch), `
 Skill richiamabili: `/richiesta` (trasforma una richiesta vaga in specifica), `/punto N` (esegue il punto N della roadmap).
 
 Quando una richiesta arriva vaga o descritta per sensazioni, applica `richiesta` prima di eseguire. Consulta sempre `td-glossario` per capire cosa intende l'autore.
+
+## Autosufficienza
+
+L'autore lavora solo da qui: non ha un'altra chat di supporto. Quindi:
+- Se una richiesta tocca una voce aperta di docs/DECISIONI.md, fermati e falla decidere prima (agente consulente-design), poi costruisci.
+- Quando un punto della roadmap sta per toccare una decisione aperta, avvisalo in anticipo.
+- Se chiede "e adesso?" o sembra perso, orientalo con docs/PROCESSO.md e docs/ROADMAP.md: digli a che punto è e le 2-3 mosse possibili.
+- A ogni fine lavoro, oltre a "cosa provare", indica qual è la mossa successiva più sensata.

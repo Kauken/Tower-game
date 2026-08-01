@@ -3,7 +3,8 @@
 import { grafica, limiti } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
 
-export function creaGestoreProiettili(applicaDanno) {
+// alImpatto(x, y) accende l'effetto visivo del colpo a segno.
+export function creaGestoreProiettili(applicaDanno, alImpatto) {
   const elenco = creaPool(limiti.proiettili_massimi, () => ({
     attivo: false,
     x: 0,
@@ -54,6 +55,7 @@ export function creaGestoreProiettili(applicaDanno) {
       // colpito se lo tocca, o se in questo passo lo supererebbe
       if (distanzaQuadrata <= contatto * contatto || distanzaQuadrata <= passo * passo) {
         applicaDanno(bersaglio, proiettile.danno)
+        alImpatto(proiettile.x, proiettile.y)
         proiettile.attivo = false
         proiettile.bersaglio = null
         continue
