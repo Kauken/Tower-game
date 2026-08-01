@@ -4,6 +4,8 @@ Regola: quando una decisione viene presa, si sposta in "Decise" con data e motiv
 
 ## Aperte
 
+0. **Le torri diventano Strutture** — Idea dell'autore (2026-08): non più oggetti che sparano a un'area, ma presenze che applicano un effetto per tutta la partita, divise in categorie (offensiva, difensiva, sugli alleati, sui nemici, sul terreno), con moduli pescati dalle carte che ci si applicano sopra e scelta delle categorie a inizio run. Proposta completa e ragionata in `docs/PROPOSTA-STRUTTURE.md`. **Va approvata, modificata o scartata prima del punto 3 della roadmap.** Raccomandazione: prima giocare il pivot a corsie già pubblicato, perché questa idea ci si appoggia sopra.
+
 1. **Destino dei moduli** — Se vendo una torre coi moduli sopra: si perdono, tornano in mano, o rimborso parziale? Da decidere prima del punto 5.
 3. **Abilità del boss** — Cura i nemici vicini, oppure immunità ai rallentamenti a intervalli. Da decidere prima del punto 8.
 4. **Le 12 regole di sinergia definitive** — 5 esistono già nel GDD, ne mancano 7. Da decidere prima del punto 6, ma si possono aggiungere gradualmente.
