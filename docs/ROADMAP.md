@@ -1,22 +1,34 @@
-# Lista di costruzione — v2 (dopo il pivot alla battaglia a corsie)
+# Lista di costruzione — v3 (roguelike a due fasi)
 
 Un punto alla volta, testando dopo ognuno.
 Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
-La lista v1 (tower defense a labirinto) è stata completata fino al punto 4 e poi
-sostituita da questa dopo il pivot: quel lavoro sopravvive dentro il motore.
+Le liste v1 (tower defense a labirinto) e v2 (battaglia a corsie) sono state
+sostituite da questa. Il lavoro fatto non è perso: corsia, due eserciti,
+combattimento fra truppe, effetti, economia e pool restano dentro il motore e
+diventano la fase di assedio.
 
-1. Campo nuovo: corsia verticale, due fortezze con vita, minion di entrambe le parti che marciano e combattono, torri adattate, pannello compatto — **FATTO**
-2. Abilità attiva "Carica!" con ricarica visibile
-3. Negozio di fine assalto (vendita torri compresa) + schermata "3 carte, ne scegli 1" (moduli e addestramenti)
-4. Sistema tag + prime 6 sinergie (anche sui minion)
-5. Patti (carte con malus) e reliquie
-6. Atti, comandante nemico, vittoria della run
-7. Altri tipi di truppa (Ratto, Golem, Sciame + un secondo minion alleato)
-8. Salvataggio e ripresa partita
-9. Cristalli e potenziamenti permanenti
-10. Obiettivi e sblocchi
-11. Ondata élite, gettoni e mercante
+## Fetta verticale — l'obiettivo di questa lista
 
-**Test obbligatorio dopo il punto 3.** Se in quel momento non c'è voglia di rigiocare, il problema è nel design e va risolto lì, prima di andare avanti.
+Un bioma, poche stanze, pochi oggetti, un assedio finale. Serve a rispondere a
+una sola domanda: **il ciclo raccogli-e-scarica è divertente?** Finché non c'è
+risposta, tutto il resto è prematuro.
+
+1. **Il personaggio.** Compare in campo, si muove con la levetta a pollice, attacca da solo il nemico più vicino. Provato dentro la corsia che esiste già.
+2. **La stanza.** Un'arena chiusa con porte, nemici che entrano, porte che si aprono quando la stanza è pulita.
+3. **La mappa.** Più stanze collegate generate a caso, spostamento fra stanze, minimappa.
+4. **Stanza del tesoro e primi 6 oggetti**, ognuno con effetto sul personaggio **e** sull'esercito.
+5. **Il collegamento.** Finite le stanze si entra nell'assedio con la build addosso; vinto l'assedio si va al bioma nuovo.
+6. **Le 4 Torri** con i loro effetti globali visibili in corsia.
+7. **Abilità ed evocazioni** sui pulsanti del pollice destro.
+8. **Sistema tag + prime 6 sinergie** (personaggio, minion e torri).
+9. **Ambienti del sentiero** — 3 tipi con ostacoli propri.
+10. **Negozio, eventi, stanze maledette e segrete.**
+11. **Mini boss e boss di bioma.**
+12. **Salvataggio e ripresa.**
+13. **Progressione permanente:** cristalli e sblocchi.
+
+**Test obbligatorio dopo il punto 5.** È il primo momento in cui il gioco è
+davvero il gioco descritto nel GDD. Se lì non c'è voglia di rigiocare, il
+problema è nel design e va risolto lì, non andando avanti con la lista.

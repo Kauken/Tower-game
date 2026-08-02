@@ -4,16 +4,16 @@ Regola: quando una decisione viene presa, si sposta in "Decise" con data e motiv
 
 ## Aperte
 
-0. **Le torri diventano Strutture** — Idea dell'autore (2026-08): non più oggetti che sparano a un'area, ma presenze che applicano un effetto per tutta la partita, divise in categorie (offensiva, difensiva, sugli alleati, sui nemici, sul terreno), con moduli pescati dalle carte che ci si applicano sopra e scelta delle categorie a inizio run. Proposta completa e ragionata in `docs/PROPOSTA-STRUTTURE.md`. **Va approvata, modificata o scartata prima del punto 3 della roadmap.** Raccomandazione: prima giocare il pivot a corsie già pubblicato, perché questa idea ci si appoggia sopra.
-
-1. **Destino dei moduli** — Se vendo una torre coi moduli sopra: si perdono, tornano in mano, o rimborso parziale? Da decidere prima del punto 5.
-3. **Abilità del boss** — Cura i nemici vicini, oppure immunità ai rallentamenti a intervalli. Da decidere prima del punto 8.
-4. **Le 12 regole di sinergia definitive** — 5 esistono già nel GDD, ne mancano 7. Da decidere prima del punto 6, ma si possono aggiungere gradualmente.
-5. **I 4 profili personaggio** — Serve solo il primo per la v1. Da decidere prima del punto 10.
-6. **Recupero vite** — Le vite perse si recuperano (consumabile, reliquia) o mai? Incide sulla tensione. Da decidere entro il punto 7.
+1. **Come si ottengono le torri** — Le 4 Torri sono già tue a inizio assedio, si conquistano combattendo in corsia, o si scelgono a inizio bioma? Da decidere prima del punto 6.
+2. **Morte del personaggio in corsia** — Sconfitta immediata della run, oppure rientri dopo qualche secondo mentre l'esercito continua a combattere? Cambia completamente il livello di tensione. Da decidere prima del punto 5.
+3. **Quanti oggetti per bioma** — Determina quanto in fretta la build decolla. Da decidere prima del punto 4.
+4. **Ambiente del sentiero** — Legato al bioma o pescato a parte? Da decidere prima del punto 9.
+5. **Le 12 regole di sinergia definitive** — Da decidere prima del punto 8, si possono aggiungere gradualmente.
+6. **I profili personaggio** — Serve solo il primo per la fetta verticale. Da decidere prima del punto 13.
 
 ## Decise
 
+- 2026-08: **EVOLUZIONE — roguelike a due fasi (esplorazione + assedio).** Scelta dell'autore: dungeon a stanze alla Binding of Isaac che alimenta una guerra d'assedio fra due castelli. GDD riscritto in v0.4, roadmap rifatta in v3. Decisioni prese contestualmente: (a) **l'assedio è il boss di fine bioma**, non una modalità parallela; (b) **un solo motore, due tipi di arena** (stanza e corsia), il personaggio si comporta identico nelle due; (c) **comandi: levetta a pollice per il movimento + attacco automatico**, mai due levette virtuali su telefono; (d) **ogni oggetto deve toccare anche l'esercito**, non solo il personaggio — è il perno che tiene unite le due fasi. La proposta "torri come Strutture" (`docs/PROPOSTA-STRUTTURE.md`) è superata da questa: le 4 Torri del GDD v0.4 ne conservano l'idea di effetto globale.
 - 2026-08: **PIVOT — battaglia a corsie con minion propri.** Scelta dell'autore, opzione B senza prototipo: due eserciti che si scontrano lungo una corsia verticale, torri solo nella metà del giocatore, sempre in combattimento. Comandi attivi pochi e con ricarica (niente MMO); potenziamenti alla Vampire Survivors / Binding of Isaac che cambiano come si spara; carte-patto con bonus e malus insieme. GDD riscritto in v0.3, roadmap rifatta.
 - 2026-08: **Vendita sì, spostamento no.** Vendita a rimborso parziale (60%, `rimborso_vendita_torre` in economia.json); niente spostamento, altrimenti gli slot speciali perdono peso. Scelta come da raccomandazione GDD, autorizzata dall'autore con mandato "procedi"; si costruisce col negozio (punto 5). Reversibile se al playtest non convince.
 - 2026-08: Ambientazione fantasy/medievale.
