@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import { interfaccia } from '../game/config.js'
 
 // Levetta a pollice: nasce dove appoggi il dito e sparisce quando lo alzi.
-// Copre tutto il campo: dal pivot a campo aperto non ci sono piu' caselle da
-// toccare, quindi qualunque punto dello schermo va bene per muoversi.
+// Copre tutto lo schermo: non c'e' niente da toccare sul campo, quindi
+// qualunque punto va bene per appoggiare il pollice e muoversi.
 // Non passa da useState: muovere il pomello a ogni frame con React vorrebbe
 // dire ridisegnare l'interfaccia 60 volte al secondo. Qui si tocca il DOM.
 export default function Levetta({ onDirezione }) {

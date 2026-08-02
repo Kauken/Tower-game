@@ -7,7 +7,7 @@ import motore from '../../config/motore.json'
 import personaggioJson from '../../config/personaggio.json'
 
 // L'area logica del gioco: la stanza piu' i muri attorno.
-export const area = { larghezza: 720, altezza: 1280 }
+export const area = stanzaJson.area
 
 export const simulazione = motore.simulazione
 export const limiti = motore.limiti

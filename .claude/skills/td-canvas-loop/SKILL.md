@@ -7,8 +7,8 @@ description: Convenzioni del ciclo di gioco e del disegno su canvas 2D per quest
 
 ## Struttura a due livelli
 
-- **Canvas di sfondo**: percorso, caselle, decorazioni. Disegnato **una volta sola** e ridisegnato solo se cambia la mappa o la dimensione della finestra.
-- **Canvas di gioco**: nemici, torri, proiettili, effetti. Ripulito e ridisegnato a ogni frame.
+- **Canvas di sfondo**: pavimento, muri, decorazioni della stanza. Disegnato **una volta sola** e ridisegnato solo se cambia la stanza o la dimensione della finestra.
+- **Canvas di gioco**: personaggio, seguito, nemici, proiettili, effetti. Ripulito e ridisegnato a ogni frame.
 
 Mai disegnare lo sfondo dentro il ciclo principale.
 
@@ -25,11 +25,11 @@ Dentro `aggiorna()` e `disegna()`:
 - proiettili e nemici vengono da **pool preallocati**: si marcano `attivo: false` invece di essere distrutti
 - per le distanze usa il quadrato, mai `Math.sqrt` a ogni confronto
 
-Il garbage collector che parte a metà ondata è la causa numero uno degli scatti su Android.
+Il garbage collector che parte a metà stanza è la causa numero uno degli scatti su Android.
 
 ## Confine con React
 
-React non sa nulla del ciclo di gioco. La comunicazione va in una sola direzione: il gioco espone uno stato leggibile (oro, vite, ondata), e l'interfaccia lo campiona **al massimo 10 volte al secondo**, non a ogni frame. Le azioni dell'interfaccia (compra, piazza) entrano nel gioco come comandi in coda, non come chiamate dirette.
+React non sa nulla del ciclo di gioco. La comunicazione va in una sola direzione: il gioco espone uno stato leggibile (vita, stanza, nemici rimasti), e l'interfaccia lo campiona **al massimo 10 volte al secondo**, non a ogni frame. Le azioni dell'interfaccia (prosegui, ricomincia) entrano nel gioco come comandi in coda, non come chiamate dirette. Fa eccezione la levetta, che e' uno stato continuo: in coda si perderebbero valori, quindi scrive diretta.
 
 ## Coordinate
 

@@ -226,7 +226,7 @@ export function creaGestoreNemici(agganci) {
 
   function disegna(ctx) {
     const stile = grafica.nemico
-    const barra = grafica.barra_vita
+    const barra = grafica.barra_vita_nemico
     const mezzaBarra = barra.larghezza / 2
 
     for (let i = 0; i < elenco.length; i++) {

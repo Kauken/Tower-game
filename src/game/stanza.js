@@ -23,24 +23,27 @@ export function creaGestoreStanza(nemici, effetti) {
     return Math.min(popolamento.quantita_massima, quantita)
   }
 
-  // Un punto a caso lungo i quattro muri, lontano dagli angoli.
+  // Un punto a caso lungo i quattro muri, lontano dagli angoli. Sta uno scarto
+  // dentro il bordo, non esattamente sopra: il disegno e' ritagliato
+  // sull'arena, e sul bordo esatto il segnale si vedrebbe a meta'.
   function puntoSulBordo(ingresso) {
     const margine = ingressi.margine_dagli_angoli
+    const scarto = ingressi.scarto_dal_muro
     const larghezza = arena.destra - arena.sinistra - margine * 2
     const altezza = arena.basso - arena.alto - margine * 2
     const lato = Math.floor(Math.random() * 4)
 
     if (lato === 0) {
       ingresso.x = arena.sinistra + margine + Math.random() * larghezza
-      ingresso.y = arena.alto
+      ingresso.y = arena.alto + scarto
     } else if (lato === 1) {
-      ingresso.x = arena.destra
+      ingresso.x = arena.destra - scarto
       ingresso.y = arena.alto + margine + Math.random() * altezza
     } else if (lato === 2) {
       ingresso.x = arena.sinistra + margine + Math.random() * larghezza
-      ingresso.y = arena.basso
+      ingresso.y = arena.basso - scarto
     } else {
-      ingresso.x = arena.sinistra
+      ingresso.x = arena.sinistra + scarto
       ingresso.y = arena.alto + margine + Math.random() * altezza
     }
   }
@@ -62,12 +65,15 @@ export function creaGestoreStanza(nemici, effetti) {
       inArrivo[i].attivo = false
     }
     daGenerare = quantiNemici(stanza)
-    attesa = 0
 
     const subito = Math.min(popolamento.quantita_iniziale, daGenerare)
     for (let i = 0; i < subito; i++) {
       accendiIngresso()
     }
+    // l'attesa parte piena, altrimenti al primo passo scatterebbe subito un
+    // quinto ingresso e quantita_iniziale direbbe una cosa diversa da quella
+    // che succede davvero
+    attesa = popolamento.intervallo_uscita_ms
   }
 
   function svuota() {

@@ -13,10 +13,11 @@ Prima di proporre qualsiasi cosa: leggi `docs/GDD.md`, `config/potenziamenti.jso
 Tag in uso: FUOCO, GELO, FULMINE, VELENO, SACRO, ORO, AREA, RAPIDITÀ.
 
 Criteri per ogni potenziamento nuovo:
-- **Si deve notare subito.** La partita dura 18 ondate: un effetto che si accumula lentamente è tempo sprecato.
+- **Si deve notare subito.** Una run dura 15-25 minuti e gli oggetti arrivano col contagocce: un effetto che si accumula lentamente è tempo sprecato.
 - **Deve essere descrivibile in una riga**, comprensibile senza leggere numeri.
 - **Non deve essere una scelta ovvia.** Se in ogni partita lo prenderesti sempre, è troppo forte; se non lo prenderesti mai, è inutile.
 - **Deve portare almeno un tag** che apre a una sinergia esistente.
-- Evita moltiplicatori puri di danno: sono noiosi. Preferisci effetti che cambiano *come* funziona una torre.
+- Evita moltiplicatori puri di danno: sono noiosi. Preferisci effetti che cambiano *come* si combatte.
+- **Regola non negoziabile del GDD:** ogni oggetto deve fare qualcosa anche al seguito, non solo al personaggio. Un oggetto che tocca solo il giocatore rende i minion decorazione, e il seguito è l'unica idea originale del progetto.
 
 Quando proponi contenuto nuovo, presenta prima l'elenco in tabella (nome, famiglia, tag, effetto in una riga) e aspetta conferma prima di scrivere i file.

@@ -14,27 +14,27 @@ Entri in una stanza col tuo **seguito** di minion appresso. Loro combattono da s
 
 **Il seguito è l'unica idea originale del progetto.** Roguelike a stanze in cui sei solo ce ne sono cento; con un esercito che cresce quasi nessuno. Ogni scelta che rende il seguito meno importante è la scelta sbagliata.
 
-## Stato reale del codice
+## Stato del codice
 
-**Il codice è ancora quello dell'assedio: non è stato ancora smontato.** Sul sito pubblicato c'è la vecchia battaglia a campo aperto fra due castelli, che non è più il gioco.
+**L'assedio è stato smontato. Il punto 1 della roadmap è FATTO:** esiste la stanza.
 
-Cosa succede al punto 1 della roadmap: si butta l'assedio e si costruisce la prima stanza.
+Cosa c'è adesso: un'arena chiusa con i muri, il personaggio che ci sbatte contro, nemici che entrano dai bordi con un segnale di preavviso, inseguono e colpiscono a contatto, si scansano fra loro. Ripuliti tutti, la stanza si dichiara pulita e un pulsante porta alla successiva (le porte vere sono al punto 4). Il personaggio ha vita e a zero la run finisce.
 
-| Sopravvive | Va buttato |
+| File | Cosa fa |
 | --- | --- |
-| Ciclo a passo fisso, pool preallocati, adattamento allo schermo (`motore.js`, `pool.js`, `schermo.js`) | Marcia verso il castello (`truppe.js`) |
-| Levetta a pollice (`Levetta.jsx`) | Pressione e spinte (`pressione.js`) |
-| Personaggio: movimento, attacco automatico, vita, abbattimento (`personaggio.js`) | Vita dei castelli e fine partita (`partita.js`) |
-| Proiettili ed effetti (`proiettili.js`, `effetti.js`) | Sfondo a campo aperto (`sfondo.js`) |
-| **La logica di combattimento** dentro `truppe.js`: ingaggia il più vicino, colpisci, cadi | Generazione dei minion da una fortezza |
+| `src/game/motore.js` | Ciclo a passo fisso, disegno ritagliato sull'arena, ponte con React |
+| `src/game/stanza.js` | Quanti nemici, da dove entrano, quando la stanza è pulita |
+| `src/game/nemici.js` | Inseguimento, attacco a contatto, spinta reciproca |
+| `src/game/personaggio.js` | Movimento, attacco automatico, vita |
+| `src/ui/Levetta.jsx` | La levetta a pollice |
+| `config/stanza.json` | Geometria dell'arena, ingressi, popolamento |
 
-Circa metà del motore resta in piedi.
+**Non esiste ancora niente** di: seguito, porte, mappa del piano, oggetti, boss, negozio, salvataggio.
 
 ## Prossime mosse
 
-1. **Punto 1**: smontare l'assedio e costruire **la stanza sola** — arena chiusa, nemici che entrano, stanza che si dichiara pulita. Niente porte, niente seguito ancora.
-2. **Punto 2**: il seguito. Tocca le **decisioni aperte 2 e 3** (come si comporta, quanti sono): vanno chiuse prima, col `consulente-design`.
-3. **Punto 3**: nemici che valgono, poi la **verifica obbligatoria** — ripulire una stanza col seguito appresso è divertente?
+1. **Punto 2**: il seguito. Tocca le **decisioni aperte 2 e 3** (come si comporta, quanti sono): vanno chiuse prima, col `consulente-design`.
+2. **Punto 3**: nemici che valgono, poi la **verifica obbligatoria** — ripulire una stanza col seguito appresso è divertente?
 
 ## Cosa è già deciso e non si rimette in discussione
 
@@ -43,13 +43,14 @@ Circa metà del motore resta in piedi.
 - **Oggetti alla Isaac**: uno su un piedistallo, non "3 carte ne scegli 1".
 - **Ogni oggetto tocca anche il seguito**, non solo il personaggio.
 
-## Problemi noti dal vecchio codice (utili solo se quel pezzo sopravvive)
+## Problemi noti (nessuno urgente)
 
 - La ricerca del bersaglio riscandaglia l'intero pool avversario a ogni passo: da far guardare a `revisore-mobile` quando le stanze saranno piene.
 - `fontWeight` e spessori bordo scritti a mano nei componenti `src/ui/` (regola 1 in senso stretto).
 - `index.html` duplica a mano due colori di `motore.json`.
 - In orizzontale il campo diventa minuscolo: prima o poi va bloccato il verticale.
 - Il bilanciamento non è mai stato fatto: tutti i numeri attuali sono messi a occhio.
+- Il Cruscotto mostra i nemici **vivi**, non quelli ancora da generare. Oggi non capita mai di vedere "0 nemici" con la stanza non finita, ma diventerà possibile quando gli oggetti faranno crescere il danno più in fretta della vita dei nemici.
 
 ## Grafica: piano concordato
 

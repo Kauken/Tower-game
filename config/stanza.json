@@ -1,5 +1,10 @@
 {
   "_nota": "La stanza: l'arena chiusa in cui si combatte. Coordinate logiche, il campo e' 720x1280 e viene scalato per riempire lo schermo. Tempi in millisecondi. Valori provvisori, tutti da tarare col pollice.",
+  "area": {
+    "_nota": "La risoluzione logica del gioco: tutte le coordinate sono espresse qui dentro, poi il canvas viene scalato per riempire lo schermo del telefono.",
+    "larghezza": 720,
+    "altezza": 1280
+  },
   "arena": {
     "_nota": "I muri stanno fuori da questi bordi: dentro ci si muove, fuori no.",
     "sinistra": 45,
@@ -9,9 +14,10 @@
     "spessore_muro": 16
   },
   "ingressi": {
-    "_nota": "I nemici entrano dai bordi. Prima compare un segnale nel punto esatto, poi arriva il nemico: farlo comparire addosso al giocatore sarebbe sleale, e la slealta' e' la cosa che fa smettere di giocare.",
+    "_nota": "I nemici entrano dai bordi. Prima compare un segnale nel punto esatto, poi arriva il nemico: farlo comparire addosso al giocatore sarebbe sleale, e la slealta' e' la cosa che fa smettere di giocare. scarto_dal_muro tiene il segnale un po' dentro l'arena, perche' sul bordo esatto verrebbe tagliato a meta'.",
     "margine_dagli_angoli": 95,
-    "preavviso_ms": 750
+    "preavviso_ms": 750,
+    "scarto_dal_muro": 32
   },
   "popolamento": {
     "_nota": "Quanti nemici ci sono e con che ritmo entrano. La quantita' cresce di stanza in stanza fino al tetto.",
@@ -22,5 +28,8 @@
     "quantita_massima": 24,
     "intervallo_uscita_ms": 1500
   },
-  "partenza_personaggio": { "x": 360, "y": 950 }
+  "partenza_personaggio": {
+    "x": 360,
+    "y": 950
+  }
 }

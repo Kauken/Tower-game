@@ -3,8 +3,6 @@
 Action roguelike a stanze con un seguito di minion, fantasy, pensato per il telefono in verticale.
 Gira nel browser (Vite + React + canvas 2D nativo, nessuna libreria di gioco) e più avanti verrà impacchettato come app con Capacitor.
 
-Al momento il progetto contiene solo l'impalcatura: nessuna logica di gioco.
-
 ## Pagina pubblicata
 
 https://kauken.github.io/Tower-game/
@@ -25,7 +23,7 @@ Serve Node 20 o superiore.
 
 | Cartella | Contenuto |
 | --- | --- |
-| `config/` | Tutti i numeri del gioco: personaggio, nemici, alleati, campo, pressione, potenziamenti, sinergie, economia |
+| `config/` | Tutti i numeri del gioco: stanza, nemici, personaggio, motore, potenziamenti, sinergie |
 | `docs/` | Documentazione di design: `docs/GDD.md` comanda, `docs/ROADMAP.md` dice cosa viene dopo |
 | `src/game/` | Motore di gioco e disegno su canvas |
 | `src/ui/` | Interfaccia React sopra al canvas |

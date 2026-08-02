@@ -11,11 +11,11 @@ Esegui in ordine:
 1. `npm run build` — deve terminare senza errori. Se fallisce, riporta l'errore esatto e la riga.
 2. Verifica che ogni file in `config/` sia JSON valido.
 3. **Coerenza incrociata**, la parte più importante:
-   - ogni riferimento a una torre nei potenziamenti esiste in `torri.json`
-   - ogni tag usato nei potenziamenti compare nelle regole di `sinergie.json` o è dichiarato come tag valido
-   - ogni tipo di nemico usato nelle ondate esiste in `nemici.json`
-   - le coordinate delle caselle in `mappe.json` cadono dentro l'area della mappa
-   - nessun valore negativo dove non ha senso (costi, vita, danno)
+   - ogni tag usato nei potenziamenti è dichiarato fra i tag validi, e le sinergie non nominano mai un potenziamento specifico
+   - ogni tipo di nemico nominato in `stanza.json` esiste in `nemici.json`
+   - la geometria di `stanza.json` è coerente: arena più muri dentro l'area, partenza del personaggio dentro l'arena
+   - nessun valore negativo dove non ha senso (vita, danno, quantità)
 4. Cerca numeri scritti a mano dentro `src/` che dovrebbero stare in configurazione. Segnalali, non correggerli.
+5. Cerca **macerie**: blocchi di configurazione che nessuno legge più, funzioni esportate e mai usate, commenti e testi che nominano cose cancellate. Questo progetto è stato riscritto più volte, ed è così che si riempie di resti.
 
 Riporta con tre esiti soltanto: **OK**, **Attenzione** (funziona ma c'è un problema), **Bloccante** (non si può pubblicare). Scrivi in italiano, in modo diretto.

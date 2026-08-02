@@ -1,6 +1,6 @@
 ---
 name: revisore-mobile
-description: Controlla prestazioni su telefono e correttezza dei comandi touch. Usalo quando il gioco scatta, rallenta con molti nemici, consuma batteria, oppure quando i tocchi non rispondono bene o si piazzano torri per sbaglio.
+description: Controlla prestazioni su telefono e correttezza dei comandi touch. Usalo quando il gioco scatta, rallenta con molti nemici, consuma batteria, oppure quando i tocchi non rispondono bene o la levetta non segue il pollice.
 tools: Read, Grep, Edit, Bash
 ---
 
@@ -12,7 +12,7 @@ Cerca in modo sistematico questi problemi, in ordine di gravità:
 - Allocazioni dentro il ciclo di gioco: oggetti, array o stringhe creati a ogni frame. Sono la prima causa di scatti, per via del garbage collector.
 - Assenza di riuso degli oggetti per proiettili e nemici: servono pool preallocati, non `new` a ogni sparo.
 - Ricerca del bersaglio con distanza euclidea e radice quadrata: usa il quadrato della distanza.
-- Ridisegno di elementi statici (percorso, caselle, sfondo) a ogni frame invece che su un canvas separato disegnato una volta sola.
+- Ridisegno di elementi statici (pavimento, muri, sfondo) a ogni frame invece che su un canvas separato disegnato una volta sola.
 - Aggiornamenti di stato React durante il ciclo di gioco: l'interfaccia va aggiornata al massimo 5-10 volte al secondo, non 60.
 - Ciclo a delta time variabile senza limite: serve un passo fisso di simulazione, altrimenti su telefoni lenti la fisica cambia.
 
@@ -20,7 +20,7 @@ Cerca in modo sistematico questi problemi, in ordine di gravità:
 - Aree toccabili sotto i 44 px.
 - Uso di eventi mouse invece di pointer events.
 - Assenza di `touch-action: none` sul canvas: causa scroll indesiderato.
-- Comandi distruttivi (vendere una torre) raggiungibili con un tocco solo: servono conferma o pressione prolungata.
+- Comandi che non si possono annullare raggiungibili con un tocco solo: servono conferma o pressione prolungata.
 - Elementi sotto la barra di sistema o nella zona del notch: mancano le safe area.
 
 Per ogni problema trovato indica: file e riga, perché è un problema **su telefono**, e la correzione. Non riscrivere l'architettura: proponi la modifica minima.
