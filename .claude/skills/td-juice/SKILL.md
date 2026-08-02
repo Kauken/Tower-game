@@ -9,11 +9,11 @@ La differenza fra un gioco amatoriale e uno professionale è quasi tutta qui, e 
 
 ## La regola dei 100 millisecondi
 
-Ogni azione del giocatore deve produrre una reazione visibile entro 100 ms. Se il dito si appoggia ma la levetta non compare per mezzo secondo, il giocatore ritocca e sbaglia. La reazione può anche essere solo un lampo: l'importante è che ci sia subito.
+Ogni azione del giocatore deve produrre una reazione visibile entro 100 ms. Se il giocatore preme Compra e non succede niente per mezzo secondo, ripreme e spende il doppio. La reazione può anche essere solo un lampo: l'importante è che ci sia subito.
 
 ## Anticipazione, impatto, riposo
 
-Ogni evento importante ha tre fasi. Un nemico che entra: il segnale si stringe sul bordo (anticipazione), il nemico compare con un anello (impatto), l'anello sfuma (riposo). Saltare l'anticipazione fa sembrare tutto meccanico, e in questo gioco la toglie anche di lealtà.
+Ogni evento importante ha tre fasi. Una recluta comprata: il pulsante si abbassa (anticipazione), la recluta compare al castello con un anello (impatto), l'anello sfuma mentre lei parte (riposo). Saltare l'anticipazione fa sembrare tutto meccanico.
 
 Durate di riferimento: anticipazione 60-100 ms, impatto istantaneo, riposo 120-200 ms.
 

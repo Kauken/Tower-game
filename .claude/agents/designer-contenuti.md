@@ -18,6 +18,6 @@ Criteri per ogni potenziamento nuovo:
 - **Non deve essere una scelta ovvia.** Se in ogni partita lo prenderesti sempre, è troppo forte; se non lo prenderesti mai, è inutile.
 - **Deve portare almeno un tag** che apre a una sinergia esistente.
 - Evita moltiplicatori puri di danno: sono noiosi. Preferisci effetti che cambiano *come* si combatte.
-- **Regola non negoziabile del GDD:** ogni oggetto deve fare qualcosa anche al seguito, non solo al personaggio. Un oggetto che tocca solo il giocatore rende i minion decorazione, e il seguito è l'unica idea originale del progetto.
+- **Regola non negoziabile del GDD:** ogni oggetto deve cambiare **come** combattono le reclute, non solo di quanto. Un oggetto che dà percentuali non si vede in campo ed è tempo sprecato.
 
 Quando proponi contenuto nuovo, presenta prima l'elenco in tabella (nome, famiglia, tag, effetto in una riga) e aspetta conferma prima di scrivere i file.

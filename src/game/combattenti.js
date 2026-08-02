@@ -109,6 +109,12 @@ export function creaGestoreCombattenti({
     return true
   }
 
+  // Si chiede prima di far pagare il giocatore: a pool pieno la recluta non
+  // comparirebbe e l'oro sarebbe speso per niente.
+  function cePostoPerUnaRecluta() {
+    return primoLibero(reclute) !== null
+  }
+
   function faiPartireRecluta(idRecluta) {
     const posto = primoLibero(reclute)
     if (!posto) {
@@ -199,6 +205,13 @@ export function creaGestoreCombattenti({
       for (let j = 0; j < schiera.length; j++) {
         const compagno = schiera[j]
         if (compagno === combattente || !compagno.attivo) {
+          continue
+        }
+        // solo chi sta sulla stessa fila mi blocca. Senza questo controllo
+        // l'esercito si incolonna tutto dietro al primo, e a combattere e'
+        // sempre e solo uno: comprare altre reclute non aggiungerebbe danno,
+        // allungherebbe una coda di duelli in sequenza.
+        if (compagno.scarto !== combattente.scarto) {
           continue
         }
         const avanzamentoCompagno = compagno.distanza * verso
@@ -311,6 +324,7 @@ export function creaGestoreCombattenti({
 
   return {
     faiUscireNemico,
+    cePostoPerUnaRecluta,
     faiPartireRecluta,
     aggiorna,
     disegna,

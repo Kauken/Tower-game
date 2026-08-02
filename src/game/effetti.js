@@ -27,9 +27,9 @@ export function creaGestoreEffetti() {
     spessore: 0
   }))
 
-  // raggio: se assente si usa quello del blocco di stile. Serve agli effetti
-  // che devono seguire un raggio deciso da chi li accende (le esplosioni).
-  function accendiAnello(x, y, blocco, raggio) {
+  // Ogni tipo di anello ha il suo raggio nel blocco di stile: chi lo accende
+  // dice solo dove, mai quanto grande.
+  function accendiAnello(x, y, blocco) {
     const anello = primoLibero(anelli)
     if (!anello) {
       return
@@ -39,31 +39,31 @@ export function creaGestoreEffetti() {
     anello.y = y
     anello.tempoMs = 0
     anello.durataMs = blocco.durata_ms
-    anello.raggioMassimo = raggio > 0 ? raggio : blocco.raggio_massimo
+    anello.raggioMassimo = blocco.raggio_massimo
     anello.colore = blocco.colore
     anello.spessore = blocco.spessore
   }
 
   function impatto(x, y) {
-    accendiAnello(x, y, stile.impatto, 0)
+    accendiAnello(x, y, stile.impatto)
   }
 
   function morte(x, y) {
-    accendiAnello(x, y, stile.morte, 0)
+    accendiAnello(x, y, stile.morte)
   }
 
   function comparsa(x, y) {
-    accendiAnello(x, y, stile.comparsa, 0)
+    accendiAnello(x, y, stile.comparsa)
   }
 
-  function esplosione(x, y, raggio) {
-    accendiAnello(x, y, stile.esplosione, raggio)
+  function esplosione(x, y) {
+    accendiAnello(x, y, stile.esplosione)
   }
 
   // Il lampo delle torri quando producono oro: senza, le torri sembrano
   // decorazione e non si collega a occhio la rendita all'oro che sale.
   function rendita(x, y) {
-    accendiAnello(x, y, grafica.torre.lampo, 0)
+    accendiAnello(x, y, grafica.torre.lampo)
   }
 
   function aggiorna(passoMs) {

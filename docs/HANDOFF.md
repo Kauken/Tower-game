@@ -50,6 +50,17 @@ Provato nel browser: senza comprare niente il castello cade all'ondata 3 con qua
 - **Si resta sul web**, niente Godot: l'autore prova il gioco aprendo un link dal telefono. Da rivedere al punto 16.
 - **Il giocatore non si muove e non mira.** Se una richiesta lo presuppone, è un fraintendimento da chiarire.
 
+## ⚠️ PROBLEMA APERTO — economia (verifica del punto 1 non superata)
+
+Il collaudo ha simulato l'economia coi valori attuali. Risultato: **la scelta fra comprare e potenziare non è una scelta.**
+
+- Difendere le ondate 1+2+3 costa ~550 oro; nei primi due minuti ne entrano ~550. Chi difende **non riesce mai** a mettere da parte i 70 del primo potenziamento.
+- La strategia "potenzia se puoi, altrimenti compra" finisce a **rendita livello 0**: comprare a 25 tiene l'oro perennemente sotto i 70.
+- La linea vincente è **non comprare niente** e lasciar passare le prime ondate: il castello ha 20 di vita e le ondate 1-2 fanno 14 danni in tutto. Chi aspetta arriva all'ondata 13, chi compra subito all'ondata 6.
+- I livelli di rendita 6, 7 e 8 si ripagano in 376, 583 e 903 secondi: **non rientrano in nessuna partita** che il gioco produca oggi. `livello_massimo: 8` è un numero irraggiungibile.
+
+Va risolto con l'agente `bilanciatore` sul solo `config/economia.json` **prima del punto 2**. Il cancello 🛑 nella roadmap è chiuso.
+
 ## Problemi noti (nessuno urgente)
 
 - Il bilanciamento non è mai stato fatto: **tutti i numeri sono messi a occhio** e la prima cosa da tarare è l'economia.

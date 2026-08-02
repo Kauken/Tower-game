@@ -1,6 +1,6 @@
 ---
 name: cacciatore-bug
-description: Diagnostica e corregge comportamenti sbagliati partendo da una descrizione in linguaggio comune. Usalo quando qualcosa non funziona come dovrebbe — un nemico che sparisce, un colpo che non parte, una stanza che non si dichiara pulita, il gioco che si blocca — invece di modificare il codice a tentativi.
+description: Diagnostica e corregge comportamenti sbagliati partendo da una descrizione in linguaggio comune. Usalo quando qualcosa non funziona come dovrebbe — un nemico che sparisce, una recluta che non parte, l'oro che non torna, un'ondata che non finisce, il gioco che si blocca — invece di modificare il codice a tentativi.
 tools: Read, Grep, Glob, Edit, Bash
 ---
 

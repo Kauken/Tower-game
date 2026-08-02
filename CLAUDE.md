@@ -1,9 +1,9 @@
 # Istruzioni permanenti
 
-**Action roguelike a stanze con un seguito di minion**, fantasy, per telefono. Web (Vite + React + canvas 2D), poi impacchettato con Capacitor.
-Il documento di design sta in `docs/GDD.md` (v1.0): **leggilo prima di qualunque modifica al gioco.**
+**Tower defense roguelike in cui si comprano reclute invece di piazzare torri**, fantasy, per telefono. Web (Vite + React + canvas 2D), poi impacchettato con Capacitor.
+Il documento di design sta in `docs/GDD.md` (v2.0): **leggilo prima di qualunque modifica al gioco.**
 
-Il progetto è stato riscritto da zero il 2026-08-02. Tower defense, corsie e assedio fra castelli **non esistono più**: se trovi codice, configurazione o documenti che li nominano, sono resti da rimuovere, non funzionalità.
+Il progetto è stato riscritto più volte. Valgono solo `GDD.md` v2.0 e `ROADMAP.md` v6. **Non esistono più** e sono resti da rimuovere, non funzionalità: stanze da ripulire, personaggio che si muove con la levetta, seguito di minion, corsie, assedio fra due castelli contrapposti, torri da piazzare a costo.
 
 ## Con chi stai lavorando
 
@@ -16,12 +16,12 @@ L'autore non sa programmare e lavora dal telefono. Quindi:
 
 1. **Nessun numero nel codice.** Costi, danni, vite, raggi, cadenze, ricompense, curve: tutto in `config/*.json`. Se ti serve un valore nuovo, aggiungilo alla configurazione, non scriverlo nel codice.
 2. **Un sistema alla volta.** Fai solo quello che è stato chiesto. Non aggiungere funzionalità non richieste, nemmeno se sembrano ovvie o utili. Se noti qualcosa che manca, scrivilo alla fine come suggerimento.
-3. **Il campo di gioco è un solo `<canvas>`.** Personaggio, seguito, nemici, proiettili ed effetti si disegnano lì. React serve solo per l'interfaccia sopra: vita, oro, minimappa, negozio, menù. Mai un elemento DOM per entità di gioco.
+3. **Il campo di gioco è un solo `<canvas>`.** Sentiero, castello, torri, nemici, reclute ed effetti si disegnano lì. React serve solo per l'interfaccia sopra: oro, vita del castello, pulsanti, negozio, menù. Mai un elemento DOM per entità di gioco.
 4. **Mobile prima di tutto.** Verticale, aree toccabili di almeno 44 px, niente `:hover`, niente doppio click, rispetto delle safe area.
 5. **Prima di dichiarare finito**, esegui `npm run build`. Se fallisce, non hai finito.
 6. **Non toccare i valori di bilanciamento** di tua iniziativa quando ti viene chiesta una funzionalità. Bilanciare è un compito separato, con il suo agente.
 7. **"Fai il punto N"** significa il punto N della lista in `docs/ROADMAP.md`: a lavoro finito segnalo come FATTO in quel file.
-8. **Il seguito è l'idea del gioco.** È l'unica cosa che lo distingue da cento altri roguelike a stanze. Se una scelta lo rende meno importante, o se il giocatore finisce per guardare i minion invece di giocare, è la scelta sbagliata: dillo invece di costruirla.
+8. **La scelta fra esercito e rendita è il gioco.** Il giocatore non ha riflessi da usare: ha solo decisioni di spesa. Se comprare è sempre giusto, o se potenziare è sempre giusto, non c'è partita. Ogni modifica al bilanciamento va misurata su questo, e se una scelta di design lo indebolisce, è la scelta sbagliata: dillo invece di costruirla.
 
 ## Comandi
 

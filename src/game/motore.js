@@ -44,7 +44,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     allaMorte: (x, y) => effetti.morte(x, y),
     allaComparsa: (x, y) => effetti.comparsa(x, y),
     allArrivoAlCastello: (danno, x, y) => {
-      effetti.esplosione(x, y, 0)
+      effetti.esplosione(x, y)
       colpisciCastello(partita, danno)
     },
     allOroRaccolto: (quantita) => economia.incassa(quantita)
@@ -99,6 +99,11 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   function compraRecluta() {
     if (partita.fase === 'sconfitta') {
+      return
+    }
+    // il posto si controlla prima di pagare: se il pool e' pieno la recluta
+    // non comparirebbe e l'oro sarebbe speso per niente
+    if (!combattenti.cePostoPerUnaRecluta()) {
       return
     }
     if (!economia.spendi(datiRecluta.costo)) {

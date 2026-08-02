@@ -39,4 +39,4 @@ Specifica:
 **Comportamento atteso** — il nemico lampeggia bianco quando colpito; alla morte svanisce in 150 ms; l'oro guadagnato appare come numero che sale e sfuma.
 **Cosa NON tocco** — bilanciamento, altre entità, interfaccia in alto.
 **File coinvolti** — `src/game/`, effetti da pool; nessun valore nuovo in config.
-**Come si verifica** — entra in una stanza, guarda un nemico morire: devi vedere lampo e dissolvenza.
+**Come si verifica** — compra una recluta, guarda un nemico morire: devi vedere lampo, dissolvenza e l'oro salire.

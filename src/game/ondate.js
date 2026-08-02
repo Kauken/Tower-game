@@ -65,7 +65,8 @@ export function creaGestoreOndate(combattenti, partita, { allaFineOndata }) {
     if (daFarUscire > 0) {
       attesaUscitaMs -= passoMs
       if (attesaUscitaMs <= 0) {
-        // se il pool e' pieno si riprova al passo dopo, non si perde il nemico
+        // a pool pieno il nemico non si perde: non si scala il contatore e si
+        // riprova al prossimo intervallo
         if (combattenti.faiUscireNemico(ondate.nemico_id, partita.ondata)) {
           daFarUscire--
         }

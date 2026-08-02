@@ -17,10 +17,10 @@ export const limiti = motore.limiti
 export const grafica = motore.grafica
 export const interfaccia = motore.interfaccia
 
-export const elencoNemici = nemiciJson.nemici
+const elencoNemici = nemiciJson.nemici
 export const scalaturaNemici = nemiciJson.scalatura
 
-export const elencoReclute = recluteJson.reclute
+const elencoReclute = recluteJson.reclute
 export const reclutaIniziale = recluteJson.recluta_iniziale
 
 export const ondate = ondateJson.ondate
