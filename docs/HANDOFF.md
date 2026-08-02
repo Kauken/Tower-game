@@ -2,61 +2,63 @@
 
 Ultimo aggiornamento: 2026-08-02. Questo file fotografa dove siamo: chi riprende il lavoro (una nuova sessione di Claude o l'autore che torna dopo tempo) parte da qui, poi approfondisce con `PROCESSO.md`, `ROADMAP.md`, `DECISIONI.md` e `GDD.md`.
 
-## ⚠️ Il progetto è stato riscritto da zero il 2026-08-02
+## ⚠️ Il gioco è cambiato il 2026-08-02
 
-Il gioco è un **action roguelike a stanze con un seguito di minion** (`GDD.md` v1.0).
+Il gioco è un **tower defense roguelike in cui non si piazzano torri: si comprano reclute** (`GDD.md` v2.0, roadmap v6).
 
-Le versioni precedenti — tower defense a labirinto, battaglia a corsie, assedio fra castelli — **non esistono più**. Non erano evoluzioni: erano giochi diversi impilati uno sull'altro. Se trovi codice, configurazione o documenti che nominano **torri, caselle, ondate, corsia, fronte, pressione, castelli o atti**, sono resti da rimuovere, non funzionalità da mantenere.
+Le versioni precedenti — tower defense a labirinto, battaglia a corsie, assedio a campo aperto, **action roguelike a stanze con un seguito di minion** — non esistono più. Se trovi codice, configurazione o documenti che nominano **stanze, porte, piani, minimappa, seguito di minion, piedistalli, levetta o personaggio da muovere**, sono resti da rimuovere, non funzionalità da mantenere.
 
 ## Cos'è il gioco
 
-Entri in una stanza col tuo **seguito** di minion appresso. Loro combattono da soli e ti fanno da scudo; tu sei veloce e preciso, e decidi dove si combatte. Ripulita la stanza le porte si aprono e prosegui. Nella stanza del tesoro c'è **un oggetto su un piedistallo**: lo prendi, e cambia il modo di combattere tuo **e del seguito**.
+Un sentiero va dalla breccia in alto al tuo castello in basso. I nemici lo scendono, le tue reclute lo risalgono, e si fermano a combattere dove si incontrano. Due torri ai lati non sparano: **producono oro**. Tu non muovi niente e non miri: **decidi solo come spendere**.
 
-**Il seguito è l'unica idea originale del progetto.** Roguelike a stanze in cui sei solo ce ne sono cento; con un esercito che cresce quasi nessuno. Ogni scelta che rende il seguito meno importante è la scelta sbagliata.
+**La domanda che regge tutto il gioco è una sola: compro una recluta adesso, o investo nella rendita per comprare di più fra poco?** Se comprare è sempre la mossa giusta, il gioco non esiste. Ogni decisione futura di bilanciamento deve difendere quella tensione.
+
+Si perde quando abbastanza nemici arrivano in fondo: il castello ha una vita che scende, e **la sconfitta si vede arrivare** in tempo per spendere diversamente.
 
 ## Stato del codice
 
-**Punti 1 e 2 della roadmap FATTI:** esiste la stanza, con quattro tipi di nemico che si comportano in modo diverso.
+**Punto 1 della roadmap FATTO.** C'è il ciclo completo: sentiero, castello con la vita, due torri che producono oro a intervalli, i due pulsanti (compra Milite / potenzia Rendita), le ondate che partono da sole e crescono, e la schermata di sconfitta con "Ricomincia".
 
-Cosa c'è adesso: un'arena chiusa con i muri, il personaggio che ci sbatte contro e attacca da solo, e i nemici **già dentro la stanza** quando entri (si accendono uno alla volta per farli contare, ma non arrivano a ondate). Ripuliti tutti, la stanza si dichiara pulita e un pulsante porta alla successiva (le porte vere sono al punto 4). Il personaggio ha vita e a zero la run finisce.
-
-I quattro nemici: **Fante** insegue e basta; **Ratto** sta fermo, si carica e scatta; **Golem** è lento, duro e non si fa spingere; **Occhio vigile** tiene le distanze, prende la mira mostrando una linea e spara un colpo che va schivato. Quanti e quali li decide un **budget** per stanza: ogni tipo ha un costo e una rarità separati, così due stanze non si somigliano.
+Provato nel browser: senza comprare niente il castello cade all'ondata 3 con quasi 400 d'oro mai speso, e il pulsante Ricomincia riparte pulito.
 
 | File | Cosa fa |
 | --- | --- |
-| `src/game/motore.js` | Ciclo a passo fisso, disegno ritagliato sull'arena, ponte con React |
-| `src/game/stanza.js` | Budget della stanza, quali nemici e dove, quando è pulita |
-| `src/game/nemici.js` | I quattro comportamenti, attacco, spinta reciproca |
-| `src/game/colpiNemici.js` | I colpi del tiratore: dritti e schivabili |
-| `src/game/personaggio.js` | Movimento, attacco automatico, vita |
-| `src/ui/Levetta.jsx` | La levetta a pollice |
-| `config/stanza.json` | Geometria dell'arena, ingressi, popolamento |
+| `src/game/motore.js` | Ciclo a passo fisso, coda dei comandi, ponte con React |
+| `src/game/percorso.js` | La geometria del sentiero: la distanza percorsa e la posizione che ne deriva |
+| `src/game/combattenti.js` | Nemici e reclute: marcia, fila, ingaggio, danno, disegno |
+| `src/game/ondate.js` | Quando parte un'ondata, quanti nemici escono e quando è finita |
+| `src/game/economia.js` | L'oro: rendita delle torri, costi, potenziamenti |
+| `src/game/partita.js` | Ondata corrente, vita del castello, fase |
+| `src/game/sfondo.js` | Terreno, sentiero, breccia, castello, torri (disegnati una volta sola) |
+| `src/ui/Cruscotto.jsx` | Ondata, castello, oro, nemici — in alto |
+| `src/ui/Comandi.jsx` | I due pulsanti, in basso sotto il pollice |
 
-**Non esiste ancora niente** di: porte, mappa del piano, oggetti, boss, negozio, salvataggio, abilità attive.
-
-**Il seguito di minion è stato tagliato** (`DECISIONI.md`): in una stanza chiusa gli alleati tolgono la tensione, perché ogni colpo che assorbono è un colpo che il giocatore non ha dovuto schivare. Resta in riserva come evocazione a pulsante. **Costo dichiarato: il gioco non ha più un elemento distintivo**, ed è la decisione aperta 1.
+**Non esiste ancora niente** di: categorie di recluta, tipi di nemico diversi, oggetti e pool, negozio, mini boss e boss, tipi di ondata speciali, sinergie, salvataggio, progressione permanente.
 
 ## Prossime mosse
 
-1. **Verifica obbligatoria**: ripulire una stanza è divertente? Se no si aggiusta qui, non si va avanti.
-2. **Punto 3**: le abilità attive sui pulsanti del pollice destro. Lì si decide anche se l'evocazione merita di esistere.
-3. Poi la Fase B: porte, pianta del piano, disposizioni preparate, boss.
+1. **Verifica obbligatoria del punto 1**, prima di aggiungere qualunque cosa: *decidere quando spendere è soddisfacente?* E soprattutto: **la scelta fra comprare adesso e investire nella rendita è una scelta vera, o comprare è sempre giusto?** Se è sempre giusto, si risolve lì con l'agente `bilanciatore` e non si va avanti.
+2. **Punto 2**: le quattro categorie di recluta, un pulsante per ciascuna.
+3. **Punto 3**: quattro tipi di nemico e la crescita ondata dopo ondata.
 
 ## Cosa è già deciso e non si rimette in discussione
 
-- **Si resta sul web**, niente Godot: l'autore prova il gioco aprendo un link dal telefono, e con Godot dovrebbe installare un pacchetto a ogni giro. Da rivedere al punto 17.
-- **Comandi**: levetta a pollice più attacco automatico. Provato dall'autore: "si muove bene ed è piacevole".
-- **Oggetti alla Isaac**: uno su un piedistallo, non "3 carte ne scegli 1".
-- **Ogni oggetto tocca anche il seguito**, non solo il personaggio.
+- **Le ondate partono da sole**: niente pulsante per chiamarle in anticipo.
+- **Un livello è una sequenza fissa di tipi di ondata** che finisce col boss del bioma.
+- **La pool è "tre oggetti, ne scegli uno"** (ribaltata la scelta alla Isaac del gioco precedente).
+- **Si resta sul web**, niente Godot: l'autore prova il gioco aprendo un link dal telefono. Da rivedere al punto 16.
+- **Il giocatore non si muove e non mira.** Se una richiesta lo presuppone, è un fraintendimento da chiarire.
 
 ## Problemi noti (nessuno urgente)
 
-- La ricerca del bersaglio riscandaglia l'intero pool avversario a ogni passo: da far guardare a `revisore-mobile` quando le stanze saranno piene.
-- `fontWeight` e spessori bordo scritti a mano nei componenti `src/ui/` (regola 1 in senso stretto).
+- Il bilanciamento non è mai stato fatto: **tutti i numeri sono messi a occhio** e la prima cosa da tarare è l'economia.
+- L'ingaggio riscandaglia l'intera schiera avversaria a ogni passo: da far guardare a `revisore-mobile` quando i nemici saranno tanti.
+- Le reclute sopravvissute risalgono fino alla breccia e restano lì: i nemici dell'ondata dopo escono addosso a loro e si sovrappongono per un istante nel disegno.
+- Sulla schermata di sconfitta il cruscotto mostra "Nemici 0" anche se sul campo ne restano.
 - `index.html` duplica a mano due colori di `motore.json`.
 - In orizzontale il campo diventa minuscolo: prima o poi va bloccato il verticale.
-- Il bilanciamento non è mai stato fatto: tutti i numeri attuali sono messi a occhio.
-- Il Cruscotto mostra i nemici **vivi**, non quelli ancora da generare. Oggi non capita mai di vedere "0 nemici" con la stanza non finita, ma diventerà possibile quando gli oggetti faranno crescere il danno più in fretta della vita dei nemici.
+- Le torri sono lontane dal sentiero e non "fanno" niente di visibile oltre al lampo della rendita.
 
 ## Grafica: piano concordato
 

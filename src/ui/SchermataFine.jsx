@@ -1,8 +1,8 @@
 import React from 'react'
 import { interfaccia } from '../game/config.js'
 
-// Fine della run: occupa tutto lo schermo.
-export default function SchermataFine({ stanza, onRicomincia }) {
+// Fine della run: il castello e' caduto. Occupa tutto lo schermo.
+export default function SchermataFine({ ondata, onRicomincia }) {
   return (
     <div
       style={{
@@ -26,10 +26,10 @@ export default function SchermataFine({ stanza, onRicomincia }) {
           color: interfaccia.colore_allarme
         }}
       >
-        Sei caduto
+        Il castello è caduto
       </div>
       <div style={{ fontSize: interfaccia.testo_normale }}>
-        Sei arrivato alla stanza {stanza}.
+        Hai resistito fino all'ondata {ondata}.
       </div>
       <button
         type="button"
@@ -37,11 +37,11 @@ export default function SchermataFine({ stanza, onRicomincia }) {
         style={{
           minHeight: interfaccia.altezza_minima_tocco,
           marginTop: interfaccia.spaziatura,
-          paddingLeft: interfaccia.spaziatura,
-          paddingRight: interfaccia.spaziatura,
+          paddingLeft: interfaccia.spaziatura * 2,
+          paddingRight: interfaccia.spaziatura * 2,
           border: 'none',
           borderRadius: interfaccia.raggio_angoli,
-          background: interfaccia.colore_pulsante,
+          background: interfaccia.pulsanti.colore_recluta,
           color: interfaccia.colore_pulsante_testo,
           fontSize: interfaccia.testo_normale,
           fontWeight: 600,

@@ -1,27 +1,43 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { creaMotore } from '../game/motore.js'
 import { grafica, interfaccia } from '../game/config.js'
+import Comandi from './Comandi.jsx'
 import Cruscotto from './Cruscotto.jsx'
-import Levetta from './Levetta.jsx'
-import PannelloStanzaPulita from './PannelloStanzaPulita.jsx'
 import SchermataFine from './SchermataFine.jsx'
 
 const VISTA_INIZIALE = {
-  vita: 0,
-  vitaMassima: 0,
-  nemici: 0,
-  stanza: 0,
-  fase: 'combattimento'
+  oro: 0,
+  oroPerCiclo: 0,
+  livelloRendita: 0,
+  costoRecluta: 0,
+  nomeRecluta: '',
+  costoPotenziamento: 0,
+  renditaAlMassimo: false,
+  vitaCastello: 0,
+  vitaCastelloMassima: 0,
+  ondata: 0,
+  fase: 'attesa',
+  secondiAllOndata: 0,
+  nemiciRimanenti: 0
 }
 
+const CAMPI = Object.keys(VISTA_INIZIALE)
+
 function uguali(a, b) {
-  return (
-    a.vita === b.vita &&
-    a.vitaMassima === b.vitaMassima &&
-    a.nemici === b.nemici &&
-    a.stanza === b.stanza &&
-    a.fase === b.fase
-  )
+  for (let i = 0; i < CAMPI.length; i++) {
+    if (a[CAMPI[i]] !== b[CAMPI[i]]) {
+      return false
+    }
+  }
+  return true
+}
+
+function copia(stato) {
+  const nuova = {}
+  for (let i = 0; i < CAMPI.length; i++) {
+    nuova[CAMPI[i]] = stato[CAMPI[i]]
+  }
+  return nuova
 }
 
 // React monta i canvas e l'interfaccia. Non partecipa al ciclo di gioco:
@@ -53,17 +69,7 @@ export default function CampoDiGioco() {
     // ridisegna niente, cosi' la batteria ringrazia
     const campionamento = setInterval(() => {
       const stato = motore.leggiStato()
-      impostaVista((precedente) =>
-        uguali(precedente, stato)
-          ? precedente
-          : {
-              vita: stato.vita,
-              vitaMassima: stato.vitaMassima,
-              nemici: stato.nemici,
-              stanza: stato.stanza,
-              fase: stato.fase
-            }
-      )
+      impostaVista((precedente) => (uguali(precedente, stato) ? precedente : copia(stato)))
     }, 1000 / interfaccia.aggiornamenti_al_secondo)
 
     return () => {
@@ -74,12 +80,12 @@ export default function CampoDiGioco() {
     }
   }, [])
 
-  const muovi = useCallback((x, y, intensita) => {
-    motoreRef.current.muovi(x, y, intensita)
+  const compra = useCallback(() => {
+    motoreRef.current.compra()
   }, [])
 
-  const prosegui = useCallback(() => {
-    motoreRef.current.prosegui()
+  const potenzia = useCallback(() => {
+    motoreRef.current.potenzia()
   }, [])
 
   const ricomincia = useCallback(() => {
@@ -107,21 +113,32 @@ export default function CampoDiGioco() {
       <canvas ref={canvasSfondo} style={stileCanvas} />
       <canvas ref={canvasGioco} style={stileCanvas} />
 
-      {/* La levetta sta sopra il campo ma sotto i pannelli: i pulsanti
-          continuano a ricevere i tocchi perche' vengono dopo. */}
-      <Levetta onDirezione={muovi} />
-
       <Cruscotto
-        vita={vista.vita}
-        vitaMassima={vista.vitaMassima}
-        stanza={vista.stanza}
-        nemici={vista.nemici}
+        oro={vista.oro}
+        oroPerCiclo={vista.oroPerCiclo}
+        vitaCastello={vista.vitaCastello}
+        vitaCastelloMassima={vista.vitaCastelloMassima}
+        ondata={vista.ondata}
+        fase={vista.fase}
+        secondiAllOndata={vista.secondiAllOndata}
+        nemiciRimanenti={vista.nemiciRimanenti}
       />
 
-      {vista.fase === 'pulita' ? <PannelloStanzaPulita onProsegui={prosegui} /> : null}
+      <Comandi
+        oro={vista.oro}
+        nomeRecluta={vista.nomeRecluta}
+        costoRecluta={vista.costoRecluta}
+        costoPotenziamento={vista.costoPotenziamento}
+        livelloRendita={vista.livelloRendita}
+        oroPerCiclo={vista.oroPerCiclo}
+        renditaAlMassimo={vista.renditaAlMassimo}
+        attivi={vista.fase !== 'sconfitta'}
+        onCompra={compra}
+        onPotenzia={potenzia}
+      />
 
       {vista.fase === 'sconfitta' ? (
-        <SchermataFine stanza={vista.stanza} onRicomincia={ricomincia} />
+        <SchermataFine ondata={vista.ondata} onRicomincia={ricomincia} />
       ) : null}
     </div>
   )
