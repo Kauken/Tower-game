@@ -1,47 +1,29 @@
 {
-  "_nota": "Valori provvisori, da tarare. Coordinate logiche: la mappa e' 720x1280 e viene scalata per riempire lo schermo. La corsia va dalla fortezza nemica (alto) a quella del giocatore (basso).",
+  "_nota": "Valori provvisori, da tarare. Coordinate logiche: il campo e' 720x1280 e viene scalato per riempire lo schermo. Dal 2026-08 non c'e' piu' una corsia stretta: gli eserciti si spargono su tutta la larghezza e si scontrano su un fronte irregolare. Il castello nemico sta in alto, il tuo in basso.",
   "area": {
     "larghezza": 720,
     "altezza": 1280
   },
   "mappe": [
     {
-      "id": "corsia_del_confine",
-      "nome": "Corsia del confine",
-      "percorso": [
-        { "x": 360, "y": 130 },
-        { "x": 360, "y": 1150 }
-      ],
-      "larghezza_corsia": 110,
-      "scarti_corsia": [-32, 0, 32, -16, 16],
-      "fortezza_nemica": { "x": 360, "y": 65, "larghezza": 220, "altezza": 100 },
-      "fortezza_giocatore": { "x": 360, "y": 1215, "larghezza": 220, "altezza": 100 },
-      "caselle": [
-        { "x": 250, "y": 720, "tipo": "normale" },
-        { "x": 470, "y": 720, "tipo": "altura" },
-        { "x": 250, "y": 960, "tipo": "mana" },
-        { "x": 470, "y": 960, "tipo": "normale" }
-      ],
-      "bonus_slot": {
-        "altura": {
-          "descrizione": "Posizione sopraelevata: la torre vede piu' lontano.",
-          "moltiplicatore_raggio": 1.3,
-          "moltiplicatore_danno": 1,
-          "moltiplicatore_cadenza": 1
-        },
-        "mana": {
-          "descrizione": "Vena di mana: la torre spara piu' spesso.",
-          "moltiplicatore_raggio": 1,
-          "moltiplicatore_danno": 1,
-          "moltiplicatore_cadenza": 0.75
-        },
-        "normale": {
-          "descrizione": "Terreno comune, nessun bonus.",
-          "moltiplicatore_raggio": 1,
-          "moltiplicatore_danno": 1,
-          "moltiplicatore_cadenza": 1
-        }
-      }
+      "id": "piana_del_confine",
+      "nome": "Piana del confine",
+      "campo": {
+        "_nota": "I bordi entro cui vivono truppe e personaggio. alto e basso sono anche le linee dove si arriva al castello avversario.",
+        "sinistra": 40,
+        "destra": 680,
+        "alto": 150,
+        "basso": 1140
+      },
+      "schieramento": {
+        "_nota": "larghezza_uscita: quanto largo esce l'esercito rispetto al campo (1 = tutta la larghezza). deriva_laterale: quanto una truppa si sposta di lato per raggiungere la sua colonna, in pixel al secondo.",
+        "larghezza_uscita": 0.86,
+        "deriva_laterale": 55,
+        "_nota_attrazione": "Distanza entro cui una truppa vede un avversario e gli va incontro di lato, anche se non e' ancora a tiro. E' cio' che fa nascere un fronte irregolare con i suoi grovigli, invece di due file che si guardano.",
+        "raggio_attrazione": 190
+      },
+      "fortezza_nemica": { "x": 360, "y": 78, "larghezza": 420, "altezza": 116 },
+      "fortezza_giocatore": { "x": 360, "y": 1206, "larghezza": 420, "altezza": 116 }
     }
   ]
 }

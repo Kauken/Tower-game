@@ -1,8 +1,9 @@
 {
   "_nota": "Valori provvisori, da tarare con l'agente bilanciatore.",
   "partita": {
-    "vita_fortezza": 15,
-    "vita_fortezza_nemica": 15,
+    "_nota": "Su campo aperto le truppe che sfondano sono molte di piu' che in corsia: i 15 punti di prima morivano in pochi secondi. Valori provvisori da rifare con l'agente bilanciatore.",
+    "vita_fortezza": 70,
+    "vita_fortezza_nemica": 70,
     "oro_iniziale": 130
   },
   "ricompense": {

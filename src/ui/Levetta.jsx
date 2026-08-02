@@ -2,16 +2,15 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import { interfaccia } from '../game/config.js'
 
 // Levetta a pollice: nasce dove appoggi il dito e sparisce quando lo alzi.
-// Copre tutto il campo, quindi deve anche distinguere i due gesti:
-//   - dito appoggiato e alzato subito, quasi fermo  -> tocco (seleziona)
-//   - dito che si sposta o resta giu'               -> movimento
+// Copre tutto il campo: dal pivot a campo aperto non ci sono piu' caselle da
+// toccare, quindi qualunque punto dello schermo va bene per muoversi.
 // Non passa da useState: muovere il pomello a ogni frame con React vorrebbe
 // dire ridisegnare l'interfaccia 60 volte al secondo. Qui si tocca il DOM.
-export default function Levetta({ onDirezione, onTocco }) {
+export default function Levetta({ onDirezione }) {
   const zona = useRef(null)
   const base = useRef(null)
   const pomello = useRef(null)
-  const gesto = useRef({ id: null, partenzaX: 0, partenzaY: 0, istante: 0, mosso: false })
+  const gesto = useRef({ id: null, partenzaX: 0, partenzaY: 0 })
 
   const stile = interfaccia.levetta
 
@@ -35,9 +34,6 @@ export default function Levetta({ onDirezione, onTocco }) {
       gesto.current.id = evento.pointerId
       gesto.current.partenzaX = evento.clientX
       gesto.current.partenzaY = evento.clientY
-      gesto.current.istante = performance.now()
-      gesto.current.mosso = false
-
       const riquadro = zona.current.getBoundingClientRect()
       base.current.style.left = evento.clientX - riquadro.left + 'px'
       base.current.style.top = evento.clientY - riquadro.top + 'px'
@@ -56,10 +52,6 @@ export default function Levetta({ onDirezione, onTocco }) {
       const dx = evento.clientX - gesto.current.partenzaX
       const dy = evento.clientY - gesto.current.partenzaY
       const distanza = Math.sqrt(dx * dx + dy * dy)
-
-      if (distanza > stile.soglia_tocco_px) {
-        gesto.current.mosso = true
-      }
 
       if (distanza <= stile.zona_morta) {
         muoviPomello(dx, dy)
@@ -81,18 +73,11 @@ export default function Levetta({ onDirezione, onTocco }) {
       if (gesto.current.id !== evento.pointerId) {
         return
       }
-      const durata = performance.now() - gesto.current.istante
-      const eraTocco = !gesto.current.mosso && durata <= stile.durata_tocco_ms
-
       gesto.current.id = null
       mostra(false)
       onDirezione(0, 0, 0)
-
-      if (eraTocco) {
-        onTocco(gesto.current.partenzaX, gesto.current.partenzaY)
-      }
     },
-    [mostra, onDirezione, onTocco, stile]
+    [mostra, onDirezione]
   )
 
   // se l'app va in background con il dito giu', il personaggio resterebbe

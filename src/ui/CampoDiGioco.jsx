@@ -3,19 +3,27 @@ import { creaMotore } from '../game/motore.js'
 import { grafica, interfaccia } from '../game/config.js'
 import Cruscotto from './Cruscotto.jsx'
 import Levetta from './Levetta.jsx'
-import PannelloConferma from './PannelloConferma.jsx'
-import PulsanteOndata from './PulsanteOndata.jsx'
 import SchermataFine from './SchermataFine.jsx'
 
-const VISTA_INIZIALE = { oro: 0, fortezza: 0, fortezzaNemica: 0, ondata: 0, fase: 'pausa' }
+const VISTA_INIZIALE = {
+  vita: 0,
+  vitaMassima: 0,
+  fortezza: 0,
+  fortezzaNemica: 0,
+  grado: 0,
+  fase: 'assedio',
+  abbattuto: false
+}
 
 function uguali(a, b) {
   return (
-    a.oro === b.oro &&
+    a.vita === b.vita &&
+    a.vitaMassima === b.vitaMassima &&
     a.fortezza === b.fortezza &&
     a.fortezzaNemica === b.fortezzaNemica &&
-    a.ondata === b.ondata &&
-    a.fase === b.fase
+    a.grado === b.grado &&
+    a.fase === b.fase &&
+    a.abbattuto === b.abbattuto
   )
 }
 
@@ -26,13 +34,11 @@ export default function CampoDiGioco() {
   const canvasSfondo = useRef(null)
   const canvasGioco = useRef(null)
   const motoreRef = useRef(null)
-  const [selezione, impostaSelezione] = useState(null)
   const [vista, impostaVista] = useState(VISTA_INIZIALE)
 
   useEffect(() => {
     const motore = creaMotore(canvasSfondo.current, canvasGioco.current)
     motoreRef.current = motore
-    motore.impostaAscoltatoreSelezione(impostaSelezione)
 
     const elemento = contenitore.current
 
@@ -54,11 +60,13 @@ export default function CampoDiGioco() {
         uguali(precedente, stato)
           ? precedente
           : {
-              oro: stato.oro,
+              vita: stato.vita,
+              vitaMassima: stato.vitaMassima,
               fortezza: stato.fortezza,
               fortezzaNemica: stato.fortezzaNemica,
-              ondata: stato.ondata,
-              fase: stato.fase
+              grado: stato.grado,
+              fase: stato.fase,
+              abbattuto: stato.abbattuto
             }
       )
     }, 1000 / interfaccia.aggiornamenti_al_secondo)
@@ -71,24 +79,8 @@ export default function CampoDiGioco() {
     }
   }, [])
 
-  const tocca = useCallback((x, y) => {
-    motoreRef.current.tocca(x, y)
-  }, [])
-
   const muovi = useCallback((x, y, intensita) => {
     motoreRef.current.muovi(x, y, intensita)
-  }, [])
-
-  const costruisci = useCallback((torreId) => {
-    motoreRef.current.costruisci(torreId)
-  }, [])
-
-  const annulla = useCallback(() => {
-    motoreRef.current.annulla()
-  }, [])
-
-  const chiamaOndata = useCallback(() => {
-    motoreRef.current.chiamaOndata()
   }, [])
 
   const ricomincia = useCallback(() => {
@@ -118,41 +110,18 @@ export default function CampoDiGioco() {
       <canvas ref={canvasSfondo} style={stileCanvas} />
       <canvas ref={canvasGioco} style={stileCanvas} />
 
-      {/* La levetta sta sopra il campo ma sotto i pannelli: i pulsanti in
-          basso continuano a ricevere i tocchi perche' vengono dopo. */}
-      <Levetta onDirezione={muovi} onTocco={tocca} />
+      <Levetta onDirezione={muovi} />
 
       <Cruscotto
-        oro={vista.oro}
+        vita={vista.vita}
+        vitaMassima={vista.vitaMassima}
         fortezza={vista.fortezza}
         fortezzaNemica={vista.fortezzaNemica}
-        ondata={vista.ondata}
+        grado={vista.grado}
       />
 
-      <div
-        style={{
-          position: 'absolute',
-          left: interfaccia.spaziatura,
-          right: interfaccia.spaziatura,
-          bottom: `calc(${interfaccia.spaziatura}px + env(safe-area-inset-bottom))`,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: interfaccia.spaziatura
-        }}
-      >
-        <PannelloConferma
-          selezione={selezione}
-          oro={vista.oro}
-          onCostruisci={costruisci}
-          onAnnulla={annulla}
-        />
-        {vista.fase === 'pausa' ? (
-          <PulsanteOndata prossimaOndata={vista.ondata + 1} onChiama={chiamaOndata} />
-        ) : null}
-      </div>
-
       {finita ? (
-        <SchermataFine esito={vista.fase} ondata={vista.ondata} onRicomincia={ricomincia} />
+        <SchermataFine esito={vista.fase} grado={vista.grado} onRicomincia={ricomincia} />
       ) : null}
     </div>
   )

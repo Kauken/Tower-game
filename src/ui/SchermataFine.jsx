@@ -2,7 +2,7 @@ import React from 'react'
 import { interfaccia } from '../game/config.js'
 
 // Fine della partita, vinta o persa: occupa tutto lo schermo.
-export default function SchermataFine({ esito, ondata, onRicomincia }) {
+export default function SchermataFine({ esito, grado, onRicomincia }) {
   const vittoria = esito === 'vittoria'
   return (
     <div
@@ -31,8 +31,8 @@ export default function SchermataFine({ esito, ondata, onRicomincia }) {
       </div>
       <div style={{ fontSize: interfaccia.testo_normale }}>
         {vittoria
-          ? `La fortezza nemica è caduta all'assalto ${ondata}.`
-          : `La tua fortezza è caduta all'assalto ${ondata}.`}
+          ? `Il castello nemico è caduto alla pressione ${grado}.`
+          : `Il tuo castello è caduto alla pressione ${grado}.`}
       </div>
       <button
         type="button"

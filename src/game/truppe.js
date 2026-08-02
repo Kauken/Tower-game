@@ -1,19 +1,21 @@
-// Le truppe dei due eserciti: i nemici scendono dalla fortezza in alto, gli
-// alleati salgono da quella in basso. Quando un avversario entra nel raggio
-// d'ingaggio si fermano e combattono; chi sfonda danneggia la fortezza.
+// Le truppe dei due eserciti su campo aperto: i nemici scendono dal castello
+// in alto, gli alleati salgono da quello in basso, sparpagliati su tutta la
+// larghezza. Quando vedono un avversario gli vanno incontro di lato; quando ce
+// l'hanno a tiro si fermano e combattono. Chi sfonda danneggia il castello.
+// I nemici considerano bersaglio anche il personaggio del giocatore.
 // Due pool preallocati, zero creazioni durante la partita.
 
 import {
   alleatoSquadra,
+  campo,
   grafica,
   limiti,
-  mappaAttiva,
-  nemicoOndata,
+  nemicoPressione,
   scalaturaAlleati,
-  scalaturaNemici
+  scalaturaNemici,
+  schieramento
 } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
-import { posizionaSuPercorso } from './percorso.js'
 
 function nuovaTruppa() {
   return {
@@ -22,9 +24,6 @@ function nuovaTruppa() {
     fazione: '',
     x: 0,
     y: 0,
-    scartoX: 0,
-    distanza: 0,
-    segmento: 0,
     vita: 0,
     vitaMassima: 0,
     velocita: 0,
@@ -45,26 +44,30 @@ function nuovaTruppa() {
 }
 
 // agganci: allaMorte(fazione, oro, x, y),
-//          allaFortezzaGiocatore(danno), allaFortezzaNemica(danno)
-export function creaGestoreTruppe(percorso, agganci) {
+//          allaFortezzaGiocatore(danno), allaFortezzaNemica(danno),
+//          colpisciGiocatore(danno), giocatore (oggetto di stato del personaggio)
+export function creaGestoreTruppe(agganci) {
   const nemici = creaPool(limiti.nemici_massimi, nuovaTruppa)
   const alleati = creaPool(limiti.alleati_massimi, nuovaTruppa)
-  const scarti = mappaAttiva.scarti_corsia
+
+  const larghezzaCampo = campo.destra - campo.sinistra
+  const larghezzaUscita = larghezzaCampo * schieramento.larghezza_uscita
+  const margineUscita = campo.sinistra + (larghezzaCampo - larghezzaUscita) / 2
+  const attrazioneQuadrata = schieramento.raggio_attrazione * schieramento.raggio_attrazione
 
   let nemiciAttivi = 0
-  let contatoreScarti = 0
+  // il personaggio, che i nemici trattano come un avversario qualsiasi.
+  // Arriva dopo la creazione perche' a sua volta ha bisogno delle truppe.
+  let giocatore = null
 
-  function prossimoScarto() {
-    contatoreScarti++
-    return scarti[contatoreScarti % scarti.length]
+  function impostaGiocatore(stato) {
+    giocatore = stato
   }
 
   function prepara(truppa, definizione, fazione, moltiplicatoreVita, moltiplicatoreDanno) {
     truppa.attivo = true
     truppa.generazione++
     truppa.fazione = fazione
-    truppa.scartoX = prossimoScarto()
-    truppa.segmento = 0
     truppa.vitaMassima = definizione.vita_base * moltiplicatoreVita
     truppa.vita = truppa.vitaMassima
     truppa.velocita = definizione.velocita
@@ -79,50 +82,44 @@ export function creaGestoreTruppe(percorso, agganci) {
     truppa.rallentaFattore = 1
     truppa.rallentaMs = 0
     truppa.bersaglio = null
+    // esce in un punto qualsiasi della fascia davanti al proprio castello:
+    // e' quello che rende il fronte irregolare invece di due file ordinate
+    truppa.x = margineUscita + Math.random() * larghezzaUscita
   }
 
-  function generaNemico(numeroOndata) {
+  function generaNemico(grado) {
     const truppa = primoLibero(nemici)
     if (!truppa) {
       return
     }
-    const esponente = numeroOndata - 1
     prepara(
       truppa,
-      nemicoOndata,
+      nemicoPressione,
       'nemico',
-      Math.pow(scalaturaNemici.vita_per_ondata, esponente),
-      Math.pow(scalaturaNemici.danno_per_ondata, esponente)
+      Math.pow(scalaturaNemici.vita_per_ondata, grado),
+      Math.pow(scalaturaNemici.danno_per_ondata, grado)
     )
     truppa.oro = Math.round(
-      nemicoOndata.oro_rilasciato * Math.pow(scalaturaNemici.oro_per_ondata, esponente)
+      nemicoPressione.oro_rilasciato * Math.pow(scalaturaNemici.oro_per_ondata, grado)
     )
-    // i nemici partono dall'inizio del percorso (fortezza in alto)
-    truppa.distanza = 0
-    posizionaSuPercorso(percorso, truppa)
-    truppa.x += truppa.scartoX
+    truppa.y = campo.alto
     nemiciAttivi++
   }
 
-  function generaAlleato(numeroOndata) {
+  function generaAlleato(grado) {
     const truppa = primoLibero(alleati)
     if (!truppa) {
       return
     }
-    const esponente = numeroOndata - 1
     prepara(
       truppa,
       alleatoSquadra,
       'alleato',
-      Math.pow(scalaturaAlleati.vita_per_ondata, esponente),
-      Math.pow(scalaturaAlleati.danno_per_ondata, esponente)
+      Math.pow(scalaturaAlleati.vita_per_ondata, grado),
+      Math.pow(scalaturaAlleati.danno_per_ondata, grado)
     )
     truppa.oro = 0
-    // gli alleati partono dalla fine del percorso (fortezza in basso)
-    truppa.distanza = percorso.lunghezzaTotale
-    truppa.segmento = percorso.segmenti - 1
-    posizionaSuPercorso(percorso, truppa)
-    truppa.x += truppa.scartoX
+    truppa.y = campo.basso
   }
 
   function spegni(truppa) {
@@ -147,10 +144,13 @@ export function creaGestoreTruppe(percorso, agganci) {
     }
   }
 
-  // Cerca l'avversario piu' vicino entro il raggio d'ingaggio della truppa.
-  function cercaAvversario(truppa, avversari) {
+  // Cerca l'avversario piu' vicino entro il raggio d'attrazione: non e' ancora
+  // detto che sia a tiro, ma la truppa gli va incontro. Il personaggio conta
+  // come avversario per i nemici.
+  function cercaAvversario(truppa, avversari, bersaglioGiocatore) {
     let migliore = null
-    let distanzaMigliore = Infinity
+    let distanzaMigliore = attrazioneQuadrata
+
     for (let i = 0; i < avversari.length; i++) {
       const altro = avversari[i]
       if (!altro.attivo) {
@@ -159,12 +159,22 @@ export function creaGestoreTruppe(percorso, agganci) {
       const dx = altro.x - truppa.x
       const dy = altro.y - truppa.y
       const distanza = dx * dx + dy * dy
-      const portata = truppa.raggioIngaggio + truppa.raggio + altro.raggio
-      if (distanza <= portata * portata && distanza < distanzaMigliore) {
+      if (distanza < distanzaMigliore) {
         migliore = altro
         distanzaMigliore = distanza
       }
     }
+
+    if (bersaglioGiocatore && bersaglioGiocatore.attivo) {
+      const dx = bersaglioGiocatore.x - truppa.x
+      const dy = bersaglioGiocatore.y - truppa.y
+      const distanza = dx * dx + dy * dy
+      if (distanza < distanzaMigliore) {
+        migliore = bersaglioGiocatore
+        distanzaMigliore = distanza
+      }
+    }
+
     return migliore
   }
 
@@ -179,11 +189,17 @@ export function creaGestoreTruppe(percorso, agganci) {
     }
     const dx = bersaglio.x - truppa.x
     const dy = bersaglio.y - truppa.y
+    return dx * dx + dy * dy <= attrazioneQuadrata
+  }
+
+  function aTiro(truppa, bersaglio) {
+    const dx = bersaglio.x - truppa.x
+    const dy = bersaglio.y - truppa.y
     const portata = truppa.raggioIngaggio + truppa.raggio + bersaglio.raggio
     return dx * dx + dy * dy <= portata * portata
   }
 
-  function aggiornaTruppa(truppa, avversari, passoMs, passoSecondi, versoFine) {
+  function aggiornaTruppa(truppa, avversari, passoMs, passoSecondi, versoIlBasso) {
     if (truppa.lampoMs > 0) {
       truppa.lampoMs -= passoMs
     }
@@ -193,39 +209,62 @@ export function creaGestoreTruppe(percorso, agganci) {
       velocita *= truppa.rallentaFattore
     }
 
-    // combattimento: se ha un avversario a portata si ferma e colpisce
+    // solo i nemici danno la caccia al personaggio
     if (!bersaglioValido(truppa)) {
-      truppa.bersaglio = cercaAvversario(truppa, avversari)
+      truppa.bersaglio = cercaAvversario(truppa, avversari, versoIlBasso ? giocatore : null)
       truppa.generazioneBersaglio = truppa.bersaglio ? truppa.bersaglio.generazione : 0
     }
-    if (truppa.bersaglio) {
+
+    // avversario a tiro: si ferma e colpisce
+    if (truppa.bersaglio && aTiro(truppa, truppa.bersaglio)) {
       if (truppa.ricarica > 0) {
         truppa.ricarica -= passoMs
       } else {
-        applicaDanno(truppa.bersaglio, truppa.danno)
+        if (truppa.bersaglio.eGiocatore) {
+          agganci.colpisciGiocatore(truppa.danno)
+        } else {
+          applicaDanno(truppa.bersaglio, truppa.danno)
+        }
         truppa.ricarica = truppa.cadenzaMs
       }
       return
     }
 
-    // marcia: i nemici verso la fine del percorso, gli alleati verso l'inizio
-    if (versoFine) {
-      truppa.distanza += velocita * passoSecondi
-      if (truppa.distanza >= percorso.lunghezzaTotale) {
-        spegni(truppa)
-        agganci.allaFortezzaGiocatore(truppa.dannoFortezza)
-        return
-      }
-    } else {
-      truppa.distanza -= velocita * passoSecondi
-      if (truppa.distanza <= 0) {
-        spegni(truppa)
-        agganci.allaFortezzaNemica(truppa.dannoFortezza)
-        return
+    // avanza verso il castello avversario, e intanto si sposta di lato verso
+    // l'avversario che ha adocchiato: e' cosi' che si formano i grovigli
+    const passo = velocita * passoSecondi
+    if (truppa.bersaglio) {
+      const scarto = truppa.bersaglio.x - truppa.x
+      const deriva = schieramento.deriva_laterale * passoSecondi
+      if (scarto > deriva) {
+        truppa.x += deriva
+      } else if (scarto < -deriva) {
+        truppa.x -= deriva
+      } else {
+        truppa.x = truppa.bersaglio.x
       }
     }
-    posizionaSuPercorso(percorso, truppa)
-    truppa.x += truppa.scartoX
+
+    if (truppa.x < campo.sinistra) {
+      truppa.x = campo.sinistra
+    } else if (truppa.x > campo.destra) {
+      truppa.x = campo.destra
+    }
+
+    if (versoIlBasso) {
+      truppa.y += passo
+      if (truppa.y >= campo.basso) {
+        spegni(truppa)
+        agganci.allaFortezzaGiocatore(truppa.dannoFortezza)
+      }
+      return
+    }
+
+    truppa.y -= passo
+    if (truppa.y <= campo.alto) {
+      spegni(truppa)
+      agganci.allaFortezzaNemica(truppa.dannoFortezza)
+    }
   }
 
   function aggiorna(passoMs, passoSecondi) {
@@ -241,28 +280,8 @@ export function creaGestoreTruppe(percorso, agganci) {
     }
   }
 
-  // --- interfaccia per le torri: agiscono solo sui nemici ---
+  // --- interfaccia per il personaggio e per gli effetti ad area ---
 
-  function bersaglioPiuAvanti(x, y, raggioQuadrato) {
-    let migliore = null
-    let distanzaMigliore = -1
-    for (let i = 0; i < nemici.length; i++) {
-      const nemico = nemici[i]
-      if (!nemico.attivo || nemico.distanza <= distanzaMigliore) {
-        continue
-      }
-      const dx = nemico.x - x
-      const dy = nemico.y - y
-      if (dx * dx + dy * dy <= raggioQuadrato) {
-        migliore = nemico
-        distanzaMigliore = nemico.distanza
-      }
-    }
-    return migliore
-  }
-
-  // Il personaggio colpisce il nemico piu' vicino, non quello piu' avanti:
-  // combatte da dov'e', non difende una linea.
   function nemicoPiuVicino(x, y, raggioQuadrato) {
     let migliore = null
     let distanzaMigliore = raggioQuadrato
@@ -368,13 +387,13 @@ export function creaGestoreTruppe(percorso, agganci) {
   }
 
   return {
+    impostaGiocatore,
     generaNemico,
     generaAlleato,
     aggiorna,
     disegna,
     applicaDanno,
     colpisciArea,
-    bersaglioPiuAvanti,
     nemicoPiuVicino,
     quantiNemiciAttivi,
     svuota

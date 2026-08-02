@@ -4,7 +4,6 @@
 import mappe from '../../config/mappe.json'
 import nemici from '../../config/nemici.json'
 import alleati from '../../config/alleati.json'
-import torri from '../../config/torri.json'
 import ondate from '../../config/ondate.json'
 import economiaJson from '../../config/economia.json'
 import motore from '../../config/motore.json'
@@ -14,7 +13,7 @@ export const area = mappe.area
 export const economia = economiaJson
 export const scalaturaNemici = nemici.scalatura
 export const scalaturaAlleati = alleati.scalatura
-export const schemaOndata = ondate.schema_ondata
+export const pressione = ondate.pressione
 export const squadra = alleati.squadra
 export const simulazione = motore.simulazione
 export const limiti = motore.limiti
@@ -37,10 +36,14 @@ export const mappaAttiva = cercaPerId(
   'mappe.json'
 )
 
-// Il nemico degli assalti: per ora ce n'e' uno solo, lo dice ondate.json
-export const nemicoOndata = cercaPerId(
+// I bordi del campo e le regole di schieramento: li leggono truppe e personaggio
+export const campo = mappaAttiva.campo
+export const schieramento = mappaAttiva.schieramento
+
+// Il nemico dell'assedio: per ora ce n'e' uno solo, lo dice ondate.json
+export const nemicoPressione = cercaPerId(
   nemici.nemici,
-  ondate.schema_ondata.nemico_id,
+  ondate.pressione.nemico_id,
   'nemici.json'
 )
 
@@ -50,20 +53,3 @@ export const alleatoSquadra = cercaPerId(
   alleati.squadra.alleato_id,
   'alleati.json'
 )
-
-// Tutte le torri piazzabili, nell'ordine del file: e' l'ordine del pannello.
-export const elencoTorri = torri.torri
-
-export function torrePerId(id) {
-  return cercaPerId(torri.torri, id, 'torri.json')
-}
-
-// I bonus di altura e vena di mana. Se un tipo di casella non ha un blocco
-// dedicato non si rompe niente: vale il blocco "normale".
-export function bonusCasella(tipo) {
-  return mappaAttiva.bonus_slot[tipo] || mappaAttiva.bonus_slot.normale
-}
-
-export function aspettoCasella(tipo) {
-  return grafica.caselle[tipo] || grafica.caselle.normale
-}

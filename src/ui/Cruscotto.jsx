@@ -19,8 +19,11 @@ function Voce({ etichetta, valore, colore }) {
   )
 }
 
-// Oro, vita delle due fortezze e numero dell'assalto: sempre a schermo.
-export default function Cruscotto({ oro, fortezza, fortezzaNemica, ondata }) {
+// La tua vita, quella dei due castelli e il grado di pressione: sempre a
+// schermo, in posizione fissa, senza animazioni che li rendano illeggibili.
+export default function Cruscotto({ vita, vitaMassima, fortezza, fortezzaNemica, grado }) {
+  const vitaBassa = vita <= vitaMassima / 3
+
   return (
     <div
       style={{
@@ -38,14 +41,18 @@ export default function Cruscotto({ oro, fortezza, fortezzaNemica, ondata }) {
         pointerEvents: 'none'
       }}
     >
-      <Voce etichetta="Oro" valore={oro} colore={interfaccia.colore_testo} />
       <Voce
-        etichetta="Fortezza"
+        etichetta="Vita"
+        valore={vita}
+        colore={vitaBassa ? interfaccia.colore_allarme : interfaccia.colore_scelto}
+      />
+      <Voce
+        etichetta="Castello"
         valore={fortezza}
         colore={fortezza > 0 ? interfaccia.colore_testo : interfaccia.colore_allarme}
       />
-      <Voce etichetta="Nemica" valore={fortezzaNemica} colore={interfaccia.colore_allarme} />
-      <Voce etichetta="Assalto" valore={ondata} colore={interfaccia.colore_testo} />
+      <Voce etichetta="Nemico" valore={fortezzaNemica} colore={interfaccia.colore_allarme} />
+      <Voce etichetta="Pressione" valore={grado} colore={interfaccia.colore_testo} />
     </div>
   )
 }

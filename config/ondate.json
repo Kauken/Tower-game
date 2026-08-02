@@ -1,11 +1,17 @@
 {
-  "_nota": "Composizione delle ondate. La quantita' e il ritmo di uscita si ricavano da una formula, mai scritti a mano ondata per ondata. Per ora esiste un solo tipo di nemico: gli altri arrivano ai punti successivi. Valori provvisori.",
-  "schema_ondata": {
+  "_nota": "La pressione dell'assedio. Non ci sono piu' ondate a chiamata: entrambi i castelli producono truppe in continuazione, e la pressione nemica cresce col tempo. Sopra al flusso costante arrivano le spinte, in cui il castello nemico svuota le caserme tutte insieme. Tempi in millisecondi. Valori provvisori.",
+  "pressione": {
     "nemico_id": "fante",
-    "quantita_base": 9,
-    "quantita_aggiunta_per_ondata": 2,
-    "intervallo_uscita_ms": 900,
-    "riduzione_intervallo_per_ondata_ms": 25,
-    "intervallo_minimo_ms": 350
+    "_nota_flusso": "Ogni quanto esce un nemico. L'intervallo si accorcia a ogni grado di pressione, fino al minimo.",
+    "intervallo_uscita_ms": 430,
+    "riduzione_intervallo_per_grado_ms": 30,
+    "intervallo_minimo_ms": 190,
+    "_nota_gradi": "Ogni durata_grado_ms la pressione sale di uno: nemici piu' fitti e piu' forti. E' il numero mostrato nel cruscotto.",
+    "durata_grado_ms": 24000,
+    "_nota_spinte": "Ogni quanto arriva una spinta, quanti nemici escono in blocco e con che ritmo interno.",
+    "intervallo_spinta_ms": 30000,
+    "quantita_spinta_base": 8,
+    "quantita_spinta_per_grado": 3,
+    "intervallo_interno_spinta_ms": 130
   }
 }

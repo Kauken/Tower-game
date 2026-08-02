@@ -15,16 +15,15 @@
     }
   ],
   "squadra": {
-    "_nota": "Quanti minion escono per assalto e con che ritmo. Crescono con le stesse regole dei nemici.",
+    "_nota": "Il tuo castello produce minion in continuazione, con lo stesso meccanismo del nemico: l'intervallo si accorcia a ogni grado di pressione.",
     "alleato_id": "milite",
-    "quantita_base": 5,
-    "quantita_aggiunta_per_ondata": 2,
-    "intervallo_uscita_ms": 1000,
-    "riduzione_intervallo_per_ondata_ms": 25,
-    "intervallo_minimo_ms": 400
+    "_nota_pareggio": "Volutamente un filo piu' lento del nemico: senza il giocatore i due eserciti si equivalgono e il fronte resta a meta' campo. Sei tu a rompere il pareggio, ed e' questo che deve far sentire decisivo il personaggio.",
+    "intervallo_uscita_ms": 470,
+    "riduzione_intervallo_per_grado_ms": 28,
+    "intervallo_minimo_ms": 220
   },
   "scalatura": {
-    "_nota": "Crescita per assalto dei minion alleati: tengono il passo dei nemici.",
+    "_nota": "Crescita per grado di pressione dei minion alleati: tengono il passo dei nemici.",
     "vita_per_ondata": 1.21,
     "danno_per_ondata": 1.15
   }

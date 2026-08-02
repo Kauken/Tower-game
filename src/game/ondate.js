@@ -1,68 +1,93 @@
-// Gli assalti: quante truppe escono per parte e con che ritmo. Tutto da
-// formule in ondate.json e alleati.json, mai elenchi scritti a mano.
+// La pressione dell'assedio. Nessuno chiama piu' le ondate: i due castelli
+// producono truppe di continuo, e la pressione nemica sale col tempo. Sopra al
+// flusso costante arrivano le spinte, in cui il castello nemico svuota le
+// caserme tutte insieme. Tutto da formule, mai elenchi scritti a mano.
 
-import { schemaOndata, squadra } from './config.js'
+import { pressione, squadra } from './config.js'
 
-function quantita(schema, numeroOndata) {
-  return schema.quantita_base + schema.quantita_aggiunta_per_ondata * (numeroOndata - 1)
-}
-
-function intervallo(schema, numeroOndata) {
-  const valore =
-    schema.intervallo_uscita_ms -
-    schema.riduzione_intervallo_per_ondata_ms * (numeroOndata - 1)
+function intervalloFlusso(schema, riduzionePerGrado, grado) {
+  const valore = schema.intervallo_uscita_ms - riduzionePerGrado * grado
   return Math.max(schema.intervallo_minimo_ms, valore)
 }
 
-export function creaGestoreOndate(truppe) {
-  const nemici = { daGenerare: 0, attesa: 0, intervallo: 0 }
-  const alleati = { daGenerare: 0, attesa: 0, intervallo: 0 }
-  let inCorso = false
+export function creaGestorePressione(truppe) {
+  const flussoNemico = { attesa: 0 }
+  const flussoAlleato = { attesa: 0 }
+  // la spinta e' una raffica: quanti ne restano da buttare fuori e ogni quanto
+  const spinta = { restanti: 0, attesa: 0 }
 
-  function avvia(numeroOndata) {
-    nemici.daGenerare = quantita(schemaOndata, numeroOndata)
-    nemici.intervallo = intervallo(schemaOndata, numeroOndata)
-    nemici.attesa = 0
-    alleati.daGenerare = quantita(squadra, numeroOndata)
-    alleati.intervallo = intervallo(squadra, numeroOndata)
-    alleati.attesa = 0
-    inCorso = true
+  let trascorsoMs = 0
+  let versoSpintaMs = 0
+  let grado = 0
+
+  function reimposta() {
+    flussoNemico.attesa = 0
+    flussoAlleato.attesa = 0
+    spinta.restanti = 0
+    spinta.attesa = 0
+    trascorsoMs = 0
+    versoSpintaMs = 0
+    grado = 0
   }
 
-  function generaParte(parte, passoMs, genera, numeroOndata) {
-    if (parte.daGenerare <= 0) {
+  function scorri(flusso, passoMs, intervallo, genera) {
+    flusso.attesa -= passoMs
+    if (flusso.attesa > 0) {
       return
     }
-    parte.attesa -= passoMs
-    if (parte.attesa <= 0) {
-      genera(numeroOndata)
-      parte.daGenerare--
-      parte.attesa = parte.intervallo
+    genera(grado)
+    flusso.attesa = intervallo
+  }
+
+  function aggiorna(passoMs) {
+    trascorsoMs += passoMs
+    grado = Math.floor(trascorsoMs / pressione.durata_grado_ms)
+
+    scorri(
+      flussoNemico,
+      passoMs,
+      intervalloFlusso(pressione, pressione.riduzione_intervallo_per_grado_ms, grado),
+      truppe.generaNemico
+    )
+    scorri(
+      flussoAlleato,
+      passoMs,
+      intervalloFlusso(squadra, squadra.riduzione_intervallo_per_grado_ms, grado),
+      truppe.generaAlleato
+    )
+
+    // la spinta: arriva a intervalli e svuota le caserme nemiche in blocco
+    versoSpintaMs += passoMs
+    if (versoSpintaMs >= pressione.intervallo_spinta_ms) {
+      versoSpintaMs -= pressione.intervallo_spinta_ms
+      spinta.restanti =
+        pressione.quantita_spinta_base + pressione.quantita_spinta_per_grado * grado
+      spinta.attesa = 0
+    }
+
+    if (spinta.restanti > 0) {
+      spinta.attesa -= passoMs
+      if (spinta.attesa <= 0) {
+        truppe.generaNemico(grado)
+        spinta.restanti--
+        spinta.attesa = pressione.intervallo_interno_spinta_ms
+      }
     }
   }
 
-  // Restituisce true nel passo esatto in cui l'assalto si conclude: tutti i
-  // nemici usciti e nessuno piu' vivo. Gli alleati superstiti continuano a
-  // marciare anche dopo: e' la spinta verso la fortezza nemica.
-  function aggiorna(passoMs, numeroOndata) {
-    if (!inCorso) {
-      return false
-    }
-    generaParte(nemici, passoMs, truppe.generaNemico, numeroOndata)
-    generaParte(alleati, passoMs, truppe.generaAlleato, numeroOndata)
-
-    if (nemici.daGenerare <= 0 && truppe.quantiNemiciAttivi() === 0) {
-      inCorso = false
-      return true
-    }
-    return false
+  // il grado mostrato al giocatore parte da 1, non da 0
+  function gradoMostrato() {
+    return grado + 1
   }
 
-  function ferma() {
-    nemici.daGenerare = 0
-    alleati.daGenerare = 0
-    inCorso = false
+  // quanto manca alla prossima spinta, da 0 a 1: serve all'avviso a schermo
+  function quotaVersoSpinta() {
+    return versoSpintaMs / pressione.intervallo_spinta_ms
   }
 
-  return { avvia, aggiorna, ferma }
+  function spintaInCorso() {
+    return spinta.restanti > 0
+  }
+
+  return { aggiorna, reimposta, gradoMostrato, quotaVersoSpinta, spintaInCorso }
 }
