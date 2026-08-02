@@ -15,7 +15,8 @@ Un bioma, poche stanze, pochi oggetti, un assedio finale. Serve a rispondere a
 una sola domanda: **il ciclo raccogli-e-scarica è divertente?** Finché non c'è
 risposta, tutto il resto è prematuro.
 
-1. **Il personaggio.** Compare in campo, si muove con la levetta a pollice, attacca da solo il nemico più vicino. Provato dentro la corsia che esiste già.
+1. **Il personaggio.** Compare in campo, si muove con la levetta a pollice, attacca da solo il nemico più vicino. Provato dentro la corsia che esiste già — **FATTO**
+   *Non compreso, perché dipende da una decisione aperta:* i nemici non lo colpiscono ancora (voce 2 di DECISIONI.md — cosa succede se muore).
 2. **La stanza.** Un'arena chiusa con porte, nemici che entrano, porte che si aprono quando la stanza è pulita.
 3. **La mappa.** Più stanze collegate generate a caso, spostamento fra stanze, minimappa.
 4. **Stanza del tesoro e primi 6 oggetti**, ognuno con effetto sul personaggio **e** sull'esercito.

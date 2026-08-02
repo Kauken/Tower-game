@@ -261,6 +261,27 @@ export function creaGestoreTruppe(percorso, agganci) {
     return migliore
   }
 
+  // Il personaggio colpisce il nemico piu' vicino, non quello piu' avanti:
+  // combatte da dov'e', non difende una linea.
+  function nemicoPiuVicino(x, y, raggioQuadrato) {
+    let migliore = null
+    let distanzaMigliore = raggioQuadrato
+    for (let i = 0; i < nemici.length; i++) {
+      const nemico = nemici[i]
+      if (!nemico.attivo) {
+        continue
+      }
+      const dx = nemico.x - x
+      const dy = nemico.y - y
+      const distanza = dx * dx + dy * dy
+      if (distanza <= distanzaMigliore) {
+        migliore = nemico
+        distanzaMigliore = distanza
+      }
+    }
+    return migliore
+  }
+
   function colpisciArea(x, y, raggioQuadrato, danno, fattoreRallenta, durataRallentaMs) {
     let toccati = 0
     for (let i = 0; i < nemici.length; i++) {
@@ -354,6 +375,7 @@ export function creaGestoreTruppe(percorso, agganci) {
     applicaDanno,
     colpisciArea,
     bersaglioPiuAvanti,
+    nemicoPiuVicino,
     quantiNemiciAttivi,
     svuota
   }

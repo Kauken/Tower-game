@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { creaMotore } from '../game/motore.js'
 import { grafica, interfaccia } from '../game/config.js'
 import Cruscotto from './Cruscotto.jsx'
+import Levetta from './Levetta.jsx'
 import PannelloConferma from './PannelloConferma.jsx'
 import PulsanteOndata from './PulsanteOndata.jsx'
 import SchermataFine from './SchermataFine.jsx'
@@ -70,8 +71,12 @@ export default function CampoDiGioco() {
     }
   }, [])
 
-  const tocca = useCallback((evento) => {
-    motoreRef.current.tocca(evento.clientX, evento.clientY)
+  const tocca = useCallback((x, y) => {
+    motoreRef.current.tocca(x, y)
+  }, [])
+
+  const muovi = useCallback((x, y, intensita) => {
+    motoreRef.current.muovi(x, y, intensita)
   }, [])
 
   const costruisci = useCallback((torreId) => {
@@ -111,7 +116,11 @@ export default function CampoDiGioco() {
       }}
     >
       <canvas ref={canvasSfondo} style={stileCanvas} />
-      <canvas ref={canvasGioco} style={stileCanvas} onPointerDown={tocca} />
+      <canvas ref={canvasGioco} style={stileCanvas} />
+
+      {/* La levetta sta sopra il campo ma sotto i pannelli: i pulsanti in
+          basso continuano a ricevere i tocchi perche' vengono dopo. */}
+      <Levetta onDirezione={muovi} onTocco={tocca} />
 
       <Cruscotto
         oro={vista.oro}

@@ -1,0 +1,22 @@
+{
+  "_nota": "Il personaggio guidato dal giocatore. Si muove con la levetta a pollice e attacca da solo il nemico piu' vicino a portata. Valori provvisori, tutti da tarare col pollice sul telefono. Distanze in pixel logici (area 720x1280), tempi in millisecondi, velocita' in pixel al secondo.",
+  "personaggio": {
+    "id": "guardiano",
+    "nome": "Guardiano",
+    "dimensione": 20,
+    "velocita": 300,
+    "raggio_attacco": 250,
+    "danno": 14,
+    "cadenza_ms": 420,
+    "velocita_proiettile": 640,
+    "raggio_area": 0,
+    "posizione_iniziale": { "x": 360, "y": 1050 },
+    "confini": {
+      "_nota": "Dove il personaggio puo' arrivare: fuori da qui non passa. In alto si ferma sotto la fortezza nemica.",
+      "sinistra": 45,
+      "destra": 675,
+      "alto": 160,
+      "basso": 1150
+    }
+  }
+}
