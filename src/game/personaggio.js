@@ -15,7 +15,7 @@ export function creaPersonaggio(truppe, proiettili) {
     ricarica: 0,
     // direzione dello sguardo: dove si e' mosso, o dove sta sparando
     guardaX: 0,
-    guardaY: -1
+    guardaY: 0
   }
 
   // Input continuo della levetta: l'interfaccia ci scrive sopra, il ciclo lo
@@ -27,8 +27,8 @@ export function creaPersonaggio(truppe, proiettili) {
     stato.x = datiPersonaggio.posizione_iniziale.x
     stato.y = datiPersonaggio.posizione_iniziale.y
     stato.ricarica = 0
-    stato.guardaX = 0
-    stato.guardaY = -1
+    stato.guardaX = datiPersonaggio.sguardo_iniziale.x
+    stato.guardaY = datiPersonaggio.sguardo_iniziale.y
     levetta.x = 0
     levetta.y = 0
     levetta.intensita = 0

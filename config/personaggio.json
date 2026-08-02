@@ -11,12 +11,17 @@
     "velocita_proiettile": 640,
     "raggio_area": 0,
     "posizione_iniziale": { "x": 360, "y": 1050 },
+    "sguardo_iniziale": {
+      "_nota": "Dove guarda prima di muoversi o di avere un nemico a tiro: y -1 vuol dire verso la fortezza nemica, in alto.",
+      "x": 0,
+      "y": -1
+    },
     "confini": {
-      "_nota": "Dove il personaggio puo' arrivare: fuori da qui non passa. In alto si ferma sotto la fortezza nemica.",
+      "_nota": "Dove il personaggio puo' arrivare: fuori da qui non passa. In alto si ferma sotto la fortezza nemica, in basso senza sovrapporsi alla propria.",
       "sinistra": 45,
       "destra": 675,
       "alto": 160,
-      "basso": 1150
+      "basso": 1145
     }
   }
 }
