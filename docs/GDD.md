@@ -1,118 +1,129 @@
-# Torre di Guardia — Documento di design v0.3
+# Torre di Guardia — Documento di design v0.4
 
-**v0.3 = pivot deciso dall'autore (2026-08):** non più un tower defense a labirinto, ma una **battaglia a corsie roguelike**. Questo documento sostituisce la v0.2; le parti che sopravvivono al pivot (carte, tag, economia, atti) sono riprese da lì.
+**v0.4 = seconda evoluzione decisa dall'autore (2026-08).** Il gioco non è più solo una battaglia a corsie: diventa un **roguelike a due fasi** — esplorazione di stanze in stile Binding of Isaac + guerra d'assedio fra due castelli. La battaglia a corsie della v0.3 non viene buttata: diventa una delle due fasi.
 
-**Decisioni chiuse:** ambientazione fantasy/medievale · battaglia a corsie con minion propri · comandi attivi pochi e con ricarica · potenziamenti che cambiano *come* si combatte, non solo quanto · carte-patto con bonus e malus · partita da 10-15 minuti · doppia valuta non convertibile · vendita torri sì (60%), spostamento no.
+**Decisioni chiuse:** ambientazione fantasy/medievale · due fasi alternate (esplorazione + assedio) · gli oggetti modificano l'esercito, non solo il personaggio · mappa e sentiero generati proceduralmente · progressione permanente fra le run · partita da 15-25 minuti.
 
-> I numeri indicati sono **valori di partenza da tarare**. Ciò che è marcato `[DA DECIDERE]` va chiuso prima di scrivere il codice relativo.
+> I numeri sono **valori di partenza da tarare**. Ciò che è marcato `[DA DECIDERE]` va chiuso prima di scrivere il codice relativo.
 
 ---
 
 ## 1. Concetto in una riga
 
-Due fortezze su una corsia verticale: i tuoi minion partono dal basso, i loro dall'alto, si scontrano dove le due spinte si incontrano. Le tue torri, poche e sempre in combattimento, sparano e potenziano. A ogni assalto peschi potenziamenti che cambiano il modo in cui il tuo esercito combatte — alla Binding of Isaac — finché la loro fortezza cade. O la tua.
+Esplori un dungeon a stanze raccogliendo oggetti che cambiano il gioco; poi porti quella build su una corsia dove il tuo esercito e quello nemico si scontrano, e la usi per abbattere il castello avversario. Gli oggetti non potenziano solo te: **trasformano tutto il tuo esercito**.
 
-## 2. Il campo
+## 2. Le due fasi
 
-- **Corsia verticale** a schermo intero: fortezza nemica in alto, la tua in basso.
-- Entrambe le fortezze hanno **punti vita**. Un minion che raggiunge la fortezza avversaria le toglie vita e si immola.
-- **Il fronte** — il punto dove gli eserciti si scontrano — è l'indicatore di chi sta vincendo: si legge a colpo d'occhio, senza numeri.
-- **4 caselle torre**, solo nella metà bassa (la tua), ai lati della corsia: 2 normali, 1 altura (+raggio), 1 vena di mana (+cadenza). Poche per scelta: ogni piazzamento pesa.
+### 2.1 Esplorazione
 
-## 3. Le truppe
+Mappa a stanze collegate, generata proceduralmente. Per passare oltre bisogna ripulire la stanza: uccisi tutti i nemici, le porte si aprono.
 
-Entrambi gli eserciti escono **da soli**, a ondate chiamate **assalti**. I minion marciano, e quando incontrano un nemico a portata si fermano e combattono. Vince chi sfonda.
+Tipi di stanza: **tesoro · negozio · evento · maledetta · segreta · NPC · mini boss**.
 
-- **I tuoi minion** (v1: il **Milite**): partono dalla tua fortezza verso l'alto. Le carte ne cambiano composizione e comportamento.
-- **I nemici** (v1: il **Fante**; poi Ratto nero, Golem, Sciame): partono dall'alto. Crescono di assalto in assalto per vita e danno, con curve in configurazione.
+Lo scopo dell'esplorazione è **costruire la build**, non vincere: è la fase in cui si raccoglie.
 
-Ogni tipo di truppa ha: vita, velocità, danno, cadenza di attacco, raggio d'ingaggio, danno alla fortezza. Tutto in `config/`.
+### 2.2 Assedio
 
-## 4. Le torri
+Una corsia collega il tuo castello a quello nemico. Da entrambi escono minion in continuazione, che avanzano da soli e si scontrano. Vince chi abbatte il castello avversario.
 
-Poche, solo nella tua metà, **sempre rilevanti** perché il fronte si muove. Ruoli:
+Il giocatore **è in campo** e può: combattere di persona, proteggere i propri minion, evocarne di nuovi, lanciare abilità e magie, e sfruttare gli oggetti raccolti.
 
-| Torre | Ruolo |
+Lo scopo dell'assedio è **usare la build**: è la fase in cui si spende.
+
+### 2.3 Come si legano (regola di struttura)
+
+**L'assedio è il boss di fine bioma.** Non è una modalità parallela: è il traguardo verso cui l'esplorazione ti prepara. Esplori 6-10 stanze, raccogli, poi la corsia mette alla prova quello che hai messo insieme. Vinto l'assedio, si passa al bioma nuovo.
+
+Questo dà un ritmo chiaro — **raccogli, poi scarica** — ed evita che le due fasi sembrino due giochi incollati.
+
+## 3. I comandi (la decisione più importante su telefono)
+
+Isaac si gioca con due levette: una per muoversi, una per sparare. **Su un telefono in verticale, con i pollici, due levette virtuali sono la cosa che uccide questi giochi.** Non si fa.
+
+Schema adottato:
+
+- **Pollice sinistro: una levetta che compare dove appoggi il dito**, per muoverti. Nient'altro.
+- **Attacco automatico**: il personaggio colpisce da solo il nemico più vicino a portata. È il modello di Vampire Survivors e Archero, ed è il motivo per cui funzionano col pollice.
+- **Pollice destro: 2-3 pulsanti grandi** per abilità, evocazione e magia, con ricarica visibile.
+
+Conseguenza di design: **la bravura del giocatore sta nel posizionarsi e nel decidere quando premere**, non nella mira. È una scelta, non un ripiego, e va rispettata da tutto il resto.
+
+## 4. Un solo motore, due arene
+
+Il personaggio si muove e combatte **allo stesso identico modo** nelle due fasi. Cambia solo la forma dell'arena:
+
+- **Stanza**: spazio chiuso, porte, nemici che entrano.
+- **Corsia**: spazio lungo, due castelli, due eserciti.
+
+Non si costruiscono due giochi: si costruisce **un personaggio dentro un'arena**, e l'arena ha due tipi. Metà del lavoro sparisce e la fusione si sente naturale invece che incollata.
+
+## 5. Le Torri
+
+Quattro grandi strutture antiche lungo la corsia. Non si distruggono: **influenzano l'intera partita con effetti globali**.
+
+| Torre | Cosa fa |
 |---|---|
-| **Balestriere** | Attacco: colpi rapidi sui nemici in corsia |
-| **Catapulta** | Area: punisce gli ammassi al fronte |
-| **Cappella del Gelo** | Controllo: rallenta la spinta nemica |
-| **Obelisco** | Potenziamento: rafforza torri (e in futuro i minion) nel raggio |
+| **Torre del Sole** | Aumenta i danni dei minion, potenzia gli attacchi di fuoco |
+| **Torre della Natura** | Cura lentamente gli alleati, evoca creature, radici che rallentano |
+| **Torre Arcana** | Potenzia la magia, riduce le ricariche, genera fulmini casuali |
+| **Torre del Ferro** | Rafforza il castello, irrobustisce i minion, crea barricate |
 
-Vendita al 60%, nessuno spostamento. Ogni torre deve avere potenziamenti che la trasformano; se una è sempre ovvia o sempre inutile, si riprogetta.
+`[DA DECIDERE]` Come si ottiene il controllo di una torre: sono già tue, si conquistano durante l'assedio, o si scelgono a inizio bioma.
 
-## 5. Il giocatore: cosa fa con le mani
+**Regola di leggibilità:** ogni torre deve produrre qualcosa di **visibile in corsia**. Un effetto globale silenzioso non si sente e non vale il lavoro.
 
-Il rischio del genere è guardare e basta. Le mani del giocatore stanno su:
+## 6. Gli oggetti — il cuore del gioco
 
-1. **Piazzare e vendere torri** (oro).
-2. **Chiamare l'assalto** quando è pronto: fra un assalto e l'altro il gioco aspetta.
-3. **Una abilità attiva con ricarica** (v1: **"Carica!"** — per qualche secondo i tuoi minion spingono più forte). Un pulsante grande, un tempo di ricarica visibile. `[DA DECIDERE]` se le carte possono sbloccarne una seconda. **Mai più di due**: niente barre di abilità da MMO, per scelta dell'autore.
-4. **Le scelte di pesca** (vedi §6): sono la vera profondità.
+Come in Isaac: ogni oggetto **cambia davvero il gioco**, non aggiunge percentuali. Esempi: frecce che rimbalzano · minion esplosivi · castello che spara laser · evocazioni automatiche · fulmini a catena · veleno contagioso · evocazioni che crescono nel tempo · oggetti che ribaltano il funzionamento di un'abilità.
 
-## 6. I potenziamenti — il cuore del gioco
+### La regola che rende il gioco originale
 
-Il modello è Vampire Survivors / Binding of Isaac: i potenziamenti non aggiungono "+10% danno", cambiano **come** si combatte, e sommandosi diventano build visibilmente più forti. Famiglie:
+**Ogni oggetto deve avere un effetto anche sull'esercito, non solo sul personaggio.**
 
-1. **Moduli** — su una torre specifica ("i colpi rimbalzano su un secondo nemico").
-2. **Addestramenti** — sui tuoi minion ("i Militi esplodono morendo", "escono in coppia ma più fragili").
-3. **Reliquie** — effetti globali di partita.
-4. **Patti** — bonus forte + malus dichiarato ("le torri sparano il 40% più veloce, la tua fortezza parte con 3 vite in meno"). La scelta col brivido.
-5. **Consumabili** — uso singolo.
+È questo il perno di tutto il progetto. Un oggetto che dà frecce infuocate deve rendere infuocati anche gli arcieri. Uno che fa esplodere i tuoi colpi deve far esplodere i minion morendo. Se un oggetto tocca solo il personaggio, il gioco torna a essere due giochi separati.
 
-### Il sistema a tag (invariato dalla v0.2)
+### Sistema a tag
 
 `FUOCO · GELO · FULMINE · VELENO · SACRO · ORO · AREA · RAPIDITÀ`
 
-I tag ora stanno **anche sui minion**: le sinergie fra esercito e torri sono l'identità del gioco. Esempi: minion FUOCO + torre AREA → le fiamme si propagano nel mucchio; torre GELO + minion RAPIDITÀ → i tuoi colpiscono i rallentati con critico. Le sinergie restano regole fra tag, mai fra oggetti specifici.
+Le sinergie sono **regole fra tag, mai fra oggetti specifici**: è così che poche righe generano centinaia di combinazioni.
 
-### Ritmo delle ricompense
+## 7. Struttura della run
 
-- Dopo ogni assalto: negozio rapido in oro (torri, vendita) — 5-10 s, saltabile.
-- Ogni 2 assalti: **3 carte, ne scegli 1** — il momento importante. I patti compaiono qui, riconoscibili.
-- Dopo il boss d'atto: il mercante (gettoni).
+```
+Stanza iniziale → esplorazione → tesoro → evento → mini boss
+      → ASSEDIO (corsia) → nuovo bioma → ...
+```
 
-## 7. Struttura della partita
+Ogni bioma introduce nemici, ambientazione e meccaniche diverse. Durata bersaglio della run: **15-25 minuti**.
 
-- **3 atti**, ognuno contro una fortezza nemica più dura.
-- Un atto si **vince** distruggendo la fortezza nemica; si **perde** se cade la tua (fine della run).
-- Gli assalti crescono senza fine finché l'atto non si chiude: chi non spinge affronta assalti sempre più duri. Ritmo atteso: fortezza giù in 5-7 assalti `[DA TARARE]`.
-- Al **6° assalto** di un atto scende in corsia il **comandante** (boss). `[DA DECIDERE]` la sua abilità.
-- Durata bersaglio della run: **12-14 minuti**.
-- **Salvataggio automatico a ogni fine assalto**, ripresa esatta. Non negoziabile su mobile.
+### Il sentiero cambia ogni volta
 
-## 8. Economia — doppia valuta (invariata)
+La corsia dell'assedio è generata proceduralmente con ambienti diversi — **ponti · foreste · cimiteri · rovine · caverne · gole · ghiacci · vulcani · paludi** — ognuno con ostacoli, trappole e vantaggi propri.
 
-| Valuta | Si guadagna | Si spende | Sopravvive |
-|---|---|---|---|
-| **Oro** | Uccisioni, fine assalto | Torri, negozio | No |
-| **Cristalli** | Fine run (anche persa) | Permanenti, personaggi | Sì |
+`[DA DECIDERE]` Se l'ambiente del sentiero è deciso dal bioma o pescato a parte.
 
-Mai convertibili. Una run persa dà comunque cristalli.
+## 8. Progressione permanente
 
-## 9. Cosa è casuale e cosa no
+Anche perdendo si avanza. Si sbloccano nel tempo: personaggi · oggetti · reliquie · minion · castelli · torri · biomi · boss · stanze · eventi.
 
-| Elemento | Casuale? |
-|---|---|
-| Corsia e caselle | No |
-| Torri disponibili | No |
-| Carte offerte | Sì, filtrate |
-| Composizione assalti | Parzialmente (schema per atto) |
-| Mercante | Sì |
+Valuta permanente: **cristalli**, guadagnati a fine run anche se persa. Mai convertibili con l'oro di partita.
 
-## 10. Architettura tecnica (invariata)
+## 9. Architettura tecnica
 
-Un solo canvas 2D per il campo; React solo per l'interfaccia; Capacitor per le app; salvataggi con Capacitor Preferences; **tutti i numeri in `config/*.json`**, il codice li legge e basta.
+Un solo canvas 2D per il campo; React solo per l'interfaccia; Capacitor per le app; salvataggi con Capacitor Preferences; **tutti i numeri in `config/*.json`**.
 
-## 11. Ambito v1 — cosa NON fare adesso
+Salvataggio automatico a ogni cambio di stanza e a ogni fine assedio: su telefono si viene interrotti di continuo.
 
-Audio, animazioni curate, più mappe, più personaggi, pubblicità/acquisti, menù e schermata titolo, traduzioni. Un solo tipo di minion per parte finché il combattimento non è divertente.
+## 10. Ambito — cosa NON fare adesso
 
-## 12. Punti aperti
+Audio, animazioni curate, più personaggi, pubblicità e acquisti, menù elaborati, traduzioni, biomi oltre il primo, progressione permanente. **Prima deve esistere una fetta verticale giocabile**: un bioma, poche stanze, pochi oggetti, un assedio.
 
-- `[DA DECIDERE]` Destino dei moduli se la torre viene venduta
-- `[DA DECIDERE]` Abilità del comandante (boss)
-- `[DA DECIDERE]` Seconda abilità attiva sbloccabile: sì o no
-- `[DA DECIDERE]` Le 12 regole di sinergia definitive (ora anche con tag sui minion)
-- `[DA DECIDERE]` I 4 profili personaggio
-- `[DA DECIDERE]` Recupero vita della fortezza: possibile o mai
+## 11. Punti aperti
+
+- `[DA DECIDERE]` Come si ottengono le torri
+- `[DA DECIDERE]` Se il personaggio muore in corsia: sconfitta immediata o rientro
+- `[DA DECIDERE]` Quanti oggetti per bioma
+- `[DA DECIDERE]` Ambiente del sentiero legato al bioma o indipendente
+- `[DA DECIDERE]` Le 12 regole di sinergia definitive
+- `[DA DECIDERE]` I profili personaggio

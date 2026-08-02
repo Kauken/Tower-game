@@ -36,7 +36,22 @@
     "colore_pulsante_testo": "#ffffff",
     "colore_pulsante_testo_spento": "#6b7280",
     "colore_sconfitta": "#0d0f14f2",
-    "colore_allarme": "#d9705f"
+    "colore_allarme": "#d9705f",
+    "levetta": {
+      "_nota": "La levetta nasce dove appoggi il dito e sparisce quando lo alzi. zona_morta evita che il personaggio parta per un tremolio; soglia_tocco_px e durata_tocco_ms distinguono un tocco secco (che seleziona una casella) da un trascinamento (che muove).",
+      "raggio_base": 58,
+      "raggio_pomello": 30,
+      "distanza_massima": 52,
+      "zona_morta": 8,
+      "soglia_tocco_px": 14,
+      "durata_tocco_ms": 260,
+      "colore_base": "#e8e3d51f",
+      "colore_bordo_base": "#e8e3d54d",
+      "spessore_bordo_base": 2,
+      "colore_pomello": "#e8e3d566",
+      "colore_bordo_pomello": "#e8e3d5aa",
+      "spessore_bordo_pomello": 2
+    }
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",
@@ -110,6 +125,22 @@
       "colore_bordo": "#e6f5e9",
       "colore_bordo_rallentato": "#7fa8ff",
       "spessore_bordo": 3
+    },
+    "personaggio": {
+      "_nota": "Il cerchio del giocatore deve leggersi al primo colpo d'occhio in mezzo ai minion: colore diverso da alleati e nemici, bordo piu' spesso, e un puntino che mostra dove sta guardando.",
+      "colore": "#f2d0a4",
+      "colore_bordo": "#ffffff",
+      "spessore_bordo": 4,
+      "sguardo": {
+        "distanza": 15,
+        "raggio": 6,
+        "colore": "#ffffff"
+      },
+      "portata": {
+        "_nota": "Cerchio tenue che mostra fin dove arriva l'attacco automatico.",
+        "colore": "#f2d0a41f",
+        "spessore": 2
+      }
     },
     "fortezza_nemica": {
       "colore": "#5a2f2f",

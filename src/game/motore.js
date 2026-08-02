@@ -22,6 +22,7 @@ import { creaGestoreProiettili } from './proiettili.js'
 import { creaGestoreTorri, statisticheTorre } from './torri.js'
 import { creaGestoreOndate } from './ondate.js'
 import { creaGestoreEffetti } from './effetti.js'
+import { creaPersonaggio } from './personaggio.js'
 import {
   creaStatoPartita,
   danniAllaFortezza,
@@ -62,6 +63,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   const proiettili = creaGestoreProiettili(truppe, effetti)
   const torri = creaGestoreTorri(truppe, proiettili, effetti)
   const ondate = creaGestoreOndate(truppe)
+  const personaggio = creaPersonaggio(truppe, proiettili)
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
@@ -166,6 +168,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     proiettili.svuota()
     torri.svuota()
     effetti.svuota()
+    personaggio.reimposta()
     reimposta(partita)
     casellaScelta = NESSUNA
     notificaSelezione()
@@ -215,6 +218,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     }
 
     truppe.aggiorna(simulazione.passo_ms, passoSecondi)
+    personaggio.aggiorna(simulazione.passo_ms, passoSecondi)
     torri.aggiorna(simulazione.passo_ms)
     proiettili.aggiorna(passoSecondi)
     effetti.aggiorna(simulazione.passo_ms)
@@ -265,6 +269,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     disegnaSelezione()
     torri.disegna(ctxGioco)
     truppe.disegna(ctxGioco)
+    // il personaggio sopra le truppe: non deve mai sparire nella mischia
+    personaggio.disegna(ctxGioco)
     proiettili.disegna(ctxGioco)
     // gli effetti sopra tutto: sono brevi e non coprono niente a lungo
     effetti.disegna(ctxGioco)
@@ -333,6 +339,11 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     accodaComando('tocco', punto.x, punto.y, '')
   }
 
+  // La levetta scrive direttamente: e' uno stato continuo, non un'azione.
+  function muovi(x, y, intensita) {
+    personaggio.muovi(x, y, intensita)
+  }
+
   function costruisci(torreId) {
     accodaComando('costruisci', 0, 0, torreId)
   }
@@ -359,6 +370,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     ridimensiona,
     leggiStato,
     tocca,
+    muovi,
     costruisci,
     annulla,
     chiamaOndata,

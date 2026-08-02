@@ -8,6 +8,7 @@ import torri from '../../config/torri.json'
 import ondate from '../../config/ondate.json'
 import economiaJson from '../../config/economia.json'
 import motore from '../../config/motore.json'
+import personaggioJson from '../../config/personaggio.json'
 
 export const area = mappe.area
 export const economia = economiaJson
@@ -20,6 +21,7 @@ export const limiti = motore.limiti
 export const anteprima = motore.anteprima
 export const grafica = motore.grafica
 export const interfaccia = motore.interfaccia
+export const datiPersonaggio = personaggioJson.personaggio
 
 function cercaPerId(elenco, id, nomeFile) {
   const trovato = elenco.find((elemento) => elemento.id === id)
