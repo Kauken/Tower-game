@@ -1,12 +1,12 @@
 // I proiettili: pool preallocato, inseguono il nemico che li ha fatti partire.
 // Un proiettile con raggioArea > 0 esplode all'impatto e danneggia tutti i
 // nemici vicini; a 0 colpisce solo il bersaglio. Per ora spara solo il
-// personaggio, a colpo singolo: l'area serve agli oggetti del punto 4.
+// personaggio, a colpo singolo: l'area servira' agli oggetti.
 
 import { grafica, limiti } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
 
-export function creaGestoreProiettili(truppe, effetti) {
+export function creaGestoreProiettili(nemici, effetti) {
   const elenco = creaPool(limiti.proiettili_massimi, () => ({
     attivo: false,
     x: 0,
@@ -35,19 +35,17 @@ export function creaGestoreProiettili(truppe, effetti) {
 
   function colpisci(proiettile, bersaglio) {
     if (proiettile.raggioArea > 0) {
-      truppe.colpisciArea(
+      nemici.colpisciArea(
         bersaglio.x,
         bersaglio.y,
         proiettile.raggioArea * proiettile.raggioArea,
-        proiettile.danno,
-        1,
-        0
+        proiettile.danno
       )
       effetti.esplosione(bersaglio.x, bersaglio.y, proiettile.raggioArea)
-    } else {
-      truppe.applicaDanno(bersaglio, proiettile.danno)
-      effetti.impatto(proiettile.x, proiettile.y)
+      return
     }
+    nemici.applicaDanno(bersaglio, proiettile.danno)
+    effetti.impatto(proiettile.x, proiettile.y)
   }
 
   function aggiorna(passoSecondi) {
@@ -60,7 +58,7 @@ export function creaGestoreProiettili(truppe, effetti) {
       }
 
       const bersaglio = proiettile.bersaglio
-      // il nemico e' morto o e' arrivato in fondo: il colpo va a vuoto
+      // il nemico e' morto prima che il colpo arrivasse: va a vuoto
       if (!bersaglio.attivo || bersaglio.generazione !== proiettile.generazioneBersaglio) {
         proiettile.attivo = false
         proiettile.bersaglio = null

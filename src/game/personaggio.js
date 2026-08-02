@@ -1,21 +1,17 @@
 // Il personaggio guidato dal giocatore. Si muove con la levetta a pollice e
 // colpisce da solo il nemico piu' vicino entro la sua portata: il giocatore
 // decide dove stare, non dove mirare.
-// I nemici lo attaccano. A vita zero non muore: viene abbattuto e si riforma
-// al proprio castello, mentre l'esercito continua a combattere senza di lui.
+// A vita zero la run finisce.
 // Un solo oggetto per tutta la partita, mai ricreato.
 
-import { campo, datiPersonaggio, grafica } from './config.js'
+import { arena, datiPersonaggio, grafica, partenzaPersonaggio } from './config.js'
 
-export function creaPersonaggio(truppe, proiettili, agganci) {
+export function creaPersonaggio(nemici, proiettili, agganci) {
   const portataQuadrata = datiPersonaggio.raggio_attacco * datiPersonaggio.raggio_attacco
-  const abbattimento = datiPersonaggio.abbattimento
 
-  // Questo oggetto viene letto anche dalle truppe nemiche, che lo trattano
-  // come un avversario qualsiasi: per questo ha attivo, generazione e raggio
-  // con gli stessi nomi di una truppa.
+  // Questo oggetto viene letto anche dai nemici, che lo inseguono: per questo
+  // ha attivo, generazione e raggio con gli stessi nomi di un nemico.
   const stato = {
-    eGiocatore: true,
     attivo: true,
     generazione: 0,
     x: 0,
@@ -26,7 +22,6 @@ export function creaPersonaggio(truppe, proiettili, agganci) {
     ricarica: 0,
     lampoMs: 0,
     immunitaMs: 0,
-    riformaMs: 0,
     guardaX: 0,
     guardaY: 0
   }
@@ -36,22 +31,17 @@ export function creaPersonaggio(truppe, proiettili, agganci) {
   // ma uno stato che cambia di continuo: in coda si perderebbero valori.
   const levetta = { x: 0, y: 0, intensita: 0 }
 
-  function riporta() {
-    stato.x = datiPersonaggio.posizione_iniziale.x
-    stato.y = datiPersonaggio.posizione_iniziale.y
+  function reimposta() {
+    stato.x = partenzaPersonaggio.x
+    stato.y = partenzaPersonaggio.y
     stato.vita = stato.vitaMassima
     stato.ricarica = 0
     stato.lampoMs = 0
-    stato.riformaMs = 0
+    stato.immunitaMs = 0
     stato.guardaX = datiPersonaggio.sguardo_iniziale.x
     stato.guardaY = datiPersonaggio.sguardo_iniziale.y
     stato.attivo = true
     stato.generazione++
-  }
-
-  function reimposta() {
-    riporta()
-    stato.immunitaMs = 0
     levetta.x = 0
     levetta.y = 0
     levetta.intensita = 0
@@ -74,18 +64,22 @@ export function creaPersonaggio(truppe, proiettili, agganci) {
     }
     stato.vita -= effettivo
     stato.lampoMs = grafica.effetti.lampo_colpo_ms
+    // breve invulnerabilita': senza, due nemici a contatto svuotano la barra
+    // in un istante e non si capisce cosa e' successo
+    stato.immunitaMs = datiPersonaggio.immunita_dopo_colpo_ms
     if (stato.vita > 0) {
       return
     }
-    // abbattuto: esce dal campo e i nemici smettono di vederlo
     stato.vita = 0
     stato.attivo = false
     stato.generazione++
-    stato.riformaMs = abbattimento.riforma_ms
-    agganci.allAbbattimento(stato.x, stato.y)
+    agganci.allaMorte(stato.x, stato.y)
   }
 
   function aggiorna(passoMs, passoSecondi) {
+    if (!stato.attivo) {
+      return
+    }
     if (stato.lampoMs > 0) {
       stato.lampoMs -= passoMs
     }
@@ -93,30 +87,21 @@ export function creaPersonaggio(truppe, proiettili, agganci) {
       stato.immunitaMs -= passoMs
     }
 
-    if (!stato.attivo) {
-      stato.riformaMs -= passoMs
-      if (stato.riformaMs <= 0) {
-        riporta()
-        stato.immunitaMs = abbattimento.immunita_ms
-        agganci.allaRiforma(stato.x, stato.y)
-      }
-      return
-    }
-
     if (levetta.intensita > 0) {
       const passo = datiPersonaggio.velocita * levetta.intensita * passoSecondi
       stato.x += levetta.x * passo
       stato.y += levetta.y * passo
 
-      if (stato.x < campo.sinistra) {
-        stato.x = campo.sinistra
-      } else if (stato.x > campo.destra) {
-        stato.x = campo.destra
+      // i muri fermano davvero: si sbatte contro il bordo della stanza
+      if (stato.x < arena.sinistra + stato.raggio) {
+        stato.x = arena.sinistra + stato.raggio
+      } else if (stato.x > arena.destra - stato.raggio) {
+        stato.x = arena.destra - stato.raggio
       }
-      if (stato.y < campo.alto) {
-        stato.y = campo.alto
-      } else if (stato.y > campo.basso) {
-        stato.y = campo.basso
+      if (stato.y < arena.alto + stato.raggio) {
+        stato.y = arena.alto + stato.raggio
+      } else if (stato.y > arena.basso - stato.raggio) {
+        stato.y = arena.basso - stato.raggio
       }
 
       stato.guardaX = levetta.x
@@ -127,7 +112,7 @@ export function creaPersonaggio(truppe, proiettili, agganci) {
       stato.ricarica -= passoMs
     }
 
-    const bersaglio = truppe.nemicoPiuVicino(stato.x, stato.y, portataQuadrata)
+    const bersaglio = nemici.piuVicino(stato.x, stato.y, portataQuadrata)
     if (!bersaglio) {
       return
     }
@@ -154,22 +139,6 @@ export function creaPersonaggio(truppe, proiettili, agganci) {
     }
   }
 
-  function disegnaAttesa(ctx) {
-    const stile = grafica.personaggio.riforma
-    const quota = 1 - stato.riformaMs / abbattimento.riforma_ms
-    ctx.beginPath()
-    ctx.arc(
-      datiPersonaggio.posizione_iniziale.x,
-      datiPersonaggio.posizione_iniziale.y,
-      stile.raggio,
-      -Math.PI / 2,
-      -Math.PI / 2 + Math.PI * 2 * quota
-    )
-    ctx.lineWidth = stile.spessore
-    ctx.strokeStyle = stile.colore
-    ctx.stroke()
-  }
-
   function disegnaBarraVita(ctx) {
     const barra = grafica.personaggio.barra_vita
     const quota = stato.vita / stato.vitaMassima
@@ -187,12 +156,11 @@ export function creaPersonaggio(truppe, proiettili, agganci) {
 
   function disegna(ctx) {
     if (!stato.attivo) {
-      disegnaAttesa(ctx)
       return
     }
 
     const stile = grafica.personaggio
-    // appena riformato si e' semitrasparenti: si vede che non ti possono toccare
+    // subito dopo un colpo si lampeggia: si vede che per un istante sei intoccabile
     if (stato.immunitaMs > 0) {
       ctx.globalAlpha = stile.immunita.opacita
     }

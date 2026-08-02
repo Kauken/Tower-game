@@ -1,44 +1,42 @@
 import React from 'react'
 import { interfaccia } from '../game/config.js'
 
-// Fine della run: occupa tutto lo schermo.
-export default function SchermataFine({ stanza, onRicomincia }) {
+// Stanza ripulita. Per ora un pulsante porta alla stanza successiva: le porte
+// vere, con la scelta della direzione, arrivano al punto 4.
+export default function PannelloStanzaPulita({ onProsegui }) {
   return (
     <div
       style={{
         position: 'absolute',
-        inset: 0,
+        left: interfaccia.spaziatura,
+        right: interfaccia.spaziatura,
+        bottom: `calc(${interfaccia.spaziatura}px + env(safe-area-inset-bottom))`,
+        padding: interfaccia.spaziatura,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
         gap: interfaccia.spaziatura,
-        padding: interfaccia.spaziatura,
-        background: interfaccia.colore_sconfitta,
-        color: interfaccia.colore_testo,
-        textAlign: 'center'
+        borderRadius: interfaccia.raggio_angoli,
+        background: interfaccia.colore_pannello,
+        border: '1px solid ' + interfaccia.colore_bordo_pannello,
+        color: interfaccia.colore_testo
       }}
     >
-      <div
+      <span
         style={{
           fontSize: interfaccia.testo_titolo,
           fontWeight: 700,
-          color: interfaccia.colore_allarme
+          color: interfaccia.colore_scelto
         }}
       >
-        Sei caduto
-      </div>
-      <div style={{ fontSize: interfaccia.testo_normale }}>
-        Sei arrivato alla stanza {stanza}.
-      </div>
+        Stanza pulita
+      </span>
       <button
         type="button"
-        onClick={onRicomincia}
+        onClick={onProsegui}
         style={{
+          width: '100%',
           minHeight: interfaccia.altezza_minima_tocco,
-          marginTop: interfaccia.spaziatura,
-          paddingLeft: interfaccia.spaziatura,
-          paddingRight: interfaccia.spaziatura,
           border: 'none',
           borderRadius: interfaccia.raggio_angoli,
           background: interfaccia.colore_pulsante,
@@ -49,7 +47,7 @@ export default function SchermataFine({ stanza, onRicomincia }) {
           touchAction: 'manipulation'
         }}
       >
-        Ricomincia
+        Stanza successiva
       </button>
     </div>
   )

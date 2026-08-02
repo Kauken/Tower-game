@@ -1,63 +1,25 @@
 {
-  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. Velocita in pixel logici al secondo, dimensione in pixel logici (raggio), tempi in millisecondi. Dal pivot i nemici combattono: hanno danno, cadenza e raggio d'ingaggio.",
+  "_nota": "I nemici delle stanze. Per ora ce n'e' uno solo e insegue il giocatore: i comportamenti diversi (chi tira da lontano, chi carica, chi e' lento e duro) arrivano al punto 3. Velocita' in pixel logici al secondo, tempi in millisecondi, dimensione e' il raggio. Valori provvisori.",
   "nemici": [
     {
       "id": "fante",
       "nome": "Fante",
-      "vita_base": 30,
-      "velocita": 95,
-      "danno": 6,
-      "cadenza_ms": 900,
-      "raggio_ingaggio": 34,
+      "vita": 30,
+      "velocita": 115,
+      "danno": 9,
+      "cadenza_ms": 850,
+      "raggio_attacco": 26,
       "riduzione_danno": 0,
-      "danno_fortezza": 1,
-      "oro_rilasciato": 4,
-      "dimensione": 14
-    },
-    {
-      "id": "ratto_nero",
-      "nome": "Ratto nero",
-      "vita_base": 14,
-      "velocita": 190,
-      "danno": 4,
-      "cadenza_ms": 600,
-      "raggio_ingaggio": 30,
-      "riduzione_danno": 0,
-      "danno_fortezza": 1,
-      "oro_rilasciato": 3,
-      "dimensione": 10
-    },
-    {
-      "id": "golem_di_pietra",
-      "nome": "Golem di pietra",
-      "vita_base": 160,
-      "velocita": 52,
-      "danno": 18,
-      "cadenza_ms": 1600,
-      "raggio_ingaggio": 40,
-      "riduzione_danno": 4,
-      "danno_fortezza": 3,
-      "oro_rilasciato": 18,
-      "dimensione": 22
-    },
-    {
-      "id": "sciame_di_goblin",
-      "nome": "Sciame di goblin",
-      "vita_base": 20,
-      "velocita": 120,
-      "danno": 3,
-      "cadenza_ms": 500,
-      "raggio_ingaggio": 28,
-      "riduzione_danno": 0,
-      "danno_fortezza": 1,
-      "oro_rilasciato": 2,
-      "dimensione": 11
+      "dimensione": 15
     }
   ],
   "scalatura": {
-    "_nota": "Crescita per grado di pressione. valore = base * (moltiplicatore ^ grado).",
-    "vita_per_grado": 1.21,
-    "oro_per_grado": 1.06,
-    "danno_per_grado": 1.15
+    "_nota": "Crescita di stanza in stanza. valore = base * (moltiplicatore ^ (stanza - 1)).",
+    "vita_per_stanza": 1.1,
+    "danno_per_stanza": 1.06
+  },
+  "affollamento": {
+    "_nota": "I nemici si scansano fra loro: senza questo si sovrappongono tutti in un unico grumo e non si capisce piu' quanti sono. spinta e' quanto si allontanano al secondo.",
+    "spinta": 90
   }
 }

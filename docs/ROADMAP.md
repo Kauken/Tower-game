@@ -24,7 +24,8 @@ inutile se lì la risposta è no.
 
 ## Fase A — la stanza deve essere divertente
 
-1. **La stanza sola.** Un'arena chiusa con le pareti, il personaggio dentro, nemici che entrano; ripuliti i nemici la stanza si dichiara pulita. Niente porte ancora, niente seguito.
+1. **La stanza sola.** Un'arena chiusa con le pareti, il personaggio dentro, nemici che entrano; ripuliti i nemici la stanza si dichiara pulita. Niente porte ancora, niente seguito — **FATTO**
+   *In più, dichiarato:* un pulsante "Stanza successiva" per poter provare più stanze di fila. Le porte vere, con la scelta della direzione, restano al punto 4.
 2. **Il seguito.** I minion ti seguono, ingaggiano da soli, cadono e si rialzano a stanza pulita. Il tetto del seguito è un numero in configurazione.
 3. **Nemici che valgono.** 3-4 tipi con comportamenti diversi (chi carica, chi tira da lontano, chi è lento e duro), e le disposizioni: quanti nemici, dove, da dove entrano.
 

@@ -6,16 +6,12 @@
   },
   "limiti": {
     "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo.",
-    "nemici_massimi": 150,
-    "alleati_massimi": 100,
-    "proiettili_massimi": 200,
+    "nemici_massimi": 60,
+    "ingressi_massimi": 12,
+    "proiettili_massimi": 120,
     "comandi_massimi": 8,
     "effetti_massimi": 48,
     "popup_massimi": 24
-  },
-  "anteprima": {
-    "_nota": "Cosa e' disponibile finche' non ci sono le altre mappe.",
-    "mappa_id": "piana_del_confine"
   },
   "interfaccia": {
     "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
@@ -50,18 +46,20 @@
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",
-    "campo": {
-      "_nota": "Il terreno fra i due castelli. Le fasce servono solo a far leggere la profondita': senza riferimenti non si capisce quanto si e' avanti.",
-      "colore": "#1d2a21",
-      "colore_bordo": "#33473a",
-      "spessore_bordo": 3,
-      "fasce": 8,
-      "colore_fascia": "#ffffff06",
-      "meta_campo": {
-        "colore": "#e8e3d51f",
-        "spessore": 3,
-        "tratto": 16
-      }
+    "stanza": {
+      "_nota": "Il pavimento e i muri. Le piastrelle danno un riferimento per capire quanto ci si e' spostati: su un pavimento uniforme il movimento non si legge.",
+      "colore_pavimento": "#1d2a21",
+      "colore_muro": "#3b4c40",
+      "colore_bordo_muro": "#55705c",
+      "spessore_bordo_muro": 3,
+      "piastrelle": 6,
+      "colore_piastrella": "#ffffff05"
+    },
+    "ingresso": {
+      "_nota": "Il segnale che avvisa dove sta per entrare un nemico. Pulsa mentre il tempo scorre.",
+      "raggio": 26,
+      "colore": "#c9524a",
+      "spessore": 4
     },
     "proiettile": {
       "raggio": 6,
@@ -72,17 +70,10 @@
     "nemico": {
       "colore": "#c9524a",
       "colore_bordo": "#f2d0a4",
-      "spessore_bordo": 3,
-      "colore_bordo_rallentato": "#7fa8ff"
-    },
-    "alleato": {
-      "colore": "#5f9e6e",
-      "colore_bordo": "#e6f5e9",
-      "spessore_bordo": 3,
-      "colore_bordo_rallentato": "#7fa8ff"
+      "spessore_bordo": 3
     },
     "personaggio": {
-      "_nota": "Il cerchio del giocatore deve leggersi al primo colpo d'occhio in mezzo ai minion: colore diverso da alleati e nemici, bordo piu' spesso, e un puntino che mostra dove sta guardando.",
+      "_nota": "Il cerchio del giocatore deve leggersi al primo colpo d'occhio in mezzo ai nemici: colore diverso, bordo piu' spesso, e un puntino che mostra dove sta guardando.",
       "colore": "#f2d0a4",
       "colore_bordo": "#ffffff",
       "spessore_bordo": 4,
@@ -97,7 +88,6 @@
         "spessore": 2
       },
       "barra_vita": {
-        "_nota": "Piu' grande di quella dei minion: e' la tua.",
         "larghezza": 64,
         "altezza": 9,
         "distanza_sopra": 16,
@@ -109,35 +99,9 @@
         "spessore_bordo": 2
       },
       "immunita": {
-        "_nota": "Come si vede che sei appena tornato e non ti possono toccare.",
-        "opacita": 0.45
-      },
-      "riforma": {
-        "_nota": "Cerchio che si chiude sul castello mentre aspetti di rientrare.",
-        "raggio": 34,
-        "colore": "#f2d0a4aa",
-        "spessore": 4
+        "_nota": "Il lampeggio dopo un colpo preso: si vede che per un istante non ti possono toccare di nuovo.",
+        "opacita": 0.5
       }
-    },
-    "fortezza_nemica": {
-      "colore": "#5a2f2f",
-      "colore_bordo": "#c9524a",
-      "spessore_bordo": 4
-    },
-    "fortezza_giocatore": {
-      "colore": "#2f4a38",
-      "colore_bordo": "#8fd6a0",
-      "spessore_bordo": 4
-    },
-    "barra_fortezza": {
-      "larghezza": 170,
-      "altezza": 12,
-      "distanza": 14,
-      "colore_fondo": "#00000099",
-      "colore_pieno": "#7fd67f",
-      "colore_pieno_nemica": "#d9705f",
-      "colore_bordo": "#0b0f0b",
-      "spessore_bordo": 2
     },
     "effetti": {
       "_nota": "Feedback visivi. Durate in millisecondi, distanze in pixel logici.",
@@ -155,18 +119,10 @@
         "colore": "#f2d0a4",
         "spessore": 3
       },
-      "popup_oro": {
-        "durata_ms": 750,
-        "salita": 48,
-        "dimensione_testo": 24,
-        "colore": "#ffd76a",
-        "colore_contorno": "#000000aa",
-        "spessore_contorno": 4
-      },
-      "onda_piazzamento": {
-        "durata_ms": 380,
-        "raggio_massimo": 72,
-        "colore": "#e6edf5",
+      "comparsa": {
+        "durata_ms": 320,
+        "raggio_massimo": 34,
+        "colore": "#c9524a",
         "spessore": 4
       },
       "esplosione": {

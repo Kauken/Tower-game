@@ -1,67 +1,49 @@
-// Disegno dello sfondo: il campo aperto fra i due castelli.
-// Gira una volta sola all'avvio e poi solo se cambia la mappa o la dimensione
-// della finestra. Mai dentro il ciclo di gioco.
+// Disegno dello sfondo: il pavimento della stanza e i muri attorno.
+// Gira una volta sola all'avvio e poi solo se cambia la dimensione della
+// finestra. Mai dentro il ciclo di gioco.
 
-import { area, grafica } from './config.js'
+import { area, arena, grafica } from './config.js'
 
-function disegnaTerreno(ctx, mappa) {
-  const stile = grafica.campo
-  const campo = mappa.campo
+export function disegnaSfondo(ctx) {
+  const stile = grafica.stanza
+  const larghezza = arena.destra - arena.sinistra
+  const altezza = arena.basso - arena.alto
 
-  ctx.fillStyle = stile.colore
-  ctx.fillRect(0, 0, area.larghezza, area.altezza)
-
-  // fasce orizzontali tenui: senza riferimenti non si legge quanto si e'
-  // avanti sul campo, e la profondita' e' l'informazione piu' importante
-  const altezza = campo.basso - campo.alto
-  const passo = altezza / stile.fasce
-  ctx.fillStyle = stile.colore_fascia
-  for (let i = 0; i < stile.fasce; i += 2) {
-    ctx.fillRect(campo.sinistra, campo.alto + passo * i, campo.destra - campo.sinistra, passo)
-  }
-
-  ctx.lineWidth = stile.spessore_bordo
-  ctx.strokeStyle = stile.colore_bordo
-  ctx.strokeRect(
-    campo.sinistra,
-    campo.alto,
-    campo.destra - campo.sinistra,
-    campo.basso - campo.alto
-  )
-}
-
-// La linea di meta' campo: dice a colpo d'occhio se stai spingendo in casa
-// loro o difendendo in casa tua.
-function disegnaMetaCampo(ctx, mappa) {
-  const stile = grafica.campo.meta_campo
-  const campo = mappa.campo
-  const meta = (campo.alto + campo.basso) / 2
-
-  ctx.save()
-  ctx.setLineDash([stile.tratto, stile.tratto])
-  ctx.beginPath()
-  ctx.moveTo(campo.sinistra, meta)
-  ctx.lineTo(campo.destra, meta)
-  ctx.lineWidth = stile.spessore
-  ctx.strokeStyle = stile.colore
-  ctx.stroke()
-  ctx.restore()
-}
-
-function disegnaCastello(ctx, blocco, stile) {
-  const sinistra = blocco.x - blocco.larghezza / 2
-  const alto = blocco.y - blocco.altezza / 2
-  ctx.fillStyle = stile.colore
-  ctx.fillRect(sinistra, alto, blocco.larghezza, blocco.altezza)
-  ctx.lineWidth = stile.spessore_bordo
-  ctx.strokeStyle = stile.colore_bordo
-  ctx.strokeRect(sinistra, alto, blocco.larghezza, blocco.altezza)
-}
-
-export function disegnaSfondo(ctx, mappa) {
   ctx.clearRect(0, 0, area.larghezza, area.altezza)
-  disegnaTerreno(ctx, mappa)
-  disegnaMetaCampo(ctx, mappa)
-  disegnaCastello(ctx, mappa.fortezza_nemica, grafica.fortezza_nemica)
-  disegnaCastello(ctx, mappa.fortezza_giocatore, grafica.fortezza_giocatore)
+
+  // i muri: una cornice spessa tutt'intorno alla stanza
+  ctx.fillStyle = stile.colore_muro
+  ctx.fillRect(
+    arena.sinistra - arena.spessore_muro,
+    arena.alto - arena.spessore_muro,
+    larghezza + arena.spessore_muro * 2,
+    altezza + arena.spessore_muro * 2
+  )
+  ctx.lineWidth = stile.spessore_bordo_muro
+  ctx.strokeStyle = stile.colore_bordo_muro
+  ctx.strokeRect(
+    arena.sinistra - arena.spessore_muro,
+    arena.alto - arena.spessore_muro,
+    larghezza + arena.spessore_muro * 2,
+    altezza + arena.spessore_muro * 2
+  )
+
+  ctx.fillStyle = stile.colore_pavimento
+  ctx.fillRect(arena.sinistra, arena.alto, larghezza, altezza)
+
+  // piastrelle a scacchiera: su un pavimento uniforme non si legge quanto ci
+  // si e' spostati, e il movimento e' la cosa piu' importante del gioco
+  const lato = larghezza / stile.piastrelle
+  const righe = Math.ceil(altezza / lato)
+  ctx.fillStyle = stile.colore_piastrella
+  for (let riga = 0; riga < righe; riga++) {
+    for (let colonna = 0; colonna < stile.piastrelle; colonna++) {
+      if ((riga + colonna) % 2 !== 0) {
+        continue
+      }
+      const alto = arena.alto + riga * lato
+      const altezzaPiastrella = Math.min(lato, arena.basso - alto)
+      ctx.fillRect(arena.sinistra + colonna * lato, alto, lato, altezzaPiastrella)
+    }
+  }
 }

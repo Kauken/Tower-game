@@ -19,9 +19,9 @@ function Voce({ etichetta, valore, colore }) {
   )
 }
 
-// La tua vita, quella dei due castelli e il grado di pressione: sempre a
-// schermo, in posizione fissa, senza animazioni che li rendano illeggibili.
-export default function Cruscotto({ vita, vitaMassima, fortezza, fortezzaNemica, grado }) {
+// La tua vita, a che stanza sei e quanti nemici restano: sempre a schermo, in
+// posizione fissa, senza animazioni che li rendano illeggibili.
+export default function Cruscotto({ vita, vitaMassima, stanza, nemici }) {
   // stessa soglia della barra sul campo, altrimenti i due indicatori si
   // contraddicono in una fascia di vita
   const vitaBassa = vita <= vitaMassima * grafica.personaggio.barra_vita.soglia_bassa
@@ -48,13 +48,12 @@ export default function Cruscotto({ vita, vitaMassima, fortezza, fortezzaNemica,
         valore={vita}
         colore={vitaBassa ? interfaccia.colore_allarme : interfaccia.colore_scelto}
       />
+      <Voce etichetta="Stanza" valore={stanza} colore={interfaccia.colore_testo} />
       <Voce
-        etichetta="Castello"
-        valore={fortezza}
-        colore={fortezza > 0 ? interfaccia.colore_testo : interfaccia.colore_allarme}
+        etichetta="Nemici"
+        valore={nemici}
+        colore={nemici > 0 ? interfaccia.colore_allarme : interfaccia.colore_testo_debole}
       />
-      <Voce etichetta="Nemico" valore={fortezzaNemica} colore={interfaccia.colore_allarme} />
-      <Voce etichetta="Pressione" valore={grado} colore={interfaccia.colore_testo} />
     </div>
   )
 }

@@ -1,0 +1,26 @@
+{
+  "_nota": "La stanza: l'arena chiusa in cui si combatte. Coordinate logiche, il campo e' 720x1280 e viene scalato per riempire lo schermo. Tempi in millisecondi. Valori provvisori, tutti da tarare col pollice.",
+  "arena": {
+    "_nota": "I muri stanno fuori da questi bordi: dentro ci si muove, fuori no.",
+    "sinistra": 45,
+    "destra": 675,
+    "alto": 205,
+    "basso": 1175,
+    "spessore_muro": 16
+  },
+  "ingressi": {
+    "_nota": "I nemici entrano dai bordi. Prima compare un segnale nel punto esatto, poi arriva il nemico: farlo comparire addosso al giocatore sarebbe sleale, e la slealta' e' la cosa che fa smettere di giocare.",
+    "margine_dagli_angoli": 95,
+    "preavviso_ms": 750
+  },
+  "popolamento": {
+    "_nota": "Quanti nemici ci sono e con che ritmo entrano. La quantita' cresce di stanza in stanza fino al tetto.",
+    "nemico_id": "fante",
+    "quantita_iniziale": 4,
+    "quantita_totale": 8,
+    "quantita_aggiunta_per_stanza": 2,
+    "quantita_massima": 24,
+    "intervallo_uscita_ms": 1500
+  },
+  "partenza_personaggio": { "x": 360, "y": 950 }
+}
