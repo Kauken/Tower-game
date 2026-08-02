@@ -1,138 +1,153 @@
-// La stanza: decide quanti nemici la popolano e da dove entrano.
-// I nemici non compaiono di colpo: prima si accende un segnale sul bordo, poi
-// il nemico arriva li'. Comparire addosso al giocatore sarebbe sleale.
-// La stanza e' pulita quando tutti sono usciti e nessuno e' piu' in piedi.
+// La stanza: decide quali nemici la popolano e dove stanno.
+// I nemici sono gia' dentro quando entri — niente ondate, niente scaglioni.
+// Quanti e quali lo decide un budget: ogni tipo costa il suo peso, e si pesca
+// finche' il budget non e' finito. Cosi' una stanza puo' essere sei fanti
+// oppure due golem e un tiratore, e due stanze non si somigliano.
+// La stanza e' pulita quando non e' rimasto nessuno in piedi.
 
-import { arena, ingressi, limiti, popolamento } from './config.js'
-import { creaPool, primoLibero } from './pool.js'
+import {
+  arena,
+  elencoNemici,
+  limiti,
+  partenzaPersonaggio,
+  popolamento
+} from './config.js'
+import { creaPool } from './pool.js'
 
-function nuovoIngresso() {
-  return { attivo: false, x: 0, y: 0, tempoMs: 0 }
-}
+// Quanti tentativi si fanno per trovare un posto libero prima di rinunciare a
+// quel nemico: senza un tetto, una stanza affollata girerebbe all'infinito.
+const TENTATIVI_PIAZZAMENTO = 30
 
 export function creaGestoreStanza(nemici, effetti) {
-  const inArrivo = creaPool(limiti.ingressi_massimi, nuovoIngresso)
+  // I posti decisi all'apertura della stanza. I nemici si accendono uno alla
+  // volta con un piccolo ritardo: comparire tutti nello stesso istante e' un
+  // muro di rosso che l'occhio non riesce a contare.
+  const posti = creaPool(limiti.nemici_massimi, () => ({
+    attivo: false,
+    tipo: null,
+    x: 0,
+    y: 0
+  }))
 
-  let daGenerare = 0
+  let quantiPosti = 0
+  let prossimo = 0
   let attesa = 0
   let stanzaCorrente = 1
 
-  function quantiNemici(stanza) {
-    const quantita =
-      popolamento.quantita_totale + popolamento.quantita_aggiunta_per_stanza * (stanza - 1)
-    return Math.min(popolamento.quantita_massima, quantita)
+  function budget(stanza) {
+    const valore = popolamento.budget_base + popolamento.budget_per_stanza * (stanza - 1)
+    return Math.min(popolamento.budget_massimo, valore)
   }
 
-  // Un punto a caso lungo i quattro muri, lontano dagli angoli. Sta uno scarto
-  // dentro il bordo, non esattamente sopra: il disegno e' ritagliato
-  // sull'arena, e sul bordo esatto il segnale si vedrebbe a meta'.
-  function puntoSulBordo(ingresso) {
-    const margine = ingressi.margine_dagli_angoli
-    const scarto = ingressi.scarto_dal_muro
+  // Pesca fra i tipi che il budget rimanente puo' ancora permettersi. Chi pesa
+  // di piu' non e' automaticamente piu' raro: la rarita' e' un valore a parte,
+  // altrimenti il golem, che costa molto, finirebbe per uscire di continuo.
+  function pescaTipo(rimanente) {
+    let totale = 0
+    for (let i = 0; i < elencoNemici.length; i++) {
+      if (elencoNemici[i].peso <= rimanente) {
+        totale += elencoNemici[i].frequenza
+      }
+    }
+    if (totale === 0) {
+      return null
+    }
+    let tiro = Math.random() * totale
+    for (let i = 0; i < elencoNemici.length; i++) {
+      const tipo = elencoNemici[i]
+      if (tipo.peso > rimanente) {
+        continue
+      }
+      tiro -= tipo.frequenza
+      if (tiro <= 0) {
+        return tipo
+      }
+    }
+    return null
+  }
+
+  function troppoVicinoAdAltri(x, y, raggio) {
+    for (let i = 0; i < quantiPosti; i++) {
+      const altro = posti[i]
+      const dx = altro.x - x
+      const dy = altro.y - y
+      const minimo = altro.tipo.dimensione + raggio
+      if (dx * dx + dy * dy < minimo * minimo) {
+        return true
+      }
+    }
+    return false
+  }
+
+  // Un punto dentro i muri, libero, e lontano da dove parte il giocatore:
+  // nascergli addosso non gli darebbe scampo.
+  function piazza(tipo) {
+    const margine = popolamento.margine_dai_muri + tipo.dimensione
     const larghezza = arena.destra - arena.sinistra - margine * 2
     const altezza = arena.basso - arena.alto - margine * 2
-    const lato = Math.floor(Math.random() * 4)
+    const distanzaMinima = popolamento.distanza_minima_dal_personaggio
 
-    if (lato === 0) {
-      ingresso.x = arena.sinistra + margine + Math.random() * larghezza
-      ingresso.y = arena.alto + scarto
-    } else if (lato === 1) {
-      ingresso.x = arena.destra - scarto
-      ingresso.y = arena.alto + margine + Math.random() * altezza
-    } else if (lato === 2) {
-      ingresso.x = arena.sinistra + margine + Math.random() * larghezza
-      ingresso.y = arena.basso - scarto
-    } else {
-      ingresso.x = arena.sinistra + scarto
-      ingresso.y = arena.alto + margine + Math.random() * altezza
+    for (let tentativo = 0; tentativo < TENTATIVI_PIAZZAMENTO; tentativo++) {
+      const x = arena.sinistra + margine + Math.random() * larghezza
+      const y = arena.alto + margine + Math.random() * altezza
+      const dx = x - partenzaPersonaggio.x
+      const dy = y - partenzaPersonaggio.y
+      if (dx * dx + dy * dy < distanzaMinima * distanzaMinima) {
+        continue
+      }
+      if (troppoVicinoAdAltri(x, y, tipo.dimensione)) {
+        continue
+      }
+      const posto = posti[quantiPosti]
+      posto.attivo = true
+      posto.tipo = tipo
+      posto.x = x
+      posto.y = y
+      quantiPosti++
+      return true
     }
+    return false
   }
 
-  function accendiIngresso() {
-    const ingresso = primoLibero(inArrivo)
-    if (!ingresso) {
-      return
-    }
-    ingresso.attivo = true
-    ingresso.tempoMs = 0
-    puntoSulBordo(ingresso)
-    daGenerare--
-  }
-
+  // Tutto il caso e tutte le decisioni stanno qui, all'apertura della stanza:
+  // dentro il ciclo di gioco non si tira mai a caso e non si alloca niente.
   function apri(stanza) {
     stanzaCorrente = stanza
-    for (let i = 0; i < inArrivo.length; i++) {
-      inArrivo[i].attivo = false
-    }
-    daGenerare = quantiNemici(stanza)
+    quantiPosti = 0
+    prossimo = 0
+    attesa = 0
 
-    const subito = Math.min(popolamento.quantita_iniziale, daGenerare)
-    for (let i = 0; i < subito; i++) {
-      accendiIngresso()
+    let rimanente = budget(stanza)
+    while (rimanente > 0 && quantiPosti < posti.length) {
+      const tipo = pescaTipo(rimanente)
+      if (!tipo || !piazza(tipo)) {
+        break
+      }
+      rimanente -= tipo.peso
     }
-    // l'attesa parte piena, altrimenti al primo passo scatterebbe subito un
-    // quinto ingresso e quantita_iniziale direbbe una cosa diversa da quella
-    // che succede davvero
-    attesa = popolamento.intervallo_uscita_ms
   }
 
   function svuota() {
-    for (let i = 0; i < inArrivo.length; i++) {
-      inArrivo[i].attivo = false
-    }
-    daGenerare = 0
+    quantiPosti = 0
+    prossimo = 0
     attesa = 0
   }
 
   // Restituisce true nel passo esatto in cui la stanza diventa pulita.
   function aggiorna(passoMs) {
-    for (let i = 0; i < inArrivo.length; i++) {
-      const ingresso = inArrivo[i]
-      if (!ingresso.attivo) {
-        continue
-      }
-      ingresso.tempoMs += passoMs
-      if (ingresso.tempoMs >= ingressi.preavviso_ms) {
-        ingresso.attivo = false
-        nemici.genera(ingresso.x, ingresso.y, stanzaCorrente)
-        effetti.comparsa(ingresso.x, ingresso.y)
-      }
-    }
-
-    if (daGenerare > 0) {
+    if (prossimo < quantiPosti) {
       attesa -= passoMs
       if (attesa <= 0) {
-        accendiIngresso()
-        attesa = popolamento.intervallo_uscita_ms
+        const posto = posti[prossimo]
+        nemici.genera(posto.tipo, posto.x, posto.y, stanzaCorrente)
+        effetti.comparsa(posto.x, posto.y)
+        prossimo++
+        attesa = popolamento.ritardo_comparsa_ms
       }
-    }
-
-    if (daGenerare > 0 || nemici.quantiVivi() > 0) {
       return false
     }
-    for (let i = 0; i < inArrivo.length; i++) {
-      if (inArrivo[i].attivo) {
-        return false
-      }
-    }
-    return true
+    return nemici.quantiVivi() === 0
   }
 
-  function disegna(ctx, stile) {
-    for (let i = 0; i < inArrivo.length; i++) {
-      const ingresso = inArrivo[i]
-      if (!ingresso.attivo) {
-        continue
-      }
-      // pulsa mentre il tempo scorre: piu' e' vicino, piu' il cerchio si chiude
-      const quota = ingresso.tempoMs / ingressi.preavviso_ms
-      ctx.beginPath()
-      ctx.arc(ingresso.x, ingresso.y, stile.raggio * (1 - quota), 0, Math.PI * 2)
-      ctx.lineWidth = stile.spessore
-      ctx.strokeStyle = stile.colore
-      ctx.stroke()
-    }
-  }
-
-  return { apri, aggiorna, disegna, svuota }
+  return { apri, aggiorna, svuota }
 }

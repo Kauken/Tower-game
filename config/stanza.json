@@ -13,20 +13,15 @@
     "basso": 1175,
     "spessore_muro": 16
   },
-  "ingressi": {
-    "_nota": "I nemici entrano dai bordi. Prima compare un segnale nel punto esatto, poi arriva il nemico: farlo comparire addosso al giocatore sarebbe sleale, e la slealta' e' la cosa che fa smettere di giocare. scarto_dal_muro tiene il segnale un po' dentro l'arena, perche' sul bordo esatto verrebbe tagliato a meta'.",
-    "margine_dagli_angoli": 95,
-    "preavviso_ms": 750,
-    "scarto_dal_muro": 32
-  },
   "popolamento": {
-    "_nota": "Quanti nemici ci sono e con che ritmo entrano. La quantita' cresce di stanza in stanza fino al tetto.",
-    "nemico_id": "fante",
-    "quantita_iniziale": 4,
-    "quantita_totale": 8,
-    "quantita_aggiunta_per_stanza": 2,
-    "quantita_massima": 24,
-    "intervallo_uscita_ms": 1500
+    "_nota": "I nemici sono gia' nella stanza quando entri: niente ondate, niente scaglioni. Il budget decide quanti e quali: ogni nemico costa il suo peso (in nemici.json) e si pesca finche' il budget non e' finito. Cosi' una stanza puo' essere sei fanti oppure un golem con due tiratori, e due stanze non si somigliano.",
+    "budget_base": 40,
+    "budget_per_stanza": 13,
+    "budget_massimo": 190,
+    "distanza_minima_dal_personaggio": 260,
+    "margine_dai_muri": 70,
+    "_nota_comparsa": "I nemici non appaiono di colpo tutti insieme: si accendono a brevissima distanza uno dall'altro, cosi' l'occhio li conta invece di trovarsi un muro di rosso.",
+    "ritardo_comparsa_ms": 70
   },
   "partenza_personaggio": {
     "x": 360,

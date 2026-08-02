@@ -15,25 +15,24 @@ export const grafica = motore.grafica
 export const interfaccia = motore.interfaccia
 
 export const arena = stanzaJson.arena
-export const ingressi = stanzaJson.ingressi
 export const popolamento = stanzaJson.popolamento
 export const partenzaPersonaggio = stanzaJson.partenza_personaggio
 
+export const elencoNemici = nemiciJson.nemici
 export const scalaturaNemici = nemiciJson.scalatura
 export const affollamento = nemiciJson.affollamento
 export const datiPersonaggio = personaggioJson.personaggio
 
-function cercaPerId(elenco, id, nomeFile) {
-  const trovato = elenco.find((elemento) => elemento.id === id)
-  if (!trovato) {
-    throw new Error(`Id "${id}" non trovato in ${nomeFile}`)
+// Controllo all'avvio: un comportamento scritto male in configurazione deve
+// fermare il gioco subito con un errore parlante, non produrre nemici inerti.
+for (const nemico of elencoNemici) {
+  if (!nemiciJson.comportamenti_validi.includes(nemico.comportamento)) {
+    throw new Error(
+      `Comportamento "${nemico.comportamento}" del nemico "${nemico.id}" non e' fra quelli validi in nemici.json`
+    )
   }
-  return trovato
 }
 
-// Il nemico che popola le stanze: per ora ce n'e' uno solo, lo dice stanza.json
-export const nemicoStanza = cercaPerId(
-  nemiciJson.nemici,
-  stanzaJson.popolamento.nemico_id,
-  'nemici.json'
-)
+export function aspettoNemico(id) {
+  return grafica.nemici[id] || grafica.nemici.predefinito
+}

@@ -16,25 +16,31 @@ Entri in una stanza col tuo **seguito** di minion appresso. Loro combattono da s
 
 ## Stato del codice
 
-**L'assedio è stato smontato. Il punto 1 della roadmap è FATTO:** esiste la stanza.
+**Punti 1 e 2 della roadmap FATTI:** esiste la stanza, con quattro tipi di nemico che si comportano in modo diverso.
 
-Cosa c'è adesso: un'arena chiusa con i muri, il personaggio che ci sbatte contro, nemici che entrano dai bordi con un segnale di preavviso, inseguono e colpiscono a contatto, si scansano fra loro. Ripuliti tutti, la stanza si dichiara pulita e un pulsante porta alla successiva (le porte vere sono al punto 4). Il personaggio ha vita e a zero la run finisce.
+Cosa c'è adesso: un'arena chiusa con i muri, il personaggio che ci sbatte contro e attacca da solo, e i nemici **già dentro la stanza** quando entri (si accendono uno alla volta per farli contare, ma non arrivano a ondate). Ripuliti tutti, la stanza si dichiara pulita e un pulsante porta alla successiva (le porte vere sono al punto 4). Il personaggio ha vita e a zero la run finisce.
+
+I quattro nemici: **Fante** insegue e basta; **Ratto** sta fermo, si carica e scatta; **Golem** è lento, duro e non si fa spingere; **Occhio vigile** tiene le distanze, prende la mira mostrando una linea e spara un colpo che va schivato. Quanti e quali li decide un **budget** per stanza: ogni tipo ha un costo e una rarità separati, così due stanze non si somigliano.
 
 | File | Cosa fa |
 | --- | --- |
 | `src/game/motore.js` | Ciclo a passo fisso, disegno ritagliato sull'arena, ponte con React |
-| `src/game/stanza.js` | Quanti nemici, da dove entrano, quando la stanza è pulita |
-| `src/game/nemici.js` | Inseguimento, attacco a contatto, spinta reciproca |
+| `src/game/stanza.js` | Budget della stanza, quali nemici e dove, quando è pulita |
+| `src/game/nemici.js` | I quattro comportamenti, attacco, spinta reciproca |
+| `src/game/colpiNemici.js` | I colpi del tiratore: dritti e schivabili |
 | `src/game/personaggio.js` | Movimento, attacco automatico, vita |
 | `src/ui/Levetta.jsx` | La levetta a pollice |
 | `config/stanza.json` | Geometria dell'arena, ingressi, popolamento |
 
-**Non esiste ancora niente** di: seguito, porte, mappa del piano, oggetti, boss, negozio, salvataggio.
+**Non esiste ancora niente** di: porte, mappa del piano, oggetti, boss, negozio, salvataggio, abilità attive.
+
+**Il seguito di minion è stato tagliato** (`DECISIONI.md`): in una stanza chiusa gli alleati tolgono la tensione, perché ogni colpo che assorbono è un colpo che il giocatore non ha dovuto schivare. Resta in riserva come evocazione a pulsante. **Costo dichiarato: il gioco non ha più un elemento distintivo**, ed è la decisione aperta 1.
 
 ## Prossime mosse
 
-1. **Punto 2**: il seguito. Tocca le **decisioni aperte 2 e 3** (come si comporta, quanti sono): vanno chiuse prima, col `consulente-design`.
-2. **Punto 3**: nemici che valgono, poi la **verifica obbligatoria** — ripulire una stanza col seguito appresso è divertente?
+1. **Verifica obbligatoria**: ripulire una stanza è divertente? Se no si aggiusta qui, non si va avanti.
+2. **Punto 3**: le abilità attive sui pulsanti del pollice destro. Lì si decide anche se l'evocazione merita di esistere.
+3. Poi la Fase B: porte, pianta del piano, disposizioni preparate, boss.
 
 ## Cosa è già deciso e non si rimette in discussione
 

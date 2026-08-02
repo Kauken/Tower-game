@@ -8,7 +8,7 @@
 
 ## 1. Il gioco in una riga
 
-**Un action roguelike a stanze alla Binding of Isaac, in cui non entri mai da solo: hai un seguito di minion che ti accompagna di stanza in stanza, e gli oggetti che trovi trasformano loro quanto te.**
+**Un action roguelike a stanze alla Binding of Isaac per telefono: entri, i nemici sono gia' li', ripulisci la stanza e prosegui. Gli oggetti che trovi non ti danno numeri piu' grossi, cambiano il modo in cui combatti.**
 
 ## 2. Cosa NON è più
 
@@ -22,41 +22,21 @@ Cancellati, perché appartenevano a un gioco diverso:
 | Le torri, comprate o conquistate | Restano di un tower defense che non esiste più |
 | "3 carte, ne scegli 1" | Non è Isaac. In Isaac l'oggetto è **uno** su un piedistallo, e il caso sta in quale sia uscito |
 
-**I minion invece restano** — ma cambiano natura, ed è la cosa più importante di tutto il documento.
+Anche **il seguito di minion** è caduto: vedi la sezione qui sotto, con il motivo.
 
-## 3. Il seguito — il cuore del gioco
+## 3. Il seguito di minion: tagliato
 
-I minion non escono più da un castello. **Sono tuoi, ti seguono, e passano con te da una stanza all'altra.**
+Per una fase il progetto ruotava attorno a un seguito di minion che ti accompagnava di stanza in stanza. **E' stato tolto**, su intuizione dell'autore, per un motivo che vale la pena ricordare:
 
-- Entri in una stanza col tuo seguito appresso.
-- Combattono da soli: ingaggiano il nemico più vicino, ti fanno da scudo.
-- Quando cadono restano a terra. **Si rialzano quando la stanza è pulita.**
-- Se cadono tutti, il resto della stanza lo fai da solo, e si sente.
+> In una stanza chiusa, degli alleati distruggono proprio la cosa che rende la stanza interessante: **che ogni nemico e' un tuo problema.**
 
-Le risorse del gioco sono quindi tre, e si difendono in modi diversi:
+Ogni colpo assorbito da un minion e' un colpo che il giocatore non ha dovuto schivare. Su un campo aperto aveva senso; dentro una stanza toglie tensione e sposta il gioco dal giocare al guardare.
 
-| Risorsa | Si perde | Si recupera |
-|---|---|---|
-| **La tua vita** | Colpi presi | Cure, oggetti, ricompense |
-| **Il seguito in piedi** | Minion abbattuti nella stanza | Da solo, a stanza ripulita |
-| **La dimensione del seguito** | Mai | Solo con oggetti e stanze di reclutamento |
+**Resta in riserva in una forma diversa:** l'**evocazione a pulsante**, come le bombe di Isaac. Premi, compaiono due guardie per pochi secondi che bloccano un varco mentre ti riposizioni, poi spariscono. Cosi' sono uno strumento che usa il giocatore, non una folla che gioca al posto suo. Si decide quando ci saranno le abilita' attive.
 
-Il risultato: momento per momento proteggi **chi è in piedi adesso**; nell'arco della run fai crescere **quanti ne puoi avere**.
+### Il debito aperto
 
-### Perché è questa l'idea che vale
-
-Il genere è pieno di roguelike a stanze in cui sei solo. I giochi con un esercito di minion esistono — *Boneraiser Minions*, *Skull Horde*, *Beyond the Silver Gate* — ma sono pochi, di nicchia, e nessuno è il riferimento del genere. **La combinazione "struttura di Isaac + un seguito che cresce" non ha un padrone.**
-
-Da qui una regola pratica: se una scelta di design rende il seguito meno importante, è la scelta sbagliata. Un Isaac senza il seguito non ha motivo di esistere.
-
-### Cosa fai tu che il seguito non sa fare
-
-I ruoli devono essere nettamente diversi, altrimenti li guardi giocare:
-
-- **Tu**: veloce, preciso. Decidi *dove* si combatte, raccogli, apri, schivi, usi le abilità.
-- **Loro**: lenti, ottusi, resistenti. Danno costante e colpi assorbiti.
-
-Tu **imposti** lo scontro, loro lo **vincono**.
+Tagliando il seguito il gioco perde l'unica cosa che lo distingueva da cento altri roguelike a stanze. **E' accettabile adesso** — quello che conta e' che il combattimento sia buono — ma non per sempre. Va trovata una risposta a "perche' questo e non Isaac", e va trovata prima di aggiungere contenuto in quantita'.
 
 ## 4. La stanza
 
@@ -81,7 +61,6 @@ Per noi: un archivio di disposizioni in configurazione, che cresce nel tempo. Un
 | **Normale** | Nemici. Ripulisci e passi |
 | **Tesoro** | Un oggetto su un piedistallo. Lo prendi e basta |
 | **Negozio** | Poche cose in vendita con l'oro raccolto |
-| **Accampamento** | Recluti minion nuovi o alzi il tetto del seguito — la stanza che questo gioco ha e gli altri no |
 | **Evento** | Una scelta scritta, con un prezzo |
 | **Maledetta** | Un oggetto forte, pagato con qualcosa |
 | **Segreta** | Nascosta, si trova rompendo un muro |
@@ -97,9 +76,9 @@ Il modello è Isaac, non le carte:
 
 ### La regola non negoziabile
 
-> **Ogni oggetto deve fare qualcosa anche al seguito, non solo a te.**
+> **Ogni oggetto deve cambiare *come* si combatte, mai solo di quanto.**
 
-Colpi infuocati? Anche i tuoi minion incendiano. I tuoi colpi rimbalzano? Anche i loro. Esplodi morendo? Anche loro. Se un oggetto tocca solo il personaggio, il seguito diventa decorazione e il gioco perde la sua unica idea originale.
+Colpi che rimbalzano, che incendiano il pavimento, che si sdoppiano; nemici che esplodono morendo; colpi che attraversano i muri. Mai "+15% danno": un potenziamento che non si vede addosso ai colpi e' tempo sprecato.
 
 ### Il sistema a tag
 
@@ -115,7 +94,7 @@ Le sinergie sono **regole fra tag, mai fra oggetti specifici**: poche righe gene
 
 Mai due levette virtuali: su un telefono in verticale sono ciò che uccide questi giochi.
 
-`[DA DECIDERE]` **Se si spara solo da fermi.** È il trucco di *Archero*: ti muovi **oppure** spari, mai insieme. Crea tensione continua con un dito solo. Qui potrebbe funzionare ancora meglio, perché mentre ti sposti **il seguito continua a combattere e ti copre**: la scelta diventa "mi tolgo dai guai e lascio fare a loro" contro "resto e faccio male". Da provare quando il combattimento base sarà solido — è una modifica piccola con un effetto grande.
+`[DA DECIDERE]` **Se si spara solo da fermi.** È il trucco di *Archero*: ti muovi **oppure** spari, mai insieme. Con un dito solo crea tensione continua e trasforma ogni istante in una scelta fra fare male e restare vivo. Da provare quando il combattimento base sarà solido — è una modifica piccola con un effetto grande.
 
 ## 7. Struttura della run
 
@@ -131,33 +110,25 @@ Piano 1 (bioma) → 8-10 stanze → boss → Piano 2 → ... → boss finale
 
 ## 8. Progressione permanente
 
-Anche perdendo si avanza: si sbloccano **personaggi, oggetti, tipi di minion, biomi, boss, stanze, eventi**. Valuta permanente: **cristalli**, guadagnati a fine run anche se persa. Mai convertibili con l'oro di partita.
+Anche perdendo si avanza: si sbloccano **personaggi, oggetti, biomi, boss, stanze, eventi**. Valuta permanente: **cristalli**, guadagnati a fine run anche se persa. Mai convertibili con l'oro di partita.
 
 ## 9. Architettura tecnica
 
 Un solo canvas 2D per il campo; React solo per l'interfaccia; **tutti i numeri in `config/*.json`**; salvataggio a ogni cambio di stanza, perché su telefono si viene interrotti. Motore: si resta sul web (deciso, vedi `DECISIONI.md`).
 
-## 10. Cosa del codice attuale sopravvive
+## 10. Stato del codice
 
-| Sopravvive | Muore |
-|---|---|
-| Ciclo a passo fisso, pool preallocati, adattamento allo schermo | Marcia verso il castello avversario |
-| Levetta a pollice | Pressione, spinte, gradi |
-| Personaggio: movimento, attacco automatico, vita, abbattimento | Vita dei castelli, vittoria e sconfitta per castello |
-| Proiettili, effetti, popup dell'oro | Sfondo a campo aperto |
-| **La logica di combattimento delle truppe** — ingaggia il più vicino, colpisci, cadi | Il fatto che i minion nascano da una fortezza |
-
-Circa metà del motore resta in piedi. Quello che va rifatto è **da dove vengono i minion e cosa li muove**: non più un castello che li sforna, ma un seguito che ti sta dietro.
+Il motore dell'assedio è stato smontato. Esiste la stanza: arena chiusa, muri veri, personaggio che si muove col pollice e attacca da solo, nemici, effetti, fine della run. Vedi `docs/HANDOFF.md` per il dettaglio.
 
 ## 11. Ambito — cosa NON si fa adesso
 
-Sprite disegnati, suono, più biomi, più personaggi, progressione permanente, negozio, traduzioni. Prima deve esistere **una stanza che sia divertente da ripulire col seguito appresso**.
+Sprite disegnati, suono, più biomi, più personaggi, progressione permanente, negozio, traduzioni. Prima deve esistere **una stanza che sia divertente da ripulire**, con nemici che si comportano in modi diversi.
 
 ## 12. Punti aperti
 
 - `[DA DECIDERE]` Si spara solo da fermi (modello Archero) o anche in movimento
-- `[DA DECIDERE]` Quanti minion nel seguito iniziale e qual è il tetto
-- `[DA DECIDERE]` Come si comporta il seguito: ti sta incollato, tiene una formazione, o si sparpaglia sui nemici
+- `[DA DECIDERE]` Se l'evocazione a pulsante entra come abilità attiva
+- `[DA DECIDERE]` Cosa distingue questo gioco da Isaac, ora che il seguito è tagliato
 - `[DA DECIDERE]` Quanti oggetti per piano
 - `[DA DECIDERE]` Le 12 regole di sinergia definitive
 - `[DA DECIDERE]` I profili personaggio

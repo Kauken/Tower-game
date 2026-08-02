@@ -10,7 +10,8 @@
     "ingressi_massimi": 12,
     "proiettili_massimi": 120,
     "comandi_massimi": 8,
-    "effetti_massimi": 48
+    "effetti_massimi": 48,
+    "proiettili_nemici_massimi": 60
   },
   "interfaccia": {
     "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
@@ -54,12 +55,6 @@
       "piastrelle": 6,
       "colore_piastrella": "#ffffff05"
     },
-    "ingresso": {
-      "_nota": "Il segnale che avvisa dove sta per entrare un nemico. Pulsa mentre il tempo scorre.",
-      "raggio": 26,
-      "colore": "#c9524a",
-      "spessore": 4
-    },
     "proiettile": {
       "raggio": 6,
       "colore": "#ffe9a8",
@@ -67,9 +62,20 @@
       "spessore_bordo": 2
     },
     "nemico": {
-      "colore": "#c9524a",
-      "colore_bordo": "#f2d0a4",
-      "spessore_bordo": 3
+      "spessore_bordo": 3,
+      "_nota": "Lo spessore del bordo vale per tutti; i colori stanno nel blocco nemici, uno per tipo.",
+      "mira": {
+        "_nota": "Il tiratore resta fermo a prendere la mira prima di sparare: la linea mostra dove tirera' ed e' il tempo che hai per toglierti.",
+        "colore": "#ffe0a0aa",
+        "spessore": 2,
+        "tratto": 10
+      },
+      "scatto": {
+        "_nota": "Il ratto si carica prima di partire: un anello che si stringe avvisa che sta per scattare.",
+        "colore": "#e0cdf5cc",
+        "spessore": 3,
+        "raggio_extra": 12
+      }
     },
     "personaggio": {
       "_nota": "Il cerchio del giocatore deve leggersi al primo colpo d'occhio in mezzo ai nemici: colore diverso, bordo piu' spesso, e un puntino che mostra dove sta guardando.",
@@ -140,6 +146,36 @@
       "colore_bordo": "#0b0f0b",
       "spessore_bordo": 2,
       "_nota": "La barra sopra i nemici. Quella del giocatore sta nel blocco personaggio: sono due cose diverse e devono restare distinguibili."
+    },
+    "nemici": {
+      "_nota": "Un colore per tipo, cosi' si riconoscono al primo colpo d'occhio senza leggere niente. La forma la decide il comportamento nel codice: il tiratore ha un occhio, il corazzato un bordo doppio.",
+      "predefinito": {
+        "colore": "#c9524a",
+        "colore_bordo": "#f2d0a4"
+      },
+      "fante": {
+        "colore": "#c9524a",
+        "colore_bordo": "#f2d0a4"
+      },
+      "ratto": {
+        "colore": "#8f6fb0",
+        "colore_bordo": "#e0cdf5"
+      },
+      "golem": {
+        "colore": "#7d7466",
+        "colore_bordo": "#d8cbb0"
+      },
+      "tiratore": {
+        "colore": "#c98a3a",
+        "colore_bordo": "#ffe0a0"
+      }
+    },
+    "proiettile_nemico": {
+      "_nota": "I colpi dei nemici devono distinguersi dai tuoi al primo sguardo: colore diverso e piu' grossi, perche' sono quelli da schivare.",
+      "raggio": 8,
+      "colore": "#ff9d5c",
+      "colore_bordo": "#ffe0a0",
+      "spessore_bordo": 2
     }
   }
 }

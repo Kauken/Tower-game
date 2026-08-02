@@ -10,6 +10,7 @@ import { creaPool, primoLibero } from './pool.js'
 import { creaGestoreNemici } from './nemici.js'
 import { creaGestoreStanza } from './stanza.js'
 import { creaGestoreProiettili } from './proiettili.js'
+import { creaGestoreColpiNemici } from './colpiNemici.js'
 import { creaGestoreEffetti } from './effetti.js'
 import { creaPersonaggio } from './personaggio.js'
 import { creaStatoPartita, prossimaStanza, reimposta } from './partita.js'
@@ -21,9 +22,16 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   const partita = creaStatoPartita()
   const effetti = creaGestoreEffetti()
 
+  const colpiNemici = creaGestoreColpiNemici({
+    colpisciGiocatore: (danno) => personaggio.colpisci(danno),
+    allImpatto: (x, y) => effetti.impatto(x, y)
+  })
+
   const nemici = creaGestoreNemici({
     allaMorte: (x, y) => effetti.morte(x, y),
-    colpisciGiocatore: (danno) => personaggio.colpisci(danno)
+    colpisciGiocatore: (danno) => personaggio.colpisci(danno),
+    sparaColpo: (x, y, versoX, versoY, velocita, danno) =>
+      colpiNemici.spara(x, y, versoX, versoY, velocita, danno)
   })
 
   const proiettili = creaGestoreProiettili(nemici, effetti)
@@ -65,6 +73,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   function ricomincia() {
     nemici.svuota()
     proiettili.svuota()
+    colpiNemici.svuota()
     effetti.svuota()
     stanza.svuota()
     personaggio.reimposta()
@@ -77,6 +86,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
     proiettili.svuota()
+    colpiNemici.svuota()
     prossimaStanza(partita)
     stanza.apri(partita.stanza)
   }
@@ -119,6 +129,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     nemici.aggiorna(simulazione.passo_ms, passoSecondi)
     personaggio.aggiorna(simulazione.passo_ms, passoSecondi)
     proiettili.aggiorna(passoSecondi)
+    colpiNemici.aggiorna(passoSecondi, personaggio.stato)
     effetti.aggiorna(simulazione.passo_ms)
   }
 
@@ -137,11 +148,11 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     )
     ctxGioco.clip()
 
-    stanza.disegna(ctxGioco, grafica.ingresso)
     nemici.disegna(ctxGioco)
     // il personaggio sopra i nemici: non deve mai sparire nella mischia
     personaggio.disegna(ctxGioco)
     proiettili.disegna(ctxGioco)
+    colpiNemici.disegna(ctxGioco)
     // gli effetti sopra tutto: sono brevi e non coprono niente a lungo
     effetti.disegna(ctxGioco)
 

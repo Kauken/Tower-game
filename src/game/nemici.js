@@ -1,14 +1,20 @@
-// I nemici dentro la stanza: inseguono il personaggio e lo colpiscono a
-// contatto. Si scansano fra loro, altrimenti si sovrappongono in un unico
-// grumo e non si capisce piu' quanti sono.
+// I nemici dentro la stanza. Sono gia' li' quando entri: nessuno arriva a
+// ondate. La varieta' viene da come si comportano, e ognuno si comporta in un
+// modo solo, dichiarato in nemici.json:
+//
+//   inseguitore  ti viene addosso e basta
+//   scattante    sta fermo, si carica, poi parte di colpo
+//   corazzato    lento e duro, e non si fa spingere via dagli altri
+//   tiratore     tiene le distanze, prende la mira e spara
+//
 // Pool preallocato, zero creazioni durante la partita.
 
 import {
   affollamento,
   arena,
+  aspettoNemico,
   grafica,
   limiti,
-  nemicoStanza,
   scalaturaNemici
 } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
@@ -17,6 +23,8 @@ function nuovoNemico() {
   return {
     attivo: false,
     generazione: 0,
+    definizione: null,
+    comportamento: '',
     x: 0,
     y: 0,
     vita: 0,
@@ -28,24 +36,30 @@ function nuovoNemico() {
     cadenzaMs: 0,
     ricarica: 0,
     riduzioneDanno: 0,
-    lampoMs: 0
+    lampoMs: 0,
+    // stato del comportamento: 'avanza' | 'pausa' | 'scatto' | 'mira'
+    fase: '',
+    timerMs: 0,
+    versoX: 0,
+    versoY: 0
   }
 }
 
-// agganci: allaMorte(x, y), colpisciGiocatore(danno)
+// agganci: allaMorte(x, y), colpisciGiocatore(danno),
+//          sparaColpo(x, y, versoX, versoY, velocita, danno)
 export function creaGestoreNemici(agganci) {
   const elenco = creaPool(limiti.nemici_massimi, nuovoNemico)
 
   let vivi = 0
-  // il personaggio: lo insegue chi e' in campo. Arriva dopo la creazione
-  // perche' a sua volta ha bisogno di poter cercare i nemici.
+  // il personaggio: lo inseguono tutti. Arriva dopo la creazione perche' a sua
+  // volta ha bisogno di poter cercare i nemici.
   let giocatore = null
 
   function impostaGiocatore(stato) {
     giocatore = stato
   }
 
-  function genera(x, y, stanza) {
+  function genera(definizione, x, y, stanza) {
     const nemico = primoLibero(elenco)
     if (!nemico) {
       return
@@ -53,19 +67,26 @@ export function creaGestoreNemici(agganci) {
     const esponente = stanza - 1
     nemico.attivo = true
     nemico.generazione++
+    nemico.definizione = definizione
+    nemico.comportamento = definizione.comportamento
     nemico.x = x
     nemico.y = y
     nemico.vitaMassima =
-      nemicoStanza.vita * Math.pow(scalaturaNemici.vita_per_stanza, esponente)
+      definizione.vita * Math.pow(scalaturaNemici.vita_per_stanza, esponente)
     nemico.vita = nemico.vitaMassima
-    nemico.velocita = nemicoStanza.velocita
-    nemico.raggio = nemicoStanza.dimensione
-    nemico.raggioAttacco = nemicoStanza.raggio_attacco
-    nemico.danno = nemicoStanza.danno * Math.pow(scalaturaNemici.danno_per_stanza, esponente)
-    nemico.cadenzaMs = nemicoStanza.cadenza_ms
+    nemico.velocita = definizione.velocita
+    nemico.raggio = definizione.dimensione
+    nemico.raggioAttacco = definizione.raggio_attacco
+    nemico.danno = definizione.danno * Math.pow(scalaturaNemici.danno_per_stanza, esponente)
+    nemico.cadenzaMs = definizione.cadenza_ms
     nemico.ricarica = 0
-    nemico.riduzioneDanno = nemicoStanza.riduzione_danno
+    nemico.riduzioneDanno = definizione.riduzione_danno
     nemico.lampoMs = 0
+    nemico.versoX = 0
+    nemico.versoY = 0
+    // lo scattante nasce in pausa: si vede che si sta caricando prima di partire
+    nemico.fase = definizione.comportamento === 'scattante' ? 'pausa' : 'avanza'
+    nemico.timerMs = nemico.fase === 'pausa' ? definizione.scatto.pausa_ms : 0
     vivi++
   }
 
@@ -86,8 +107,111 @@ export function creaGestoreNemici(agganci) {
     agganci.allaMorte(nemico.x, nemico.y)
   }
 
-  // Spinta reciproca fra nemici vicini. Si guarda solo la coppia (i, j) una
-  // volta sola e si spingono in direzioni opposte.
+  function versoIlGiocatore(nemico) {
+    const dx = giocatore.x - nemico.x
+    const dy = giocatore.y - nemico.y
+    const distanza = Math.sqrt(dx * dx + dy * dy)
+    if (distanza === 0) {
+      nemico.versoX = 0
+      nemico.versoY = 0
+      return 0
+    }
+    nemico.versoX = dx / distanza
+    nemico.versoY = dy / distanza
+    return distanza
+  }
+
+  function attaccaSeAContatto(nemico, distanza) {
+    const portata = nemico.raggio + giocatore.raggio + nemico.definizione.raggio_attacco
+    if (distanza > portata || nemico.ricarica > 0) {
+      return false
+    }
+    agganci.colpisciGiocatore(nemico.danno)
+    nemico.ricarica = nemico.cadenzaMs
+    return true
+  }
+
+  function avanza(nemico, passoSecondi) {
+    const passo = nemico.velocita * passoSecondi
+    nemico.x += nemico.versoX * passo
+    nemico.y += nemico.versoY * passo
+  }
+
+  function aggiornaInseguitore(nemico, passoSecondi) {
+    const distanza = versoIlGiocatore(nemico)
+    const portata = nemico.raggio + giocatore.raggio + nemico.raggioAttacco
+    if (distanza <= portata) {
+      attaccaSeAContatto(nemico, distanza)
+      return
+    }
+    avanza(nemico, passoSecondi)
+  }
+
+  function aggiornaScattante(nemico, passoMs, passoSecondi) {
+    const distanza = versoIlGiocatore(nemico)
+    attaccaSeAContatto(nemico, distanza)
+
+    nemico.timerMs -= passoMs
+    const scatto = nemico.definizione.scatto
+
+    if (nemico.fase === 'pausa') {
+      // fermo, si carica: la direzione si fissa solo nell'istante della partenza
+      if (nemico.timerMs <= 0) {
+        nemico.fase = 'scatto'
+        nemico.timerMs = scatto.durata_ms
+      }
+      return
+    }
+
+    avanza(nemico, passoSecondi)
+    if (nemico.timerMs <= 0) {
+      nemico.fase = 'pausa'
+      nemico.timerMs = scatto.pausa_ms
+    }
+  }
+
+  function aggiornaTiratore(nemico, passoMs, passoSecondi) {
+    const distanza = versoIlGiocatore(nemico)
+    const tiro = nemico.definizione.tiro
+
+    // fermo a prendere la mira: e' il tempo che il giocatore ha per togliersi
+    if (nemico.fase === 'mira') {
+      nemico.timerMs -= passoMs
+      if (nemico.timerMs > 0) {
+        return
+      }
+      nemico.fase = 'avanza'
+      nemico.ricarica = nemico.cadenzaMs
+      agganci.sparaColpo(
+        nemico.x,
+        nemico.y,
+        nemico.versoX,
+        nemico.versoY,
+        tiro.velocita_proiettile,
+        nemico.danno
+      )
+      return
+    }
+
+    if (nemico.ricarica <= 0 && distanza <= nemico.raggioAttacco) {
+      nemico.fase = 'mira'
+      nemico.timerMs = tiro.mira_ms
+      return
+    }
+
+    // tiene la distanza: troppo lontano si avvicina, troppo vicino indietreggia
+    const passo = nemico.velocita * passoSecondi
+    if (distanza > tiro.distanza_preferita + tiro.tolleranza) {
+      nemico.x += nemico.versoX * passo
+      nemico.y += nemico.versoY * passo
+    } else if (distanza < tiro.distanza_preferita - tiro.tolleranza) {
+      nemico.x -= nemico.versoX * passo
+      nemico.y -= nemico.versoY * passo
+    }
+  }
+
+  // Spinta reciproca fra nemici vicini. Si guarda ogni coppia una volta sola.
+  // Il corazzato non si sposta: e' un muro, e deve sentirsi tale.
   function scansa(passoSecondi) {
     const spinta = affollamento.spinta * passoSecondi
 
@@ -111,10 +235,14 @@ export function creaGestoreNemici(agganci) {
         const distanza = Math.sqrt(distanzaQuadrata)
         const versoX = (dx / distanza) * spinta
         const versoY = (dy / distanza) * spinta
-        a.x -= versoX
-        a.y -= versoY
-        b.x += versoX
-        b.y += versoY
+        if (a.comportamento !== 'corazzato') {
+          a.x -= versoX
+          a.y -= versoY
+        }
+        if (b.comportamento !== 'corazzato') {
+          b.x += versoX
+          b.y += versoY
+        }
       }
     }
   }
@@ -150,24 +278,15 @@ export function creaGestoreNemici(agganci) {
         continue
       }
 
-      const dx = giocatore.x - nemico.x
-      const dy = giocatore.y - nemico.y
-      const distanzaQuadrata = dx * dx + dy * dy
-      const portata = nemico.raggioAttacco + nemico.raggio + giocatore.raggio
-
-      // a contatto si ferma e colpisce
-      if (distanzaQuadrata <= portata * portata) {
-        if (nemico.ricarica <= 0) {
-          agganci.colpisciGiocatore(nemico.danno)
-          nemico.ricarica = nemico.cadenzaMs
-        }
-        continue
+      if (nemico.comportamento === 'scattante') {
+        aggiornaScattante(nemico, passoMs, passoSecondi)
+      } else if (nemico.comportamento === 'tiratore') {
+        aggiornaTiratore(nemico, passoMs, passoSecondi)
+      } else {
+        // inseguitore e corazzato si muovono uguale: cambiano i numeri e il
+        // fatto che il corazzato non si faccia spingere
+        aggiornaInseguitore(nemico, passoSecondi)
       }
-
-      const distanza = Math.sqrt(distanzaQuadrata)
-      const passo = nemico.velocita * passoSecondi
-      nemico.x += (dx / distanza) * passo
-      nemico.y += (dy / distanza) * passo
     }
 
     scansa(passoSecondi)
@@ -216,6 +335,23 @@ export function creaGestoreNemici(agganci) {
     return vivi
   }
 
+  // Serve alla stanza per non far nascere due nemici uno dentro l'altro.
+  function spazioLibero(x, y, raggio) {
+    for (let i = 0; i < elenco.length; i++) {
+      const nemico = elenco[i]
+      if (!nemico.attivo) {
+        continue
+      }
+      const dx = nemico.x - x
+      const dy = nemico.y - y
+      const minimo = nemico.raggio + raggio
+      if (dx * dx + dy * dy < minimo * minimo) {
+        return false
+      }
+    }
+    return true
+  }
+
   function svuota() {
     for (let i = 0; i < elenco.length; i++) {
       elenco[i].attivo = false
@@ -224,8 +360,46 @@ export function creaGestoreNemici(agganci) {
     vivi = 0
   }
 
+  function disegnaSegnali(ctx, nemico) {
+    // il tiratore mostra dove sta mirando: e' il tempo per togliersi
+    if (nemico.fase === 'mira') {
+      const stile = grafica.nemico.mira
+      const tiro = nemico.definizione.tiro
+      ctx.save()
+      ctx.setLineDash([stile.tratto, stile.tratto])
+      ctx.beginPath()
+      ctx.moveTo(nemico.x, nemico.y)
+      ctx.lineTo(
+        nemico.x + nemico.versoX * tiro.distanza_preferita,
+        nemico.y + nemico.versoY * tiro.distanza_preferita
+      )
+      ctx.lineWidth = stile.spessore
+      ctx.strokeStyle = stile.colore
+      ctx.stroke()
+      ctx.restore()
+      return
+    }
+
+    // lo scattante si carica: l'anello si stringe fino alla partenza
+    if (nemico.fase === 'pausa') {
+      const stile = grafica.nemico.scatto
+      const quota = nemico.timerMs / nemico.definizione.scatto.pausa_ms
+      ctx.beginPath()
+      ctx.arc(
+        nemico.x,
+        nemico.y,
+        nemico.raggio + stile.raggio_extra * quota,
+        0,
+        Math.PI * 2
+      )
+      ctx.lineWidth = stile.spessore
+      ctx.strokeStyle = stile.colore
+      ctx.stroke()
+    }
+  }
+
   function disegna(ctx) {
-    const stile = grafica.nemico
+    const comune = grafica.nemico
     const barra = grafica.barra_vita_nemico
     const mezzaBarra = barra.larghezza / 2
 
@@ -234,14 +408,30 @@ export function creaGestoreNemici(agganci) {
       if (!nemico.attivo) {
         continue
       }
+      const aspetto = aspettoNemico(nemico.definizione.id)
+
+      disegnaSegnali(ctx, nemico)
 
       ctx.beginPath()
       ctx.arc(nemico.x, nemico.y, nemico.raggio, 0, Math.PI * 2)
-      ctx.fillStyle = nemico.lampoMs > 0 ? grafica.effetti.colore_lampo : stile.colore
+      ctx.fillStyle = nemico.lampoMs > 0 ? grafica.effetti.colore_lampo : aspetto.colore
       ctx.fill()
-      ctx.lineWidth = stile.spessore_bordo
-      ctx.strokeStyle = stile.colore_bordo
+      ctx.lineWidth = comune.spessore_bordo
+      ctx.strokeStyle = aspetto.colore_bordo
       ctx.stroke()
+
+      // il corazzato ha un bordo doppio, il tiratore un occhio: si riconoscono
+      // senza dover leggere niente
+      if (nemico.comportamento === 'corazzato') {
+        ctx.beginPath()
+        ctx.arc(nemico.x, nemico.y, nemico.raggio - comune.spessore_bordo * 2, 0, Math.PI * 2)
+        ctx.stroke()
+      } else if (nemico.comportamento === 'tiratore') {
+        ctx.beginPath()
+        ctx.arc(nemico.x, nemico.y, nemico.raggio / 3, 0, Math.PI * 2)
+        ctx.fillStyle = aspetto.colore_bordo
+        ctx.fill()
+      }
 
       const sinistra = nemico.x - mezzaBarra
       const alto = nemico.y - nemico.raggio - barra.distanza_sopra - barra.altezza
@@ -269,6 +459,7 @@ export function creaGestoreNemici(agganci) {
     colpisciArea,
     piuVicino,
     quantiVivi,
+    spazioLibero,
     svuota
   }
 }
