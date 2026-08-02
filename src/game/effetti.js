@@ -1,5 +1,6 @@
 // Gli effetti visivi: anelli che si allargano e sfumano. Impatto di un colpo,
-// morte di un nemico, comparsa dall'ingresso, esplosione ad area.
+// morte di un combattente, comparsa dall'uscita nemici, colpo al castello,
+// e il lampo delle torri a ogni ciclo di rendita.
 // Tutto da un pool preallocato, come impone td-canvas-loop: si accende e si
 // spegne, mai creare al volo.
 
@@ -59,6 +60,12 @@ export function creaGestoreEffetti() {
     accendiAnello(x, y, stile.esplosione, raggio)
   }
 
+  // Il lampo delle torri quando producono oro: senza, le torri sembrano
+  // decorazione e non si collega a occhio la rendita all'oro che sale.
+  function rendita(x, y) {
+    accendiAnello(x, y, grafica.torre.lampo, 0)
+  }
+
   function aggiorna(passoMs) {
     for (let i = 0; i < anelli.length; i++) {
       const anello = anelli[i]
@@ -95,5 +102,5 @@ export function creaGestoreEffetti() {
     }
   }
 
-  return { impatto, morte, comparsa, esplosione, aggiorna, disegna, svuota }
+  return { impatto, morte, comparsa, esplosione, rendita, aggiorna, disegna, svuota }
 }

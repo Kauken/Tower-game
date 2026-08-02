@@ -1,70 +1,55 @@
-# Lista di costruzione — v5 (progetto riscritto da zero)
+# Lista di costruzione — v6
 
 Un punto alla volta, testando dopo ognuno.
 Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
-Le liste precedenti sono cancellate insieme ai giochi per cui erano scritte.
-Il gioco è quello del `GDD.md` v1.0: **action roguelike a stanze per telefono**.
+Il gioco è quello del `GDD.md` v2.0: **tower defense roguelike in cui si comprano
+reclute invece di piazzare torri.**
 
 ## Come è ordinata
 
-Ogni punto deve lasciare qualcosa di **giocabile col pollice**, e i punti sono
-messi in modo che le domande grosse ricevano risposta il prima possibile.
+Ogni punto deve lasciare qualcosa di **giocabile col pollice**, e la domanda più
+grossa riceve risposta per prima:
 
-La domanda più grossa di tutte è la prima:
+> **Guardare l'oro salire e decidere quando spenderlo è soddisfacente?**
 
-> **Ripulire una stanza è divertente?**
-
-Ci si arriva al punto 2. Tutto il resto — piani, oggetti, boss, negozi — è
-inutile se lì la risposta è no.
+Ci si arriva al punto 1. Tutto il resto — categorie, pool, negozi, boss, biomi —
+è inutile se lì la risposta è no.
 
 ---
 
-## Fase A — la stanza deve essere divertente
+## Fase A — il nucleo deve funzionare
 
-1. **La stanza sola.** Un'arena chiusa con le pareti, il personaggio dentro, nemici da eliminare; ripuliti i nemici la stanza si dichiara pulita. Niente porte ancora — **FATTO**
-   *In più, dichiarato:* un pulsante "Stanza successiva" per poter provare più stanze di fila. Le porte vere, con la scelta della direzione, restano al punto 4.
-2. **Nemici che valgono.** I nemici sono già nella stanza quando entri, non arrivano a scaglioni. 4 tipi con comportamenti diversi: chi ti insegue, chi è veloce e imprevedibile, chi è lento e duro, chi tira da lontano e ti costringe a schivare — **FATTO**
-3. **Abilità attive.** Uno o due pulsanti sul pollice destro con ricarica visibile. Qui si decide se l'evocazione (quel che resta del seguito) merita di esistere.
+1. **Il ciclo dell'oro.** — **FATTO** (2026-08-02). Sentiero, castello con la vita, due torri che producono oro, un pulsante per comprare la recluta base, un pulsante per potenziare la rendita, ondate di nemici che scendono. Si perde se il castello cade.
 
-> ### 🛑 Verifica dopo il punto 2
-> **Ripulire una stanza è divertente?**
-> Se no, il problema è nel combattimento e si risolve qui: velocità dei nemici,
-> quanto perdonano gli errori, quanto ti senti decisivo.
-> Costruire i piani sopra una stanza noiosa moltiplicherebbe solo la noia.
+> ### 🛑 Verifica dopo il punto 1
+> **Decidere quando spendere è soddisfacente?** E soprattutto: **la scelta fra
+> comprare adesso e investire nella rendita è una scelta vera**, o comprare è
+> sempre giusto? Se è sempre giusto, il gioco non esiste ancora e si risolve qui.
 
-## Fase B — il piano
+2. **Le categorie di recluta.** 4 tipi con ruoli diversi (chi regge, chi fa danno, chi colpisce da lontano, chi è veloce ed economico), un pulsante per ciascuna.
+3. **Nemici che valgono.** 4 tipi con comportamenti diversi, e la crescita ondata dopo ondata.
+4. **La pool: tre oggetti, ne scegli uno.** 8 oggetti che cambiano *come* combattono le reclute.
 
-4. **Porte e passaggio.** Ripulita la stanza le porte si aprono, si passa alla stanza accanto.
-5. **La pianta del piano.** Griglia, stanze collegate generate a caso, minimappa. Le stanze speciali hanno il loro posto.
-6. **L'archivio delle disposizioni.** Una ventina di interni preparati in configurazione, pescati a caso: è ciò che rende ogni stanza diversa.
-7. **Il boss.** Una stanza in fondo al piano, un nemico grosso, e la discesa al piano dopo.
+## Fase B — il livello
 
-## Fase C — gli oggetti, cioè il gioco
+5. **La sequenza delle ondate**: normale, speciale, negozio, mini boss, tesoro, boss. Con l'indicatore di cosa sta arrivando.
+6. **Il negozio** fra un'ondata e l'altra.
+7. **Mini boss e boss di bioma**, e il passaggio al livello successivo.
+8. **Le ondate speciali**: vincoli e stranezze che cambiano una singola ondata.
 
-8. **La stanza del tesoro e i primi 8 oggetti.** Un oggetto su un piedistallo, lo prendi e basta. Ognuno cambia **come** si combatte, mai solo di quanto.
+> ### 🛑 Verifica dopo il punto 7
+> **Due run di fila sono diverse fra loro?** Se si somigliano, mancano oggetti
+> o mancano sinergie, e si sta lì.
+
+## Fase C — il gioco intero
+
 9. **Sistema tag e prime 6 sinergie.**
-10. **Altri 10-12 oggetti** con l'agente `designer-contenuti`.
-
-> ### 🛑 Verifica dopo il punto 10
-> **Due run di fila sono diverse fra loro?** È la promessa del genere.
-> Se le run si somigliano, mancano oggetti o mancano sinergie, e si sta lì.
-
-## Fase D — il gioco intero
-
-11. **Le stanze speciali**: negozio, evento, maledetta, segreta.
-12. **Il secondo e terzo bioma**: nemici, boss e disposizioni propri.
-14. **Salvataggio e ripresa.** Su telefono si viene interrotti: non negoziabile prima di far provare il gioco a chiunque altro.
+10. **Il tetto di equipaggiamento**: porti poche categorie su molte, e la pool si piega su quelle.
+11. **Altri oggetti e altre reclute** con l'agente `designer-contenuti`.
+12. **Il secondo e terzo bioma.**
+13. **Salvataggio e ripresa.**
 14. **Progressione permanente**: cristalli e sblocchi.
 15. **Bilanciamento e rifinitura** con gli agenti dedicati.
-16. **Impacchettamento mobile** con Capacitor, e rivalutazione del motore di gioco.
-
----
-
-## Il debito aperto
-
-Tagliando il seguito il gioco ha perso l'unica cosa che lo distingueva da cento
-altri roguelike a stanze (`DECISIONI.md`, voce aperta 1). Non va risolto adesso
-— prima il combattimento deve essere buono — ma **prima della Fase C**, cioè
-prima di mettersi a produrre oggetti in quantità.
+16. **Impacchettamento mobile** con Capacitor, e rivalutazione del motore.

@@ -1,117 +1,137 @@
 {
-  "_nota": "Valori del motore e dell'aspetto grafico. Provvisori. Distanze in pixel logici, tempi in millisecondi.",
+  "_nota": "Valori del motore e dell'aspetto grafico. Non sono valori di bilanciamento: l'agente bilanciatore non tocca questo file. Distanze in pixel logici, tempi in millisecondi.",
   "simulazione": {
     "passo_ms": 16.67,
     "passi_massimi_per_frame": 5
   },
   "limiti": {
-    "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo.",
+    "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo. Se un'ondata ne chiede di piu', i nemici in eccesso semplicemente non escono.",
     "nemici_massimi": 60,
-    "ingressi_massimi": 12,
-    "proiettili_massimi": 120,
+    "reclute_massime": 40,
     "comandi_massimi": 8,
-    "effetti_massimi": 48,
-    "proiettili_nemici_massimi": 60
+    "effetti_massimi": 48
   },
   "interfaccia": {
     "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
     "aggiornamenti_al_secondo": 10,
-    "altezza_minima_tocco": 52,
+    "altezza_minima_tocco": 64,
     "spaziatura": 12,
     "raggio_angoli": 14,
-    "testo_titolo": 20,
+    "testo_titolo": 22,
     "testo_normale": 15,
+    "testo_piccolo": 14,
     "colore_pannello": "#161b22e0",
     "colore_bordo_pannello": "#3a4550",
     "colore_testo": "#e8e3d5",
     "colore_testo_debole": "#9fa89b",
-    "colore_pulsante": "#3f6b46",
+    "colore_oro": "#f2c44a",
     "colore_scelto": "#f2d0a4",
     "colore_pulsante_testo": "#ffffff",
     "colore_sconfitta": "#0d0f14f2",
     "colore_allarme": "#d9705f",
-    "levetta": {
-      "_nota": "La levetta nasce dove appoggi il dito e sparisce quando lo alzi. zona_morta evita che il personaggio parta per un tremolio.",
-      "raggio_base": 58,
-      "raggio_pomello": 30,
-      "distanza_massima": 52,
-      "zona_morta": 8,
-      "colore_base": "#e8e3d51f",
-      "colore_bordo_base": "#e8e3d54d",
-      "spessore_bordo_base": 2,
-      "colore_pomello": "#e8e3d566",
-      "colore_bordo_pomello": "#e8e3d5aa",
-      "spessore_bordo_pomello": 2
+    "pulsanti": {
+      "_nota": "I due pulsanti stanno in basso, sotto il pollice. Quando l'oro non basta restano visibili ma spenti: sapere quanto manca fa parte della decisione, nasconderli no.",
+      "colore_recluta": "#3f6b46",
+      "colore_rendita": "#4a5c86",
+      "colore_spento": "#2b3138",
+      "colore_testo_spento": "#79828b",
+      "colore_bordo_pronto": "#f2c44a",
+      "spessore_bordo_pronto": 2,
+      "opacita_premuto": 0.75
+    },
+    "barra_castello": {
+      "_nota": "La vita del castello in alto: e' la cosa che si perde, deve leggersi senza contare i numeri.",
+      "altezza": 10,
+      "colore_fondo": "#00000066",
+      "colore_pieno": "#7fd67f",
+      "colore_basso": "#d9705f",
+      "soglia_bassa": 0.35,
+      "raggio_angoli": 5
     }
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",
-    "stanza": {
-      "_nota": "Il pavimento e i muri. Le piastrelle danno un riferimento per capire quanto ci si e' spostati: su un pavimento uniforme il movimento non si legge.",
-      "colore_pavimento": "#1d2a21",
-      "colore_muro": "#3b4c40",
-      "colore_bordo_muro": "#55705c",
-      "spessore_bordo_muro": 3,
-      "piastrelle": 6,
-      "colore_piastrella": "#ffffff05"
+    "campo": {
+      "_nota": "Il terreno e il sentiero. Il sentiero e' disegnato come una linea spessa che segue la spezzata di percorso.json.",
+      "colore_terreno": "#1d2a21",
+      "colore_sentiero": "#4a4033",
+      "colore_bordo_sentiero": "#6b5c48",
+      "spessore_bordo_sentiero": 4,
+      "colore_traversine": "#00000022",
+      "distanza_traversine": 48,
+      "spessore_traversine": 3
     },
-    "proiettile": {
-      "raggio": 6,
-      "colore": "#ffe9a8",
-      "colore_bordo": "#ffffff",
-      "spessore_bordo": 2
+    "castello": {
+      "_nota": "Il castello in fondo al sentiero: e' quello che si difende, deve essere la cosa piu' solida sullo schermo.",
+      "colore": "#4c5a6b",
+      "colore_bordo": "#93a3b5",
+      "spessore_bordo": 4,
+      "raggio_angoli": 10,
+      "merli": 5,
+      "altezza_merli": 16
     },
-    "nemico": {
+    "uscita_nemici": {
+      "_nota": "La breccia da cui scendono i nemici, in cima al sentiero.",
+      "colore": "#3a2430",
+      "colore_bordo": "#c9524a",
       "spessore_bordo": 3,
-      "_nota": "Lo spessore del bordo vale per tutti; i colori stanno nel blocco nemici, uno per tipo.",
-      "mira": {
-        "_nota": "Il tiratore resta fermo a prendere la mira prima di sparare: la linea mostra dove tirera' ed e' il tempo che hai per toglierti.",
-        "colore": "#ffe0a0aa",
-        "spessore": 2,
-        "tratto": 10
-      },
-      "scatto": {
-        "_nota": "Il ratto si carica prima di partire: un anello che si stringe avvisa che sta per scattare.",
-        "colore": "#e0cdf5cc",
-        "spessore": 3,
-        "raggio_extra": 12
+      "raggio_angoli": 8
+    },
+    "torre": {
+      "_nota": "Le due torri che producono oro. Non sparano. Il lampo a ogni ciclo di rendita e' l'unico modo per collegare a occhio le torri all'oro che sale.",
+      "raggio": 26,
+      "colore": "#5a4f3f",
+      "colore_bordo": "#f2c44a",
+      "spessore_bordo": 3,
+      "colore_tetto": "#8a6f3f",
+      "lampo": {
+        "durata_ms": 420,
+        "raggio_massimo": 46,
+        "colore": "#f2c44a",
+        "spessore": 3
       }
     },
-    "personaggio": {
-      "_nota": "Il cerchio del giocatore deve leggersi al primo colpo d'occhio in mezzo ai nemici: colore diverso, bordo piu' spesso, e un puntino che mostra dove sta guardando.",
-      "colore": "#f2d0a4",
-      "colore_bordo": "#ffffff",
-      "spessore_bordo": 4,
-      "sguardo": {
-        "distanza": 15,
-        "raggio": 6,
-        "colore": "#ffffff"
-      },
-      "portata": {
-        "_nota": "Cerchio tenue che mostra fin dove arriva l'attacco automatico.",
-        "colore": "#f2d0a41f",
-        "spessore": 2
-      },
+    "combattente": {
+      "_nota": "Come si disegnano nemici e reclute: stessa struttura, colori diversi. I nemici sono cerchi, le reclute quadrati, cosi' si distinguono anche per forma e non solo per colore.",
+      "spessore_bordo": 3,
+      "lampo_colpo_ms": 90,
+      "colore_lampo": "#ffffffcc",
       "barra_vita": {
-        "larghezza": 64,
-        "altezza": 9,
-        "distanza_sopra": 16,
+        "larghezza": 30,
+        "altezza": 6,
+        "distanza_sopra": 11,
         "colore_fondo": "#00000099",
-        "colore_pieno": "#f2d0a4",
-        "colore_basso": "#d9705f",
-        "soglia_bassa": 0.35,
+        "colore_pieno_nemico": "#c9524a",
+        "colore_pieno_recluta": "#7fd67f",
         "colore_bordo": "#0b0f0b",
-        "spessore_bordo": 2
+        "spessore_bordo": 2,
+        "_nota": "La barra compare solo quando il combattente e' ferito: con tutte piene sarebbe solo rumore."
+      }
+    },
+    "nemici": {
+      "_nota": "Un colore per tipo, cosi' si riconoscono al primo colpo d'occhio senza leggere niente.",
+      "predefinito": {
+        "colore": "#c9524a",
+        "colore_bordo": "#f2d0a4"
       },
-      "immunita": {
-        "_nota": "Il lampeggio dopo un colpo preso: si vede che per un istante non ti possono toccare di nuovo.",
-        "opacita": 0.5
+      "fante": {
+        "colore": "#c9524a",
+        "colore_bordo": "#f2d0a4"
+      }
+    },
+    "reclute": {
+      "_nota": "Un colore per recluta. Devono distinguersi dai nemici al primo sguardo: tinte fredde contro le tinte calde dei nemici.",
+      "predefinito": {
+        "colore": "#4a7fb5",
+        "colore_bordo": "#cfe4f5"
+      },
+      "milite": {
+        "colore": "#4a7fb5",
+        "colore_bordo": "#cfe4f5"
       }
     },
     "effetti": {
-      "_nota": "Feedback visivi. Durate in millisecondi, distanze in pixel logici.",
-      "lampo_colpo_ms": 90,
-      "colore_lampo": "#ffffffcc",
+      "_nota": "Feedback visivi: anelli che si allargano e sfumano. Durate in millisecondi, distanze in pixel logici.",
       "impatto": {
         "durata_ms": 140,
         "raggio_massimo": 14,
@@ -120,62 +140,22 @@
       },
       "morte": {
         "durata_ms": 240,
-        "raggio_massimo": 30,
+        "raggio_massimo": 26,
         "colore": "#f2d0a4",
         "spessore": 3
       },
       "comparsa": {
         "durata_ms": 320,
-        "raggio_massimo": 34,
+        "raggio_massimo": 30,
         "colore": "#c9524a",
         "spessore": 4
       },
       "esplosione": {
         "durata_ms": 260,
+        "raggio_massimo": 40,
         "colore": "#ffb35c",
-        "spessore": 4,
-        "raggio_massimo": 40
+        "spessore": 4
       }
-    },
-    "barra_vita_nemico": {
-      "larghezza": 40,
-      "altezza": 7,
-      "distanza_sopra": 12,
-      "colore_fondo": "#00000099",
-      "colore_pieno": "#7fd67f",
-      "colore_bordo": "#0b0f0b",
-      "spessore_bordo": 2,
-      "_nota": "La barra sopra i nemici. Quella del giocatore sta nel blocco personaggio: sono due cose diverse e devono restare distinguibili."
-    },
-    "nemici": {
-      "_nota": "Un colore per tipo, cosi' si riconoscono al primo colpo d'occhio senza leggere niente. La forma la decide il comportamento nel codice: il tiratore ha un occhio, il corazzato un bordo doppio.",
-      "predefinito": {
-        "colore": "#c9524a",
-        "colore_bordo": "#f2d0a4"
-      },
-      "fante": {
-        "colore": "#c9524a",
-        "colore_bordo": "#f2d0a4"
-      },
-      "ratto": {
-        "colore": "#8f6fb0",
-        "colore_bordo": "#e0cdf5"
-      },
-      "golem": {
-        "colore": "#7d7466",
-        "colore_bordo": "#d8cbb0"
-      },
-      "tiratore": {
-        "colore": "#c98a3a",
-        "colore_bordo": "#ffe0a0"
-      }
-    },
-    "proiettile_nemico": {
-      "_nota": "I colpi dei nemici devono distinguersi dai tuoi al primo sguardo: colore diverso e piu' grossi, perche' sono quelli da schivare.",
-      "raggio": 8,
-      "colore": "#ff9d5c",
-      "colore_bordo": "#ffe0a0",
-      "spessore_bordo": 2
     }
   }
 }

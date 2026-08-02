@@ -1,0 +1,32 @@
+{
+  "_nota": "Il campo di battaglia: il sentiero che i nemici scendono e le reclute risalgono, il castello da difendere e le due torri che producono oro. Coordinate logiche in un'area 720x1280, poi il canvas viene scalato per riempire lo schermo. Valori provvisori.",
+  "area": {
+    "larghezza": 720,
+    "altezza": 1280
+  },
+  "campo": {
+    "_nota": "Il sentiero e' una spezzata: i nemici entrano dal primo punto e camminano fino all'ultimo, dove c'e' il castello. Le curve servono a far sembrare un percorso invece di una corsia dritta.",
+    "_nota_altezze": "Il sentiero sta fra y=270 e y=1135: sopra ci va il cruscotto e sotto i due pulsanti, e ne' la breccia ne' il castello devono finirci sotto.",
+    "sentiero": [
+      { "x": 360, "y": 270 },
+      { "x": 360, "y": 417 },
+      { "x": 180, "y": 515 },
+      { "x": 180, "y": 678 },
+      { "x": 540, "y": 776 },
+      { "x": 540, "y": 939 },
+      { "x": 360, "y": 1037 },
+      { "x": 360, "y": 1135 }
+    ],
+    "larghezza_sentiero": 96,
+    "_nota_scarti": "Gli scostamenti laterali dalla linea del sentiero, usati a rotazione: servono solo a non far sovrapporre i combattenti nel disegno. Gli scontri si decidono sulla distanza percorsa, mai in linea d'aria.",
+    "scarti_sentiero": [-26, 0, 26, -13, 13],
+    "_nota_fila": "Quanto spazio tiene un combattente da quello che ha davanti dalla stessa parte. Senza questo, tutti quelli bloccati si ammucchiano nello stesso punto e la schiera sembra un blocco solo.",
+    "distanza_minima_in_fila": 26,
+    "castello": { "x": 360, "y": 1180, "larghezza": 300, "altezza": 90 },
+    "uscita_nemici": { "x": 360, "y": 230, "larghezza": 220, "altezza": 60 },
+    "torri_rendita": [
+      { "x": 130, "y": 900 },
+      { "x": 590, "y": 380 }
+    ]
+  }
+}

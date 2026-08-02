@@ -1,0 +1,20 @@
+{
+  "_nota": "Le reclute che il giocatore compra. Partono dal castello e risalgono il sentiero: non si piazzano. Per ora ce n'e' una sola, le categorie arrivano al punto 2. Velocita' in pixel logici al secondo, tempi in millisecondi, dimensione e' il raggio. Valori provvisori.",
+  "reclute": [
+    {
+      "id": "milite",
+      "nome": "Milite",
+      "categoria": "fanteria",
+      "_nota": "La recluta base: economica, niente di speciale. E' il metro con cui si misurera' tutto il resto.",
+      "costo": 25,
+      "vita": 46,
+      "velocita": 78,
+      "danno": 9,
+      "cadenza_ms": 750,
+      "raggio_ingaggio": 34,
+      "riduzione_danno": 0,
+      "dimensione": 14
+    }
+  ],
+  "recluta_iniziale": "milite"
+}

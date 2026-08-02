@@ -1,92 +1,24 @@
 {
-  "_nota": "I nemici delle stanze. Ognuno ha un comportamento diverso: e' da li' che viene la varieta', non da quando entrano. peso e' quanto costa al budget della stanza (un golem vale come tre fanti); frequenza e' quanto spesso viene pescato. Sono due cose diverse: un nemico puo' costare molto ed essere comunque raro. Velocita' in pixel logici al secondo, tempi in millisecondi, dimensione e' il raggio. Valori provvisori.",
-  "comportamenti_validi": [
-    "inseguitore",
-    "scattante",
-    "corazzato",
-    "tiratore"
-  ],
+  "_nota": "I nemici che scendono lungo il sentiero. Per ora ce n'e' uno solo: i tipi diversi arrivano al punto 3. Velocita' in pixel logici al secondo, tempi in millisecondi, dimensione e' il raggio. Valori provvisori.",
   "nemici": [
     {
       "id": "fante",
       "nome": "Fante",
-      "comportamento": "inseguitore",
-      "_nota": "Il nemico base: ti viene addosso e basta. Serve a riempire e a fare pressione.",
-      "peso": 6,
-      "vita": 30,
-      "velocita": 115,
-      "danno": 9,
-      "cadenza_ms": 850,
-      "raggio_attacco": 26,
+      "vita": 34,
+      "velocita": 68,
+      "danno": 8,
+      "cadenza_ms": 800,
+      "raggio_ingaggio": 34,
       "riduzione_danno": 0,
-      "dimensione": 15,
-      "frequenza": 10
-    },
-    {
-      "id": "ratto",
-      "nome": "Ratto nero",
-      "comportamento": "scattante",
-      "_nota": "Fragile e imprevedibile: sta fermo, poi scatta addosso. Punisce chi si distrae.",
-      "peso": 5,
-      "vita": 16,
-      "velocita": 320,
-      "danno": 6,
-      "cadenza_ms": 700,
-      "raggio_attacco": 22,
-      "riduzione_danno": 0,
-      "dimensione": 11,
-      "scatto": {
-        "_nota": "Alterna pausa e scatto. Durante la pausa e' fermo e si vede che sta per partire.",
-        "pausa_ms": 900,
-        "durata_ms": 450
-      },
-      "frequenza": 7
-    },
-    {
-      "id": "golem",
-      "nome": "Golem di pietra",
-      "comportamento": "corazzato",
-      "_nota": "Lento, tanta vita, colpi che fanno molto male. Non si puo' ignorare ma si puo' girare intorno.",
-      "peso": 16,
-      "vita": 130,
-      "velocita": 58,
-      "danno": 22,
-      "cadenza_ms": 1500,
-      "raggio_attacco": 34,
-      "riduzione_danno": 3,
-      "dimensione": 24,
-      "frequenza": 3
-    },
-    {
-      "id": "tiratore",
-      "nome": "Occhio vigile",
-      "comportamento": "tiratore",
-      "_nota": "Tiene le distanze e spara. E' il nemico che obbliga a schivare invece che a stare fermi a sparare: senza di lui il gioco non ha bisogno delle mani.",
-      "peso": 9,
-      "vita": 22,
-      "velocita": 95,
-      "danno": 11,
-      "cadenza_ms": 1900,
-      "raggio_attacco": 300,
-      "riduzione_danno": 0,
-      "dimensione": 14,
-      "tiro": {
-        "_nota": "distanza_preferita: sotto questa si allontana, sopra si avvicina. mira_ms: quanto resta fermo a prendere la mira prima di sparare, ed e' il tempo che hai per toglierti.",
-        "distanza_preferita": 230,
-        "tolleranza": 45,
-        "mira_ms": 550,
-        "velocita_proiettile": 330
-      },
-      "frequenza": 5
+      "danno_castello": 1,
+      "oro_rilasciato": 6,
+      "dimensione": 14
     }
   ],
   "scalatura": {
-    "_nota": "Crescita di stanza in stanza. valore = base * (moltiplicatore ^ (stanza - 1)).",
-    "vita_per_stanza": 1.1,
-    "danno_per_stanza": 1.06
-  },
-  "affollamento": {
-    "_nota": "I nemici si scansano fra loro: senza questo si sovrappongono tutti in un unico grumo e non si capisce piu' quanti sono. spinta e' quanto si allontanano al secondo.",
-    "spinta": 90
+    "_nota": "Crescita ondata dopo ondata. valore = base * (moltiplicatore ^ (ondata - 1)). Con 1.16 l'ondata 20 vale circa 19 volte la prima.",
+    "vita_per_ondata": 1.16,
+    "danno_per_ondata": 1.1,
+    "oro_per_ondata": 1.05
   }
 }

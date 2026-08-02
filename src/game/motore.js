@@ -1,58 +1,77 @@
 // Ciclo di gioco: passo fisso di simulazione, disegno alla frequenza dello
 // schermo. Dentro aggiorna() e disegna() non si creano oggetti nuovi.
-// Le azioni dell'interfaccia entrano da una coda di comandi; la levetta no,
-// perche' e' uno stato continuo e in coda si perderebbero valori.
+//
+// Le azioni dell'interfaccia (compra, potenzia, ricomincia) entrano da una
+// coda di comandi e vengono eseguite dentro un passo di simulazione: cosi' due
+// tocchi ravvicinati non possono spendere due volte lo stesso oro.
 
-import { area, arena, grafica, limiti, simulazione } from './config.js'
+import {
+  area,
+  campo,
+  limiti,
+  reclutaIniziale,
+  simulazione,
+  trovaRecluta
+} from './config.js'
 import { disegnaSfondo } from './sfondo.js'
 import { adattaCanvas } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
-import { creaGestoreNemici } from './nemici.js'
-import { creaGestoreStanza } from './stanza.js'
-import { creaGestoreProiettili } from './proiettili.js'
-import { creaGestoreColpiNemici } from './colpiNemici.js'
+import { creaGestoreCombattenti } from './combattenti.js'
 import { creaGestoreEffetti } from './effetti.js'
-import { creaPersonaggio } from './personaggio.js'
-import { creaStatoPartita, prossimaStanza, reimposta } from './partita.js'
+import { creaEconomia } from './economia.js'
+import { creaGestoreOndate } from './ondate.js'
+import { colpisciCastello, creaStatoPartita, reimposta } from './partita.js'
 
 export function creaMotore(canvasSfondo, canvasGioco) {
   const passoSecondi = simulazione.passo_ms / 1000
   const accumuloMassimo = simulazione.passi_massimi_per_frame * simulazione.passo_ms
 
+  const datiRecluta = trovaRecluta(reclutaIniziale)
+
   const partita = creaStatoPartita()
   const effetti = creaGestoreEffetti()
 
-  const colpiNemici = creaGestoreColpiNemici({
-    colpisciGiocatore: (danno) => personaggio.colpisci(danno),
-    allImpatto: (x, y) => effetti.impatto(x, y)
-  })
-
-  const nemici = creaGestoreNemici({
-    allaMorte: (x, y) => effetti.morte(x, y),
-    colpisciGiocatore: (danno) => personaggio.colpisci(danno),
-    sparaColpo: (x, y, versoX, versoY, velocita, danno) =>
-      colpiNemici.spara(x, y, versoX, versoY, velocita, danno)
-  })
-
-  const proiettili = creaGestoreProiettili(nemici, effetti)
-  const personaggio = creaPersonaggio(nemici, proiettili, {
-    allaMorte: (x, y) => {
-      effetti.morte(x, y)
-      partita.fase = 'sconfitta'
+  const economia = creaEconomia({
+    allaProduzione: () => {
+      for (let i = 0; i < campo.torri_rendita.length; i++) {
+        effetti.rendita(campo.torri_rendita[i].x, campo.torri_rendita[i].y)
+      }
     }
   })
-  const stanza = creaGestoreStanza(nemici, effetti)
+
+  const combattenti = creaGestoreCombattenti({
+    allImpatto: (x, y) => effetti.impatto(x, y),
+    allaMorte: (x, y) => effetti.morte(x, y),
+    allaComparsa: (x, y) => effetti.comparsa(x, y),
+    allArrivoAlCastello: (danno, x, y) => {
+      effetti.esplosione(x, y, 0)
+      colpisciCastello(partita, danno)
+    },
+    allOroRaccolto: (quantita) => economia.incassa(quantita)
+  })
+
+  const ondate = creaGestoreOndate(combattenti, partita, {
+    allaFineOndata: (numeroOndata) => economia.ricompensaOndata(numeroOndata)
+  })
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({ attivo: false, tipo: '' }))
 
   // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
   // aggiornato sul posto, non ricreato.
   const vetrina = {
-    vita: 0,
-    vitaMassima: 0,
-    nemici: 0,
-    stanza: 0,
-    fase: 'combattimento'
+    oro: 0,
+    oroPerCiclo: 0,
+    livelloRendita: 0,
+    costoRecluta: datiRecluta.costo,
+    nomeRecluta: datiRecluta.nome,
+    costoPotenziamento: 0,
+    renditaAlMassimo: false,
+    vitaCastello: 0,
+    vitaCastelloMassima: 0,
+    ondata: 0,
+    fase: 'attesa',
+    secondiAllOndata: 0,
+    nemiciRimanenti: 0
   }
 
   let ctxSfondo = null
@@ -71,24 +90,21 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   }
 
   function ricomincia() {
-    nemici.svuota()
-    proiettili.svuota()
-    colpiNemici.svuota()
+    combattenti.svuota()
     effetti.svuota()
-    stanza.svuota()
-    personaggio.reimposta()
+    economia.reimposta()
     reimposta(partita)
-    stanza.apri(partita.stanza)
+    ondate.reimposta()
   }
 
-  function avanti() {
-    if (partita.fase !== 'pulita') {
+  function compraRecluta() {
+    if (partita.fase === 'sconfitta') {
       return
     }
-    proiettili.svuota()
-    colpiNemici.svuota()
-    prossimaStanza(partita)
-    stanza.apri(partita.stanza)
+    if (!economia.spendi(datiRecluta.costo)) {
+      return
+    }
+    combattenti.faiPartireRecluta(reclutaIniziale)
   }
 
   function eseguiComandi() {
@@ -100,8 +116,10 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       comando.attivo = false
       if (comando.tipo === 'ricomincia') {
         ricomincia()
-      } else if (comando.tipo === 'avanti') {
-        avanti()
+      } else if (comando.tipo === 'compra_recluta') {
+        compraRecluta()
+      } else if (comando.tipo === 'potenzia_rendita' && partita.fase !== 'sconfitta') {
+        economia.potenziaRendita()
       }
     }
   }
@@ -122,41 +140,19 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
 
-    if (partita.fase === 'combattimento' && stanza.aggiorna(simulazione.passo_ms)) {
-      partita.fase = 'pulita'
-    }
-
-    nemici.aggiorna(simulazione.passo_ms, passoSecondi)
-    personaggio.aggiorna(simulazione.passo_ms, passoSecondi)
-    proiettili.aggiorna(passoSecondi)
-    colpiNemici.aggiorna(passoSecondi, personaggio.stato)
+    // l'oro sale anche mentre non succede niente: e' la pausa fra le ondate
+    // che rende una decisione il momento in cui si spende
+    economia.aggiorna(simulazione.passo_ms)
+    ondate.aggiorna(simulazione.passo_ms)
+    combattenti.aggiorna(simulazione.passo_ms, passoSecondi)
     effetti.aggiorna(simulazione.passo_ms)
   }
 
   function disegna() {
     ctxGioco.clearRect(0, 0, area.larghezza, area.altezza)
-
-    // niente esce mai dalla stanza: senza questo il cerchio della portata e
-    // gli effetti sui bordi sbordano sui muri e il campo sembra rotto
-    ctxGioco.save()
-    ctxGioco.beginPath()
-    ctxGioco.rect(
-      arena.sinistra,
-      arena.alto,
-      arena.destra - arena.sinistra,
-      arena.basso - arena.alto
-    )
-    ctxGioco.clip()
-
-    nemici.disegna(ctxGioco)
-    // il personaggio sopra i nemici: non deve mai sparire nella mischia
-    personaggio.disegna(ctxGioco)
-    proiettili.disegna(ctxGioco)
-    colpiNemici.disegna(ctxGioco)
+    combattenti.disegna(ctxGioco)
     // gli effetti sopra tutto: sono brevi e non coprono niente a lungo
     effetti.disegna(ctxGioco)
-
-    ctxGioco.restore()
   }
 
   function frame(tempo) {
@@ -177,7 +173,6 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   }
 
   function avvia() {
-    stanza.apri(partita.stanza)
     ultimoTempo = performance.now()
     accumulato = 0
     richiesta = requestAnimationFrame(frame)
@@ -192,30 +187,34 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   // L'interfaccia legge, non chiede: nessun oggetto nuovo a ogni lettura.
   function leggiStato() {
-    vetrina.vita = Math.ceil(personaggio.stato.vita)
-    vetrina.vitaMassima = personaggio.stato.vitaMassima
-    vetrina.nemici = nemici.quantiVivi()
-    vetrina.stanza = partita.stanza
+    vetrina.oro = Math.floor(economia.stato.oro)
+    vetrina.oroPerCiclo = economia.stato.oroPerCiclo
+    vetrina.livelloRendita = economia.stato.livelloRendita
+    vetrina.costoPotenziamento = economia.stato.costoPotenziamento
+    vetrina.renditaAlMassimo = economia.stato.renditaAlMassimo
+    vetrina.vitaCastello = partita.vitaCastello
+    vetrina.vitaCastelloMassima = partita.vitaCastelloMassima
+    vetrina.ondata = partita.ondata
     vetrina.fase = partita.fase
+    // arrotondato per eccesso: il conto alla rovescia non deve mostrare 0
+    // mentre l'ondata non e' ancora partita
+    vetrina.secondiAllOndata =
+      partita.fase === 'attesa' ? Math.ceil(partita.attesaMs / 1000) : 0
+    vetrina.nemiciRimanenti = partita.fase === 'ondata' ? partita.nemiciRimanenti : 0
     return vetrina
   }
 
-  // La levetta scrive direttamente: e' uno stato continuo, non un'azione.
-  function muovi(x, y, intensita) {
-    personaggio.muovi(x, y, intensita)
+  function compra() {
+    accodaComando('compra_recluta')
   }
 
-  function prosegui() {
-    accodaComando('avanti')
+  function potenzia() {
+    accodaComando('potenzia_rendita')
   }
 
   function riparti() {
     accodaComando('ricomincia')
   }
 
-  // i nemici inseguono il personaggio: glielo si presenta qui, perche' a sua
-  // volta il personaggio ha bisogno di poter cercare i nemici
-  nemici.impostaGiocatore(personaggio.stato)
-
-  return { avvia, ferma, ridimensiona, leggiStato, muovi, prosegui, riparti }
+  return { avvia, ferma, ridimensiona, leggiStato, compra, potenzia, riparti }
 }

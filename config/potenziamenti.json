@@ -1,5 +1,5 @@
 {
-  "_nota": "Solo struttura e pochi esempi: il pool vero si costruisce con l'agente designer-contenuti (punto 4). Nessuno legge ancora questo file. Regola del GDD: ogni oggetto deve avere un effetto anche sull'esercito, non solo sul personaggio. Valori provvisori.",
+  "_nota": "Solo struttura e pochi esempi: la pool vera si costruisce con l'agente designer-contenuti (punto 4). Nessuno legge ancora questo file. Regola del GDD: ogni oggetto deve cambiare COME combattono le reclute, non solo di quanto. Valori provvisori.",
   "tag_validi": ["FUOCO", "GELO", "FULMINE", "VELENO", "SACRO", "ORO", "AREA", "RAPIDITA"],
   "rarita_valide": ["comune", "raro", "leggendario"],
   "potenziamenti": [
@@ -12,7 +12,7 @@
       "descrizione": "I colpi lasciano una bruciatura che continua a fare danno.",
       "effetto": {
         "tipo": "danno_nel_tempo",
-        "bersaglio": "colpi_del_personaggio_e_dei_minion",
+        "bersaglio": "colpi_delle_reclute",
         "danno_per_secondo": 3,
         "durata_ms": 3000
       }
