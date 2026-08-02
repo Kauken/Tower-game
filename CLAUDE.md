@@ -1,7 +1,9 @@
-# Torre di Guardia — istruzioni permanenti
+# Istruzioni permanenti
 
-Tower defense roguelike fantasy per mobile. Web (Vite + React + canvas 2D), poi impacchettato con Capacitor.
-Il documento di design sta in `docs/GDD.md`: leggilo prima di qualunque modifica al gioco.
+**Action roguelike a stanze con un seguito di minion**, fantasy, per telefono. Web (Vite + React + canvas 2D), poi impacchettato con Capacitor.
+Il documento di design sta in `docs/GDD.md` (v1.0): **leggilo prima di qualunque modifica al gioco.**
+
+Il progetto è stato riscritto da zero il 2026-08-02. Tower defense, corsie e assedio fra castelli **non esistono più**: se trovi codice, configurazione o documenti che li nominano, sono resti da rimuovere, non funzionalità.
 
 ## Con chi stai lavorando
 
@@ -14,11 +16,12 @@ L'autore non sa programmare e lavora dal telefono. Quindi:
 
 1. **Nessun numero nel codice.** Costi, danni, vite, raggi, cadenze, ricompense, curve: tutto in `config/*.json`. Se ti serve un valore nuovo, aggiungilo alla configurazione, non scriverlo nel codice.
 2. **Un sistema alla volta.** Fai solo quello che è stato chiesto. Non aggiungere funzionalità non richieste, nemmeno se sembrano ovvie o utili. Se noti qualcosa che manca, scrivilo alla fine come suggerimento.
-3. **Il campo di gioco è un solo `<canvas>`.** Nemici, torri, proiettili ed effetti si disegnano lì. React serve solo per l'interfaccia sopra: oro, vite, negozio, carte, menù. Mai un elemento DOM per entità di gioco.
+3. **Il campo di gioco è un solo `<canvas>`.** Personaggio, seguito, nemici, proiettili ed effetti si disegnano lì. React serve solo per l'interfaccia sopra: vita, oro, minimappa, negozio, menù. Mai un elemento DOM per entità di gioco.
 4. **Mobile prima di tutto.** Verticale, aree toccabili di almeno 44 px, niente `:hover`, niente doppio click, rispetto delle safe area.
 5. **Prima di dichiarare finito**, esegui `npm run build`. Se fallisce, non hai finito.
 6. **Non toccare i valori di bilanciamento** di tua iniziativa quando ti viene chiesta una funzionalità. Bilanciare è un compito separato, con il suo agente.
 7. **"Fai il punto N"** significa il punto N della lista in `docs/ROADMAP.md`: a lavoro finito segnalo come FATTO in quel file.
+8. **Il seguito è l'idea del gioco.** È l'unica cosa che lo distingue da cento altri roguelike a stanze. Se una scelta lo rende meno importante, o se il giocatore finisce per guardare i minion invece di giocare, è la scelta sbagliata: dillo invece di costruirla.
 
 ## Comandi
 
@@ -32,7 +35,7 @@ Ogni merge su `main` fa partire il workflow che pubblica su GitHub Pages.
 
 ## Strumenti disponibili
 
-Agenti: `bilanciatore` (solo config), `revisore-mobile` (prestazioni e touch), `designer-contenuti` (nuovi potenziamenti), `collaudo` (verifica finale), `cacciatore-bug` (diagnosi), `rifinitore` (sensazione di gioco).
+Agenti: `bilanciatore` (solo config), `revisore-mobile` (prestazioni e touch), `designer-contenuti` (nuovi oggetti e nemici), `collaudo` (verifica finale), `cacciatore-bug` (diagnosi), `rifinitore` (sensazione di gioco), `consulente-design` (decisioni aperte).
 
 Skill richiamabili: `/richiesta` (trasforma una richiesta vaga in specifica), `/punto N` (esegue il punto N della roadmap).
 

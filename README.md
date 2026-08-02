@@ -1,6 +1,6 @@
 # Torre di Guardia
 
-Tower defense roguelike fantasy pensato per il telefono, in verticale.
+Action roguelike a stanze con un seguito di minion, fantasy, pensato per il telefono in verticale.
 Gira nel browser (Vite + React + canvas 2D nativo, nessuna libreria di gioco) e più avanti verrà impacchettato come app con Capacitor.
 
 Al momento il progetto contiene solo l'impalcatura: nessuna logica di gioco.
