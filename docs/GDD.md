@@ -2,7 +2,7 @@
 
 **v0.4 = seconda evoluzione decisa dall'autore (2026-08).** Il gioco non è più solo una battaglia a corsie: diventa un **roguelike a due fasi** — esplorazione di stanze in stile Binding of Isaac + guerra d'assedio fra due castelli. La battaglia a corsie della v0.3 non viene buttata: diventa una delle due fasi.
 
-**Decisioni chiuse:** ambientazione fantasy/medievale · due fasi alternate (esplorazione + assedio) · gli oggetti modificano l'esercito, non solo il personaggio · mappa e sentiero generati proceduralmente · progressione permanente fra le run · partita da 15-25 minuti.
+**Decisioni chiuse:** ambientazione fantasy/medievale · due fasi alternate (esplorazione + assedio) · gli oggetti modificano l'esercito, non solo il personaggio · mappa e campo di battaglia generati proceduralmente · progressione permanente fra le run · partita da 15-25 minuti.
 
 > I numeri sono **valori di partenza da tarare**. Ciò che è marcato `[DA DECIDERE]` va chiuso prima di scrivere il codice relativo.
 
@@ -10,7 +10,7 @@
 
 ## 1. Concetto in una riga
 
-Esplori un dungeon a stanze raccogliendo oggetti che cambiano il gioco; poi porti quella build su una corsia dove il tuo esercito e quello nemico si scontrano, e la usi per abbattere il castello avversario. Gli oggetti non potenziano solo te: **trasformano tutto il tuo esercito**.
+Esplori un dungeon a stanze raccogliendo oggetti che cambiano il gioco; poi porti quella build su un campo di battaglia dove il tuo esercito e quello nemico si scontrano, e la usi per abbattere il castello avversario. Gli oggetti non potenziano solo te: **trasformano tutto il tuo esercito**.
 
 ## 2. Le due fasi
 
@@ -38,7 +38,7 @@ Il campo largo quanto lo schermo risolve il problema alla radice: gli eserciti s
 
 ### 2.3 Come si legano (regola di struttura)
 
-**L'assedio è il boss di fine bioma.** Non è una modalità parallela: è il traguardo verso cui l'esplorazione ti prepara. Esplori 6-10 stanze, raccogli, poi la corsia mette alla prova quello che hai messo insieme. Vinto l'assedio, si passa al bioma nuovo.
+**L'assedio è il boss di fine bioma.** Non è una modalità parallela: è il traguardo verso cui l'esplorazione ti prepara. Esplori 6-10 stanze, raccogli, poi il campo mette alla prova quello che hai messo insieme. Vinto l'assedio, si passa al bioma nuovo.
 
 Questo dà un ritmo chiaro — **raccogli, poi scarica** — ed evita che le due fasi sembrino due giochi incollati.
 
@@ -109,7 +109,7 @@ Non si distruggono: **influenzano l'intera partita con effetti globali**.
 | **Torre Arcana** | Potenzia la magia, riduce le ricariche, genera fulmini casuali |
 | **Torre del Ferro** | Rafforza il castello, irrobustisce i minion, crea barricate |
 
-**Regola di leggibilità:** ogni torre deve produrre qualcosa di **visibile in corsia**. Un effetto globale silenzioso non si sente e non vale il lavoro.
+**Regola di leggibilità:** ogni torre deve produrre qualcosa di **visibile sul campo**. Un effetto globale silenzioso non si sente e non vale il lavoro.
 
 ## 6. Gli oggetti — il cuore del gioco
 
@@ -139,16 +139,16 @@ Togliere il pulsante toglie anche il momento morto in cui il gioco aspettava il 
 
 ```
 Stanza iniziale → esplorazione → tesoro → evento → mini boss
-      → ASSEDIO (corsia) → nuovo bioma → ...
+      → ASSEDIO (campo aperto) → nuovo bioma → ...
 ```
 
 Ogni bioma introduce nemici, ambientazione e meccaniche diverse. Durata bersaglio della run: **15-25 minuti**.
 
-### Il sentiero cambia ogni volta
+### Il campo cambia ogni volta
 
-La corsia dell'assedio è generata proceduralmente con ambienti diversi — **ponti · foreste · cimiteri · rovine · caverne · gole · ghiacci · vulcani · paludi** — ognuno con ostacoli, trappole e vantaggi propri.
+Il campo dell'assedio è generato proceduralmente con ambienti diversi — **ponti · foreste · cimiteri · rovine · caverne · gole · ghiacci · vulcani · paludi** — ognuno con ostacoli, trappole e vantaggi propri.
 
-`[DA DECIDERE]` Se l'ambiente del sentiero è deciso dal bioma o pescato a parte.
+`[DA DECIDERE]` Se l'ambiente del campo è deciso dal bioma o pescato a parte.
 
 ## 8. Progressione permanente
 
@@ -169,8 +169,8 @@ Audio, animazioni curate, più personaggi, pubblicità e acquisti, menù elabora
 ## 11. Punti aperti
 
 - `[DA DECIDERE]` Come si ottengono le torri
-- `[DA DECIDERE]` Se il personaggio muore in corsia: sconfitta immediata o rientro
 - `[DA DECIDERE]` Quanti oggetti per bioma
-- `[DA DECIDERE]` Ambiente del sentiero legato al bioma o indipendente
+- `[DA DECIDERE]` Ambiente del campo legato al bioma o indipendente
+- `[DA DECIDERE]` Come si conquista una Torre: basta starci vicino o va tenuta la zona
 - `[DA DECIDERE]` Le 12 regole di sinergia definitive
 - `[DA DECIDERE]` I profili personaggio

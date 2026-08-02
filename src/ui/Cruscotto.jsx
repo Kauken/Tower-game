@@ -1,5 +1,5 @@
 import React from 'react'
-import { interfaccia } from '../game/config.js'
+import { grafica, interfaccia } from '../game/config.js'
 
 function Voce({ etichetta, valore, colore }) {
   return (
@@ -22,7 +22,9 @@ function Voce({ etichetta, valore, colore }) {
 // La tua vita, quella dei due castelli e il grado di pressione: sempre a
 // schermo, in posizione fissa, senza animazioni che li rendano illeggibili.
 export default function Cruscotto({ vita, vitaMassima, fortezza, fortezzaNemica, grado }) {
-  const vitaBassa = vita <= vitaMassima / 3
+  // stessa soglia della barra sul campo, altrimenti i due indicatori si
+  // contraddicono in una fascia di vita
+  const vitaBassa = vita <= vitaMassima * grafica.personaggio.barra_vita.soglia_bassa
 
   return (
     <div

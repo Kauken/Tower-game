@@ -26,14 +26,6 @@ export function reimposta(stato) {
   stato.fase = 'assedio'
 }
 
-export function puoPagare(stato, costo) {
-  return stato.oro >= costo
-}
-
-export function paga(stato, costo) {
-  stato.oro -= costo
-}
-
 export function incassa(stato, oro) {
   stato.oro += oro
 }

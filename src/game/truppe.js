@@ -20,6 +20,10 @@ import { creaPool, primoLibero } from './pool.js'
 function nuovaTruppa() {
   return {
     attivo: false,
+    // dichiarato anche qui, anche se e' sempre falso: le truppe e il
+    // personaggio vengono letti dallo stesso codice di bersaglio, e un campo
+    // mancante rallenta il punto piu' caldo del ciclo
+    eGiocatore: false,
     generazione: 0,
     fazione: '',
     x: 0,
@@ -55,7 +59,6 @@ export function creaGestoreTruppe(agganci) {
   const margineUscita = campo.sinistra + (larghezzaCampo - larghezzaUscita) / 2
   const attrazioneQuadrata = schieramento.raggio_attrazione * schieramento.raggio_attrazione
 
-  let nemiciAttivi = 0
   // il personaggio, che i nemici trattano come un avversario qualsiasi.
   // Arriva dopo la creazione perche' a sua volta ha bisogno delle truppe.
   let giocatore = null
@@ -96,14 +99,13 @@ export function creaGestoreTruppe(agganci) {
       truppa,
       nemicoPressione,
       'nemico',
-      Math.pow(scalaturaNemici.vita_per_ondata, grado),
-      Math.pow(scalaturaNemici.danno_per_ondata, grado)
+      Math.pow(scalaturaNemici.vita_per_grado, grado),
+      Math.pow(scalaturaNemici.danno_per_grado, grado)
     )
     truppa.oro = Math.round(
-      nemicoPressione.oro_rilasciato * Math.pow(scalaturaNemici.oro_per_ondata, grado)
+      nemicoPressione.oro_rilasciato * Math.pow(scalaturaNemici.oro_per_grado, grado)
     )
     truppa.y = campo.alto
-    nemiciAttivi++
   }
 
   function generaAlleato(grado) {
@@ -115,8 +117,8 @@ export function creaGestoreTruppe(agganci) {
       truppa,
       alleatoSquadra,
       'alleato',
-      Math.pow(scalaturaAlleati.vita_per_ondata, grado),
-      Math.pow(scalaturaAlleati.danno_per_ondata, grado)
+      Math.pow(scalaturaAlleati.vita_per_grado, grado),
+      Math.pow(scalaturaAlleati.danno_per_grado, grado)
     )
     truppa.oro = 0
     truppa.y = campo.basso
@@ -125,9 +127,6 @@ export function creaGestoreTruppe(agganci) {
   function spegni(truppa) {
     truppa.attivo = false
     truppa.bersaglio = null
-    if (truppa.fazione === 'nemico') {
-      nemiciAttivi--
-    }
   }
 
   function applicaDanno(truppa, danno) {
@@ -327,10 +326,6 @@ export function creaGestoreTruppe(agganci) {
     return toccati
   }
 
-  function quantiNemiciAttivi() {
-    return nemiciAttivi
-  }
-
   function svuota() {
     for (let i = 0; i < nemici.length; i++) {
       nemici[i].attivo = false
@@ -342,7 +337,6 @@ export function creaGestoreTruppe(agganci) {
       alleati[i].bersaglio = null
       alleati[i].generazione++
     }
-    nemiciAttivi = 0
   }
 
   function disegnaElenco(ctx, elenco, stile) {
@@ -395,7 +389,6 @@ export function creaGestoreTruppe(agganci) {
     applicaDanno,
     colpisciArea,
     nemicoPiuVicino,
-    quantiNemiciAttivi,
     svuota
   }
 }

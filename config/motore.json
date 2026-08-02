@@ -30,11 +30,8 @@
     "colore_testo": "#e8e3d5",
     "colore_testo_debole": "#9fa89b",
     "colore_pulsante": "#3f6b46",
-    "colore_pulsante_secondario": "#2a313a",
     "colore_scelto": "#f2d0a4",
-    "colore_pulsante_spento": "#252a30",
     "colore_pulsante_testo": "#ffffff",
-    "colore_pulsante_testo_spento": "#6b7280",
     "colore_sconfitta": "#0d0f14f2",
     "colore_allarme": "#d9705f",
     "levetta": {
@@ -53,11 +50,6 @@
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",
-    "terreno": {
-      "colore": "#18211b",
-      "colore_bordo": "#2b3a2e",
-      "spessore_bordo": 4
-    },
     "campo": {
       "_nota": "Il terreno fra i due castelli. Le fasce servono solo a far leggere la profondita': senza riferimenti non si capisce quanto si e' avanti.",
       "colore": "#1d2a21",
@@ -80,14 +72,14 @@
     "nemico": {
       "colore": "#c9524a",
       "colore_bordo": "#f2d0a4",
-      "colore_bordo_rallentato": "#7fa8ff",
-      "spessore_bordo": 3
+      "spessore_bordo": 3,
+      "colore_bordo_rallentato": "#7fa8ff"
     },
     "alleato": {
       "colore": "#5f9e6e",
       "colore_bordo": "#e6f5e9",
-      "colore_bordo_rallentato": "#7fa8ff",
-      "spessore_bordo": 3
+      "spessore_bordo": 3,
+      "colore_bordo_rallentato": "#7fa8ff"
     },
     "personaggio": {
       "_nota": "Il cerchio del giocatore deve leggersi al primo colpo d'occhio in mezzo ai minion: colore diverso da alleati e nemici, bordo piu' spesso, e un puntino che mostra dove sta guardando.",
@@ -181,11 +173,6 @@
         "durata_ms": 260,
         "colore": "#ffb35c",
         "spessore": 4
-      },
-      "impulso_gelo": {
-        "durata_ms": 420,
-        "colore": "#9cc7ff",
-        "spessore": 3
       }
     },
     "barra_vita": {

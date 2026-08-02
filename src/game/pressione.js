@@ -80,14 +80,5 @@ export function creaGestorePressione(truppe) {
     return grado + 1
   }
 
-  // quanto manca alla prossima spinta, da 0 a 1: serve all'avviso a schermo
-  function quotaVersoSpinta() {
-    return versoSpintaMs / pressione.intervallo_spinta_ms
-  }
-
-  function spintaInCorso() {
-    return spinta.restanti > 0
-  }
-
-  return { aggiorna, reimposta, gradoMostrato, quotaVersoSpinta, spintaInCorso }
+  return { aggiorna, reimposta, gradoMostrato }
 }

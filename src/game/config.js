@@ -4,7 +4,7 @@
 import mappe from '../../config/mappe.json'
 import nemici from '../../config/nemici.json'
 import alleati from '../../config/alleati.json'
-import ondate from '../../config/ondate.json'
+import pressioneJson from '../../config/pressione.json'
 import economiaJson from '../../config/economia.json'
 import motore from '../../config/motore.json'
 import personaggioJson from '../../config/personaggio.json'
@@ -13,7 +13,7 @@ export const area = mappe.area
 export const economia = economiaJson
 export const scalaturaNemici = nemici.scalatura
 export const scalaturaAlleati = alleati.scalatura
-export const pressione = ondate.pressione
+export const pressione = pressioneJson.pressione
 export const squadra = alleati.squadra
 export const simulazione = motore.simulazione
 export const limiti = motore.limiti
@@ -40,10 +40,10 @@ export const mappaAttiva = cercaPerId(
 export const campo = mappaAttiva.campo
 export const schieramento = mappaAttiva.schieramento
 
-// Il nemico dell'assedio: per ora ce n'e' uno solo, lo dice ondate.json
+// Il nemico dell'assedio: per ora ce n'e' uno solo, lo dice pressione.json
 export const nemicoPressione = cercaPerId(
   nemici.nemici,
-  ondate.pressione.nemico_id,
+  pressioneJson.pressione.nemico_id,
   'nemici.json'
 )
 

@@ -1,18 +1,18 @@
 {
-  "_nota": "Solo struttura e pochi esempi: il pool vero si costruisce con l'agente designer-contenuti. Valori provvisori.",
+  "_nota": "Solo struttura e pochi esempi: il pool vero si costruisce con l'agente designer-contenuti (punto 4). Nessuno legge ancora questo file. Regola del GDD: ogni oggetto deve avere un effetto anche sull'esercito, non solo sul personaggio. Valori provvisori.",
   "tag_validi": ["FUOCO", "GELO", "FULMINE", "VELENO", "SACRO", "ORO", "AREA", "RAPIDITA"],
   "rarita_valide": ["comune", "raro", "leggendario"],
   "potenziamenti": [
     {
       "id": "punte_incendiarie",
       "nome": "Punte incendiarie",
-      "famiglia": "modulo",
+      "famiglia": "oggetto",
       "tag": ["FUOCO"],
       "rarita": "comune",
       "descrizione": "I colpi lasciano una bruciatura che continua a fare danno.",
       "effetto": {
         "tipo": "danno_nel_tempo",
-        "bersaglio": "torre_equipaggiata",
+        "bersaglio": "colpi_del_personaggio_e_dei_minion",
         "danno_per_secondo": 3,
         "durata_ms": 3000
       }
@@ -38,12 +38,12 @@
       "famiglia": "consumabile",
       "tag": ["ORO"],
       "rarita": "comune",
-      "descrizione": "Per tre ondate ogni nemico ucciso lascia oro extra.",
+      "descrizione": "Per un po' ogni nemico ucciso lascia oro extra.",
       "effetto": {
         "tipo": "oro_extra",
         "bersaglio": "globale",
         "oro_aggiuntivo_per_uccisione": 2,
-        "ondate_durata": 3
+        "durata_ms": 45000
       }
     }
   ]

@@ -55,9 +55,9 @@
     }
   ],
   "scalatura": {
-    "_nota": "Crescita per assalto. valore = base * (moltiplicatore ^ (assalto - 1)). Con 1.21 l'assalto 18 vale circa 27 volte il primo.",
-    "vita_per_ondata": 1.21,
-    "oro_per_ondata": 1.06,
-    "danno_per_ondata": 1.15
+    "_nota": "Crescita per grado di pressione. valore = base * (moltiplicatore ^ grado).",
+    "vita_per_grado": 1.21,
+    "oro_per_grado": 1.06,
+    "danno_per_grado": 1.15
   }
 }

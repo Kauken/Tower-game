@@ -9,7 +9,7 @@ import { adattaCanvas } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
 import { creaGestoreTruppe } from './truppe.js'
 import { creaGestoreProiettili } from './proiettili.js'
-import { creaGestorePressione } from './ondate.js'
+import { creaGestorePressione } from './pressione.js'
 import { creaGestoreEffetti } from './effetti.js'
 import { creaPersonaggio } from './personaggio.js'
 import {

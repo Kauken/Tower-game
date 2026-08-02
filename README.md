@@ -25,10 +25,10 @@ Serve Node 20 o superiore.
 
 | Cartella | Contenuto |
 | --- | --- |
-| `config/` | Tutti i numeri del gioco: torri, nemici, mappe, potenziamenti, sinergie, economia |
-| `docs/` | Documentazione di design (`docs/GDD.md`, ancora da scrivere) |
-| `src/game/` | Motore di gioco e disegno su canvas (vuoto per ora) |
-| `src/ui/` | Interfaccia React sopra al canvas (vuota per ora) |
+| `config/` | Tutti i numeri del gioco: personaggio, nemici, alleati, campo, pressione, potenziamenti, sinergie, economia |
+| `docs/` | Documentazione di design: `docs/GDD.md` comanda, `docs/ROADMAP.md` dice cosa viene dopo |
+| `src/game/` | Motore di gioco e disegno su canvas |
+| `src/ui/` | Interfaccia React sopra al canvas |
 | `.claude/agents/` | Assistenti specializzati: bilanciamento, resa su mobile, contenuti, collaudo |
 | `.claude/skills/` | Regole di progetto: schema configurazioni, ciclo di gioco, interfaccia touch |
 

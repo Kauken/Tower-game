@@ -1,48 +1,75 @@
 # Consegne — stato del progetto
 
-Ultimo aggiornamento: 2026-08-01. Questo file fotografa dove siamo: chi riprende il lavoro (una nuova sessione di Claude o l'autore che torna dopo tempo) parte da qui, poi approfondisce con `PROCESSO.md`, `ROADMAP.md`, `DECISIONI.md` e `GDD.md`.
+Ultimo aggiornamento: 2026-08-02. Questo file fotografa dove siamo: chi riprende il lavoro (una nuova sessione di Claude o l'autore che torna dopo tempo) parte da qui, poi approfondisce con `PROCESSO.md`, `ROADMAP.md`, `DECISIONI.md` e `GDD.md`.
 
 ## Cos'è il gioco adesso
 
-**Battaglia a corsie roguelike** (pivot deciso dall'autore il 2026-08, GDD v0.3 — il tower defense a labirinto delle versioni precedenti non esiste più):
+**Roguelike a due fasi** (GDD v0.4): esplorazione di stanze alla Binding of Isaac che alimenta una **guerra d'assedio** fra due castelli. Le versioni precedenti — tower defense a labirinto, poi battaglia a corsie — non esistono più.
 
-- Corsia verticale: fortezza nemica in alto, quella del giocatore in basso, entrambe con la vita.
-- I **Militi** (verdi) del giocatore salgono, i **Fanti** (rossi) scendono; si ingaggiano e combattono al fronte; chi sfonda toglie vita alla fortezza avversaria.
-- 4 caselle torre solo nella metà bassa (2 normali, 1 altura +raggio, 1 mana +cadenza); 4 torri: Balestriere, Catapulta (area), Cappella del Gelo (rallenta), Obelisco (aura +danno).
-- Vittoria = cade la fortezza nemica; sconfitta = cade la tua. Assalti chiamati dal giocatore, crescono senza fine.
+Di queste due fasi **esiste solo l'assedio**. L'esplorazione è tutta da costruire (punti 2-5 della roadmap).
+
+Com'è fatto l'assedio oggi:
+
+- **Campo aperto** largo quanto lo schermo: castello nemico in alto, il tuo in basso, entrambi con la vita.
+- I **Militi** (verdi) salgono, i **Fanti** (rossi) scendono, sparpagliati su tutta la larghezza; si attirano di lato e si scontrano su un fronte irregolare. Chi sfonda toglie vita al castello avversario.
+- Il **personaggio** (cerchio chiaro) si muove con la levetta a pollice e attacca da solo il nemico più vicino. Ha vita, i nemici lo attaccano, a zero viene **abbattuto** e si riforma al castello mentre l'esercito continua senza di lui.
+- **Pressione continua**: nessun pulsante, i due castelli producono di continuo e la pressione nemica sale col tempo, con **spinte** periodiche.
+- Vittoria = cade il castello nemico; sconfitta = cade il tuo.
+
+**Non esistono più**: torri, caselle di piazzamento, negozio, pulsante ondata. Le 4 Torri tornano al punto 6 come strutture del campo **da conquistare**, non da comprare.
+
+## Il perno del design (da non perdere di vista)
+
+Il pericolo non è l'accerchiamento casuale alla Vampire Survivors: è **sbilanciarsi in avanti**. La profondità sul campo è la manopola di rischio, e siccome il fronte si muove la zona sicura cambia da sola. Spiegato per esteso in `GDD.md` §2.4. Ogni scelta futura va misurata su questo.
+
+E la regola che tiene insieme le due fasi: **ogni oggetto deve avere un effetto anche sull'esercito**, non solo sul personaggio.
 
 ## Stato del codice
 
-- **Roadmap v2, punto 1 FATTO.** Tutto è su `main` e pubblicato: https://kauken.github.io/Tower-game/
+- **Roadmap v3: punti 1 e 1bis FATTI.** Tutto è su `main` e pubblicato: https://kauken.github.io/Tower-game/
 - Ramo di lavoro: `claude/torre-guardia-scaffold-5fv3nl`, riallineato a `main`.
-- `npm run build` passa. Collaudo dell'intero pivot: OK, nessun bloccante.
-- Prestazioni misurate: 0,13 ms per passo di simulazione col campo pieno (250 truppe). Memoria piatta, tutto da pool preallocati.
-- Bilanciamento verificato in simulazione: senza torri sconfitta all'assalto 4; con 2 Balestrieri piazzati bene vittoria al 7; piazzati male si perde. Assalto tipo: 15-25 secondi.
+- `npm run build` passa. Collaudo del campo aperto: nessun bloccante; i residui segnalati sono stati rimossi.
+- **Il bilanciamento non è mai stato fatto sul campo aperto.** I valori attuali (vita castelli 70, ritmi di uscita, vita personaggio 100, tempo di riforma) sono messi a occhio perché il gioco fosse provabile. Serve un giro dell'agente `bilanciatore`.
+- **Le prestazioni non sono state rimisurate** dopo il passaggio a campo aperto. Da far guardare a `revisore-mobile`.
 
 ## Architettura in due righe
 
-Motore su canvas 2D (`src/game/`), React solo per l'interfaccia (`src/ui/`), comunicazione a campionamento (10 Hz) e coda comandi. Tutti i numeri in `config/*.json` — regola non negoziabile. File chiave: `truppe.js` (i due eserciti), `motore.js` (ciclo a passo fisso), `torri.js`, `ondate.js`, `partita.js`, `effetti.js`.
+Motore su canvas 2D (`src/game/`), React solo per l'interfaccia (`src/ui/`), comunicazione a campionamento (10 Hz) e coda comandi; la levetta scrive invece diretta, perché è uno stato continuo. Tutti i numeri in `config/*.json` — regola non negoziabile.
+
+| File | Cosa fa |
+| --- | --- |
+| `src/game/motore.js` | Ciclo a passo fisso, disegno, ponte con React |
+| `src/game/truppe.js` | I due eserciti: movimento a campo aperto e combattimento |
+| `src/game/personaggio.js` | Il giocatore: movimento, attacco automatico, abbattimento |
+| `src/game/pressione.js` | Quante truppe escono e quando |
+| `src/ui/Levetta.jsx` | La levetta a pollice |
+| `config/mappe.json` | Bordi del campo e schieramento |
+| `config/pressione.json` | Ritmo dell'assedio |
 
 ## In attesa di verdetto dell'autore
 
-L'autore deve ancora **giocare il pivot sul telefono** e dire:
-1. Lo scontro al fronte si legge bene?
-2. È divertente o ci si annoia? (LA domanda del pivot)
-3. Il pannello compatto lascia vedere il campo?
+Ha provato il personaggio e gli è piaciuto muoverlo. Deve ancora giocare il **campo aperto** e dire:
+1. Spingersi in avanti fa davvero paura?
+2. Il campo è troppo vuoto o troppo pieno?
+3. Si capisce quando il fronte si sposta?
 
 ## Prossime mosse previste
 
-1. **Punto 2 della roadmap**: abilità attiva "Carica!" con ricarica — le mani del giocatore nella battaglia.
-2. **Punto 3**: negozio di fine assalto (con vendita torri al 60%, già decisa) + schermata "3 carte, ne scegli 1". Tocca la **decisione aperta 1** (destino dei moduli): va chiusa prima, con l'agente consulente-design.
-3. Dopo il punto 3: **tappa obbligatoria di gioco vero** prima di proseguire.
+1. Se il campo convince: **punto 6**, le 4 Torri da conquistare — è ciò che dà un motivo per andare da qualche parte oltre al fronte. Tocca la **decisione aperta 2** (come si conquista una Torre), da chiudere prima col consulente-design.
+2. Se il campo non convince: è un problema di densità e velocità, si risolve con l'agente `bilanciatore`, non con altro codice.
+3. In parallelo, la strada lunga resta la roadmap: punti 2-5 costruiscono l'esplorazione, e il test che conta davvero è dopo il punto 5.
 
 ## Problemi noti e suggerimenti accantonati (nessuno urgente)
 
-- Due torri vicine sprecano colpi sullo stesso bersaglio morente: serve una regola anti-doppio-bersaglio in `src/game/truppe.js` (`bersaglioPiuAvanti`). Rende il bilanciamento meno "a filo di lama".
+- **L'oro si accumula ma non si vede e non si spende**: i popup "+4" volano via e il cruscotto non lo mostra, perché non c'è più niente da comprare. Va deciso quando esisterà il negozio.
+- **Il tetto dei pool taglia la pressione**: `nemici_massimi: 150`. In stallo a metà campo i nemici si accumulano, la generazione esce in silenzio e la pressione crescente smette di crescere davvero.
+- **Costo di ricerca del bersaglio**: una truppa senza bersaglio riscandaglia l'intero pool avversario a ogni passo. Da far guardare a `revisore-mobile` se su telefono si sente.
+- Le **spinte arrivano senza preavviso**: non c'è nulla a schermo che le annunci.
+- 3 nemici su 4 (`ratto_nero`, `golem_di_pietra`, `sciame_di_goblin`) sono definiti ma mai usati: materiale per dopo.
 - `fontWeight` e spessori bordo scritti a mano nei componenti `src/ui/` (regola 1 in senso stretto: andrebbero in `motore.json → interfaccia`).
 - `index.html` duplica a mano due colori di `motore.json` (`#0d0f14`, `#e8e3d5`): se si cambiano in config, l'HTML resta indietro.
-- In orizzontale la mappa diventa minuscola: prima o poi va bloccato il verticale.
-- `economia.json`: i blocchi `cristalli` e `mercante` non sono ancora letti dal codice (roadmap punti 9 e 11, voluto).
+- In orizzontale il campo diventa minuscolo: prima o poi va bloccato il verticale.
+- `config/potenziamenti.json` e `config/sinergie.json` non sono ancora letti da nessuno: servono al punto 4.
 
 ## Grafica: piano concordato
 

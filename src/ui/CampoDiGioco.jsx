@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { creaMotore } from '../game/motore.js'
 import { grafica, interfaccia } from '../game/config.js'
+import AvvisoAbbattuto from './AvvisoAbbattuto.jsx'
 import Cruscotto from './Cruscotto.jsx'
 import Levetta from './Levetta.jsx'
 import SchermataFine from './SchermataFine.jsx'
@@ -119,6 +120,8 @@ export default function CampoDiGioco() {
         fortezzaNemica={vista.fortezzaNemica}
         grado={vista.grado}
       />
+
+      {vista.abbattuto && !finita ? <AvvisoAbbattuto /> : null}
 
       {finita ? (
         <SchermataFine esito={vista.fase} grado={vista.grado} onRicomincia={ricomincia} />

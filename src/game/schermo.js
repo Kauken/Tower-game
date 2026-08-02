@@ -21,15 +21,3 @@ export function adattaCanvas(canvas, area, larghezzaDisponibile, altezzaDisponib
   ctx.setTransform(scala * densita, 0, 0, scala * densita, 0, 0)
   return ctx
 }
-
-// Punto riusato: la conversione avviene su un tocco, ma tenere un solo oggetto
-// evita di sporcare la memoria anche in caso di tocchi ripetuti.
-const punto = { x: 0, y: 0 }
-
-// Da coordinate del dito sullo schermo a coordinate logiche del gioco.
-export function aCoordinateLogiche(canvas, area, xSchermo, ySchermo) {
-  const riquadro = canvas.getBoundingClientRect()
-  punto.x = ((xSchermo - riquadro.left) / riquadro.width) * area.larghezza
-  punto.y = ((ySchermo - riquadro.top) / riquadro.height) * area.altezza
-  return punto
-}

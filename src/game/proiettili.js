@@ -1,6 +1,7 @@
 // I proiettili: pool preallocato, inseguono il nemico che li ha fatti partire.
 // Un proiettile con raggioArea > 0 esplode all'impatto e danneggia tutti i
-// nemici vicini (Catapulta); a 0 colpisce solo il bersaglio (Balestriere).
+// nemici vicini; a 0 colpisce solo il bersaglio. Per ora spara solo il
+// personaggio, a colpo singolo: l'area serve agli oggetti del punto 4.
 
 import { grafica, limiti } from './config.js'
 import { creaPool, primoLibero } from './pool.js'

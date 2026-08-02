@@ -24,7 +24,7 @@
   },
   "scalatura": {
     "_nota": "Crescita per grado di pressione dei minion alleati: tengono il passo dei nemici.",
-    "vita_per_ondata": 1.21,
-    "danno_per_ondata": 1.15
+    "vita_per_grado": 1.21,
+    "danno_per_grado": 1.15
   }
 }

@@ -1,29 +1,14 @@
 {
-  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore.",
+  "_nota": "Valori provvisori, da tarare con l'agente bilanciatore. I blocchi di ricompense e mercante sono stati tolti col passaggio a campo aperto: torneranno quando esistera' il negozio.",
   "partita": {
     "_nota": "Su campo aperto le truppe che sfondano sono molte di piu' che in corsia: i 15 punti di prima morivano in pochi secondi. Valori provvisori da rifare con l'agente bilanciatore.",
     "vita_fortezza": 70,
     "vita_fortezza_nemica": 70,
     "oro_iniziale": 130
   },
-  "ricompense": {
-    "oro_base_per_ondata": 25,
-    "oro_per_ondata_crescita": 1.12,
-    "oro_ondata_boss": 120,
-    "ondate_boss": [6, 12, 18],
-    "bonus_vita_intatta": 15
-  },
   "cristalli": {
-    "_nota": "Valuta permanente fra una partita e l'altra.",
-    "per_ondata_superata": 2,
-    "per_ondata_boss": 10,
+    "_nota": "Valuta permanente fra una partita e l'altra. Nessuno la legge ancora: serve al punto 13.",
+    "per_grado_superato": 2,
     "bonus_vittoria": 40
-  },
-  "mercante": {
-    "costo_rimescolo_carte": 20,
-    "costo_carta_extra": 45,
-    "costo_riparazione_vita": 60,
-    "vite_riparate": 3,
-    "rimborso_vendita_torre": 0.6
   }
 }

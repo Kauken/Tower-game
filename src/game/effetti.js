@@ -41,7 +41,7 @@ export function creaGestoreEffetti() {
   const fontPopup = 'bold ' + stile.popup_oro.dimensione_testo + 'px system-ui, sans-serif'
 
   // raggio: se assente si usa quello del blocco di stile. Serve agli effetti
-  // che seguono il raggio reale di una torre (esplosione, impulso di gelo).
+  // che devono seguire un raggio deciso da chi li accende (le esplosioni).
   function accendiAnello(x, y, blocco, raggio) {
     const anello = primoLibero(anelli)
     if (!anello) {
@@ -71,10 +71,6 @@ export function creaGestoreEffetti() {
 
   function esplosione(x, y, raggio) {
     accendiAnello(x, y, stile.esplosione, raggio)
-  }
-
-  function impulsoGelo(x, y, raggio) {
-    accendiAnello(x, y, stile.impulso_gelo, raggio)
   }
 
   function popupOro(x, y, oro) {
@@ -165,7 +161,6 @@ export function creaGestoreEffetti() {
     morte,
     ondaPiazzamento,
     esplosione,
-    impulsoGelo,
     popupOro,
     aggiorna,
     disegna,
