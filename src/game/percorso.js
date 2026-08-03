@@ -42,6 +42,10 @@ for (let i = 0; i < punti.length - 1; i++) {
 export const lunghezzaTotale = totale
 export const distanzaMinimaInFila = campo.distanza_minima_in_fila
 
+// Fin dove possono spingersi le reclute, contato dall'uscita dei nemici: oltre
+// questa distanza si fermano e aspettano. E' la loro linea di difesa.
+export const distanzaLineaDifesa = totale * (1 - campo.linea_di_difesa)
+
 // Scrive la posizione dentro `esito` invece di restituire un oggetto nuovo:
 // questa funzione gira per ogni combattente a ogni passo, e allocare qui
 // significherebbe far partire il garbage collector a meta' ondata.

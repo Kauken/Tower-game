@@ -50,18 +50,24 @@ Provato nel browser: senza comprare niente il castello cade all'ondata 3 con qua
 - **Si resta sul web**, niente Godot: l'autore prova il gioco aprendo un link dal telefono. Da rivedere al punto 16.
 - **Il giocatore non si muove e non mira.** Se una richiesta lo presuppone, è un fraintendimento da chiarire.
 
-## ⚠️ PROBLEMA APERTO — economia (verifica del punto 1 non superata)
+## L'economia, come sta adesso (misurata)
 
-Il collaudo ha simulato l'economia coi valori attuali. Risultato: **la scelta fra comprare e potenziare non è una scelta.**
+Bilanciata il 2026-08-02 con una simulazione che gira sul motore vero (`giocaUnaPartita`, vedi sotto). Risultati con le strategie che un giocatore può avere in testa:
 
-- Difendere le ondate 1+2+3 costa ~550 oro; nei primi due minuti ne entrano ~550. Chi difende **non riesce mai** a mettere da parte i 70 del primo potenziamento.
-- La strategia "potenzia se puoi, altrimenti compra" finisce a **rendita livello 0**: comprare a 25 tiene l'oro perennemente sotto i 70.
-- La linea vincente è **non comprare niente** e lasciar passare le prime ondate: il castello ha 20 di vita e le ondate 1-2 fanno 14 danni in tutto. Chi aspetta arriva all'ondata 13, chi compra subito all'ondata 6.
-- I livelli di rendita 6, 7 e 8 si ripagano in 376, 583 e 903 secondi: **non rientrano in nessuna partita** che il gioco produca oggi. `livello_massimo: 8` è un numero irraggiungibile.
+| Come si gioca | Ondata | Durata | Tocchi/min |
+| --- | --- | --- | --- |
+| Compra appena puoi | 19 | 15 min | 16 |
+| Potenzia se puoi, altrimenti compra | 23 | 25 min | 29 |
+| Niente reclute fino a rendita 2 | 21 | 19 min | 22 |
+| Equilibrata: tieni una scorta e potenzia | 22 | 23 min | 28 |
 
-Va risolto con l'agente `bilanciatore` sul solo `config/economia.json` **prima del punto 2**. Il cancello 🛑 nella roadmap è chiuso.
+Investire nella rendita porta più lontano, ma comprare e basta resta una partita vera: **la scelta è viva**. Durata dentro il bersaglio di 15-25 minuti.
 
-## Problemi noti (nessuno urgente)
+**Come rimisurare:** c'è una simulazione headless che importa i moduli veri del gioco e gira una partita in un secondo. Sta nello scratchpad della sessione (`sorgente-sim.js` + `prove.js`, bundle con esbuild). Va rifatta a ogni cambio di `economia.json`, `reclute.json`, `nemici.json` o `ondate.json`: ragionare a tavolino su questi numeri non funziona.
+
+**Il muro naturale è verso l'ondata 20**, quando il fante supera in forza la recluta base. È voluto: da lì in poi devono essere gli oggetti (punto 4) e le altre categorie (punto 2) a tenere il passo, non il Milite.
+
+## Problemi noti## Problemi noti (nessuno urgente)
 
 - Il bilanciamento non è mai stato fatto: **tutti i numeri sono messi a occhio** e la prima cosa da tarare è l'economia.
 - L'ingaggio riscandaglia l'intera schiera avversaria a ogni passo: da far guardare a `revisore-mobile` quando i nemici saranno tanti.

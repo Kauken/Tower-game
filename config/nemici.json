@@ -4,21 +4,21 @@
     {
       "id": "fante",
       "nome": "Fante",
-      "vita": 34,
-      "velocita": 68,
-      "danno": 8,
-      "cadenza_ms": 800,
+      "vita": 30,
+      "velocita": 64,
+      "danno": 7,
+      "cadenza_ms": 900,
       "raggio_ingaggio": 34,
       "riduzione_danno": 0,
       "danno_castello": 1,
-      "oro_rilasciato": 6,
+      "oro_rilasciato": 7,
       "dimensione": 14
     }
   ],
   "scalatura": {
-    "_nota": "Crescita ondata dopo ondata. valore = base * (moltiplicatore ^ (ondata - 1)). Con 1.16 l'ondata 20 vale circa 19 volte la prima.",
-    "vita_per_ondata": 1.16,
-    "danno_per_ondata": 1.1,
+    "_nota": "Crescita ondata dopo ondata. valore = base * (moltiplicatore ^ (ondata - 1)). Sono i numeri piu' delicati del gioco: la vita dei nemici cresce in modo composto, la rendita del giocatore no. Con 1.16 il muro arrivava all'ondata 4; con 1.08 la recluta base regge fino a circa la dodicesima.",
+    "vita_per_ondata": 1.1,
+    "danno_per_ondata": 1.05,
     "oro_per_ondata": 1.05
   }
 }

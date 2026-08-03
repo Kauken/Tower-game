@@ -21,7 +21,12 @@ import {
   trovaRecluta
 } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
-import { distanzaMinimaInFila, lunghezzaTotale, posizionaSulSentiero } from './percorso.js'
+import {
+  distanzaLineaDifesa,
+  distanzaMinimaInFila,
+  lunghezzaTotale,
+  posizionaSulSentiero
+} from './percorso.js'
 
 const stile = grafica.combattente
 const scarti = campo.scarti_sentiero
@@ -159,7 +164,9 @@ export function creaGestoreCombattenti({
   // Moltiplicando la distanza per il verso si ottiene un "avanzamento" che
   // cresce sempre, e le due schiere si aggiornano con lo stesso codice.
   function aggiornaSchiera(schiera, avversari, verso, passoMs, passoSecondi, avversariNemici) {
-    const avanzamentoMassimo = verso > 0 ? lunghezzaTotale : 0
+    // i nemici possono arrivare fino al castello; le reclute si fermano alla
+    // linea di difesa, altrimenti presidierebbero l'uscita dei nemici
+    const avanzamentoMassimo = verso > 0 ? lunghezzaTotale : -distanzaLineaDifesa
 
     for (let i = 0; i < schiera.length; i++) {
       const combattente = schiera[i]
