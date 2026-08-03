@@ -7,7 +7,7 @@
   "limiti": {
     "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo. Se un'ondata ne chiede di piu', i nemici in eccesso semplicemente non escono.",
     "nemici_massimi": 60,
-    "reclute_massime": 40,
+    "reclute_massime": 60,
     "comandi_massimi": 8,
     "effetti_massimi": 48
   },
@@ -30,14 +30,17 @@
     "colore_sconfitta": "#0d0f14f2",
     "colore_allarme": "#d9705f",
     "pulsanti": {
-      "_nota": "I due pulsanti stanno in basso, sotto il pollice. Quando l'oro non basta restano visibili ma spenti: sapere quanto manca fa parte della decisione, nasconderli no.",
-      "colore_recluta": "#3f6b46",
+      "_nota": "I pulsanti stanno in basso, sotto il pollice: quattro reclute su due righe, la rendita larga sotto. Quando l'oro non basta restano visibili ma spenti: sapere quanto manca fa parte della decisione, nasconderli no. Il colore di ogni recluta e' lo stesso che ha in campo, cosi' si riconosce chi si sta comprando senza leggere.",
       "colore_rendita": "#4a5c86",
       "colore_spento": "#2b3138",
       "colore_testo_spento": "#79828b",
       "colore_bordo_pronto": "#f2c44a",
       "spessore_bordo_pronto": 2,
-      "opacita_premuto": 0.75
+      "opacita_premuto": 0.75,
+      "distanza_righe": 2,
+      "peso_titolo": 700,
+      "opacita_dettaglio": 0.85,
+      "colore_conferma": "#3f6b46"
     },
     "barra_castello": {
       "_nota": "La vita del castello in alto: e' la cosa che si perde, deve leggersi senza contare i numeri.",
@@ -47,7 +50,12 @@
       "colore_basso": "#d9705f",
       "soglia_bassa": 0.35,
       "raggio_angoli": 5
-    }
+    },
+    "altezza_minima_tocco_compatta": 54,
+    "spaziatura_stretta": 6,
+    "_nota_spazi": "Quanto spazio si tiene libero sopra e sotto per cruscotto e pulsanti. Il canvas viene misurato su quello che resta, non su tutto lo schermo: e' cosi' che il castello non finisce mai sotto ai comandi. Se si aggiunge o si toglie una riga di pulsanti, questi due numeri vanno rifatti.",
+    "spazio_cruscotto": 92,
+    "spazio_comandi": 146
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",
@@ -120,7 +128,7 @@
       }
     },
     "reclute": {
-      "_nota": "Un colore per recluta. Devono distinguersi dai nemici al primo sguardo: tinte fredde contro le tinte calde dei nemici.",
+      "_nota": "Un colore per recluta. Devono distinguersi dai nemici al primo sguardo: tinte fredde contro le tinte calde dei nemici, e ognuna dalla sua compagna.",
       "predefinito": {
         "colore": "#4a7fb5",
         "colore_bordo": "#cfe4f5"
@@ -128,6 +136,18 @@
       "milite": {
         "colore": "#4a7fb5",
         "colore_bordo": "#cfe4f5"
+      },
+      "guardia": {
+        "colore": "#8a93a8",
+        "colore_bordo": "#e6edf5"
+      },
+      "arciere": {
+        "colore": "#4fa88c",
+        "colore_bordo": "#cff0e2"
+      },
+      "ratto": {
+        "colore": "#8f6fb0",
+        "colore_bordo": "#e0cdf5"
       }
     },
     "effetti": {

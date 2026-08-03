@@ -41,7 +41,7 @@ export default function SchermataFine({ ondata, onRicomincia }) {
           paddingRight: interfaccia.spaziatura * 2,
           border: 'none',
           borderRadius: interfaccia.raggio_angoli,
-          background: interfaccia.pulsanti.colore_recluta,
+          background: interfaccia.pulsanti.colore_conferma,
           color: interfaccia.colore_pulsante_testo,
           fontSize: interfaccia.testo_normale,
           fontWeight: 600,

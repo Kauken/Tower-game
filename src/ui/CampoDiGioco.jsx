@@ -9,8 +9,6 @@ const VISTA_INIZIALE = {
   oro: 0,
   oroPerCiclo: 0,
   livelloRendita: 0,
-  costoRecluta: 0,
-  nomeRecluta: '',
   costoPotenziamento: 0,
   renditaAlMassimo: false,
   vitaCastello: 0,
@@ -80,8 +78,8 @@ export default function CampoDiGioco() {
     }
   }, [])
 
-  const compra = useCallback(() => {
-    motoreRef.current.compra()
+  const compra = useCallback((idRecluta) => {
+    motoreRef.current.compra(idRecluta)
   }, [])
 
   const potenzia = useCallback(() => {
@@ -102,7 +100,6 @@ export default function CampoDiGioco() {
 
   return (
     <div
-      ref={contenitore}
       style={{
         position: 'fixed',
         inset: 0,
@@ -110,8 +107,22 @@ export default function CampoDiGioco() {
         background: grafica.colore_fuori_area
       }}
     >
-      <canvas ref={canvasSfondo} style={stileCanvas} />
-      <canvas ref={canvasGioco} style={stileCanvas} />
+      {/* Il campo vive qui dentro, fra il cruscotto e i pulsanti. Misurando il
+          canvas su questo riquadro invece che su tutto lo schermo, il castello
+          non puo' finire sotto ai comandi su nessun telefono. */}
+      <div
+        ref={contenitore}
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: `calc(${interfaccia.spazio_cruscotto}px + env(safe-area-inset-top))`,
+          bottom: `calc(${interfaccia.spazio_comandi}px + env(safe-area-inset-bottom))`
+        }}
+      >
+        <canvas ref={canvasSfondo} style={stileCanvas} />
+        <canvas ref={canvasGioco} style={stileCanvas} />
+      </div>
 
       <Cruscotto
         oro={vista.oro}
@@ -126,8 +137,6 @@ export default function CampoDiGioco() {
 
       <Comandi
         oro={vista.oro}
-        nomeRecluta={vista.nomeRecluta}
-        costoRecluta={vista.costoRecluta}
         costoPotenziamento={vista.costoPotenziamento}
         livelloRendita={vista.livelloRendita}
         oroPerCiclo={vista.oroPerCiclo}

@@ -5,14 +5,7 @@
 // coda di comandi e vengono eseguite dentro un passo di simulazione: cosi' due
 // tocchi ravvicinati non possono spendere due volte lo stesso oro.
 
-import {
-  area,
-  campo,
-  limiti,
-  reclutaIniziale,
-  simulazione,
-  trovaRecluta
-} from './config.js'
+import { area, campo, limiti, simulazione, trovaRecluta } from './config.js'
 import { disegnaSfondo } from './sfondo.js'
 import { adattaCanvas } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
@@ -25,8 +18,6 @@ import { colpisciCastello, creaStatoPartita, reimposta } from './partita.js'
 export function creaMotore(canvasSfondo, canvasGioco) {
   const passoSecondi = simulazione.passo_ms / 1000
   const accumuloMassimo = simulazione.passi_massimi_per_frame * simulazione.passo_ms
-
-  const datiRecluta = trovaRecluta(reclutaIniziale)
 
   const partita = creaStatoPartita()
   const effetti = creaGestoreEffetti()
@@ -54,7 +45,13 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     allaFineOndata: (numeroOndata) => economia.ricompensaOndata(numeroOndata)
   })
 
-  const comandi = creaPool(limiti.comandi_massimi, () => ({ attivo: false, tipo: '' }))
+  // il comando porta con se' quale recluta: cosi' due tocchi ravvicinati su
+  // pulsanti diversi non si confondono
+  const comandi = creaPool(limiti.comandi_massimi, () => ({
+    attivo: false,
+    tipo: '',
+    idRecluta: ''
+  }))
 
   // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
   // aggiornato sul posto, non ricreato.
@@ -62,8 +59,6 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     oro: 0,
     oroPerCiclo: 0,
     livelloRendita: 0,
-    costoRecluta: datiRecluta.costo,
-    nomeRecluta: datiRecluta.nome,
     costoPotenziamento: 0,
     renditaAlMassimo: false,
     vitaCastello: 0,
@@ -80,13 +75,14 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   let accumulato = 0
   let richiesta = 0
 
-  function accodaComando(tipo) {
+  function accodaComando(tipo, idRecluta) {
     const comando = primoLibero(comandi)
     if (!comando) {
       return
     }
     comando.attivo = true
     comando.tipo = tipo
+    comando.idRecluta = idRecluta || ''
   }
 
   function ricomincia() {
@@ -97,7 +93,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     ondate.reimposta()
   }
 
-  function compraRecluta() {
+  function compraRecluta(idRecluta) {
     if (partita.fase === 'sconfitta') {
       return
     }
@@ -106,10 +102,11 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     if (!combattenti.cePostoPerUnaRecluta()) {
       return
     }
-    if (!economia.spendi(datiRecluta.costo)) {
+    const dati = trovaRecluta(idRecluta)
+    if (!economia.spendi(dati.costo)) {
       return
     }
-    combattenti.faiPartireRecluta(reclutaIniziale)
+    combattenti.faiPartireRecluta(idRecluta)
   }
 
   function eseguiComandi() {
@@ -122,7 +119,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       if (comando.tipo === 'ricomincia') {
         ricomincia()
       } else if (comando.tipo === 'compra_recluta') {
-        compraRecluta()
+        compraRecluta(comando.idRecluta)
       } else if (comando.tipo === 'potenzia_rendita' && partita.fase !== 'sconfitta') {
         economia.potenziaRendita()
       }
@@ -209,8 +206,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     return vetrina
   }
 
-  function compra() {
-    accodaComando('compra_recluta')
+  function compra(idRecluta) {
+    accodaComando('compra_recluta', idRecluta)
   }
 
   function potenzia() {

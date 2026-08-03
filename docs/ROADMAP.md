@@ -28,7 +28,7 @@ Ci si arriva al punto 1. Tutto il resto — categorie, pool, negozi, boss, biomi
 > comprare adesso e investire nella rendita è una scelta vera**, o comprare è
 > sempre giusto? Se è sempre giusto, il gioco non esiste ancora e si risolve qui.
 
-2. **Le categorie di recluta.** 4 tipi con ruoli diversi (chi regge, chi fa danno, chi colpisce da lontano, chi è veloce ed economico), un pulsante per ciascuna.
+2. **Le categorie di recluta.** — **FATTO** (2026-08-02). Milite (il metro), Guardia (regge e protegge), Arciere (colpisce da dietro la prima fila), Ratto (costa poco e arriva subito). Un pulsante per ciascuna, col colore che hanno in campo.
 3. **Nemici che valgono.** 4 tipi con comportamenti diversi, e la crescita ondata dopo ondata.
 4. **La pool: tre oggetti, ne scegli uno.** 8 oggetti che cambiano *come* combattono le reclute.
 

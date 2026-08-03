@@ -56,10 +56,10 @@ Bilanciata il 2026-08-02 con una simulazione che gira sul motore vero (`giocaUna
 
 | Come si gioca | Ondata | Durata | Tocchi/min |
 | --- | --- | --- | --- |
-| Compra appena puoi | 19 | 15 min | 16 |
-| Potenzia se puoi, altrimenti compra | 23 | 25 min | 29 |
-| Niente reclute fino a rendita 2 | 21 | 19 min | 22 |
-| Equilibrata: tieni una scorta e potenzia | 22 | 23 min | 28 |
+| Compra appena puoi | 18 | 14 min | 16 |
+| Potenzia se puoi, altrimenti compra | 23 | 24 min | 28 |
+| Niente reclute fino a rendita 2 | 20 | 18 min | 21 |
+| Equilibrata: tieni una scorta e potenzia | 23 | 24 min | 27 |
 
 Investire nella rendita porta più lontano, ma comprare e basta resta una partita vera: **la scelta è viva**. Durata dentro il bersaglio di 15-25 minuti.
 

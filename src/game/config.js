@@ -20,7 +20,7 @@ export const interfaccia = motore.interfaccia
 const elencoNemici = nemiciJson.nemici
 export const scalaturaNemici = nemiciJson.scalatura
 
-const elencoReclute = recluteJson.reclute
+export const elencoReclute = recluteJson.reclute
 export const reclutaIniziale = recluteJson.recluta_iniziale
 
 export const ondate = ondateJson.ondate

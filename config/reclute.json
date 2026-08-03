@@ -1,11 +1,12 @@
 {
-  "_nota": "Le reclute che il giocatore compra. Partono dal castello e risalgono il sentiero: non si piazzano. Per ora ce n'e' una sola, le categorie arrivano al punto 2. Velocita' in pixel logici al secondo, tempi in millisecondi, dimensione e' il raggio. Valori provvisori.",
+  "_nota": "Le reclute che il giocatore compra. Partono dal castello, risalgono il sentiero fino alla linea di difesa e li' tengono: non si piazzano. Ognuna ha un ruolo diverso, ed e' dal ruolo che nasce la decisione, non dal fatto che una sia migliore delle altre. Velocita' in pixel logici al secondo, tempi in millisecondi, dimensione e' il raggio. Valori provvisori.",
+  "_nota_ruoli": "Il Milite e' il metro: costo e forza medi. La Guardia regge i colpi ma quasi non ne fa, e serve a tenere in vita chi sta dietro. L'Arciere colpisce da lontano restando dietro la prima fila, ma un nemico che gli arriva addosso lo uccide. Il Ratto costa poco e arriva subito: e' quello che si compra quando l'ondata e' gia' sulla linea.",
   "reclute": [
     {
       "id": "milite",
       "nome": "Milite",
       "categoria": "fanteria",
-      "_nota": "La recluta base: economica, niente di speciale. E' il metro con cui si misura tutto il resto. Deve battere comodamente un fante uno contro uno alle prime ondate, e cominciare a faticare verso la dodicesima: da li' in poi a tenere il passo devono essere gli oggetti e le altre categorie, non lei.",
+      "_nota": "La recluta base: nessun punto debole, nessun punto forte. E' il metro con cui si misurano le altre. Deve battere comodamente un fante uno contro uno alle prime ondate e cominciare a faticare verso la dodicesima.",
       "costo": 45,
       "vita": 88,
       "velocita": 82,
@@ -14,6 +15,48 @@
       "raggio_ingaggio": 34,
       "riduzione_danno": 0,
       "dimensione": 14
+    },
+    {
+      "id": "guardia",
+      "nome": "Guardia",
+      "categoria": "fanteria",
+      "_nota": "Il muro: tanta vita e una riduzione del danno, ma colpisce piano. Da sola non vince niente; davanti agli Arcieri li tiene in vita. riduzione_danno e' una frazione, non un valore assoluto.",
+      "costo": 70,
+      "vita": 240,
+      "velocita": 62,
+      "danno": 11,
+      "cadenza_ms": 950,
+      "raggio_ingaggio": 34,
+      "riduzione_danno": 0.25,
+      "dimensione": 17
+    },
+    {
+      "id": "arciere",
+      "nome": "Arciere",
+      "categoria": "tiratori",
+      "_nota": "Colpisce da dietro la prima fila: il raggio d'ingaggio e' molto piu' lungo di quello dei nemici, quindi li ferisce senza essere raggiunto. Fragile: se l'ondata sfonda, e' il primo a morire.",
+      "costo": 60,
+      "vita": 52,
+      "velocita": 88,
+      "danno": 24,
+      "cadenza_ms": 900,
+      "raggio_ingaggio": 130,
+      "riduzione_danno": 0,
+      "dimensione": 13
+    },
+    {
+      "id": "ratto",
+      "nome": "Ratto",
+      "categoria": "bestie",
+      "_nota": "Costa poco e arriva in fretta: e' la recluta di emergenza, quella che si compra quando l'ondata e' gia' addosso e non c'e' tempo per niente di meglio. Muore subito.",
+      "costo": 20,
+      "vita": 40,
+      "velocita": 128,
+      "danno": 11,
+      "cadenza_ms": 620,
+      "raggio_ingaggio": 30,
+      "riduzione_danno": 0,
+      "dimensione": 11
     }
   ],
   "recluta_iniziale": "milite"
