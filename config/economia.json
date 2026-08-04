@@ -2,21 +2,21 @@
   "_nota": "L'economia: e' il cuore del gioco. La domanda che questi numeri devono rendere difficile e' una sola — compro adesso o investo nella rendita? Se comprare e' sempre giusto, il gioco non esiste. Valori provvisori, da tarare con l'agente bilanciatore.",
   "partita": {
     "_nota": "Il castello assorbe gli errori: deve permettere di sbagliare qualche ondata senza perdere subito.",
-    "oro_iniziale": 70,
+    "oro_iniziale": 300,
     "vita_castello": 20
   },
   "rendita": {
-    "_nota": "Le due torri producono insieme oro_per_ciclo ogni ciclo_ms. Ogni potenziamento aggiunge oro_aggiunto_per_livello e costa sempre di piu': e' la scommessa sul futuro. Regola da rispettare: ogni livello deve ripagarsi in meno di due minuti, altrimenti e' un numero che nessuno premera' mai.",
-    "oro_per_ciclo": 6,
-    "ciclo_ms": 2500,
-    "oro_aggiunto_per_livello": 5,
-    "costo_primo_potenziamento": 60,
-    "crescita_costo_potenziamento": 1.4,
+    "_nota": "Le due torri producono insieme oro_per_ciclo ogni ciclo_ms. Ogni potenziamento aggiunge oro_aggiunto_per_livello e costa sempre di piu': e' la scommessa sul futuro. Due regole da rispettare: ogni livello deve ripagarsi in meno di due minuti, e la rendita al secondo va rifatta ogni volta che si cambia il ritmo delle ondate — ondate piu' corte vogliono dire meno tempo per accumulare.",
+    "oro_per_ciclo": 12,
+    "ciclo_ms": 1500,
+    "oro_aggiunto_per_livello": 8,
+    "costo_primo_potenziamento": 260,
+    "crescita_costo_potenziamento": 1.38,
     "livello_massimo": 6
   },
   "ricompense": {
     "_nota": "Oro regalato dal completamento di un'ondata, oltre a quello lasciato dai nemici uccisi.",
-    "oro_base_per_ondata": 18,
+    "oro_base_per_ondata": 26,
     "crescita_per_ondata": 1.12
   },
   "cristalli": {

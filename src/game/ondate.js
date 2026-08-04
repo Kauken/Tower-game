@@ -7,7 +7,31 @@
 // Quantita' e cadenza si ricavano da una formula, mai scritte a mano ondata
 // per ondata: cosi' il gioco non finisce mai le ondate preparate.
 
-import { ondate } from './config.js'
+import { elencoNemici, ondate } from './config.js'
+
+// Pesca quale nemico esce fra quelli gia' disponibili a questa ondata. I tipi
+// entrano un pezzo alla volta (da_ondata), cosi' il giocatore non deve
+// imparare quattro comportamenti tutti insieme alla prima partita.
+function pescaNemico(numeroOndata) {
+  let totale = 0
+  for (let i = 0; i < elencoNemici.length; i++) {
+    if (elencoNemici[i].da_ondata <= numeroOndata) {
+      totale += elencoNemici[i].frequenza
+    }
+  }
+  let tiro = Math.random() * totale
+  for (let i = 0; i < elencoNemici.length; i++) {
+    const nemico = elencoNemici[i]
+    if (nemico.da_ondata > numeroOndata) {
+      continue
+    }
+    tiro -= nemico.frequenza
+    if (tiro <= 0) {
+      return nemico.id
+    }
+  }
+  return elencoNemici[0].id
+}
 
 export function creaGestoreOndate(combattenti, partita, { allaFineOndata }) {
   // quanti nemici mancano da far uscire e quanto manca al prossimo
@@ -67,7 +91,7 @@ export function creaGestoreOndate(combattenti, partita, { allaFineOndata }) {
       if (attesaUscitaMs <= 0) {
         // a pool pieno il nemico non si perde: non si scala il contatore e si
         // riprova al prossimo intervallo
-        if (combattenti.faiUscireNemico(ondate.nemico_id, partita.ondata)) {
+        if (combattenti.faiUscireNemico(pescaNemico(partita.ondata), partita.ondata)) {
           daFarUscire--
         }
         attesaUscitaMs = intervalloMs

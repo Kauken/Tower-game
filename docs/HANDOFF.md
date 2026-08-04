@@ -50,24 +50,28 @@ Provato nel browser: senza comprare niente il castello cade all'ondata 3 con qua
 - **Si resta sul web**, niente Godot: l'autore prova il gioco aprendo un link dal telefono. Da rivedere al punto 16.
 - **Il giocatore non si muove e non mira.** Se una richiesta lo presuppone, è un fraintendimento da chiarire.
 
-## L'economia, come sta adesso (misurata)
+## L'economia e il ritmo, come stanno adesso (misurati)
 
-Bilanciata il 2026-08-02 con una simulazione che gira sul motore vero (`giocaUnaPartita`, vedi sotto). Risultati con le strategie che un giocatore può avere in testa:
+Rifatti il 2026-08-02 dopo che l'autore ha detto "sembra noiosa, le truppe si fermano impalate al centro, ed è molto lento". Misurato con la simulazione headless che gira sul motore vero.
 
 | Come si gioca | Ondata | Durata | Tocchi/min |
 | --- | --- | --- | --- |
-| Compra appena puoi | 18 | 14 min | 16 |
-| Potenzia se puoi, altrimenti compra | 23 | 24 min | 28 |
-| Niente reclute fino a rendita 2 | 20 | 18 min | 21 |
-| Equilibrata: tieni una scorta e potenzia | 23 | 24 min | 27 |
+| Compra appena puoi | 23 | 7 min | 10 |
+| Potenzia se puoi, altrimenti compra | 24 | 8 min | 12 |
+| Niente reclute fino a rendita 2 | 24 | 8 min | 12 |
+| Niente reclute fino a rendita 4 | 3 | 1 min | — |
 
-Investire nella rendita porta più lontano, ma comprare e basta resta una partita vera: **la scelta è viva**. Durata dentro il bersaglio di 15-25 minuti.
+L'ultima riga è voluta: chi non compra niente per troppo tempo viene travolto. L'avidità si paga.
 
-**Come rimisurare:** c'è una simulazione headless che importa i moduli veri del gioco e gira una partita in un secondo. Sta nello scratchpad della sessione (`sorgente-sim.js` + `prove.js`, bundle con esbuild). Va rifatta a ogni cambio di `economia.json`, `reclute.json`, `nemici.json` o `ondate.json`: ragionare a tavolino su questi numeri non funziona.
+**Come rimisurare:** c'è una simulazione headless che importa i moduli veri del gioco e gira una partita in un secondo. Sta nello scratchpad della sessione (`sorgente-sim.js` + `prove.js`, bundle con esbuild). Va rifatta a ogni cambio di `economia.json`, `reclute.json`, `nemici.json` o `ondate.json`: ragionare a tavolino su questi numeri non funziona, e questa sessione lo ha dimostrato tre volte.
 
-**Il muro naturale è verso l'ondata 20**, quando il fante supera in forza la recluta base. È voluto: da lì in poi devono essere gli oggetti (punto 4) e le altre categorie (punto 2) a tenere il passo, non il Milite.
+### Le tre regole che ho imparato tarando, e che valgono per il futuro
 
-## Problemi noti## Problemi noti (nessuno urgente)
+1. **Il ritmo delle ondate e la rendita al secondo sono la stessa manopola.** Dimezzare la durata di un'ondata dimezza l'oro che entra: ogni volta che si accorcia il ritmo, la rendita va rialzata o il gioco diventa impossibile.
+2. **Uno scontro che non si risolve blocca l'ondata per sempre.** Colpi deboli contro molta vita producono stalli in cui nessuno vince: meglio danni alti e vite basse, che fanno anche muovere il fronte invece di tenerlo fermo.
+3. **Il numero di tocchi al minuto è un valore di design, non un effetto collaterale.** Si controlla col rapporto fra costo e rendita, e con quanti uomini parte una squadra. Il bersaglio è 10-15 al minuto.
+
+## Problemi noti## Problemi noti## Problemi noti (nessuno urgente)
 
 - Il bilanciamento non è mai stato fatto: **tutti i numeri sono messi a occhio** e la prima cosa da tarare è l'economia.
 - L'ingaggio riscandaglia l'intera schiera avversaria a ogni passo: da far guardare a `revisore-mobile` quando i nemici saranno tanti.

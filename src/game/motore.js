@@ -97,9 +97,9 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     if (partita.fase === 'sconfitta') {
       return
     }
-    // il posto si controlla prima di pagare: se il pool e' pieno la recluta
-    // non comparirebbe e l'oro sarebbe speso per niente
-    if (!combattenti.cePostoPerUnaRecluta()) {
+    // il posto si controlla prima di pagare: senza spazio per tutta la squadra
+    // l'oro sarebbe speso per una squadra a meta'
+    if (!combattenti.cePostoPerUnaSquadra(idRecluta)) {
       return
     }
     const dati = trovaRecluta(idRecluta)

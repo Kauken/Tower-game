@@ -17,7 +17,7 @@ export const limiti = motore.limiti
 export const grafica = motore.grafica
 export const interfaccia = motore.interfaccia
 
-const elencoNemici = nemiciJson.nemici
+export const elencoNemici = nemiciJson.nemici
 export const scalaturaNemici = nemiciJson.scalatura
 
 export const elencoReclute = recluteJson.reclute
@@ -45,9 +45,11 @@ export function trovaRecluta(id) {
   return recluta
 }
 
-// Controlli all'avvio: un riferimento sbagliato in configurazione deve fermare
-// il gioco subito con un errore parlante, non produrre un campo vuoto e muto.
-trovaNemico(ondate.nemico_id)
+// Controlli all'avvio: una configurazione sbagliata deve fermare il gioco
+// subito con un errore parlante, non produrre un campo vuoto e muto.
+if (!elencoNemici.some((nemico) => nemico.da_ondata <= 1)) {
+  throw new Error('Nessun nemico disponibile alla prima ondata: controlla da_ondata in nemici.json')
+}
 trovaRecluta(reclutaIniziale)
 
 if (campo.sentiero.length < 2) {

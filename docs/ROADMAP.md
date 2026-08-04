@@ -29,7 +29,7 @@ Ci si arriva al punto 1. Tutto il resto — categorie, pool, negozi, boss, biomi
 > sempre giusto? Se è sempre giusto, il gioco non esiste ancora e si risolve qui.
 
 2. **Le categorie di recluta.** — **FATTO** (2026-08-02). Milite (il metro), Guardia (regge e protegge), Arciere (colpisce da dietro la prima fila), Ratto (costa poco e arriva subito). Un pulsante per ciascuna, col colore che hanno in campo.
-3. **Nemici che valgono.** 4 tipi con comportamenti diversi, e la crescita ondata dopo ondata.
+3. **Nemici che valgono.** — **FATTO** (2026-08-02). Fante (base), Corridore (veloce, dall'ondata 4), Bruto (lento e corazzato, dalla 9), Balestriere (colpisce da lontano, dalla 13). Entrano un tipo alla volta, e ognuno punisce una difesa sbilanciata.
 4. **La pool: tre oggetti, ne scegli uno.** 8 oggetti che cambiano *come* combattono le reclute.
 
 ## Fase B — il livello

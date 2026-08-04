@@ -74,7 +74,7 @@
         "y": 420
       }
     ],
-    "_nota_linea": "Le reclute avanzano solo fino a questa frazione del sentiero, contata dal castello: e' la loro linea di difesa. Senza un limite risalgono fino all'uscita dei nemici e li uccidono uno per uno appena escono, cosi' l'esercito non perde mai un uomo e il castello non viene mai toccato. Con la linea l'ondata arriva compatta e si scontra tutta insieme, che e' il momento in cui il gioco succede.",
-    "linea_di_difesa": 0.55
+    "_nota_linea": "Fin dove possono spingersi le reclute, come frazione del sentiero contata dal castello. Non e' una linea dove aspettare: e' solo il punto oltre il quale non si va, per non presidiare l'uscita dei nemici uccidendoli uno per uno appena compaiono. Tenuta alta di proposito, cosi' quando vinci la schiera avanza davvero e si vede che stai spingendo, invece di restare impalata a meta' campo.",
+    "linea_di_difesa": 0.82
   }
 }

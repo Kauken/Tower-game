@@ -7,7 +7,7 @@
   "limiti": {
     "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo. Se un'ondata ne chiede di piu', i nemici in eccesso semplicemente non escono.",
     "nemici_massimi": 60,
-    "reclute_massime": 60,
+    "reclute_massime": 90,
     "comandi_massimi": 8,
     "effetti_massimi": 48
   },
@@ -117,7 +117,7 @@
       }
     },
     "nemici": {
-      "_nota": "Un colore per tipo, cosi' si riconoscono al primo colpo d'occhio senza leggere niente.",
+      "_nota": "Un colore per tipo, cosi' si riconoscono al primo colpo d'occhio senza leggere niente. Tinte calde per i nemici, fredde per le reclute.",
       "predefinito": {
         "colore": "#c9524a",
         "colore_bordo": "#f2d0a4"
@@ -125,6 +125,18 @@
       "fante": {
         "colore": "#c9524a",
         "colore_bordo": "#f2d0a4"
+      },
+      "corridore": {
+        "colore": "#e0894a",
+        "colore_bordo": "#ffd9a8"
+      },
+      "bruto": {
+        "colore": "#8a4a3a",
+        "colore_bordo": "#e8a878"
+      },
+      "balestriere": {
+        "colore": "#b0407a",
+        "colore_bordo": "#f5b8d4"
       }
     },
     "reclute": {

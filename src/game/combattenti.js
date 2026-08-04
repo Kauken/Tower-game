@@ -114,21 +114,27 @@ export function creaGestoreCombattenti({
     return true
   }
 
-  // Si chiede prima di far pagare il giocatore: a pool pieno la recluta non
-  // comparirebbe e l'oro sarebbe speso per niente.
-  function cePostoPerUnaRecluta() {
-    return primoLibero(reclute) !== null
+  // Si chiede prima di far pagare il giocatore: senza posto per l'intera
+  // squadra l'oro sarebbe speso per una squadra a meta'.
+  function cePostoPerUnaSquadra(idRecluta) {
+    const quanti = trovaRecluta(idRecluta).quantita
+    let liberi = 0
+    for (let i = 0; i < reclute.length; i++) {
+      if (!reclute[i].attivo) {
+        liberi++
+        if (liberi >= quanti) {
+          return true
+        }
+      }
+    }
+    return false
   }
 
-  function faiPartireRecluta(idRecluta) {
+  function accendiUnaRecluta(dati, aspetto) {
     const posto = primoLibero(reclute)
     if (!posto) {
-      return false
+      return
     }
-
-    const dati = trovaRecluta(idRecluta)
-    const aspetto = aspettoRecluta(dati.id)
-
     accendi(posto, dati, lunghezzaTotale, scarti[prossimoScartoRecluta % scarti.length])
     prossimoScartoRecluta++
 
@@ -139,8 +145,33 @@ export function creaGestoreCombattenti({
     posto.dannoCastello = 0
     posto.colore = aspetto.colore
     posto.coloreBordo = aspetto.colore_bordo
+  }
 
+  // Un acquisto fa partire una squadra intera: e' quello che tiene basso il
+  // numero di tocchi senza togliere niente al bilanciamento.
+  function faiPartireRecluta(idRecluta) {
+    const dati = trovaRecluta(idRecluta)
+    const aspetto = aspettoRecluta(dati.id)
+    for (let i = 0; i < dati.quantita; i++) {
+      accendiUnaRecluta(dati, aspetto)
+    }
     return true
+  }
+
+  // Quanto e' avanti il nemico piu' avanzato, cioe' quello piu' vicino alla
+  // breccia da cui escono. Vale -1 se non c'e' nessun nemico in campo.
+  function nemicoPiuAvanzato(avversari) {
+    let minima = -1
+    for (let i = 0; i < avversari.length; i++) {
+      const avversario = avversari[i]
+      if (!avversario.attivo) {
+        continue
+      }
+      if (minima < 0 || avversario.distanza < minima) {
+        minima = avversario.distanza
+      }
+    }
+    return minima
   }
 
   function colpisci(attaccante, bersaglio, bersaglioENemico) {
@@ -164,9 +195,22 @@ export function creaGestoreCombattenti({
   // Moltiplicando la distanza per il verso si ottiene un "avanzamento" che
   // cresce sempre, e le due schiere si aggiornano con lo stesso codice.
   function aggiornaSchiera(schiera, avversari, verso, passoMs, passoSecondi, avversariNemici) {
-    // i nemici possono arrivare fino al castello; le reclute si fermano alla
-    // linea di difesa, altrimenti presidierebbero l'uscita dei nemici
-    const avanzamentoMassimo = verso > 0 ? lunghezzaTotale : -distanzaLineaDifesa
+    // I nemici possono arrivare fino al castello.
+    //
+    // Le reclute invece si fermano dove c'e' la battaglia: possono spingersi
+    // fino al nemico piu' avanzato, mai oltre. Cosi' il fronte sta sempre dove
+    // succede qualcosa — avanza quando vinci, arretra quando perdi — senza che
+    // l'esercito finisca a presidiare la breccia uccidendo i nemici uno per uno
+    // appena compaiono. A campo libero vale la linea di difesa, piu' arretrata.
+    //
+    // Il limite deve comunque lasciarli arrivare a tiro di chi colpisce da
+    // lontano: un Balestriere fuori portata e irraggiungibile bloccherebbe
+    // l'ondata per sempre.
+    let avanzamentoMassimo = lunghezzaTotale
+    if (verso < 0) {
+      const primoNemico = nemicoPiuAvanzato(avversari)
+      avanzamentoMassimo = primoNemico < 0 ? -distanzaLineaDifesa : -primoNemico
+    }
 
     for (let i = 0; i < schiera.length; i++) {
       const combattente = schiera[i]
@@ -331,7 +375,7 @@ export function creaGestoreCombattenti({
 
   return {
     faiUscireNemico,
-    cePostoPerUnaRecluta,
+    cePostoPerUnaSquadra,
     faiPartireRecluta,
     aggiorna,
     disegna,
