@@ -5,7 +5,14 @@
 // coda di comandi e vengono eseguite dentro un passo di simulazione: cosi' due
 // tocchi ravvicinati non possono spendere due volte lo stesso oro.
 
-import { area, campo, limiti, simulazione, trovaRecluta } from './config.js'
+import {
+  area,
+  campo,
+  limiti,
+  oggettiOfferti,
+  simulazione,
+  trovaRecluta
+} from './config.js'
 import { disegnaSfondo } from './sfondo.js'
 import { adattaCanvas } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
@@ -14,6 +21,7 @@ import { creaGestoreEffetti } from './effetti.js'
 import { creaEconomia } from './economia.js'
 import { creaGestoreOndate } from './ondate.js'
 import { colpisciCastello, creaStatoPartita, reimposta } from './partita.js'
+import { creaOggetti, pescaOfferta } from './oggetti.js'
 
 export function creaMotore(canvasSfondo, canvasGioco) {
   const passoSecondi = simulazione.passo_ms / 1000
@@ -21,8 +29,10 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   const partita = creaStatoPartita()
   const effetti = creaGestoreEffetti()
+  const oggetti = creaOggetti()
 
   const economia = creaEconomia({
+    oggetti,
     allaProduzione: () => {
       for (let i = 0; i < campo.torri_rendita.length; i++) {
         effetti.rendita(campo.torri_rendita[i].x, campo.torri_rendita[i].y)
@@ -38,7 +48,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       effetti.esplosione(x, y)
       colpisciCastello(partita, danno)
     },
-    allOroRaccolto: (quantita) => economia.incassa(quantita)
+    allOroRaccolto: (quantita) => economia.incassa(quantita),
+    oggetti
   })
 
   const ondate = creaGestoreOndate(combattenti, partita, {
@@ -66,7 +77,11 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     ondata: 0,
     fase: 'attesa',
     secondiAllOndata: 0,
-    nemiciRimanenti: 0
+    nemiciRimanenti: 0,
+    quantitaProssimaOndata: 0,
+    // stringa, non elenco: l'interfaccia la confronta per capire se e'
+    // cambiata, e confrontare due elenchi a ogni lettura sarebbe piu' caro
+    nemiciNuovi: ''
   }
 
   let ctxSfondo = null
@@ -85,12 +100,33 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     comando.idRecluta = idRecluta || ''
   }
 
+  // L'offerta di oggetti: si pesca una volta sola, alla scelta. Dentro il
+  // ciclo di gioco non si tira mai a caso e non si alloca niente.
+  let offerta = []
+
+  function apriSceltaOggetti() {
+    offerta = pescaOfferta(oggetti, oggettiOfferti)
+    partita.fase = 'scelta'
+  }
+
+  function scegliOggetto(idOggetto) {
+    if (partita.fase !== 'scelta') {
+      return
+    }
+    oggetti.prendi(idOggetto)
+    economia.rileggiOggetti()
+    offerta = []
+    ondate.reimposta()
+  }
+
   function ricomincia() {
     combattenti.svuota()
     effetti.svuota()
+    oggetti.svuota()
     economia.reimposta()
     reimposta(partita)
     ondate.reimposta()
+    apriSceltaOggetti()
   }
 
   function compraRecluta(idRecluta) {
@@ -103,7 +139,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
     const dati = trovaRecluta(idRecluta)
-    if (!economia.spendi(dati.costo)) {
+    if (!economia.spendi(economia.costoReale(dati.costo))) {
       return
     }
     combattenti.faiPartireRecluta(idRecluta)
@@ -118,6 +154,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       comando.attivo = false
       if (comando.tipo === 'ricomincia') {
         ricomincia()
+      } else if (comando.tipo === 'scegli_oggetto') {
+        scegliOggetto(comando.idRecluta)
       } else if (comando.tipo === 'compra_recluta') {
         compraRecluta(comando.idRecluta)
       } else if (comando.tipo === 'potenzia_rendita' && partita.fase !== 'sconfitta') {
@@ -136,8 +174,9 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   function aggiorna() {
     eseguiComandi()
 
-    if (partita.fase === 'sconfitta') {
-      // a run finita resta la schermata: gli effetti finiscono di sfumare
+    // a run finita, e mentre si sceglie un oggetto, il campo sta fermo: gli
+    // effetti finiscono solo di sfumare
+    if (partita.fase === 'sconfitta' || partita.fase === 'scelta') {
       effetti.aggiorna(simulazione.passo_ms)
       return
     }
@@ -175,6 +214,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   }
 
   function avvia() {
+    apriSceltaOggetti()
     ultimoTempo = performance.now()
     accumulato = 0
     richiesta = requestAnimationFrame(frame)
@@ -203,6 +243,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     vetrina.secondiAllOndata =
       partita.fase === 'attesa' ? Math.ceil(partita.attesaMs / 1000) : 0
     vetrina.nemiciRimanenti = partita.fase === 'ondata' ? partita.nemiciRimanenti : 0
+    vetrina.quantitaProssimaOndata = partita.quantitaProssimaOndata
+    vetrina.nemiciNuovi = partita.nemiciNuovi.join(', ')
     return vetrina
   }
 
@@ -218,5 +260,25 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     accodaComando('ricomincia')
   }
 
-  return { avvia, ferma, ridimensiona, leggiStato, compra, potenzia, riparti }
+  function scegli(idOggetto) {
+    accodaComando('scegli_oggetto', idOggetto)
+  }
+
+  // l'offerta cambia solo quando si apre la scelta: l'interfaccia la legge
+  // direttamente, senza che il ciclo debba ricopiarla a ogni lettura
+  function leggiOfferta() {
+    return offerta
+  }
+
+  return {
+    avvia,
+    ferma,
+    ridimensiona,
+    leggiStato,
+    leggiOfferta,
+    compra,
+    potenzia,
+    scegli,
+    riparti
+  }
 }

@@ -6,6 +6,7 @@ import nemiciJson from '../../config/nemici.json'
 import recluteJson from '../../config/reclute.json'
 import ondateJson from '../../config/ondate.json'
 import economiaJson from '../../config/economia.json'
+import potenziamentiJson from '../../config/potenziamenti.json'
 import motore from '../../config/motore.json'
 
 // L'area logica del gioco: il campo intero, poi scalato sullo schermo.
@@ -24,6 +25,8 @@ export const elencoReclute = recluteJson.reclute
 export const reclutaIniziale = recluteJson.recluta_iniziale
 
 export const ondate = ondateJson.ondate
+export const elencoPotenziamenti = potenziamentiJson.potenziamenti
+export const oggettiOfferti = potenziamentiJson.quanti_offerti
 
 export const partitaIniziale = economiaJson.partita
 export const rendita = economiaJson.rendita

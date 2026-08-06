@@ -9,6 +9,8 @@ export function creaStatoPartita() {
     fase: 'attesa',
     attesaMs: 0,
     nemiciRimanenti: 0,
+    quantitaProssimaOndata: 0,
+    nemiciNuovi: [],
     vitaCastello: 0,
     vitaCastelloMassima: partitaIniziale.vita_castello
   }

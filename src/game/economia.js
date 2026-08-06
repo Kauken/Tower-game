@@ -7,7 +7,7 @@
 
 import { partitaIniziale, rendita, ricompense } from './config.js'
 
-export function creaEconomia({ allaProduzione }) {
+export function creaEconomia({ allaProduzione, oggetti }) {
   const stato = {
     oro: 0,
     livelloRendita: 0,
@@ -21,7 +21,9 @@ export function creaEconomia({ allaProduzione }) {
 
   function ricalcola() {
     stato.oroPerCiclo =
-      rendita.oro_per_ciclo + rendita.oro_aggiunto_per_livello * stato.livelloRendita
+      rendita.oro_per_ciclo +
+      rendita.oro_aggiunto_per_livello * stato.livelloRendita +
+      oggetti.renditaAggiunta()
     stato.renditaAlMassimo = stato.livelloRendita >= rendita.livello_massimo
     stato.costoPotenziamento = stato.renditaAlMassimo
       ? 0
@@ -54,6 +56,17 @@ export function creaEconomia({ allaProduzione }) {
     stato.oro += quantita
   }
 
+  // gli oggetti possono cambiare rendita e sconti: quando se ne prende uno
+  // vanno rifatti i conti, altrimenti l'effetto non si vedrebbe
+  function rileggiOggetti() {
+    ricalcola()
+  }
+
+  // quanto costa davvero una recluta, tenuto conto degli sconti raccolti
+  function costoReale(costoDiListino) {
+    return Math.round(costoDiListino * oggetti.scontoReclute())
+  }
+
   function ricompensaOndata(numeroOndata) {
     incassa(
       Math.round(
@@ -82,5 +95,15 @@ export function creaEconomia({ allaProduzione }) {
 
   reimposta()
 
-  return { stato, aggiorna, incassa, ricompensaOndata, spendi, potenziaRendita, reimposta }
+  return {
+    stato,
+    aggiorna,
+    incassa,
+    ricompensaOndata,
+    spendi,
+    potenziaRendita,
+    reimposta,
+    rileggiOggetti,
+    costoReale
+  }
 }

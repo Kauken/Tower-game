@@ -42,9 +42,12 @@ for (let i = 0; i < punti.length - 1; i++) {
 export const lunghezzaTotale = totale
 export const distanzaMinimaInFila = campo.distanza_minima_in_fila
 
-// Fin dove possono spingersi le reclute, contato dall'uscita dei nemici: oltre
-// questa distanza si fermano e aspettano. E' la loro linea di difesa.
-export const distanzaLineaDifesa = totale * (1 - campo.linea_di_difesa)
+// I presidi, in distanza dall'uscita dei nemici e ordinati dal piu' avanzato
+// (piu' vicino alla breccia) al piu' arretrato. Le reclute si fermano qui, mai
+// in un punto qualunque della strada.
+export const distanzePresidi = campo.presidi
+  .map((frazione) => totale * (1 - frazione))
+  .sort((a, b) => a - b)
 
 // Scrive la posizione dentro `esito` invece di restituire un oggetto nuovo:
 // questa funzione gira per ogni combattente a ogni passo, e allocare qui

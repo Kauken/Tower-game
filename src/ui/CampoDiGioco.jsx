@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { creaMotore } from '../game/motore.js'
 import { grafica, interfaccia } from '../game/config.js'
 import Comandi from './Comandi.jsx'
+import AvvisoOndata from './AvvisoOndata.jsx'
 import Cruscotto from './Cruscotto.jsx'
+import SceltaOggetto from './SceltaOggetto.jsx'
 import SchermataFine from './SchermataFine.jsx'
 
 const VISTA_INIZIALE = {
@@ -16,6 +18,8 @@ const VISTA_INIZIALE = {
   ondata: 0,
   fase: 'attesa',
   secondiAllOndata: 0,
+  quantitaProssimaOndata: 0,
+  nemiciNuovi: '',
   nemiciRimanenti: 0
 }
 
@@ -46,6 +50,7 @@ export default function CampoDiGioco() {
   const canvasGioco = useRef(null)
   const motoreRef = useRef(null)
   const [vista, impostaVista] = useState(VISTA_INIZIALE)
+  const [offerta, impostaOfferta] = useState([])
 
   useEffect(() => {
     const motore = creaMotore(canvasSfondo.current, canvasGioco.current)
@@ -68,6 +73,12 @@ export default function CampoDiGioco() {
     const campionamento = setInterval(() => {
       const stato = motore.leggiStato()
       impostaVista((precedente) => (uguali(precedente, stato) ? precedente : copia(stato)))
+      // l'offerta cambia solo quando si apre la scelta: si legge qui invece di
+      // tenerla nello stato del gioco, che verrebbe ricopiato a ogni giro
+      impostaOfferta((precedente) => {
+        const attuale = stato.fase === 'scelta' ? motore.leggiOfferta() : precedente
+        return precedente.length === attuale.length ? precedente : attuale
+      })
     }, 1000 / interfaccia.aggiornamenti_al_secondo)
 
     return () => {
@@ -88,6 +99,12 @@ export default function CampoDiGioco() {
 
   const ricomincia = useCallback(() => {
     motoreRef.current.riparti()
+    impostaOfferta([])
+  }, [])
+
+  const scegli = useCallback((idOggetto) => {
+    motoreRef.current.scegli(idOggetto)
+    impostaOfferta([])
   }, [])
 
   const stileCanvas = {
@@ -135,6 +152,15 @@ export default function CampoDiGioco() {
         nemiciRimanenti={vista.nemiciRimanenti}
       />
 
+      {vista.fase === 'attesa' ? (
+        <AvvisoOndata
+          ondata={vista.ondata}
+          quantita={vista.quantitaProssimaOndata}
+          nemiciNuovi={vista.nemiciNuovi}
+          secondi={vista.secondiAllOndata}
+        />
+      ) : null}
+
       <Comandi
         oro={vista.oro}
         costoPotenziamento={vista.costoPotenziamento}
@@ -145,6 +171,10 @@ export default function CampoDiGioco() {
         onCompra={compra}
         onPotenzia={potenzia}
       />
+
+      {vista.fase === 'scelta' && offerta.length > 0 ? (
+        <SceltaOggetto offerta={offerta} onScegli={scegli} />
+      ) : null}
 
       {vista.fase === 'sconfitta' ? (
         <SchermataFine ondata={vista.ondata} onRicomincia={ricomincia} />

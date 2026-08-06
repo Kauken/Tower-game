@@ -33,6 +33,18 @@ function pescaNemico(numeroOndata) {
   return elencoNemici[0].id
 }
 
+// Quali tipi compaiono per la prima volta a questa ondata: e' l'avviso che
+// serve al giocatore per non trovarsi davanti un nemico nuovo senza preavviso.
+function nemiciNuoviDi(numeroOndata) {
+  const nuovi = []
+  for (let i = 0; i < elencoNemici.length; i++) {
+    if (elencoNemici[i].da_ondata === numeroOndata) {
+      nuovi.push(elencoNemici[i].nome)
+    }
+  }
+  return nuovi
+}
+
 export function creaGestoreOndate(combattenti, partita, { allaFineOndata }) {
   // quanti nemici mancano da far uscire e quanto manca al prossimo
   let daFarUscire = 0
@@ -55,6 +67,10 @@ export function creaGestoreOndate(combattenti, partita, { allaFineOndata }) {
   function preparaAttesa(attesaMs) {
     partita.fase = 'attesa'
     partita.attesaMs = attesaMs
+    // si annuncia cosa sta per arrivare: un'ondata che compare dal nulla e
+    // travolge le truppe sembra ingiusta anche quando non lo e'
+    partita.quantitaProssimaOndata = quantiNemici(partita.ondata)
+    partita.nemiciNuovi = nemiciNuoviDi(partita.ondata)
   }
 
   function reimposta() {

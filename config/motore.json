@@ -55,7 +55,18 @@
     "spaziatura_stretta": 6,
     "_nota_spazi": "Quanto spazio si tiene libero sopra e sotto per cruscotto e pulsanti. Il canvas viene misurato su quello che resta, non su tutto lo schermo: e' cosi' che il castello non finisce mai sotto ai comandi. Se si aggiunge o si toglie una riga di pulsanti, questi due numeri vanno rifatti.",
     "spazio_cruscotto": 92,
-    "spazio_comandi": 146
+    "spazio_comandi": 146,
+    "avviso_ondata": {
+      "_nota": "Il pannello che annuncia l'ondata durante la pausa. Sta sotto il cruscotto e non intercetta i tocchi.",
+      "distanza_righe": 3,
+      "peso_titolo": 700
+    },
+    "scelta_oggetto": {
+      "_nota": "La schermata dei tre oggetti. Occupa tutto lo schermo: e' il momento che decide che partita sara', non una cosa da fare di sfuggita.",
+      "distanza_righe": 4,
+      "peso_titolo": 700,
+      "spessore_bordo": 2
+    }
   },
   "grafica": {
     "colore_fuori_area": "#0d0f14",
@@ -188,6 +199,14 @@
         "colore": "#ffb35c",
         "spessore": 4
       }
+    },
+    "presidio": {
+      "_nota": "I presidi disegnati sul sentiero: una fascia chiara attraverso la strada. Servono a far capire dove le truppe si fermeranno, prima ancora che ci arrivino. Senza un segno visibile la sosta sembra casuale.",
+      "larghezza_extra": 22,
+      "spessore": 7,
+      "colore": "#e8e3d52e",
+      "raggio_bollo": 9,
+      "colore_bollo": "#e8e3d55c"
     }
   }
 }

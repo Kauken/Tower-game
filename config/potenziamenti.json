@@ -1,49 +1,149 @@
 {
-  "_nota": "Solo struttura e pochi esempi: la pool vera si costruisce con l'agente designer-contenuti (punto 4). Nessuno legge ancora questo file. Regola del GDD: ogni oggetto deve cambiare COME combattono le reclute, non solo di quanto. Valori provvisori.",
-  "tag_validi": ["FUOCO", "GELO", "FULMINE", "VELENO", "SACRO", "ORO", "AREA", "RAPIDITA"],
-  "rarita_valide": ["comune", "raro", "leggendario"],
+  "_nota": "Gli oggetti della pool. Se ne sceglie uno fra tre all'inizio della partita, e altri arriveranno dalle ondate tesoro (punto 5). Si accumulano per tutta la run e non si perdono mai.",
+  "quanti_offerti": 3,
+  "_nota_effetti": "Ogni effetto ha un tipo, un bersaglio e un valore. tipo 'moltiplica' agisce su una statistica delle reclute di una categoria ('tutte' vale per ogni categoria); 'rendita' aggiunge oro per ciclo; 'sconto' abbassa il costo di tutte le reclute. Nessun effetto e' scritto nel codice: il codice sa leggere questi tre tipi e basta.",
+  "tag_validi": [
+    "FERRO",
+    "FUOCO",
+    "GELO",
+    "FULMINE",
+    "ORO",
+    "RAPIDITA"
+  ],
+  "rarita_valide": [
+    "comune",
+    "raro",
+    "leggendario"
+  ],
   "potenziamenti": [
     {
-      "id": "punte_incendiarie",
-      "nome": "Punte incendiarie",
-      "famiglia": "oggetto",
-      "tag": ["FUOCO"],
+      "id": "lame_affilate",
+      "nome": "Lame affilate",
+      "descrizione": "La fanteria colpisce molto piu' forte.",
+      "tag": [
+        "FERRO"
+      ],
       "rarita": "comune",
-      "descrizione": "I colpi lasciano una bruciatura che continua a fare danno.",
       "effetto": {
-        "tipo": "danno_nel_tempo",
-        "bersaglio": "colpi_delle_reclute",
-        "danno_per_secondo": 3,
-        "durata_ms": 3000
+        "tipo": "moltiplica",
+        "categoria": "fanteria",
+        "statistica": "danno",
+        "valore": 1.55
       }
     },
     {
-      "id": "campana_di_brina",
-      "nome": "Campana di brina",
-      "famiglia": "reliquia",
-      "tag": ["GELO", "AREA"],
+      "id": "corde_tese",
+      "nome": "Corde tese",
+      "descrizione": "I tiratori colpiscono da molto piu' lontano.",
+      "tag": [
+        "FERRO",
+        "RAPIDITA"
+      ],
+      "rarita": "comune",
+      "effetto": {
+        "tipo": "moltiplica",
+        "categoria": "tiratori",
+        "statistica": "raggio_ingaggio",
+        "valore": 1.5
+      }
+    },
+    {
+      "id": "corazze_pesanti",
+      "nome": "Corazze pesanti",
+      "descrizione": "Tutte le tue reclute reggono molti piu' colpi, ma marciano piu' piano.",
+      "tag": [
+        "FERRO"
+      ],
+      "rarita": "comune",
+      "effetto": {
+        "tipo": "moltiplica",
+        "categoria": "tutte",
+        "statistica": "vita",
+        "valore": 1.6
+      },
+      "effetto_secondario": {
+        "tipo": "moltiplica",
+        "categoria": "tutte",
+        "statistica": "velocita",
+        "valore": 0.78
+      }
+    },
+    {
+      "id": "zanne_del_branco",
+      "nome": "Zanne del branco",
+      "descrizione": "Le bestie diventano molto piu' forti e piu' resistenti.",
+      "tag": [
+        "RAPIDITA"
+      ],
       "rarita": "raro",
-      "descrizione": "Ogni nemico colpito rallenta anche quelli che gli stanno attorno.",
       "effetto": {
-        "tipo": "rallentamento_contagioso",
-        "bersaglio": "globale",
-        "raggio": 60,
-        "riduzione_velocita": 0.25,
-        "durata_ms": 1500
+        "tipo": "moltiplica",
+        "categoria": "bestie",
+        "statistica": "danno",
+        "valore": 1.8
+      },
+      "effetto_secondario": {
+        "tipo": "moltiplica",
+        "categoria": "bestie",
+        "statistica": "vita",
+        "valore": 1.5
       }
     },
     {
-      "id": "decima_del_tesoriere",
-      "nome": "Decima del tesoriere",
-      "famiglia": "consumabile",
-      "tag": ["ORO"],
+      "id": "vena_daurata",
+      "nome": "Vena dorata",
+      "descrizione": "Le torri producono molto piu' oro.",
+      "tag": [
+        "ORO"
+      ],
       "rarita": "comune",
-      "descrizione": "Per un po' ogni nemico ucciso lascia oro extra.",
       "effetto": {
-        "tipo": "oro_extra",
-        "bersaglio": "globale",
-        "oro_aggiuntivo_per_uccisione": 2,
-        "durata_ms": 45000
+        "tipo": "rendita",
+        "valore": 7
+      }
+    },
+    {
+      "id": "bando_di_leva",
+      "nome": "Bando di leva",
+      "descrizione": "Tutte le reclute costano un quinto in meno.",
+      "tag": [
+        "ORO"
+      ],
+      "rarita": "raro",
+      "effetto": {
+        "tipo": "sconto",
+        "valore": 0.8
+      }
+    },
+    {
+      "id": "passo_di_carica",
+      "nome": "Passo di carica",
+      "descrizione": "Tutte le reclute marciano molto piu' in fretta e raggiungono il fronte prima.",
+      "tag": [
+        "RAPIDITA"
+      ],
+      "rarita": "comune",
+      "effetto": {
+        "tipo": "moltiplica",
+        "categoria": "tutte",
+        "statistica": "velocita",
+        "valore": 1.5
+      }
+    },
+    {
+      "id": "disciplina_ferrea",
+      "nome": "Disciplina ferrea",
+      "descrizione": "Tutte le reclute colpiscono piu' spesso.",
+      "tag": [
+        "FERRO",
+        "RAPIDITA"
+      ],
+      "rarita": "raro",
+      "effetto": {
+        "tipo": "moltiplica",
+        "categoria": "tutte",
+        "statistica": "cadenza_ms",
+        "valore": 0.75
       }
     }
   ]

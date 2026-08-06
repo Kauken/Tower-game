@@ -22,8 +22,8 @@ import {
 } from './config.js'
 import { creaPool, primoLibero } from './pool.js'
 import {
-  distanzaLineaDifesa,
   distanzaMinimaInFila,
+  distanzePresidi,
   lunghezzaTotale,
   posizionaSulSentiero
 } from './percorso.js'
@@ -61,7 +61,8 @@ export function creaGestoreCombattenti({
   allaMorte,
   allaComparsa,
   allArrivoAlCastello,
-  allOroRaccolto
+  allOroRaccolto,
+  oggetti
 }) {
   const nemici = creaPool(limiti.nemici_massimi, combattenteVuoto)
   const reclute = creaPool(limiti.reclute_massime, combattenteVuoto)
@@ -130,17 +131,24 @@ export function creaGestoreCombattenti({
     return false
   }
 
+  // Gli oggetti raccolti si applicano alla nascita della recluta, non a ogni
+  // frame: chi e' gia' in campo resta com'era, chi parte dopo e' piu' forte.
   function accendiUnaRecluta(dati, aspetto) {
     const posto = primoLibero(reclute)
     if (!posto) {
       return
     }
+    const categoria = dati.categoria
     accendi(posto, dati, lunghezzaTotale, scarti[prossimoScartoRecluta % scarti.length])
     prossimoScartoRecluta++
 
-    posto.vitaMassima = dati.vita
-    posto.vita = dati.vita
-    posto.danno = dati.danno
+    posto.velocita = dati.velocita * oggetti.moltiplicatore(categoria, 'velocita')
+    posto.cadenzaMs = dati.cadenza_ms * oggetti.moltiplicatore(categoria, 'cadenza_ms')
+    posto.raggioIngaggio =
+      dati.raggio_ingaggio * oggetti.moltiplicatore(categoria, 'raggio_ingaggio')
+    posto.vitaMassima = dati.vita * oggetti.moltiplicatore(categoria, 'vita')
+    posto.vita = posto.vitaMassima
+    posto.danno = dati.danno * oggetti.moltiplicatore(categoria, 'danno')
     posto.oroRilasciato = 0
     posto.dannoCastello = 0
     posto.colore = aspetto.colore
@@ -197,19 +205,22 @@ export function creaGestoreCombattenti({
   function aggiornaSchiera(schiera, avversari, verso, passoMs, passoSecondi, avversariNemici) {
     // I nemici possono arrivare fino al castello.
     //
-    // Le reclute invece si fermano dove c'e' la battaglia: possono spingersi
-    // fino al nemico piu' avanzato, mai oltre. Cosi' il fronte sta sempre dove
-    // succede qualcosa — avanza quando vinci, arretra quando perdi — senza che
-    // l'esercito finisca a presidiare la breccia uccidendo i nemici uno per uno
-    // appena compaiono. A campo libero vale la linea di difesa, piu' arretrata.
+    // Le reclute hanno due comportamenti, ed e' la differenza fra le due cose
+    // che da' un senso a dove si fermano:
     //
-    // Il limite deve comunque lasciarli arrivare a tiro di chi colpisce da
-    // lontano: un Balestriere fuori portata e irraggiungibile bloccherebbe
-    // l'ondata per sempre.
+    // - **con nemici in campo** vanno incontro al piu' avanzato e si fermano
+    //   li'. Cosi' il fronte sta dove c'e' la battaglia, avanza quando vinci e
+    //   arretra quando perdi. E chi colpisce da lontano resta raggiungibile:
+    //   un Balestriere irraggiungibile bloccherebbe l'ondata per sempre.
+    //
+    // - **a campo libero** ripiegano al presidio piu' avanzato, che e' un
+    //   punto segnato sul sentiero. Senza, restavano impalate dove capitava e
+    //   il giocatore non capiva cosa stessero facendo.
     let avanzamentoMassimo = lunghezzaTotale
     if (verso < 0) {
       const primoNemico = nemicoPiuAvanzato(avversari)
-      avanzamentoMassimo = primoNemico < 0 ? -distanzaLineaDifesa : -primoNemico
+      avanzamentoMassimo =
+        primoNemico < 0 ? -distanzePresidi[0] : -primoNemico
     }
 
     for (let i = 0; i < schiera.length; i++) {

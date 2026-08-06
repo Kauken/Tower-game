@@ -3,7 +3,7 @@
 // finestra. Mai dentro il ciclo di gioco.
 
 import { area, campo, grafica } from './config.js'
-import { perOgniTratto } from './percorso.js'
+import { distanzePresidi, perOgniTratto, posizionaSulSentiero } from './percorso.js'
 
 function rettangoloArrotondato(ctx, x, y, larghezza, altezza, raggio) {
   ctx.beginPath()
@@ -125,6 +125,32 @@ function disegnaTorri(ctx) {
   }
 }
 
+// I presidi: una fascia chiara di traverso al sentiero, nel punto dove le
+// truppe si fermeranno. Vanno visti prima che ci arrivi qualcuno, altrimenti
+// la sosta sembra casuale ed e' esattamente cio' che confondeva.
+function disegnaPresidi(ctx) {
+  const stile = grafica.presidio
+  const larghezza = campo.larghezza_sentiero + stile.larghezza_extra
+  const punto = { x: 0, y: 0 }
+
+  for (let i = 0; i < distanzePresidi.length; i++) {
+    posizionaSulSentiero(distanzePresidi[i], 0, punto)
+
+    ctx.beginPath()
+    ctx.moveTo(punto.x - larghezza / 2, punto.y)
+    ctx.lineTo(punto.x + larghezza / 2, punto.y)
+    ctx.lineWidth = stile.spessore
+    ctx.lineCap = 'round'
+    ctx.strokeStyle = stile.colore
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.arc(punto.x, punto.y, stile.raggio_bollo, 0, Math.PI * 2)
+    ctx.fillStyle = stile.colore_bollo
+    ctx.fill()
+  }
+}
+
 export function disegnaSfondo(ctx) {
   ctx.clearRect(0, 0, area.larghezza, area.altezza)
 
@@ -132,6 +158,7 @@ export function disegnaSfondo(ctx) {
   ctx.fillRect(0, 0, area.larghezza, area.altezza)
 
   disegnaSentiero(ctx)
+  disegnaPresidi(ctx)
   disegnaUscitaNemici(ctx)
   disegnaCastello(ctx)
   disegnaTorri(ctx)
