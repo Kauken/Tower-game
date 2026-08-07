@@ -2,8 +2,8 @@
   "_nota": "L'economia: e' il cuore del gioco. La domanda che questi numeri devono rendere difficile e' una sola — compro adesso o investo nella rendita? Se comprare e' sempre giusto, il gioco non esiste. Valori provvisori, da tarare con l'agente bilanciatore.",
   "partita": {
     "_nota": "Il castello assorbe gli errori: deve permettere di sbagliare qualche ondata senza perdere subito.",
-    "oro_iniziale": 300,
-    "vita_castello": 20
+    "oro_iniziale": 420,
+    "vita_castello": 25
   },
   "rendita": {
     "_nota": "Le due torri producono insieme oro_per_ciclo ogni ciclo_ms. Ogni potenziamento aggiunge oro_aggiunto_per_livello e costa sempre di piu': e' la scommessa sul futuro. Due regole da rispettare: ogni livello deve ripagarsi in meno di due minuti, e la rendita al secondo va rifatta ogni volta che si cambia il ritmo delle ondate — ondate piu' corte vogliono dire meno tempo per accumulare.",

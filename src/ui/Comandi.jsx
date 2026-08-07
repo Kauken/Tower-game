@@ -1,7 +1,70 @@
 import React, { useState } from 'react'
 import { elencoReclute, grafica, interfaccia } from '../game/config.js'
+import { postazioni } from '../game/percorso.js'
 
 const stile = interfaccia.pulsanti
+const stilePostazioni = interfaccia.postazioni
+
+// La postazione dove finiranno le prossime reclute comprate. Si sceglie una
+// volta e resta: un tocco per postazione, non uno per uomo. Mostra i posti
+// liberi, perche' quando sono finiti l'acquisto non parte e il giocatore deve
+// poterlo sapere prima di premere.
+function ScegliPostazione({ scelta, liberi, attivi, onMandaA }) {
+  return (
+    <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
+      {postazioni.map((postazione, indice) => {
+        const posti = liberi[indice]
+        const pieno = posti === 0
+        const attiva = indice === scelta
+
+        return (
+          <button
+            key={postazione.id}
+            type="button"
+            disabled={!attivi}
+            onPointerDown={() => attivi && onMandaA(indice)}
+            style={{
+              flex: 1,
+              minHeight: interfaccia.altezza_minima_tocco_compatta,
+              padding: interfaccia.spaziatura / 3,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: stile.distanza_righe,
+              border:
+                stile.spessore_bordo_pronto +
+                'px solid ' +
+                (attiva ? stile.colore_bordo_pronto : 'transparent'),
+              borderRadius: interfaccia.raggio_angoli,
+              background: attiva ? stilePostazioni.colore_scelta : stilePostazioni.colore,
+              color: interfaccia.colore_testo,
+              fontFamily: 'inherit',
+              touchAction: 'manipulation'
+            }}
+          >
+            <span
+              style={{
+                fontSize: interfaccia.testo_piccolo,
+                fontWeight: attiva ? stile.peso_titolo : 400
+              }}
+            >
+              {postazione.nome}
+            </span>
+            <span
+              style={{
+                fontSize: interfaccia.testo_piccolo,
+                color: pieno ? interfaccia.colore_allarme : interfaccia.colore_testo_debole
+              }}
+            >
+              {pieno ? 'pieno' : posti + '/' + postazione.posti}
+            </span>
+          </button>
+        )
+      })}
+    </div>
+  )
+}
 
 // Un pulsante grande, in basso, sotto il pollice. Risponde al tocco che scende
 // (non al click che sale): su telefono la differenza fra le due cose si sente.
@@ -80,10 +143,18 @@ export default function Comandi({
   livelloRendita,
   oroPerCiclo,
   renditaAlMassimo,
+  postazioneScelta,
+  postiLiberi,
   attivi,
   onCompra,
-  onPotenzia
+  onPotenzia,
+  onMandaA
 }) {
+  // arriva come "3,0,12,12": una stringa sola invece di un elenco, cosi'
+  // l'interfaccia capisce con un confronto se e' cambiato qualcosa
+  const liberi = postiLiberi.split(',').map(Number)
+  const spazioNellaPostazione = liberi[postazioneScelta] || 0
+
   return (
     <div
       style={{
@@ -96,9 +167,19 @@ export default function Comandi({
         gap: interfaccia.spaziatura
       }}
     >
+      <ScegliPostazione
+        scelta={postazioneScelta}
+        liberi={liberi}
+        attivi={attivi}
+        onMandaA={onMandaA}
+      />
+
       {/* una riga sola: due righe di reclute piu' la rendita coprirebbero il
           castello sui telefoni piccoli, e il castello e' il punto in cui i
-          nemici colpiscono. Niente categoria qui: il colore la dice gia' */}
+          nemici colpiscono. Niente categoria qui: il colore la dice gia'.
+          Il pulsante si spegne anche quando nella postazione scelta non c'e'
+          posto per tutta la squadra: premere e non veder partire niente e'
+          peggio di un pulsante spento */}
       <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
         {elencoReclute.map((recluta) => (
           <Pulsante
@@ -106,7 +187,9 @@ export default function Comandi({
             titolo={recluta.nome}
             costo={recluta.costo}
             colore={grafica.reclute[recluta.id].colore}
-            acceso={attivi && oro >= recluta.costo}
+            acceso={
+              attivi && oro >= recluta.costo && spazioNellaPostazione >= recluta.quantita
+            }
             compatto
             onTocco={() => onCompra(recluta.id)}
           />

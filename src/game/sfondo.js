@@ -3,7 +3,12 @@
 // finestra. Mai dentro il ciclo di gioco.
 
 import { area, campo, grafica } from './config.js'
-import { distanzePresidi, perOgniTratto, posizionaSulSentiero } from './percorso.js'
+import {
+  perOgniTratto,
+  posizionaSulSentiero,
+  postazioni,
+  profonditaPostazione
+} from './percorso.js'
 
 function rettangoloArrotondato(ctx, x, y, larghezza, altezza, raggio) {
   ctx.beginPath()
@@ -125,30 +130,88 @@ function disegnaTorri(ctx) {
   }
 }
 
-// I presidi: una fascia chiara di traverso al sentiero, nel punto dove le
-// truppe si fermeranno. Vanno visti prima che ci arrivi qualcuno, altrimenti
-// la sosta sembra casuale ed e' esattamente cio' che confondeva.
-function disegnaPresidi(ctx) {
-  const stile = grafica.presidio
+// Le postazioni: un tratto di sentiero allargato, con una riga netta davanti.
+// Sono il posto dove le reclute vanno a stare, e vanno viste prima ancora di
+// comprare qualcosa: e' li' che si prende la decisione.
+const punto = { x: 0, y: 0 }
+
+function tracciaTrattoPostazione(ctx, postazione) {
+  const stile = grafica.postazione
+  const fine = postazione.distanza + profonditaPostazione
+  const passo = (fine - postazione.distanza) / stile.campioni_tratto
+
+  ctx.beginPath()
+  for (let i = 0; i <= stile.campioni_tratto; i++) {
+    posizionaSulSentiero(postazione.distanza + passo * i, 0, punto)
+    if (i === 0) {
+      ctx.moveTo(punto.x, punto.y)
+    } else {
+      ctx.lineTo(punto.x, punto.y)
+    }
+  }
+}
+
+// La riga netta davanti alla postazione: e' il punto in cui i nemici entrano
+// sotto tiro.
+function tracciaFronte(ctx, postazione, larghezza) {
+  posizionaSulSentiero(postazione.distanza, 0, punto)
+  const centroX = punto.x
+  const centroY = punto.y
+  posizionaSulSentiero(postazione.distanza + 1, 0, punto)
+  // la perpendicolare alla marcia, ricavata dai due punti
+  const versoX = punto.x - centroX
+  const versoY = punto.y - centroY
+  const lunghezza = Math.sqrt(versoX * versoX + versoY * versoY) || 1
+  const lateraleX = (-versoY / lunghezza) * (larghezza / 2)
+  const lateraleY = (versoX / lunghezza) * (larghezza / 2)
+
+  ctx.beginPath()
+  ctx.moveTo(centroX - lateraleX, centroY - lateraleY)
+  ctx.lineTo(centroX + lateraleX, centroY + lateraleY)
+}
+
+function disegnaPostazioni(ctx) {
+  const stile = grafica.postazione
   const larghezza = campo.larghezza_sentiero + stile.larghezza_extra
-  const punto = { x: 0, y: 0 }
 
-  for (let i = 0; i < distanzePresidi.length; i++) {
-    posizionaSulSentiero(distanzePresidi[i], 0, punto)
+  ctx.lineJoin = 'round'
+  ctx.lineCap = 'butt'
 
-    ctx.beginPath()
-    ctx.moveTo(punto.x - larghezza / 2, punto.y)
-    ctx.lineTo(punto.x + larghezza / 2, punto.y)
-    ctx.lineWidth = stile.spessore
-    ctx.lineCap = 'round'
-    ctx.strokeStyle = stile.colore
+  for (let i = 0; i < postazioni.length; i++) {
+    tracciaTrattoPostazione(ctx, postazioni[i])
+    ctx.strokeStyle = stile.colore_tratto
+    ctx.lineWidth = larghezza
     ctx.stroke()
 
-    ctx.beginPath()
-    ctx.arc(punto.x, punto.y, stile.raggio_bollo, 0, Math.PI * 2)
-    ctx.fillStyle = stile.colore_bollo
-    ctx.fill()
+    tracciaFronte(ctx, postazioni[i], larghezza)
+    ctx.strokeStyle = stile.colore_fronte
+    ctx.lineWidth = stile.spessore_fronte
+    ctx.stroke()
   }
+
+  ctx.lineCap = 'round'
+}
+
+// Il contorno acceso della postazione scelta. Questo non sta nello sfondo:
+// cambia a ogni tocco, quindi si disegna sul canvas del gioco.
+export function disegnaPostazioneScelta(ctx, indice) {
+  if (indice < 0 || indice >= postazioni.length) {
+    return
+  }
+  const stile = grafica.postazione
+  const larghezza = campo.larghezza_sentiero + stile.larghezza_extra
+
+  ctx.lineCap = 'butt'
+  tracciaTrattoPostazione(ctx, postazioni[indice])
+  ctx.strokeStyle = stile.colore_scelta
+  ctx.lineWidth = larghezza
+  ctx.stroke()
+
+  tracciaFronte(ctx, postazioni[indice], larghezza)
+  ctx.strokeStyle = stile.colore_fronte_scelta
+  ctx.lineWidth = stile.spessore_fronte_scelta
+  ctx.stroke()
+  ctx.lineCap = 'round'
 }
 
 export function disegnaSfondo(ctx) {
@@ -158,7 +221,7 @@ export function disegnaSfondo(ctx) {
   ctx.fillRect(0, 0, area.larghezza, area.altezza)
 
   disegnaSentiero(ctx)
-  disegnaPresidi(ctx)
+  disegnaPostazioni(ctx)
   disegnaUscitaNemici(ctx)
   disegnaCastello(ctx)
   disegnaTorri(ctx)

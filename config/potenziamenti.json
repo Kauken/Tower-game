@@ -1,7 +1,8 @@
 {
   "_nota": "Gli oggetti della pool. Se ne sceglie uno fra tre all'inizio della partita, e altri arriveranno dalle ondate tesoro (punto 5). Si accumulano per tutta la run e non si perdono mai.",
   "quanti_offerti": 3,
-  "_nota_effetti": "Ogni effetto ha un tipo, un bersaglio e un valore. tipo 'moltiplica' agisce su una statistica delle reclute di una categoria ('tutte' vale per ogni categoria); 'rendita' aggiunge oro per ciclo; 'sconto' abbassa il costo di tutte le reclute. Nessun effetto e' scritto nel codice: il codice sa leggere questi tre tipi e basta.",
+  "_nota_effetti": "Ogni effetto ha un tipo, un bersaglio e dei valori. Nessun effetto e' scritto nel codice: il codice sa leggere questi tipi e basta. moltiplica = una statistica delle reclute di una categoria ('tutte' vale per ogni categoria). rendita = oro in piu' per ciclo. sconto = tutte le reclute costano meno. oro_uccisione = oro in piu' per ogni nemico ucciso. guarigione_ondata = frazione di vita che le reclute ferite recuperano a fine ondata. rinforzo = una squadra gratis a ogni ondata, mandata da sola dove c'e' piu' spazio. esplosione_morte = la recluta che cade scoppia (raggio lungo il sentiero, valore = danno). rallenta = i nemici colpiti marciano E colpiscono piu' piano (valore = quanto resta della loro velocita' e della loro cadenza, durata_ms = per quanto). Rallentare la sola marcia faceva perdere ondate: un nemico lento resta piu' a lungo addosso a reclute che sono ferme e non guariscono. veterano = ogni uccisione aumenta il danno della recluta di valore, fino a massimo. spine = la recluta restituisce questa frazione dei colpi che riceve.",
+  "_nota_dinamici": "Gli ultimi quattro tipi sono quelli che cambiano come si gioca invece di quanto forte si e'. Sono gli oggetti che devono far ricordare una partita: senza, la pool e' solo una lista di numeri piu' grandi.",
   "tag_validi": [
     "FERRO",
     "FUOCO",
@@ -44,13 +45,13 @@
         "tipo": "moltiplica",
         "categoria": "tiratori",
         "statistica": "raggio_ingaggio",
-        "valore": 1.5
+        "valore": 1.9
       }
     },
     {
       "id": "corazze_pesanti",
       "nome": "Corazze pesanti",
-      "descrizione": "Tutte le tue reclute reggono molti piu' colpi, ma marciano piu' piano.",
+      "descrizione": "Tutte le tue reclute reggono molti piu' colpi, ma sotto il ferro colpiscono piu' lente.",
       "tag": [
         "FERRO"
       ],
@@ -64,8 +65,8 @@
       "effetto_secondario": {
         "tipo": "moltiplica",
         "categoria": "tutte",
-        "statistica": "velocita",
-        "valore": 0.78
+        "statistica": "cadenza_ms",
+        "valore": 1.28
       }
     },
     {
@@ -118,7 +119,7 @@
     {
       "id": "passo_di_carica",
       "nome": "Passo di carica",
-      "descrizione": "Tutte le reclute marciano molto piu' in fretta e raggiungono il fronte prima.",
+      "descrizione": "Le reclute corrono alla postazione quasi subito: quando una linea cede, il rimpiazzo e' gia' li'. E colpiscono un po' piu' spesso.",
       "tag": [
         "RAPIDITA"
       ],
@@ -127,7 +128,13 @@
         "tipo": "moltiplica",
         "categoria": "tutte",
         "statistica": "velocita",
-        "valore": 1.5
+        "valore": 2.4
+      },
+      "effetto_secondario": {
+        "tipo": "moltiplica",
+        "categoria": "tutte",
+        "statistica": "cadenza_ms",
+        "valore": 0.88
       }
     },
     {
@@ -144,6 +151,133 @@
         "categoria": "tutte",
         "statistica": "cadenza_ms",
         "valore": 0.75
+      }
+    },
+    {
+      "id": "fiale_infrante",
+      "nome": "Fiale infrante",
+      "descrizione": "Ogni recluta che cade esplode e ferisce tutti i nemici che le stanno passando accanto.",
+      "tag": [
+        "FUOCO"
+      ],
+      "rarita": "raro",
+      "effetto": {
+        "tipo": "esplosione_morte",
+        "categoria": "tutte",
+        "raggio": 72,
+        "valore": 95
+      }
+    },
+    {
+      "id": "vento_di_gelo",
+      "nome": "Vento di gelo",
+      "descrizione": "Frecce di ghiaccio: i tiratori fanno molto piu' male, e chi le prende marcia e mena piu' piano.",
+      "tag": [
+        "GELO"
+      ],
+      "rarita": "raro",
+      "effetto": {
+        "tipo": "moltiplica",
+        "categoria": "tiratori",
+        "statistica": "danno",
+        "valore": 1.75
+      },
+      "effetto_secondario": {
+        "tipo": "rallenta",
+        "categoria": "tiratori",
+        "valore": 0.55,
+        "durata_ms": 1800
+      }
+    },
+    {
+      "id": "cicatrici",
+      "nome": "Cicatrici",
+      "descrizione": "Ogni nemico ucciso rende quella recluta un po' piu' forte, per il resto della partita.",
+      "tag": [
+        "FERRO"
+      ],
+      "rarita": "raro",
+      "effetto": {
+        "tipo": "veterano",
+        "categoria": "tutte",
+        "valore": 0.1,
+        "massimo": 1.5
+      }
+    },
+    {
+      "id": "chirurgo_da_campo",
+      "nome": "Chirurgo da campo",
+      "descrizione": "Fra un'ondata e l'altra le reclute ferite si rimettono in sesto per un terzo.",
+      "tag": [
+        "FERRO"
+      ],
+      "rarita": "leggendario",
+      "effetto": {
+        "tipo": "guarigione_ondata",
+        "valore": 0.34
+      }
+    },
+    {
+      "id": "volontari",
+      "nome": "Volontari",
+      "descrizione": "A ogni ondata una squadra di Ratti arriva gratis e si mette dove c'e' piu' posto.",
+      "tag": [
+        "ORO",
+        "RAPIDITA"
+      ],
+      "rarita": "raro",
+      "effetto": {
+        "tipo": "rinforzo",
+        "recluta": "ratto"
+      }
+    },
+    {
+      "id": "pelle_di_rovo",
+      "nome": "Pelle di rovo",
+      "descrizione": "Chi colpisce la tua fanteria si ferisce da solo: quasi tre quarti del colpo tornano indietro.",
+      "tag": [
+        "FERRO"
+      ],
+      "rarita": "raro",
+      "effetto": {
+        "tipo": "spine",
+        "categoria": "fanteria",
+        "valore": 0.7
+      }
+    },
+    {
+      "id": "bottino_di_guerra",
+      "nome": "Bottino di guerra",
+      "descrizione": "Ogni nemico ucciso lascia qualche moneta in piu'.",
+      "tag": [
+        "ORO"
+      ],
+      "rarita": "comune",
+      "effetto": {
+        "tipo": "oro_uccisione",
+        "valore": 5
+      }
+    },
+    {
+      "id": "morsi_avvelenati",
+      "nome": "Morsi avvelenati",
+      "descrizione": "Ogni bestia che cade scoppia in una nuvola velenosa, e i suoi morsi intorpidiscono chi li prende.",
+      "tag": [
+        "GELO",
+        "FUOCO"
+      ],
+      "rarita": "leggendario",
+      "effetto": {
+        "tipo": "esplosione_morte",
+        "categoria": "bestie",
+        "raggio": 66,
+        "valore": 110
+      },
+      "effetto_secondario": {
+        "tipo": "rallenta",
+        "categoria": "bestie",
+        "valore": 0.6,
+        "durata_ms": 1400
       }
     }
   ]

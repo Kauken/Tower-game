@@ -53,9 +53,14 @@
     },
     "altezza_minima_tocco_compatta": 54,
     "spaziatura_stretta": 6,
-    "_nota_spazi": "Quanto spazio si tiene libero sopra e sotto per cruscotto e pulsanti. Il canvas viene misurato su quello che resta, non su tutto lo schermo: e' cosi' che il castello non finisce mai sotto ai comandi. Se si aggiunge o si toglie una riga di pulsanti, questi due numeri vanno rifatti.",
+    "postazioni": {
+      "_nota": "La riga che sceglie dove mandare le prossime reclute. Sta sopra ai pulsanti delle reclute perche' e' la decisione che viene prima: dove, poi chi.",
+      "colore": "#232a31",
+      "colore_scelta": "#3c4450"
+    },
+    "_nota_spazi": "Quanto spazio si tiene libero sopra e sotto per cruscotto e pulsanti. Il canvas viene misurato su quello che resta, non su tutto lo schermo: e' cosi' che il castello non finisce mai sotto ai comandi. Se si aggiunge o si toglie una riga di pulsanti, questi due numeri vanno rifatti. Adesso le righe sono tre: postazioni, reclute, rendita.",
     "spazio_cruscotto": 92,
-    "spazio_comandi": 146,
+    "spazio_comandi": 220,
     "avviso_ondata": {
       "_nota": "Il pannello che annuncia l'ondata durante la pausa. Sta sotto il cruscotto e non intercetta i tocchi.",
       "distanza_righe": 3,
@@ -200,13 +205,16 @@
         "spessore": 4
       }
     },
-    "presidio": {
-      "_nota": "I presidi disegnati sul sentiero: una fascia chiara attraverso la strada. Servono a far capire dove le truppe si fermeranno, prima ancora che ci arrivino. Senza un segno visibile la sosta sembra casuale.",
-      "larghezza_extra": 22,
-      "spessore": 7,
-      "colore": "#e8e3d52e",
-      "raggio_bollo": 9,
-      "colore_bollo": "#e8e3d55c"
+    "postazione": {
+      "_nota": "Le postazioni disegnate sul sentiero: un tratto di strada allargato con una riga netta davanti, che e' il punto in cui i nemici entrano sotto tiro. Vanno viste prima di comprare, perche' sono la decisione. Quella scelta si accende sopra, sul canvas del gioco, perche' cambia a ogni tocco.",
+      "larghezza_extra": 30,
+      "campioni_tratto": 6,
+      "colore_tratto": "#e8e3d51c",
+      "colore_fronte": "#e8e3d54d",
+      "spessore_fronte": 4,
+      "colore_scelta": "#f2c44a26",
+      "colore_fronte_scelta": "#f2c44acc",
+      "spessore_fronte_scelta": 6
     }
   }
 }

@@ -74,11 +74,39 @@
         "y": 420
       }
     ],
-    "_nota_presidi": "I punti del sentiero dove le truppe si fermano a presidiare, come frazione della distanza dal castello: 0.25 e' vicino a casa, 0.85 e' quasi alla breccia. Le reclute non si fermano piu' in un punto qualunque — vanno al presidio piu' avanzato che riescono a raggiungere e li' tengono. Se l'ondata sfonda, i superstiti ripiegano al presidio dietro. E' questo che da' un senso a dove arrivano: senza, le truppe si fermano a caso in mezzo alla strada e il giocatore non capisce cosa stiano facendo.",
-    "presidi": [
-      0.28,
-      0.55,
-      0.85
-    ]
+    "_nota_postazioni": "Le postazioni lungo il sentiero: e' li' che le reclute vengono mandate, e li' restano per sempre. frazione e' la distanza dal castello (0.2 = vicino a casa, 0.85 = quasi alla breccia); posti dice quante reclute ci stanno. Il tetto dei posti e' cio' che impedisce di ammassare tutto l'esercito in un punto solo: senza, l'armata finiva sotto la breccia a uccidere i nemici uno per uno e il castello non veniva mai toccato.",
+    "postazioni": [
+      {
+        "id": "avamposto",
+        "nome": "Avamposto",
+        "frazione": 0.82,
+        "posti": 12
+      },
+      {
+        "id": "guado",
+        "nome": "Guado",
+        "frazione": 0.6,
+        "posti": 12
+      },
+      {
+        "id": "gola",
+        "nome": "Gola",
+        "frazione": 0.38,
+        "posti": 12
+      },
+      {
+        "id": "porta",
+        "nome": "Porta",
+        "frazione": 0.16,
+        "posti": 12
+      }
+    ],
+    "_nota_file": "Gli scostamenti laterali dei posti dentro una postazione: quanti valori ci sono, tante reclute stanno affiancate prima di formare una seconda fila. Le file successive stanno dietro, verso il castello, distanti distanza_fra_file l'una dall'altra.",
+    "scarti_postazione": [
+      -26,
+      0,
+      26
+    ],
+    "distanza_fra_file": 28
   }
 }

@@ -45,7 +45,7 @@ function nemiciNuoviDi(numeroOndata) {
   return nuovi
 }
 
-export function creaGestoreOndate(combattenti, partita, { allaFineOndata }) {
+export function creaGestoreOndate(combattenti, partita, { allInizioOndata, allaFineOndata }) {
   // quanti nemici mancano da far uscire e quanto manca al prossimo
   let daFarUscire = 0
   let intervalloMs = 0
@@ -87,6 +87,9 @@ export function creaGestoreOndate(combattenti, partita, { allaFineOndata }) {
     // il primo esce subito: l'ondata deve iniziare quando dice di iniziare
     attesaUscitaMs = 0
     partita.nemiciRimanenti = daFarUscire
+    // i rinforzi gratuiti degli oggetti arrivano adesso: devono essere gia'
+    // in marcia quando esce il primo nemico
+    allInizioOndata(partita.ondata)
   }
 
   function aggiorna(passoMs) {

@@ -13,7 +13,8 @@ import {
   simulazione,
   trovaRecluta
 } from './config.js'
-import { disegnaSfondo } from './sfondo.js'
+import { disegnaPostazioneScelta, disegnaSfondo } from './sfondo.js'
+import { postazioni } from './percorso.js'
 import { adattaCanvas } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
 import { creaGestoreCombattenti } from './combattenti.js'
@@ -44,6 +45,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     allImpatto: (x, y) => effetti.impatto(x, y),
     allaMorte: (x, y) => effetti.morte(x, y),
     allaComparsa: (x, y) => effetti.comparsa(x, y),
+    allEsplosione: (x, y) => effetti.esplosione(x, y),
     allArrivoAlCastello: (danno, x, y) => {
       effetti.esplosione(x, y)
       colpisciCastello(partita, danno)
@@ -52,16 +54,27 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     oggetti
   })
 
+  // dove vanno le reclute che si comprano: si sceglie una volta e resta.
+  // Un tocco per postazione, non uno per uomo.
+  let postazioneScelta = 0
+
   const ondate = creaGestoreOndate(combattenti, partita, {
-    allaFineOndata: (numeroOndata) => economia.ricompensaOndata(numeroOndata)
+    allInizioOndata: () => combattenti.faiArrivareRinforzi(),
+    allaFineOndata: (numeroOndata) => {
+      economia.ricompensaOndata(numeroOndata)
+      // le reclute non guariscono da sole: succede qualcosa solo se un
+      // oggetto raccolto lo prevede
+      combattenti.riposaFraOndate()
+    }
   })
 
-  // il comando porta con se' quale recluta: cosi' due tocchi ravvicinati su
-  // pulsanti diversi non si confondono
+  // il comando porta con se' quale recluta e quale postazione: cosi' due
+  // tocchi ravvicinati su pulsanti diversi non si confondono
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
     tipo: '',
-    idRecluta: ''
+    idRecluta: '',
+    valore: 0
   }))
 
   // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
@@ -81,7 +94,12 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     quantitaProssimaOndata: 0,
     // stringa, non elenco: l'interfaccia la confronta per capire se e'
     // cambiata, e confrontare due elenchi a ogni lettura sarebbe piu' caro
-    nemiciNuovi: ''
+    nemiciNuovi: '',
+    postazioneScelta: 0,
+    // "3,0,12,12": quanti posti liberi ha ogni postazione. Stringa e non
+    // elenco, come nemiciNuovi: l'interfaccia la confronta per capire se e'
+    // cambiata, e confrontare due elenchi a ogni lettura costerebbe di piu'.
+    postiLiberi: ''
   }
 
   let ctxSfondo = null
@@ -90,7 +108,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   let accumulato = 0
   let richiesta = 0
 
-  function accodaComando(tipo, idRecluta) {
+  function accodaComando(tipo, idRecluta, valore) {
     const comando = primoLibero(comandi)
     if (!comando) {
       return
@@ -98,6 +116,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     comando.attivo = true
     comando.tipo = tipo
     comando.idRecluta = idRecluta || ''
+    comando.valore = valore || 0
   }
 
   // L'offerta di oggetti: si pesca una volta sola, alla scelta. Dentro il
@@ -126,6 +145,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     economia.reimposta()
     reimposta(partita)
     ondate.reimposta()
+    postazioneScelta = 0
     apriSceltaOggetti()
   }
 
@@ -134,15 +154,22 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       return
     }
     // il posto si controlla prima di pagare: senza spazio per tutta la squadra
-    // l'oro sarebbe speso per una squadra a meta'
-    if (!combattenti.cePostoPerUnaSquadra(idRecluta)) {
+    // nella postazione scelta l'oro sarebbe speso per una squadra a meta'
+    if (!combattenti.cePostoPerUnaSquadra(idRecluta, postazioneScelta)) {
       return
     }
     const dati = trovaRecluta(idRecluta)
     if (!economia.spendi(economia.costoReale(dati.costo))) {
       return
     }
-    combattenti.faiPartireRecluta(idRecluta)
+    combattenti.faiPartireRecluta(idRecluta, postazioneScelta)
+  }
+
+  function scegliPostazione(indice) {
+    if (indice < 0 || indice >= postazioni.length) {
+      return
+    }
+    postazioneScelta = indice
   }
 
   function eseguiComandi() {
@@ -158,6 +185,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
         scegliOggetto(comando.idRecluta)
       } else if (comando.tipo === 'compra_recluta') {
         compraRecluta(comando.idRecluta)
+      } else if (comando.tipo === 'scegli_postazione') {
+        scegliPostazione(comando.valore)
       } else if (comando.tipo === 'potenzia_rendita' && partita.fase !== 'sconfitta') {
         economia.potenziaRendita()
       }
@@ -191,6 +220,9 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   function disegna() {
     ctxGioco.clearRect(0, 0, area.larghezza, area.altezza)
+    // la postazione scelta si accende qui e non nello sfondo: cambia a ogni
+    // tocco, e lo sfondo si disegna una volta sola
+    disegnaPostazioneScelta(ctxGioco, postazioneScelta)
     combattenti.disegna(ctxGioco)
     // gli effetti sopra tutto: sono brevi e non coprono niente a lungo
     effetti.disegna(ctxGioco)
@@ -245,6 +277,12 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     vetrina.nemiciRimanenti = partita.fase === 'ondata' ? partita.nemiciRimanenti : 0
     vetrina.quantitaProssimaOndata = partita.quantitaProssimaOndata
     vetrina.nemiciNuovi = partita.nemiciNuovi.join(', ')
+    vetrina.postazioneScelta = postazioneScelta
+    let liberi = ''
+    for (let i = 0; i < postazioni.length; i++) {
+      liberi += (i > 0 ? ',' : '') + combattenti.postiLiberi(i)
+    }
+    vetrina.postiLiberi = liberi
     return vetrina
   }
 
@@ -254,6 +292,10 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   function potenzia() {
     accodaComando('potenzia_rendita')
+  }
+
+  function mandaA(indice) {
+    accodaComando('scegli_postazione', '', indice)
   }
 
   function riparti() {
@@ -278,6 +320,7 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     leggiOfferta,
     compra,
     potenzia,
+    mandaA,
     scegli,
     riparti
   }

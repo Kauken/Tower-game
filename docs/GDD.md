@@ -8,15 +8,16 @@
 
 ## 1. Il gioco in una riga
 
-**Un tower defense roguelike per telefono in cui non piazzi torri: compri reclute.** Due torri tue producono oro da sole; tu decidi cosa comprare e quando, e se investire nella rendita invece che nell'esercito. Le reclute partono, marciano e combattono senza di te. Gli oggetti che trovi le trasformano.
+**Un tower defense roguelike per telefono in cui non piazzi torri: compri reclute e le mandi a una postazione.** Due torri tue producono oro da sole; tu decidi cosa comprare, dove mandarlo e se investire nella rendita invece che nell'esercito. Le reclute combattono senza di te — e si consumano. Gli oggetti che trovi le trasformano.
 
 ## 2. Il ruolo del giocatore
 
 Zero riflessi, zero mira, zero schivate. Tre decisioni che si ripetono:
 
 1. **Quale recluta comprare, e quando.**
-2. **Esercito adesso o rendita per dopo** — potenziare le torri costa oro che non stai spendendo in truppe.
-3. **Quale oggetto prendere**, quando la pool ne offre tre.
+2. **A quale postazione mandarla** — un tocco per postazione, non uno per uomo.
+3. **Esercito adesso o rendita per dopo** — potenziare le torri costa oro che non stai spendendo in truppe.
+4. **Quale oggetto prendere**, quando la pool ne offre tre.
 
 > Non guardi: **spendi**.
 
@@ -26,18 +27,35 @@ Zero riflessi, zero mira, zero schivate. Tre decisioni che si ripetono:
 
 Un **sentiero** che va dal punto di uscita dei nemici, in alto, al **tuo castello**, in basso.
 
-- I **nemici** scendono lungo il sentiero verso il tuo castello.
-- Le tue **reclute** salgono lungo lo stesso sentiero e li incontrano a metà strada. Dove si incontrano si fermano e combattono.
+- Lungo il sentiero ci sono **quattro postazioni** con un numero fisso di posti. È lì che le reclute vanno a stare.
+- I **nemici scendono e non si fermano mai.** Marciano dalla breccia al castello e colpiscono chi trovano lungo la strada senza rallentare. Attraversano tutte e quattro le postazioni: ognuna li logora un pezzo, nessuna li blocca.
 - Un nemico che arriva in fondo **toglie vita al tuo castello**. A zero, la run finisce.
 - Le tue **due torri** stanno ai lati e non sparano: **producono oro**. Sono fisse, non si piazzano, e si possono potenziare.
 
+### Perché le postazioni, e perché i nemici non si fermano
+
+Sono la stessa regola vista da due lati, e sono la correzione dell'errore che ha rovinato tre versioni di questo gioco.
+
+Quando i nemici si fermavano a combattere e le reclute potevano andare tutte nello stesso punto, l'esercito si accumulava sotto la breccia e uccideva i nemici **uno per uno, appena usciti**. Il castello non veniva mai toccato, l'oro si accumulava senza avere dove andare, e comprare smetteva di essere una decisione.
+
+Il **tetto dei posti** impedisce di ammassare l'esercito in un punto solo e costringe la difesa a distribuirsi su tutto il sentiero. Il fatto che i **nemici non si fermino** impedisce l'ingorgo e tiene il castello raggiungibile.
+
 ## 4. Le reclute
 
-Si comprano con un pulsante, quando hai l'oro. Partono dal tuo lato e camminano: **non si piazzano**. Il sentiero è uno solo, e scegliere dove metterle non sarebbe una decisione — solo una fatica in più.
+Si comprano con un pulsante, quando hai l'oro. Partono dal castello e camminano fino alla **postazione scelta**, e lì restano. Un acquisto fa partire una **squadra intera**: è quello che tiene basso il numero di tocchi senza togliere niente alla decisione.
 
 - Divise in **categorie** (per esempio Fanteria, Bestie, Arcani, Meccanismi).
 - Ognuna ha costo, vita, danno, velocità, portata.
+- La **velocità** decide quanto ci mettono ad arrivare alla postazione: è per questo che il Ratto è la recluta d'emergenza.
 - Se ne sbloccano di nuove giocando.
+
+### Le reclute non guariscono. Si consumano.
+
+Una recluta ferita resta ferita. Ogni ondata che passa la logora, e prima o poi cade.
+
+Non è una punizione, è il motore dell'economia: è **l'usura che dà all'oro un posto dove andare** per tutta la partita, e che tiene la difesa sempre un po' più sottile di quanto vorresti. Un tower defense in cui la tua difesa sanguina.
+
+L'unico modo per curarle è un oggetto della pool — ed è per questo che quell'oggetto conta.
 
 ### Il tetto di equipaggiamento — l'idea che regge la varietà
 
@@ -77,10 +95,26 @@ Il castello ha una **vita**. Ogni nemico che arriva in fondo al sentiero ne togl
 
 Arrivano dalla pool nelle ondate tesoro: **tre, ne scegli uno**. Si accumulano per tutta la run.
 
-Ogni oggetto cambia **come combattono le tue reclute**, mai solo di quanto:
+Ogni oggetto cambia **come combattono le tue reclute**, non solo di quanto. Un pool fatto solo di moltiplicatori è una lista di numeri più grandi: quello che deve far ricordare una partita è l'oggetto che cambia le regole.
 
-- generici — *"le tue reclute esplodono morendo"*
-- di categoria — *"le Bestie caricano il primo nemico che vedono"*
+I tipi di effetto che il motore sa leggere (il codice non conosce nessun oggetto in particolare — si aggiunge una voce in `config/potenziamenti.json`, non si tocca il codice):
+
+| tipo | cosa fa |
+|---|---|
+| `moltiplica` | una statistica delle reclute, per categoria o per tutte |
+| `rendita` | oro in più per ciclo dalle torri |
+| `sconto` | tutte le reclute costano meno |
+| `oro_uccisione` | oro in più per ogni nemico ucciso |
+| `guarigione_ondata` | le reclute ferite recuperano fra un'ondata e l'altra |
+| `rinforzo` | una squadra gratis a ogni ondata, che va da sola dove c'è più posto |
+| `esplosione_morte` | la recluta che cade scoppia e ferisce i nemici vicini |
+| `rallenta` | i nemici colpiti marciano **e colpiscono** più piano |
+| `veterano` | ogni uccisione rende quella recluta più forte, per il resto della partita |
+| `spine` | chi colpisce la recluta si ferisce da solo |
+
+Ogni oggetto può essere **generico** (`categoria: "tutte"`) o **di categoria**, ed è la seconda cosa che fa nascere le sinergie con il tetto di equipaggiamento.
+
+> **Nota di progetto, misurata e non supposta:** rallentare la sola marcia dei nemici *fa perdere ondate*. Un nemico lento resta più a lungo addosso a reclute che sono ferme e non guariscono, e i due effetti si annullano. Per questo `rallenta` agisce anche sulla cadenza dei colpi, e per questo non esiste un oggetto costruito solo sul rallentamento: in un gioco dove la difesa è immobile, il rallentamento da solo non è un archetipo che funziona.
 
 ### Sistema a tag
 

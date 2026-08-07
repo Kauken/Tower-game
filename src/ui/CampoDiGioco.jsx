@@ -20,7 +20,9 @@ const VISTA_INIZIALE = {
   secondiAllOndata: 0,
   quantitaProssimaOndata: 0,
   nemiciNuovi: '',
-  nemiciRimanenti: 0
+  nemiciRimanenti: 0,
+  postazioneScelta: 0,
+  postiLiberi: ''
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -97,6 +99,10 @@ export default function CampoDiGioco() {
     motoreRef.current.potenzia()
   }, [])
 
+  const mandaA = useCallback((indice) => {
+    motoreRef.current.mandaA(indice)
+  }, [])
+
   const ricomincia = useCallback(() => {
     motoreRef.current.riparti()
     impostaOfferta([])
@@ -167,9 +173,12 @@ export default function CampoDiGioco() {
         livelloRendita={vista.livelloRendita}
         oroPerCiclo={vista.oroPerCiclo}
         renditaAlMassimo={vista.renditaAlMassimo}
+        postazioneScelta={vista.postazioneScelta}
+        postiLiberi={vista.postiLiberi}
         attivi={vista.fase !== 'sconfitta'}
         onCompra={compra}
         onPotenzia={potenzia}
+        onMandaA={mandaA}
       />
 
       {vista.fase === 'scelta' && offerta.length > 0 ? (

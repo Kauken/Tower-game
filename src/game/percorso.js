@@ -42,12 +42,43 @@ for (let i = 0; i < punti.length - 1; i++) {
 export const lunghezzaTotale = totale
 export const distanzaMinimaInFila = campo.distanza_minima_in_fila
 
-// I presidi, in distanza dall'uscita dei nemici e ordinati dal piu' avanzato
-// (piu' vicino alla breccia) al piu' arretrato. Le reclute si fermano qui, mai
-// in un punto qualunque della strada.
-export const distanzePresidi = campo.presidi
-  .map((frazione) => totale * (1 - frazione))
-  .sort((a, b) => a - b)
+// Le postazioni, con la distanza dall'uscita dei nemici gia' calcolata e tutti
+// i posti gia' disposti in file. Si calcola qui, una volta sola all'avvio:
+// dentro il ciclo di gioco una recluta legge il suo posto e basta.
+//
+// Ordinate dalla piu' avanzata (vicina alla breccia) alla piu' arretrata: e'
+// l'ordine in cui i nemici le incontrano.
+const scartiPosto = campo.scarti_postazione
+
+export const postazioni = campo.postazioni
+  .map((posto) => {
+    const distanza = totale * (1 - posto.frazione)
+    const slot = []
+    for (let i = 0; i < posto.posti; i++) {
+      const fila = Math.floor(i / scartiPosto.length)
+      slot.push({
+        // le file successive stanno dietro, cioe' piu' vicine al castello
+        distanza: distanza + fila * campo.distanza_fra_file,
+        scarto: scartiPosto[i % scartiPosto.length]
+      })
+    }
+    return { id: posto.id, nome: posto.nome, posti: posto.posti, distanza, slot }
+  })
+  .sort((a, b) => a.distanza - b.distanza)
+
+// Quanto e' profonda la postazione piu' profonda: serve a disegnarla.
+export const profonditaPostazione =
+  (Math.ceil(
+    postazioni.reduce((massimo, posto) => Math.max(massimo, posto.posti), 0) /
+      scartiPosto.length
+  ) -
+    1) *
+  campo.distanza_fra_file
+
+export const capienzaMassimaPostazione = postazioni.reduce(
+  (massimo, posto) => Math.max(massimo, posto.posti),
+  0
+)
 
 // Scrive la posizione dentro `esito` invece di restituire un oggetto nuovo:
 // questa funzione gira per ogni combattente a ogni passo, e allocare qui

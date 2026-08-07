@@ -30,7 +30,9 @@ Ci si arriva al punto 1. Tutto il resto — categorie, pool, negozi, boss, biomi
 
 2. **Le categorie di recluta.** — **FATTO** (2026-08-02). Milite (il metro), Guardia (regge e protegge), Arciere (colpisce da dietro la prima fila), Ratto (costa poco e arriva subito). Un pulsante per ciascuna, col colore che hanno in campo.
 3. **Nemici che valgono.** — **FATTO** (2026-08-02). Fante (base), Corridore (veloce, dall'ondata 4), Bruto (lento e corazzato, dalla 9), Balestriere (colpisce da lontano, dalla 13). Entrano un tipo alla volta, e ognuno punisce una difesa sbilanciata.
-4. **La pool: tre oggetti, ne scegli uno.** — **PARZIALE** (2026-08-02). Esiste la scelta a inizio partita con 8 oggetti. Manca la scelta ricorrente dalle ondate tesoro, che arriva col punto 5.
+4. **La pool: tre oggetti, ne scegli uno.** — **PARZIALE** (2026-08-07). Esiste la scelta a inizio partita con 16 oggetti, di cui 8 dinamici (esplosione alla morte, veterano, spine, rinforzi gratuiti, cure fra le ondate, oro per uccisione, gelo). Manca la scelta ricorrente dalle ondate tesoro, che arriva col punto 5.
+
+4b. **Le postazioni e il logoramento.** — **FATTO** (2026-08-07). Quattro postazioni con posti limitati lungo il sentiero; le reclute si mandano lì e lì restano. I nemici non si fermano più: marciano fino al castello colpendo chi trovano. Le reclute non guariscono. È la correzione dell'errore che rovinava le versioni precedenti — l'esercito che si ammassava sotto la breccia e rendeva il castello irraggiungibile.
 
 ## Fase B — il livello
 

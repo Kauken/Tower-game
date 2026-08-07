@@ -8,7 +8,7 @@
       "_nota": "Il nemico base: nessuna sorpresa. Serve a fare massa e a misurare tutto il resto.",
       "da_ondata": 1,
       "frequenza": 10,
-      "vita": 30,
+      "vita": 58,
       "velocita": 96,
       "danno": 11,
       "cadenza_ms": 800,
@@ -24,7 +24,7 @@
       "_nota": "Veloce e fragile: supera la linea se ha un varco e arriva al castello prima che tu possa reagire. Punisce chi tiene pochi difensori, e cade subito sotto gli Arcieri che lo colpiscono mentre arriva.",
       "da_ondata": 4,
       "frequenza": 7,
-      "vita": 22,
+      "vita": 42,
       "velocita": 168,
       "danno": 8,
       "cadenza_ms": 620,
@@ -40,7 +40,7 @@
       "_nota": "Lento, enorme, colpisce fortissimo e incassa. Contro i Militi da soli sfonda; davanti a una Guardia si blocca e gli Arcieri lo smontano da dietro. E' il nemico che rende necessaria la Guardia.",
       "da_ondata": 9,
       "frequenza": 4,
-      "vita": 130,
+      "vita": 225,
       "velocita": 58,
       "danno": 26,
       "cadenza_ms": 1300,
@@ -56,7 +56,7 @@
       "_nota": "Colpisce da piu' lontano di Militi e Guardie: si ferma fuori portata e uccide la tua prima fila senza essere toccato. L'unica risposta e' qualcosa che gli arrivi addosso in fretta (il Ratto) o che lo superi di gittata (l'Arciere). E' il nemico che rende necessarie le reclute veloci.",
       "da_ondata": 13,
       "frequenza": 5,
-      "vita": 44,
+      "vita": 84,
       "velocita": 78,
       "danno": 22,
       "cadenza_ms": 1400,
@@ -69,8 +69,8 @@
   ],
   "scalatura": {
     "_nota": "Crescita ondata dopo ondata. valore = base * (moltiplicatore ^ (ondata - 1)). Sono i numeri piu' delicati del gioco: la vita dei nemici cresce in modo composto, la rendita del giocatore no. Con 1.16 il muro arrivava all'ondata 4.",
-    "vita_per_ondata": 1.07,
-    "danno_per_ondata": 1.04,
+    "vita_per_ondata": 1.078,
+    "danno_per_ondata": 1.06,
     "oro_per_ondata": 1.05
   }
 }
