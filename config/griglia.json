@@ -5,7 +5,7 @@
     "altezza": 1200
   },
   "griglia": {
-    "_nota": "La scacchiera. Poche caselle e grandi: lo spazio stretto e' il gioco, e un dito grosso deve poterle centrare. Su un telefono da 390 px di larghezza una casella viene circa 67 px, ben sopra i 44 px minimi. L'area logica e' alta quanto serve perche' la griglia riempia lo schermo di un telefono in verticale: se si cambiano colonne o righe, va rifatta anche quella.",
+    "_nota": "La scacchiera. Su un telefono da 390 px di larghezza una casella viene circa 67 px, ben sopra i 44 px minimi. L'area logica e' alta quanto serve perche' la griglia riempia lo schermo di un telefono in verticale: se si cambiano colonne o righe, va rifatta anche quella. Quante caselle sono gia' arate all'inizio sta in economia.json, non qui: e' un valore di bilanciamento.",
     "colonne": 5,
     "righe": 8,
     "lato_casella": 120,

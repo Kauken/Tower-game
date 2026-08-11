@@ -14,8 +14,8 @@ Esegui in ordine:
    - ogni tag usato nei potenziamenti è dichiarato fra i tag validi, e le sinergie non nominano mai un potenziamento specifico
    - ogni `id` nominato in `vicinanze.json` e `sblocchi.json` esiste davvero in `contenuti.json`
    - la geometria di `griglia.json` e' coerente: la griglia intera sta dentro l'area, e niente finisce sotto il cruscotto in alto o sotto i pulsanti in basso
-   - **la bacheca non ha buchi**: dev'esserci sempre almeno uno sblocco quasi raggiungibile e almeno uno lontano. Un tratto in cui non si puo' desiderare niente e' un problema bloccante, non un dettaglio
-   - **le vicinanze si contraddicono**: devono esistere sia regole che premiano la monocoltura sia regole che premiano la varieta'. Se tirano tutte dalla stessa parte, il piazzamento ha una risposta ovvia e il gioco non esiste
+   - **nessuna coltura domina**: se una e' migliore di un'altra sotto ogni aspetto (seme, tempo e guadagno), scegliere cosa piantare non e' una decisione. Il codice lo controlla da solo all'avvio: se `npm run build` passa ma il gioco non parte nel browser, guarda qui
+   - **si puo' cominciare**: con le monete e i semi di partenza si deve poter piantare qualcosa e arrivare al primo raccolto senza restare bloccati a zero
    - nessun valore negativo dove non ha senso (vita, danno, costi, quantità)
 4. Cerca numeri scritti a mano dentro `src/` che dovrebbero stare in configurazione. Segnalali, non correggerli.
 5. Cerca **macerie**: blocchi di configurazione che nessuno legge più, funzioni esportate e mai usate, commenti e testi che nominano cose cancellate. Questo progetto è stato riscritto più volte, ed è così che si riempie di resti.

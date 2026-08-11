@@ -1,80 +1,85 @@
-# Lista di costruzione — v7
+# Lista di costruzione — v8
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
-Il gioco è quello del `GDD.md` v3.0: **una fattoria cozy su griglia, con minerali,
-tecnologie e automazioni.**
+Il gioco è quello del `GDD.md` v4.0: **gestionale di fattoria con catene di
+produzione** — Stardew per l'economia, Minecraft moddato per la scala tecnica,
+un pizzico di RimWorld per chi ci lavora.
 
 ## Come è ordinata
 
 Ogni punto deve lasciare qualcosa di **giocabile col pollice**, e la domanda più
 grossa riceve risposta per prima:
 
-> **Piazzare una cosa sulla griglia e vedere che si incastra con le vicine è soddisfacente?**
+> **Alla fine di una giornata, hai voglia di farne un'altra?**
 
-Ci si arriva al punto 2. Tecnologie, appezzamenti, automazioni e bacheca sono
+Ci si arriva al punto 3. Macchine, commesse, braccianti e appezzamenti sono
 tutti inutili se lì la risposta è no.
 
-**La lezione delle cinque versioni precedenti:** il progetto è morto ogni volta
-perché abbiamo costruito il gioco intero prima di sapere se il pezzo centrale
-era divertente. Il blocco della verifica dopo il punto 2 non è una formalità.
+**La lezione delle versioni precedenti:** il progetto è morto ogni volta perché
+abbiamo costruito il gioco intero prima di sapere se il pezzo centrale era
+divertente. I blocchi di verifica non sono una formalità.
 
 ---
 
-## Fase A — il nucleo deve funzionare
+## Fase A — il ciclo economico deve funzionare
 
-1. **La griglia.** — **FATTO** (2026-08-11). Griglia 5x8 verticale che riempie lo schermo del telefono. Tocchi una casella vuota, scegli fra Grano, Rapa, Lino e Canale, la vedi riempirsi dal basso mentre cresce, la raccogli toccandola e ricomincia. Magazzino in alto col contatore delle caselle usate. Si puo' togliere quello che si e' messo, altrimenti non si potrebbe provare a incastrare.
-2. **Le vicinanze, e che si vedano.** — **FATTO** (2026-08-11). Tre regole in `config/vicinanze.json`: **Filare** (grano vicino a grano, si moltiplica per ogni vicino), **Irrigazione** (qualunque coltura che tocca un canale cresce piu' del doppio), **Rotazione** (una coltura circondata da due colture diverse da lei rende molto di piu'). Filare e Rotazione si contraddicono apposta. Fra due caselle in sinergia si accende un legame giallo, e sulla casella compare la pastiglia col moltiplicatore.
+1. **I semi costano e si consumano.** — **FATTO** (2026-08-11). Piantare consuma un seme. Le caselle hanno tre stati: incolto (con i ciuffi d'erba), arato, occupato. Si parte con 6 caselle arate, 4 semi di rapa e 60 monete: non puoi riempire il campo neanche volendo. Estirpare restituisce il seme.
+2. **Vendere e comprare.** — **FATTO** (2026-08-11). Il mercato compra il raccolto a prezzi che oscillano ogni giorno, e vende i semi. Quelli che non ti puoi permettere restano visibili ma spenti: vedere quanto manca al Lino e' meta' del motivo per tornare domani. Dissodare costa, e il costo sale a ogni casella aperta.
+3. **Il giorno.** — **FATTO** (2026-08-11). Dura 90 secondi; il cruscotto mostra sempre quanto manca a sera e quanto si paghera'. A fine giornata si paga la manutenzione (3 per casella arata), i prezzi si rifanno, e un riepilogo dice raccolti, incassato, speso e saldo. Se non bastano i soldi una casella vuota torna incolta: **non si perde mai**.
 
-> ### 🛑 Verifica dopo il punto 2 — non si va avanti senza
-> **Piazzare e incastrare è soddisfacente?** Ti viene voglia di spostare le cose
-> per farle combaciare meglio, o stai solo riempiendo caselle? Se stai solo
-> riempiendo, il gioco non esiste ancora e si risolve qui: si cambiano le regole
-> di vicinanza, non si aggiunge contenuto sopra.
+> ### 🛑 Verifica dopo il punto 3 — non si va avanti senza
+> **Alla fine di una giornata, hai voglia di farne un'altra?** E soprattutto:
+> **decidere cosa piantare è una decisione vera**, o c'è sempre un seme
+> ovviamente migliore? Se è ovvio, si risolve qui coi numeri, non aggiungendo
+> contenuto sopra.
 
-3. **Lo scavo.** Le rocce sulla griglia. Tocchi, si crepa, si spacca, escono minerali. È l'unica cosa attiva del gioco e deve essere piacevole da fare a vuoto.
-4. **La prima macchina.** Qualcosa che consuma da una catena e produce nell'altra (il Mulino: grano → farina, costruito con rame). È il momento in cui colture e minerali diventano un gioco solo.
-5. **Il tempo.** Il giorno che passa mentre guardi, e la produzione a app chiusa con il suo tetto.
+4. **Le commesse.** La bacheca che chiede roba precisa, paga molto di più del mercato e sblocca lavorazioni. È il "non vedo l'ora", ed è la decisione *vendo o tengo da parte*.
+5. **Lo scavo e i minerali.** Le rocce sul campo: tocchi, si crepa, si spacca. È l'unica cosa attiva del gioco.
 
-> ### 🛑 Verifica dopo il punto 5
-> **Una sessione da tre minuti contiene almeno una decisione?** Se apri, raccogli
-> e chiudi senza aver scelto niente, manca il gioco.
+## Fase B — la scala tecnica
 
-## Fase B — l'avanzamento
+6. **La prima lavorazione**: il Mulino (grano → farina), costruito con rame. È il momento in cui colture e minerali diventano un gioco solo.
+7. **La catena a due passaggi**: il Forno (farina → pane). Il valore si moltiplica a ogni passaggio.
+8. **I braccianti**: assumi, assegni un mestiere e una zona, li paghi ogni giorno.
 
-6. **La bacheca degli sblocchi.** Le cose bloccate in ombra, col costo e con quanto manca. È il motore del "non vedo l'ora".
-7. **Le prime automazioni**, con il loro costo in caselle: spaventapasseri (raccoglie) e semina automatica (ripianta).
-8. **L'espansione**: comprare caselle nuove.
-9. **Il secondo appezzamento** (la Collina), con la sua risorsa e le sue macchine.
+> ### 🛑 Verifica dopo il punto 8
+> **"Assumo o me lo faccio da solo" è una decisione difficile?** Se assumere è
+> sempre giusto o sempre sbagliato, i salari sono tarati male.
 
-> ### 🛑 Verifica dopo il punto 9
+9. **Le macchine che sostituiscono i braccianti**: costano molto di più subito, niente dopo. Nasce la decisione *assumo o compro*.
+10. **Il secondo appezzamento** e la ristrutturazione: la macchina migliore non entra dove stava la vecchia.
+
+> ### 🛑 Verifica dopo il punto 10
 > **C'è qualcosa che non vedi l'ora di sbloccare?** Se guardi la bacheca e non
-> desideri niente in particolare, gli sblocchi stanno dando numeri invece di verbi.
+> desideri niente, gli sblocchi stanno dando numeri invece di verbi.
 
 ## Fase C — il gioco intero
 
-10. **Il trasporto fra caselle** (il Carretto) e gli ordini permanenti.
-11. **Il terzo appezzamento** (il Bosco) e le vicinanze di biodiversità.
-12. **Salvataggio e ripresa**, con la produzione offline.
-13. **Altre colture, minerali, macchine e vicinanze** con l'agente `designer-contenuti`.
-14. **Il ritmo degli sblocchi**: nessun buco noioso, misurato con la simulazione headless.
-15. **Rifinitura**: suoni, animazioni, il piacere del gesto, con l'agente `rifinitore`.
-16. **Impacchettamento mobile** con Capacitor.
+11. **Gli eventi**: la settimana secca, il mercante di passaggio col seme raro. Poco e ben distanziato, come lo storyteller di RimWorld.
+12. **Le stagioni**, se la decisione aperta 5 si chiude a favore.
+13. **Salvataggio e ripresa**, con la produzione a app chiusa.
+14. **Altre colture, minerali, lavorazioni e commesse** con l'agente `designer-contenuti`.
+15. **Il ritmo degli sblocchi**: nessun buco noioso, misurato con la simulazione headless.
+16. **Rifinitura**: suoni, animazioni, il piacere del gesto, con l'agente `rifinitore`.
+17. **Impacchettamento mobile** con Capacitor.
 
 ---
 
-## Cosa resta del progetto precedente
+## Cosa è stato tolto, e perché
 
-Il tower defense è stato abbandonato il 2026-08-11. **Si è salvata l'impalcatura,
-non il gioco:**
+**Il puzzle di vicinanze (2026-08-11).** Filare (monocoltura) e Rotazione
+(varietà) erano regole nate per fare un puzzle di incastro. L'autore ha
+chiarito che non vuole un puzzle game ma un farmer, quindi sono state rimosse.
+**Resta solo l'acqua**, perché irrigare è agricoltura e si capisce senza
+spiegazioni.
 
-- il motore a passo fisso, i pool preallocati, canvas separato da React, la coda dei comandi
-- la regola dei **numeri solo in `config/`**
-- la **simulazione headless**, che qui vale ancora di più: simula ore di fattoria in un secondo e verifica che il ritmo degli sblocchi non abbia buchi
-- le convenzioni touch
+I veri problemi di disposizione arriveranno dalle macchine — cosa alimenta
+cosa, dove sta il magazzino — e nasceranno dalla simulazione, non da
+moltiplicatori inventati.
 
-Sono spariti: `combattenti.js`, `ondate.js`, `percorso.js`, `oggetti.js`,
-`economia.js`, `partita.js`, `effetti.js`, `sfondo.js` e tutte le configurazioni
-del tower defense.
+**Il tower defense (2026-08-11).** Si è salvata solo l'impalcatura: motore a
+passo fisso, strutture preallocate, canvas separato da React, coda dei comandi,
+numeri solo in `config/`, e la simulazione headless.

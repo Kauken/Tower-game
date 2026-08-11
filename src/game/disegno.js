@@ -109,27 +109,20 @@ function disegnaContenuto(ctx, casella, indice) {
   ctx.restore()
 }
 
-// La pastiglia col moltiplicatore. La stringa e' gia' pronta sulla casella:
-// comporla qui sarebbe un'allocazione per casella per fotogramma.
+// La goccia sulla casella irrigata. Niente testo: un segno si legge di colpo,
+// un numero va letto.
 function disegnaDistintivo(ctx, casella, indice) {
-  if (!casella.etichetta) {
+  if (!casella.irrigata) {
     return
   }
   const stile = grafica.distintivo
-  // larghezza stimata dalla lunghezza del testo: measureText allocherebbe
-  const larghezza = casella.etichetta.length * stile.testo * 0.62 + stile.altezza * 0.5
-  const x = angoloX(indice) + lato - larghezza - 4
+  const x = angoloX(indice) + lato - stile.altezza - 4
   const y = angoloY(indice) + 4
 
-  rettangoloArrotondato(ctx, x, y, larghezza, stile.altezza, stile.raggio)
+  ctx.beginPath()
+  ctx.arc(x + stile.altezza / 2, y + stile.altezza / 2, stile.altezza / 2, 0, Math.PI * 2)
   ctx.fillStyle = stile.colore_fondo
   ctx.fill()
-
-  ctx.fillStyle = stile.colore_testo
-  ctx.font = stile.peso_testo + ' ' + stile.testo + 'px system-ui, sans-serif'
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText(casella.etichetta, x + larghezza / 2, y + stile.altezza / 2 + 1)
 }
 
 function disegnaSelezione(ctx, indice) {

@@ -26,9 +26,9 @@
     "colore_testo": "#ece7d6",
     "colore_testo_debole": "#9aa38c",
     "colore_scelto": "#f0c95c",
-    "_nota_spazi": "Quanto spazio si tiene libero sopra per il magazzino. Il canvas viene misurato su quello che resta, non su tutto lo schermo. Il pannello di scelta e' un foglio che sale dal basso solo quando serve, quindi sotto non si riserva niente.",
+    "_nota_spazi": "Quanto spazio si tiene libero sopra per il cruscotto e sotto per il pulsante del mercato. Il canvas viene misurato su quello che resta, non su tutto lo schermo: e' cosi' che il campo non finisce mai sotto ai comandi.",
     "spazio_magazzino": 78,
-    "spazio_sotto": 16,
+    "spazio_sotto": 88,
     "magazzino": {
       "_nota": "La striscia in alto con quello che hai raccolto. E' l'unico punteggio del gioco: serve a confrontare due disposizioni della griglia.",
       "altezza_pastiglia": 34,
@@ -40,18 +40,29 @@
       "peso_titolo": 700,
       "spessore_bordo": 2,
       "colore_rimuovi": "#6b3f3f",
-      "colore_chiudi": "#2b3226"
-    }
+      "colore_chiudi": "#2b3226",
+      "colore_mercato": "#3a5340",
+      "colore_dissoda": "#4a4030",
+      "colore_spento": "#262c20",
+      "colore_testo_spento": "#6d7565"
+    },
+    "colore_monete": "#f0c95c",
+    "colore_spesa": "#d9805f"
   },
   "grafica": {
     "colore_fuori_area": "#0c0f08",
     "campo": {
-      "_nota": "Il terreno e il reticolo delle caselle, disegnati una volta sola sul canvas di sfondo.",
+      "_nota": "Il terreno e le caselle. Si ridisegna solo quando il campo cambia forma, mai a ogni frame. La terra incolta ha dei ciuffi: si deve capire a colpo d'occhio quale pezzo di campo e' gia' tuo e quale va ancora aperto.",
       "colore_terreno": "#1b2413",
       "colore_casella": "#2c3a20",
       "colore_bordo_casella": "#3f5130",
       "spessore_bordo_casella": 3,
-      "raggio_casella": 14
+      "raggio_casella": 14,
+      "colore_incolto": "#243018",
+      "colore_bordo_incolto": "#31401f",
+      "colore_ciuffi": "#4a6030",
+      "spessore_ciuffi": 3,
+      "quanti_ciuffi": 3
     },
     "contenuto": {
       "_nota": "Come si disegna quello che sta in una casella. La coltura si riempie dal basso mentre cresce: e' il modo piu' leggibile di far vedere il tempo che passa senza scrivere numeri.",
@@ -71,13 +82,9 @@
       "raggio_nodo": 6
     },
     "distintivo": {
-      "_nota": "La pastiglia col moltiplicatore, in alto a destra sulla casella. Il testo si prepara quando cambia la griglia, mai a ogni frame.",
-      "colore_fondo": "#f0c95c",
-      "colore_testo": "#1b2413",
-      "altezza": 22,
-      "raggio": 11,
-      "testo": 13,
-      "peso_testo": 700
+      "_nota": "La goccia sulla casella irrigata. Niente testo: un segno si legge di colpo, un numero va letto.",
+      "colore_fondo": "#9fd8e4",
+      "altezza": 22
     },
     "selezione": {
       "_nota": "La casella toccata: un contorno acceso, cosi' si sa sempre su cosa si sta agendo.",

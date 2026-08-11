@@ -4,6 +4,8 @@
 import grigliaJson from '../../config/griglia.json'
 import contenutiJson from '../../config/contenuti.json'
 import vicinanzeJson from '../../config/vicinanze.json'
+import economiaJson from '../../config/economia.json'
+import tempoJson from '../../config/tempo.json'
 import motore from '../../config/motore.json'
 
 // L'area logica del gioco, poi scalata sullo schermo.
@@ -19,6 +21,15 @@ export const elencoContenuti = contenutiJson.contenuti
 export const elencoMateriali = contenutiJson.materiali
 export const elencoVicinanze = vicinanzeJson.vicinanze
 
+export const partenza = economiaJson.partenza
+export const spese = economiaJson.spese
+export const dissodare = economiaJson.dissodare
+export const mercato = economiaJson.mercato
+export const tempo = tempoJson
+
+// Cosa si puo' piantare o costruire: tutto quello che ha un costo del seme.
+export const elencoPiantabili = elencoContenuti.filter((voce) => voce.costo_seme > 0)
+
 export function trovaContenuto(id) {
   const contenuto = elencoContenuti.find((voce) => voce.id === id)
   if (!contenuto) {
@@ -27,8 +38,16 @@ export function trovaContenuto(id) {
   return contenuto
 }
 
+export function trovaMateriale(id) {
+  const materiale = elencoMateriali.find((voce) => voce.id === id)
+  if (!materiale) {
+    throw new Error(`Materiale "${id}" non trovato in contenuti.json`)
+  }
+  return materiale
+}
+
 // Controlli all'avvio: una configurazione sbagliata deve fermare il gioco
-// subito con un errore parlante, non produrre una griglia vuota e muta.
+// subito con un errore parlante, non produrre un campo vuoto e muto.
 if (griglia.colonne < 2 || griglia.righe < 2) {
   throw new Error('La griglia in griglia.json ha bisogno di almeno 2 colonne e 2 righe')
 }
@@ -38,42 +57,43 @@ for (let i = 0; i < elencoContenuti.length; i++) {
   if (contenuto.famiglia === 'coltura' && !contenuto.resa) {
     throw new Error(`La coltura "${contenuto.id}" non ha una resa in contenuti.json`)
   }
-  if (contenuto.resa && !elencoMateriali.some((m) => m.id === contenuto.resa.materiale)) {
-    throw new Error(
-      `"${contenuto.id}" produce il materiale "${contenuto.resa.materiale}", che non esiste in contenuti.json`
-    )
+  if (contenuto.resa) {
+    trovaMateriale(contenuto.resa.materiale)
   }
 }
 
-// Una regola di vicinanza che nomina qualcosa che non esiste non farebbe
-// niente e non se ne accorgerebbe nessuno: meglio fermarsi qui.
-function verificaBersaglio(bersaglio, dove) {
-  if (bersaglio.id && !elencoContenuti.some((c) => c.id === bersaglio.id)) {
-    throw new Error(`${dove} nomina il contenuto "${bersaglio.id}", che non esiste`)
-  }
-  if (bersaglio.famiglia && !elencoContenuti.some((c) => c.famiglia === bersaglio.famiglia)) {
-    throw new Error(`${dove} nomina la famiglia "${bersaglio.famiglia}", che non esiste`)
-  }
+// Ogni seme di partenza deve esistere, altrimenti si comincia con niente in
+// mano e sembra un guasto.
+for (let i = 0; i < partenza.semi.length; i++) {
+  trovaContenuto(partenza.semi[i].id)
 }
 
-for (let i = 0; i < elencoVicinanze.length; i++) {
-  const regola = elencoVicinanze[i]
-  verificaBersaglio(regola.chi, `La vicinanza "${regola.id}" (chi)`)
-  verificaBersaglio(regola.accanto_a, `La vicinanza "${regola.id}" (accanto_a)`)
-}
-
-// La regola di design del GDD sezione 4, controllata dal codice perche' e' la
-// cosa che tiene in piedi il gioco: se tutte le vicinanze premiassero la stessa
-// disposizione, il piazzamento avrebbe una risposta ovvia e non ci sarebbe gioco.
-const premiaLUguale = elencoVicinanze.some((r) => !r.diverse && r.chi.id && r.chi.id === r.accanto_a.id)
-const premiaIlDiverso = elencoVicinanze.some((r) => r.diverse)
-if (!premiaLUguale || !premiaIlDiverso) {
-  throw new Error(
-    'vicinanze.json deve contenere sia una regola che premia la monocoltura sia una che premia la varieta: senza la contraddizione il piazzamento non e una scelta'
-  )
+// La regola di design del GDD sezione 3, controllata dal codice perche' e' cio'
+// che tiene in piedi il gioco: se una coltura fosse migliore di un'altra sotto
+// ogni aspetto, scegliere cosa piantare non sarebbe una decisione.
+const colture = elencoContenuti.filter((voce) => voce.famiglia === 'coltura')
+for (let i = 0; i < colture.length; i++) {
+  for (let j = 0; j < colture.length; j++) {
+    if (i === j) {
+      continue
+    }
+    const a = colture[i]
+    const b = colture[j]
+    const guadagnoA = a.resa.quantita * trovaMateriale(a.resa.materiale).prezzo_base
+    const guadagnoB = b.resa.quantita * trovaMateriale(b.resa.materiale).prezzo_base
+    if (
+      a.costo_seme <= b.costo_seme &&
+      a.tempo_crescita_ms <= b.tempo_crescita_ms &&
+      guadagnoA >= guadagnoB &&
+      (a.costo_seme < b.costo_seme || a.tempo_crescita_ms < b.tempo_crescita_ms || guadagnoA > guadagnoB)
+    ) {
+      throw new Error(
+        `"${a.nome}" e migliore di "${b.nome}" sotto ogni aspetto (seme, tempo e guadagno): con una coltura dominante, scegliere cosa piantare non e una decisione. Vedi GDD sezione 3.`
+      )
+    }
+  }
 }
 
 export function aspettoContenuto(id) {
-  const contenuto = trovaContenuto(id)
-  return contenuto
+  return trovaContenuto(id)
 }

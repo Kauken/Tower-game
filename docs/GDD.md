@@ -1,142 +1,124 @@
-# Documento di design — v3.0
+# Documento di design — v4.0
 
-**Grano e Ferro** — una fattoria cozy su griglia, con minerali, tecnologie e automazioni.
+**Grano e Ferro** — gestionale di fattoria con catene di produzione.
 Per telefono, verticale, una mano sola.
 
-> Questa versione sostituisce completamente la v2.0 (tower defense a reclute).
-> Se trovi documenti, codice o configurazioni che parlano di **reclute, ondate,
-> nemici, castello, torri, sentiero, postazioni** sono resti da rimuovere, non
-> funzionalità da mantenere.
+> Sostituisce la v3.0 (fattoria a griglia con puzzle di vicinanze), che sbagliava
+> genere: metteva la scarsità **sullo spazio** e ne usciva un puzzle game.
+> Qui la scarsità sta su **semi e soldi**, che è come funziona un farmer.
+>
+> Se trovi documenti o codice che parlano di **reclute, ondate, nemici, castello,
+> torri, sentiero, postazioni**, o di **Filare e Rotazione**, sono resti da
+> rimuovere, non funzionalità da mantenere.
 
 ---
 
 ## 1. Il gioco in una riga
 
-**Una fattoria su una griglia, dove lo spazio è l'unica cosa che scarseggia davvero.** Coltivi, scavi, costruisci macchine. Ogni cosa che sblocchi occupa una casella, e le caselle sono poche: quindi ogni sblocco non è una spesa, è un **puzzle di incastro**.
+**Stardew Valley per il ciclo economico, Minecraft moddato tecnico per la scala di produzione, un pizzico di RimWorld per chi ci lavora.** Compri semi, coltivi, vendi o consegni, e con quello che guadagni allarghi il campo, sblocchi lavorazioni e assumi gente che lavori al posto tuo.
 
 ## 2. Il ruolo del giocatore
 
-Zero riflessi, zero fretta, zero fallimento. **Non si può perdere.** Tre cose che si ripetono:
+Zero riflessi, zero fretta, **non si può perdere**. Quattro decisioni che si ripetono:
 
-1. **Cosa sbloccare adesso** — la bacheca ti mostra sempre più cose di quante puoi permetterti.
-2. **Dove metterlo** — è qui che sta il gioco, per via delle vicinanze.
-3. **Cosa scavare** — l'unica cosa attiva, e il ponte fra le due catene.
+1. **Cosa piantare** — i semi costano, e ognuno ha un tempo, un prezzo e una resa diversi.
+2. **Vendere o tenere da parte** — il mercato paga subito, le commesse pagano molto di più ma vogliono roba precisa.
+3. **Reinvestire o mettere da parte** — ogni giorno la fattoria ha delle spese.
+4. **Assumere o comprare la macchina** — chi lavora costa ogni giorno, la macchina costa tanto una volta sola.
 
-> Non ottimizzi un foglio di calcolo: **incastri una griglia.**
+> Non ottimizzi una griglia: **mandi avanti una fattoria.**
 
-## 3. Il campo: la griglia
+## 3. Il ciclo
 
-Una griglia di caselle quadrate, verticale, che sta tutta in uno schermo di telefono. Si parte piccoli (indicativamente 5×6) e si espande comprando caselle, che è la spesa più desiderata del gioco.
+> **Semi → pianti → cresce → raccogli → vendi o consegni → compri semi migliori, attrezzi e lavorazioni → ricomincia più in grande.**
 
-Ogni casella contiene **una cosa sola**: una coltura, una roccia, una macchina, un canale. Toccare una casella vuota apre cosa ci si può mettere; toccare una casella piena dice cosa fa e con chi sta andando in sinergia.
+**All'inizio non puoi riempire il campo neanche volendo**, perché non hai i semi. Piantare ne consuma uno. È quello che rende difficile l'inizio, e quel problema si scioglie da solo man mano che vendi: è la sensazione di "piano piano questo passo diventa più facile".
 
-## 4. Il cuore: le vicinanze
+## 4. Il campo
 
-**Quello che metti vicino a cosa cambia quanto rende.** È la meccanica su cui è costruito tutto il resto.
+Una griglia verticale. Ogni casella è in uno di tre stati:
 
-| Esempio | Effetto |
+| Stato | Cosa vuol dire |
 | --- | --- |
-| Grano adiacente a Grano | +10% a testa — la monocoltura rende |
-| Canale d'acqua adiacente | la coltura cresce molto più in fretta |
-| Miniera su una vena di roccia | scava molto di più |
-| Forno attaccato al Mulino | la farina passa da sola, niente trasporto |
-| **Alveare toccato da 4 colture diverse** | bonus grosso — la biodiversità rende |
+| **Incolto** | terra selvatica. Va dissodata, e costa |
+| **Arato** | ci puoi piantare |
+| **Occupato** | c'è una coltura, una roccia, una macchina |
 
-**Le vicinanze si contraddicono apposta.** Alcune cose premiano la monocoltura, altre premiano la varietà, e sulla stessa griglia non puoi avere entrambe. È da quella contraddizione che nasce la decisione, senza chiedere al giocatore nessun riflesso.
+**Dissodare è la spesa che allarga la fattoria**, e ogni casella arata aumenta la manutenzione giornaliera. Espandere è una scommessa, non un regalo.
 
-**Le vicinanze devono vedersi.** Quando due cose vanno in sinergia si accende un segno fra loro. Una fattoria ben incastrata si riconosce a colpo d'occhio, prima di leggere qualunque numero: è quello che rende il gioco bello da guardare e non solo da calcolare.
+### Le vicinanze, ridimensionate
 
-## 5. Le due catene
+Resta **solo l'acqua**: una coltura che tocca un canale cresce molto più in fretta. Irrigare è agricoltura, si capisce senza spiegazioni.
 
-- **Colture** — crescono da sole nel tempo. Danno roba morbida: grano, fibra, frutta.
-- **Minerali** — si scavano. Danno roba dura: pietra, rame, ferro.
+Le regole astratte di moltiplicatori (monocoltura contro varietà) **sono state tolte**: erano un puzzle, e questo non è un puzzle game. I veri problemi di disposizione arriveranno dalle macchine — cosa alimenta cosa, dove sta il magazzino — e nasceranno dalla simulazione, non da regole inventate.
 
-**Le macchine hanno bisogno di tutte e due.** Il mulino vuole legno e rame, la serra vuole vetro e fibra. È questo che tiene insieme colture e minerali invece di farne due giochi appiccicati: nessuna delle due catene si può ignorare.
+## 5. Il giorno
 
-## 6. Il tempo — *deciso il 2026-08-11*
+Il **giorno è il battito del gioco**. Dura pochi minuti mentre l'app è aperta. A fine giornata:
 
-**Il tempo scorre mentre guardi.** Un giorno dura pochi minuti mentre l'app è aperta: ti siedi un quarto d'ora e vedi passare mezza stagione.
+- si paga la **manutenzione** e i **salari**
+- i **prezzi di mercato** cambiano un po'
+- ogni tanto **succede qualcosa** (una settimana secca, un mercante di passaggio con un seme raro)
+- un **riepilogo**: cosa hai raccolto, venduto, speso
 
-A app chiusa la fattoria produce comunque, ma **più piano e fino a un tetto**. Così riaprire è sempre premiato, ma aspettare non è mai la strategia migliore: giocare lo è.
+È il meccanismo del *"vabbè, ancora un giorno"*, che è il motore vero di Stardew: ogni giornata ti avvicina in modo visibile a qualcosa che vuoi.
 
-Perché non tempo reale puro: se il grano cresce in ore vere il gioco è ingiocabile in una sessione: apri, raccogli, chiudi. Non c'è niente da guardare, e guardare è metà del punto.
+## 6. La scala tecnica — la parte Minecraft
 
-## 7. Lo scavo — *deciso il 2026-08-11*
+È quello che separa questo gioco dall'ennesimo giochino di fattoria.
 
-**Scavare resta manuale a lungo, ed è l'unica cosa attiva del gioco.** Tocchi una roccia, si crepa, si spacca, escono minerali.
+**L'albero non è una lista, è un grafo di dipendenze.** Il valore si moltiplica a ogni passaggio, e ogni macchina chiede materiali di *un'altra* catena:
 
-Non è un ripiego: è la risposta al difetto noto del genere (vedi §9). Quando tutto il resto va da solo, scavare è quello che ti tiene le mani sullo schermo. Ed è gentile: nessun tempo di reazione, nessun errore possibile, si può smettere a metà.
+> grano → *Mulino* → farina → *Forno* → **pane**, che vale molto di più
+>
+> ma il Mulino si costruisce col **rame**, e il rame lo devi scavare
 
-Si automatizza tardi, e automatizzarlo è uno degli sblocchi più desiderati proprio perché rinunci a qualcosa che ti piaceva fare.
+È così che colture e minerali diventano un gioco solo invece di due appiccicati.
 
-## 8. Le automazioni, e il loro costo
+**E avanzare deve costringere a rifare pezzi di fattoria.** Nei modpack tecnici è la cosa che tiene vivo il gioco per centinaia di ore: la macchina migliore non si infila dove stava la vecchia. È anche la risposta al difetto noto del genere — *quando è tutto automatico non hai più niente da fare* — senza bisogno di nessun puzzle inventato.
 
-**Ogni sblocco ti toglie un lavoro:**
+## 7. Il mercato e le commesse
 
-| Sblocco | Ti toglie |
-| --- | --- |
-| Spaventapasseri | raccogliere |
-| Semina automatica | ripiantare |
-| Carretto | portare i materiali da una casella all'altra |
-| Ordine permanente | riscegliere la ricetta ogni volta |
-| Trivella | scavare |
+- **Il mercato** compra qualunque cosa, subito, a un prezzo che oscilla. È la rete di sicurezza.
+- **Le commesse** chiedono roba precisa, pagano molto di più e **sbloccano lavorazioni**.
 
-La fantasia è **la fattoria che impara a badare a sé stessa**, ed è misurabile: i tocchi al minuto devono scendere partita dopo partita.
+> **Il fornaio chiede:** 20 grano, 5 farina
+> **Paga:** 300 monete + sblocca il **Forno**
 
-### La regola che tiene in piedi tutto: **l'automazione occupa una casella**
+Le commesse sono il "non vedo l'ora": **vedi cosa ti chiedono prima di poterlo dare.** E producono la decisione che si ripete di più: *vendo adesso, o tengo da parte?*
 
-Lo spaventapasseri ruba un quadrato al grano. Il carretto ruba un quadrato alla miniera.
+## 8. Chi lavora — la parte RimWorld
 
-**Automatizzare non è mai gratis: baratti produzione per pigrizia.** È la decisione più bella del gioco, e siccome lo spazio non smette mai di essere stretto, la griglia non è mai "risolta" una volta per tutte.
+*Deciso il 2026-08-11: prima i braccianti, poi le macchine.*
 
-## 9. Il difetto noto del genere, e come lo evitiamo
+**I braccianti.** Assumi persone. Ognuna fa **un mestiere solo** (raccoglie, semina, scava) in **una zona** che le assegni. E le **paghi ogni giorno**: non è un bottone che premi una volta, è un costo fisso che la fattoria deve coprire.
 
-Nei giochi di automazione c'è un problema documentato e ricorrente: **quando tutto è automatico non hai più niente da fare**, e il gioco muore proprio nel momento in cui hai vinto.
+**Le macchine.** Arrivano dopo e fanno lo stesso lavoro: costano molto di più subito, ma **niente dopo**.
 
-Le nostre tre risposte, tutte già nel design:
+Da lì nasce una decisione economica che non smette mai: **assumo, o compro la macchina?** Dipende da quanto pensi di durare su quella coltura, e da quanti soldi hai adesso.
 
-1. **L'automazione costa caselle** (§8) — il puzzle di incastro non finisce mai.
-2. **Lo scavo resta manuale** (§7) — c'è sempre un gesto disponibile.
-3. **Gli appezzamenti nuovi ripartono da zero** (§11) — ogni terreno nuovo è una griglia vuota da risolvere daccapo, con una risorsa nuova nel mazzo.
+## 9. Le spese fisse
 
-## 10. La bacheca degli sblocchi
+*Deciso il 2026-08-11.*
 
-**Devi vedere quello che ancora non puoi avere.** È l'attesa a creare il desiderio: una ricompensa rimandata vale più di una immediata, ed è esattamente la sensazione che il gioco deve produrre.
+Ogni giorno la fattoria costa: **manutenzione** per casella arata, e **salari** per chi hai assunto.
 
-Quindi **niente albero nascosto**. Una bacheca che si scorre col pollice, con le cose bloccate disegnate in ombra e sotto scritto **esattamente quanto manca**:
+È quello che rende difficile l'inizio e che tiene viva ogni decisione di espansione. Senza, allargarsi sarebbe sempre la mossa giusta e non ci sarebbe partita.
 
-> 🏚️ **Serra** — *le colture crescono anche d'inverno*
-> ti mancano **140 ferro**
+**Non si perde mai.** Se non riesci a pagare, i braccianti se ne vanno e le caselle tornano incolte: la fattoria si rimpicciolisce e riparti. Niente schermata di sconfitta, niente run azzerata.
 
-Vedi la serra dal primo giorno. Ci pensi mentre scavi.
-
-**Uno sblocco deve dare un verbo nuovo, non un numero più grande.** Un potenziamento che fa solo "+15% grano" non va in bacheca: va nei potenziamenti minori. In bacheca ci va solo quello che cambia cosa puoi fare.
-
-## 11. Gli appezzamenti
-
-La scala grossa dell'avanzamento. Si aprono uno dopo l'altro, e **ognuno porta una risorsa nuova e un tipo di macchina nuovo**, non solo più spazio:
-
-| Appezzamento | Cosa introduce |
-| --- | --- |
-| **L'Orto** | colture, acqua, le prime vicinanze |
-| **La Collina** | rocce e minerali, lo scavo, le prime macchine |
-| **Il Bosco** | legno e api, le vicinanze di biodiversità |
-| **La Palude** | *[da progettare]* |
-
-## 12. Cosa questo gioco **non** è
+## 10. Cosa questo gioco **non** è
 
 Guardrail, da difendere in ogni decisione futura:
 
-- **Non si perde e non si sbaglia in modo irreversibile.** Qualunque piazzamento si può disfare (con un piccolo costo, non a gratis).
-- **Non c'è fretta.** Niente timer che scadono, niente colture che marciscono se non torni.
-- **Non è un idle da guardare.** Se in una sessione da tre minuti non c'è almeno una decisione da prendere, il gioco è rotto lì.
-- **Non è un foglio di calcolo.** Se una scelta si può risolvere leggendo due numeri senza guardare la griglia, quella scelta è progettata male.
+- **Non è un puzzle game.** Se una decisione si risolve incastrando forme su una griglia, è progettata male.
+- **Non si perde e non si sbaglia in modo irreversibile.**
+- **Non c'è fretta.** Niente timer che scadono, niente raccolti che marciscono se non torni.
+- **Non è un idle da guardare.** Se in una giornata non c'è almeno una decisione, il gioco è rotto lì.
 - **Niente valuta premium, niente pubblicità, niente attese che si pagano.**
 
-## 13. La domanda che regge tutto
+## 11. La domanda che regge tutto
 
-Come la v2.0 aveva "compro adesso o investo?", questa versione ne ha una sola:
+> ### Alla fine di una giornata, hai voglia di farne un'altra?
 
-> ### Piazzare una cosa sulla griglia e vedere che si incastra con le vicine è soddisfacente?
-
-Se lì la risposta è sì, tutto il resto è contenuto. Se è no, nessuna quantità di tecnologie, appezzamenti e automazioni lo salva. **È la verifica obbligatoria del punto 1 della roadmap, e si fa prima di costruire qualunque altra cosa.**
+Se sì, tutto il resto è contenuto. Se no, nessuna quantità di macchine, commesse e braccianti lo salva. **È la verifica obbligatoria del punto 3 della roadmap.**
