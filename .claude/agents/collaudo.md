@@ -12,9 +12,10 @@ Esegui in ordine:
 2. Verifica che ogni file in `config/` sia JSON valido.
 3. **Coerenza incrociata**, la parte più importante:
    - ogni tag usato nei potenziamenti è dichiarato fra i tag validi, e le sinergie non nominano mai un potenziamento specifico
-   - ogni tipo di nemico e di recluta nominato in `ondate.json` e `reclute.json` esiste davvero
-   - la geometria di `percorso.json` è coerente: sentiero, castello e uscita nemici dentro l'area, torri non sopra il sentiero, e niente che finisca sotto il cruscotto in alto o sotto i pulsanti in basso
-   - **l'economia regge**: con i valori attuali, potenziare la rendita e comprare reclute devono essere entrambe mosse sensate in momenti diversi. Se una delle due è sempre giusta, è un problema bloccante, non un dettaglio
+   - ogni `id` nominato in `vicinanze.json` e `sblocchi.json` esiste davvero in `contenuti.json`
+   - la geometria di `griglia.json` e' coerente: la griglia intera sta dentro l'area, e niente finisce sotto il cruscotto in alto o sotto i pulsanti in basso
+   - **la bacheca non ha buchi**: dev'esserci sempre almeno uno sblocco quasi raggiungibile e almeno uno lontano. Un tratto in cui non si puo' desiderare niente e' un problema bloccante, non un dettaglio
+   - **le vicinanze si contraddicono**: devono esistere sia regole che premiano la monocoltura sia regole che premiano la varieta'. Se tirano tutte dalla stessa parte, il piazzamento ha una risposta ovvia e il gioco non esiste
    - nessun valore negativo dove non ha senso (vita, danno, costi, quantità)
 4. Cerca numeri scritti a mano dentro `src/` che dovrebbero stare in configurazione. Segnalali, non correggerli.
 5. Cerca **macerie**: blocchi di configurazione che nessuno legge più, funzioni esportate e mai usate, commenti e testi che nominano cose cancellate. Questo progetto è stato riscritto più volte, ed è così che si riempie di resti.

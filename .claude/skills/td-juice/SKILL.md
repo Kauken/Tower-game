@@ -13,7 +13,9 @@ Ogni azione del giocatore deve produrre una reazione visibile entro 100 ms. Se i
 
 ## Anticipazione, impatto, riposo
 
-Ogni evento importante ha tre fasi. Una recluta comprata: il pulsante si abbassa (anticipazione), la recluta compare al castello con un anello (impatto), l'anello sfuma mentre lei parte (riposo). Saltare l'anticipazione fa sembrare tutto meccanico.
+Ogni evento importante ha tre fasi. Una cosa piazzata: la casella si illumina sotto il dito (anticipazione), il contenuto compare con un rimbalzo (impatto), i segni di vicinanza si accendono uno dopo l'altro verso i vicini (riposo). Saltare l'anticipazione fa sembrare tutto meccanico.
+
+**Il momento piu' importante del gioco e' l'accensione di una vicinanza.** E' li' che il giocatore capisce di aver incastrato bene: se quel segno non da' soddisfazione, il gioco non ce l'ha.
 
 Durate di riferimento: anticipazione 60-100 ms, impatto istantaneo, riposo 120-200 ms.
 
@@ -23,12 +25,12 @@ Niente animazioni a velocità costante: sembrano finte. Partenza rapida e arrivo
 
 ## Sovrapposizione
 
-Non aspettare che un'animazione finisca per iniziare la successiva. Il nemico può iniziare a dissolversi mentre il numero dell'oro sta già salendo.
+Non aspettare che un'animazione finisca per iniziare la successiva. La roccia puo' iniziare a sbriciolarsi mentre il numero del magazzino sta gia' salendo.
 
 ## Budget degli effetti
 
 - Ogni effetto da **pool preallocato**, mai `new` a runtime.
-- Tetto complessivo: **1 ms per frame** per tutti gli effetti insieme, con 100 nemici a schermo.
+- Tetto complessivo: **1 ms per frame** per tutti gli effetti insieme, con la griglia piena.
 - Se non rientra, l'effetto si semplifica o si toglie. Un gioco fluido senza effetti batte sempre un gioco effettato che scatta.
 
 ## Scuotimento dello schermo

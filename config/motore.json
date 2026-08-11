@@ -5,216 +5,98 @@
     "passi_massimi_per_frame": 5
   },
   "limiti": {
-    "_nota": "Dimensione dei pool preallocati: oltre questi numeri il gioco non crea niente di nuovo. Se un'ondata ne chiede di piu', i nemici in eccesso semplicemente non escono.",
-    "nemici_massimi": 60,
-    "reclute_massime": 90,
+    "_nota": "Dimensione delle strutture preallocate: oltre questi numeri il gioco non crea niente di nuovo.",
     "comandi_massimi": 8,
-    "effetti_massimi": 48
+    "effetti_massimi": 24,
+    "vicini_massimi": 4
   },
   "interfaccia": {
     "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
     "aggiornamenti_al_secondo": 10,
     "altezza_minima_tocco": 64,
     "spaziatura": 12,
+    "spaziatura_stretta": 8,
     "raggio_angoli": 14,
-    "testo_titolo": 22,
+    "testo_titolo": 20,
     "testo_normale": 15,
-    "testo_piccolo": 14,
-    "colore_pannello": "#161b22e0",
-    "colore_bordo_pannello": "#3a4550",
-    "colore_testo": "#e8e3d5",
-    "colore_testo_debole": "#9fa89b",
-    "colore_oro": "#f2c44a",
-    "colore_scelto": "#f2d0a4",
-    "colore_pulsante_testo": "#ffffff",
-    "colore_sconfitta": "#0d0f14f2",
-    "colore_allarme": "#d9705f",
-    "pulsanti": {
-      "_nota": "I pulsanti stanno in basso, sotto il pollice: quattro reclute su due righe, la rendita larga sotto. Quando l'oro non basta restano visibili ma spenti: sapere quanto manca fa parte della decisione, nasconderli no. Il colore di ogni recluta e' lo stesso che ha in campo, cosi' si riconosce chi si sta comprando senza leggere.",
-      "colore_rendita": "#4a5c86",
-      "colore_spento": "#2b3138",
-      "colore_testo_spento": "#79828b",
-      "colore_bordo_pronto": "#f2c44a",
-      "spessore_bordo_pronto": 2,
-      "opacita_premuto": 0.75,
-      "distanza_righe": 2,
+    "testo_piccolo": 13,
+    "colore_sfondo": "#14180f",
+    "colore_pannello": "#1e2418f2",
+    "colore_bordo_pannello": "#3d4733",
+    "colore_testo": "#ece7d6",
+    "colore_testo_debole": "#9aa38c",
+    "colore_scelto": "#f0c95c",
+    "_nota_spazi": "Quanto spazio si tiene libero sopra per il magazzino. Il canvas viene misurato su quello che resta, non su tutto lo schermo. Il pannello di scelta e' un foglio che sale dal basso solo quando serve, quindi sotto non si riserva niente.",
+    "spazio_magazzino": 78,
+    "spazio_sotto": 16,
+    "magazzino": {
+      "_nota": "La striscia in alto con quello che hai raccolto. E' l'unico punteggio del gioco: serve a confrontare due disposizioni della griglia.",
+      "altezza_pastiglia": 34,
+      "raggio_pastiglia": 17,
+      "peso_numero": 700
+    },
+    "pannello": {
+      "_nota": "Il foglio che sale dal basso quando tocchi una casella. Sale solo quando serve, cosi' la griglia resta la cosa piu' grande sullo schermo.",
       "peso_titolo": 700,
-      "opacita_dettaglio": 0.85,
-      "colore_conferma": "#3f6b46"
-    },
-    "barra_castello": {
-      "_nota": "La vita del castello in alto: e' la cosa che si perde, deve leggersi senza contare i numeri.",
-      "altezza": 10,
-      "colore_fondo": "#00000066",
-      "colore_pieno": "#7fd67f",
-      "colore_basso": "#d9705f",
-      "soglia_bassa": 0.35,
-      "raggio_angoli": 5
-    },
-    "altezza_minima_tocco_compatta": 54,
-    "spaziatura_stretta": 6,
-    "postazioni": {
-      "_nota": "La riga che sceglie dove mandare le prossime reclute. Sta sopra ai pulsanti delle reclute perche' e' la decisione che viene prima: dove, poi chi.",
-      "colore": "#232a31",
-      "colore_scelta": "#3c4450"
-    },
-    "_nota_spazi": "Quanto spazio si tiene libero sopra e sotto per cruscotto e pulsanti. Il canvas viene misurato su quello che resta, non su tutto lo schermo: e' cosi' che il castello non finisce mai sotto ai comandi. Se si aggiunge o si toglie una riga di pulsanti, questi due numeri vanno rifatti. Adesso le righe sono tre: postazioni, reclute, rendita.",
-    "spazio_cruscotto": 92,
-    "spazio_comandi": 220,
-    "avviso_ondata": {
-      "_nota": "Il pannello che annuncia l'ondata durante la pausa. Sta sotto il cruscotto e non intercetta i tocchi.",
-      "distanza_righe": 3,
-      "peso_titolo": 700
-    },
-    "scelta_oggetto": {
-      "_nota": "La schermata dei tre oggetti. Occupa tutto lo schermo: e' il momento che decide che partita sara', non una cosa da fare di sfuggita.",
-      "distanza_righe": 4,
-      "peso_titolo": 700,
-      "spessore_bordo": 2
+      "spessore_bordo": 2,
+      "colore_rimuovi": "#6b3f3f",
+      "colore_chiudi": "#2b3226"
     }
   },
   "grafica": {
-    "colore_fuori_area": "#0d0f14",
+    "colore_fuori_area": "#0c0f08",
     "campo": {
-      "_nota": "Il terreno e il sentiero. Il sentiero e' disegnato come una linea spessa che segue la spezzata di percorso.json.",
-      "colore_terreno": "#1d2a21",
-      "colore_sentiero": "#4a4033",
-      "colore_bordo_sentiero": "#6b5c48",
-      "spessore_bordo_sentiero": 4,
-      "colore_traversine": "#00000022",
-      "distanza_traversine": 48,
-      "spessore_traversine": 3
+      "_nota": "Il terreno e il reticolo delle caselle, disegnati una volta sola sul canvas di sfondo.",
+      "colore_terreno": "#1b2413",
+      "colore_casella": "#2c3a20",
+      "colore_bordo_casella": "#3f5130",
+      "spessore_bordo_casella": 3,
+      "raggio_casella": 14
     },
-    "castello": {
-      "_nota": "Il castello in fondo al sentiero: e' quello che si difende, deve essere la cosa piu' solida sullo schermo.",
-      "colore": "#4c5a6b",
-      "colore_bordo": "#93a3b5",
-      "spessore_bordo": 4,
-      "raggio_angoli": 10,
-      "merli": 5,
-      "altezza_merli": 16
-    },
-    "uscita_nemici": {
-      "_nota": "La breccia da cui scendono i nemici, in cima al sentiero.",
-      "colore": "#3a2430",
-      "colore_bordo": "#c9524a",
+    "contenuto": {
+      "_nota": "Come si disegna quello che sta in una casella. La coltura si riempie dal basso mentre cresce: e' il modo piu' leggibile di far vedere il tempo che passa senza scrivere numeri.",
+      "margine": 12,
+      "raggio": 11,
       "spessore_bordo": 3,
-      "raggio_angoli": 8
+      "opacita_acerbo": 0.3,
+      "colore_maturo": "#fff3c4",
+      "spessore_anello_maturo": 4,
+      "raggio_anello_maturo": 5
     },
-    "torre": {
-      "_nota": "Le due torri che producono oro. Non sparano. Il lampo a ogni ciclo di rendita e' l'unico modo per collegare a occhio le torri all'oro che sale.",
-      "raggio": 26,
-      "colore": "#5a4f3f",
-      "colore_bordo": "#f2c44a",
-      "spessore_bordo": 3,
-      "colore_tetto": "#8a6f3f",
-      "lampo": {
-        "durata_ms": 420,
-        "raggio_massimo": 46,
-        "colore": "#f2c44a",
-        "spessore": 3
-      }
+    "legame": {
+      "_nota": "Il segno che si accende fra due caselle in sinergia. E' il momento piu' importante del gioco: e' li' che si capisce di aver incastrato bene. Va visto prima di leggere qualunque numero.",
+      "spessore": 9,
+      "colore": "#f0c95c",
+      "opacita": 0.85,
+      "raggio_nodo": 6
     },
-    "combattente": {
-      "_nota": "Come si disegnano nemici e reclute: stessa struttura, colori diversi. I nemici sono cerchi, le reclute quadrati, cosi' si distinguono anche per forma e non solo per colore.",
-      "spessore_bordo": 3,
-      "lampo_colpo_ms": 90,
-      "colore_lampo": "#ffffffcc",
-      "barra_vita": {
-        "larghezza": 30,
-        "altezza": 6,
-        "distanza_sopra": 11,
-        "colore_fondo": "#00000099",
-        "colore_pieno_nemico": "#c9524a",
-        "colore_pieno_recluta": "#7fd67f",
-        "colore_bordo": "#0b0f0b",
-        "spessore_bordo": 2,
-        "_nota": "La barra compare solo quando il combattente e' ferito: con tutte piene sarebbe solo rumore."
-      }
+    "distintivo": {
+      "_nota": "La pastiglia col moltiplicatore, in alto a destra sulla casella. Il testo si prepara quando cambia la griglia, mai a ogni frame.",
+      "colore_fondo": "#f0c95c",
+      "colore_testo": "#1b2413",
+      "altezza": 22,
+      "raggio": 11,
+      "testo": 13,
+      "peso_testo": 700
     },
-    "nemici": {
-      "_nota": "Un colore per tipo, cosi' si riconoscono al primo colpo d'occhio senza leggere niente. Tinte calde per i nemici, fredde per le reclute.",
-      "predefinito": {
-        "colore": "#c9524a",
-        "colore_bordo": "#f2d0a4"
-      },
-      "fante": {
-        "colore": "#c9524a",
-        "colore_bordo": "#f2d0a4"
-      },
-      "corridore": {
-        "colore": "#e0894a",
-        "colore_bordo": "#ffd9a8"
-      },
-      "bruto": {
-        "colore": "#8a4a3a",
-        "colore_bordo": "#e8a878"
-      },
-      "balestriere": {
-        "colore": "#b0407a",
-        "colore_bordo": "#f5b8d4"
-      }
-    },
-    "reclute": {
-      "_nota": "Un colore per recluta. Devono distinguersi dai nemici al primo sguardo: tinte fredde contro le tinte calde dei nemici, e ognuna dalla sua compagna.",
-      "predefinito": {
-        "colore": "#4a7fb5",
-        "colore_bordo": "#cfe4f5"
-      },
-      "milite": {
-        "colore": "#4a7fb5",
-        "colore_bordo": "#cfe4f5"
-      },
-      "guardia": {
-        "colore": "#8a93a8",
-        "colore_bordo": "#e6edf5"
-      },
-      "arciere": {
-        "colore": "#4fa88c",
-        "colore_bordo": "#cff0e2"
-      },
-      "ratto": {
-        "colore": "#8f6fb0",
-        "colore_bordo": "#e0cdf5"
-      }
+    "selezione": {
+      "_nota": "La casella toccata: un contorno acceso, cosi' si sa sempre su cosa si sta agendo.",
+      "colore": "#ece7d6",
+      "spessore": 4,
+      "raggio": 14
     },
     "effetti": {
-      "_nota": "Feedback visivi: anelli che si allargano e sfumano. Durate in millisecondi, distanze in pixel logici.",
-      "impatto": {
-        "durata_ms": 140,
-        "raggio_massimo": 14,
-        "colore": "#ffe9a8",
-        "spessore": 3
-      },
-      "morte": {
-        "durata_ms": 240,
-        "raggio_massimo": 26,
-        "colore": "#f2d0a4",
-        "spessore": 3
-      },
-      "comparsa": {
-        "durata_ms": 320,
-        "raggio_massimo": 30,
-        "colore": "#c9524a",
-        "spessore": 4
-      },
-      "esplosione": {
+      "_nota": "Feedback visivi. Durate in millisecondi, distanze in pixel logici.",
+      "piazzamento": {
         "durata_ms": 260,
-        "raggio_massimo": 40,
-        "colore": "#ffb35c",
+        "scala_iniziale": 0.55
+      },
+      "raccolta": {
+        "durata_ms": 340,
+        "raggio_massimo": 46,
+        "colore": "#fff3c4",
         "spessore": 4
       }
-    },
-    "postazione": {
-      "_nota": "Le postazioni disegnate sul sentiero: un tratto di strada allargato con una riga netta davanti, che e' il punto in cui i nemici entrano sotto tiro. Vanno viste prima di comprare, perche' sono la decisione. Quella scelta si accende sopra, sul canvas del gioco, perche' cambia a ogni tocco.",
-      "larghezza_extra": 30,
-      "campioni_tratto": 6,
-      "colore_tratto": "#e8e3d51c",
-      "colore_fronte": "#e8e3d54d",
-      "spessore_fronte": 4,
-      "colore_scelta": "#f2c44a26",
-      "colore_fronte_scelta": "#f2c44acc",
-      "spessore_fronte_scelta": 6
     }
   }
 }
