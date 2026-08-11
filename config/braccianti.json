@@ -22,7 +22,22 @@
     }
   ],
   "iniziali": [
-    { "mestiere": "taglialegna", "tessera": [10, 14] },
-    { "mestiere": "cavatore", "tessera": [12, 14] }
-  ]
+    {
+      "mestiere": "taglialegna",
+      "tessera": [
+        10,
+        14
+      ]
+    },
+    {
+      "mestiere": "cavatore",
+      "tessera": [
+        12,
+        14
+      ]
+    }
+  ],
+  "_nota_zaino": "Quanto porta addosso un bracciante. E' piccolo apposta: quando e' pieno smette di lavorare e va a scaricare, e quella camminata e' il costo che rende utile mettere una cassa vicino al lavoro. Senza quel costo i nastri non servirebbero a niente.",
+  "zaino": 12,
+  "_nota_scarico": "Dove scarica lo decide il giocatore, cassa per cassa. NON c'e' un magazzino centrale in cui la roba compare da sola: e' la differenza fra questo gioco e un gestionale alla Age of Empires, ed e' la ragione per cui piu' avanti i nastri avranno senso."
 }

@@ -1,0 +1,20 @@
+{
+  "_nota": "Quello che il giocatore puo' mettere sull'isola. NIENTE MAGAZZINO CENTRALE: le risorse stanno dentro casse che hanno un posto preciso, e qualcuno le deve portare li'. E' il modello di Factorio, ed e' la ragione per cui piu' avanti i nastri avranno senso.",
+  "costruzioni": [
+    {
+      "id": "cassa",
+      "nome": "Cassa",
+      "descrizione": "Ci si scarica dentro la roba. Una cassa vicina al lavoro fa risparmiare tutta la strada.",
+      "costo": [
+        { "materiale": "legno", "quantita": 8 }
+      ],
+      "capienza": 120,
+      "colore": "#7a5a34",
+      "colore_bordo": "#c9a172",
+      "colore_pieno": "#e0b878",
+      "raggio": 0.36
+    }
+  ],
+  "_nota_prima_cassa": "La cassa del casotto c'e' gia' all'avvio e non si paga: senza, il primo bracciante non saprebbe dove scaricare e sembrerebbe rotto.",
+  "capienza_casotto": 200
+}

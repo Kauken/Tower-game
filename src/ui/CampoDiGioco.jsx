@@ -3,6 +3,12 @@ import { creaMotore } from '../game/motore.js'
 import { area, grafica, interfaccia, telecamera } from '../game/config.js'
 import Cruscotto from './Cruscotto.jsx'
 import Bottone from './Bottone.jsx'
+import {
+  Avviso,
+  PannelloBracciante,
+  PannelloCassa,
+  PannelloCostruisci
+} from './Pannelli.jsx'
 
 const VISTA_INIZIALE = {
   magazzino: '',
@@ -10,7 +16,17 @@ const VISTA_INIZIALE = {
   braccantiFermi: 0,
   braccantiTotali: 0,
   zoomLontano: false,
-  ultimoEsito: ''
+  modo: 'normale',
+  daCostruire: '',
+  esito: '',
+  braccianteScelto: -1,
+  nomeScelto: '',
+  statoScelto: '',
+  caricoScelto: '',
+  scaricaAScelto: '',
+  cassaScelta: false,
+  contenutoCassa: '',
+  pienoCassa: ''
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -40,6 +56,7 @@ export default function CampoDiGioco() {
   const motoreRef = useRef(null)
   const gesto = useRef({ premuto: false, x: 0, y: 0, inizio: 0, spostato: 0 })
   const [vista, impostaVista] = useState(VISTA_INIZIALE)
+  const [costruzioneAperta, apriCostruzione] = useState(false)
 
   useEffect(() => {
     const motore = creaMotore(canvasGioco.current)
@@ -136,6 +153,15 @@ export default function CampoDiGioco() {
   )
 
   const zoom = useCallback(() => motoreRef.current.zoom(), [])
+  const assegna = useCallback(() => motoreRef.current.assegna(), [])
+  const annulla = useCallback(() => {
+    motoreRef.current.annulla()
+    apriCostruzione(false)
+  }, [])
+  const costruisci = useCallback((id) => {
+    motoreRef.current.costruisci(id)
+    apriCostruzione(false)
+  }, [])
 
   return (
     <div
@@ -168,22 +194,59 @@ export default function CampoDiGioco() {
         lavoriInAttesa={vista.lavoriInAttesa}
         braccantiFermi={vista.braccantiFermi}
         braccantiTotali={vista.braccantiTotali}
-        esito={vista.ultimoEsito}
+        esito={vista.esito}
       />
+
+      {/* i fogli e gli avvisi stanno sopra alla riga dei pulsanti, mai sotto:
+          il pollice arriva prima in basso */}
+      {vista.modo === 'costruisci' ? (
+        <Avviso testo="Tocca dove metterla" onAnnulla={annulla} />
+      ) : vista.modo === 'assegna' ? (
+        <Avviso testo="Tocca la cassa dove deve scaricare" onAnnulla={annulla} />
+      ) : costruzioneAperta ? (
+        <PannelloCostruisci
+          magazzino={vista.magazzino}
+          onCostruisci={costruisci}
+          onChiudi={() => apriCostruzione(false)}
+        />
+      ) : vista.braccianteScelto >= 0 ? (
+        <PannelloBracciante
+          nome={vista.nomeScelto}
+          stato={vista.statoScelto}
+          carico={vista.caricoScelto}
+          scaricaA={vista.scaricaAScelto}
+          onAssegna={assegna}
+          onChiudi={annulla}
+        />
+      ) : vista.cassaScelta ? (
+        <PannelloCassa
+          contenuto={vista.contenutoCassa}
+          pieno={vista.pienoCassa}
+          onChiudi={annulla}
+        />
+      ) : null}
 
       <div
         style={{
           position: 'absolute',
+          left: interfaccia.spaziatura,
           right: interfaccia.spaziatura,
           bottom: `calc(${interfaccia.spaziatura}px + env(safe-area-inset-bottom))`,
-          width: 132,
-          display: 'flex'
+          display: 'flex',
+          gap: interfaccia.spaziatura_stretta
         }}
       >
         <Bottone
-          titolo={vista.zoomLontano ? 'Avvicina' : 'Allontana'}
+          titolo="Costruisci"
           colore={interfaccia.pannello.colore_azione}
-          largo
+          onTocco={() => {
+            motoreRef.current.annulla()
+            apriCostruzione((aperto) => !aperto)
+          }}
+        />
+        <Bottone
+          titolo={vista.zoomLontano ? 'Avvicina' : 'Allontana'}
+          colore={interfaccia.pannello.colore_chiudi}
           onTocco={zoom}
         />
       </div>

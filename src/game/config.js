@@ -3,6 +3,7 @@
 
 import isolaJson from '../../config/isola.json'
 import braccantiJson from '../../config/braccianti.json'
+import costruzioniJson from '../../config/costruzioni.json'
 import motore from '../../config/motore.json'
 
 // L'area logica dello **schermo**, non del mondo: l'isola e' piu' grande, e la
@@ -24,6 +25,17 @@ export const telecamera = isolaJson.telecamera
 
 export const braccianti = braccantiJson
 export const mestieri = braccantiJson.mestieri
+
+export const costruzioni = costruzioniJson
+export const elencoCostruzioni = costruzioniJson.costruzioni
+
+export function trovaCostruzione(id) {
+  const costruzione = elencoCostruzioni.find((voce) => voce.id === id)
+  if (!costruzione) {
+    throw new Error(`Costruzione "${id}" non trovata in costruzioni.json`)
+  }
+  return costruzione
+}
 
 export function trovaMestiere(id) {
   const mestiere = mestieri.find((voce) => voce.id === id)
@@ -70,6 +82,24 @@ for (const nome in risorse) {
 
 // Ogni mestiere presente all'inizio deve esistere, e deve servire a qualcosa:
 // un bracciante senza lavoro da fare e' configurazione morta.
+// Ogni costruzione deve costare materiali che esistono, e il casotto deve
+// esserci sulla mappa: senza, il primo bracciante non saprebbe dove scaricare.
+for (let i = 0; i < elencoCostruzioni.length; i++) {
+  const costo = elencoCostruzioni[i].costo
+  for (let c = 0; c < costo.length; c++) {
+    if (!elencoMateriali.some((m) => m.id === costo[c].materiale)) {
+      throw new Error(
+        `La costruzione "${elencoCostruzioni[i].id}" costa "${costo[c].materiale}", che non e un materiale di isola.json`
+      )
+    }
+  }
+}
+if (!isolaJson.mappa.some((riga) => riga.indexOf('C') >= 0)) {
+  throw new Error(
+    'Sulla mappa non c\'e il casotto (C): senza, il primo bracciante non saprebbe dove scaricare'
+  )
+}
+
 for (let i = 0; i < braccantiJson.iniziali.length; i++) {
   const id = braccantiJson.iniziali[i].mestiere
   trovaMestiere(id)

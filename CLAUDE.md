@@ -31,9 +31,10 @@ L'autore non sa programmare e lavora dal telefono. Quindi:
 7. **"Fai il punto N"** significa il punto N della lista in `docs/ROADMAP.md`: a lavoro finito segnalo come FATTO in quel file.
 8. **NIENTE PERSONAGGIO DA MUOVERE.** L'autore l'ha rifiutato tre volte in tre versioni diverse. Il giocatore non è dentro lo schermo: è sopra, e comanda col dito.
 9. **Le tessere non si devono vedere.** Servono solo a far agganciare le cose, come in Factorio. Niente bordi sulle tessere, mai; la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro. Un quadrato dentro una griglia di quadrati si legge come una scacchiera, ed è la cosa che l'autore ha rifiutato.
-10. **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
-11. **La domanda che regge il gioco è "assumo, o me lo faccio bastare?"** Se assumere è sempre giusto, non c'è partita. E la domanda di roba deve crescere sempre più in fretta della produzione: se un giorno hai abbastanza di tutto, il gioco è finito.
-12. **Uno sblocco dà un verbo nuovo, non un numero più grande.**
+10. **NIENTE MAGAZZINO CENTRALE.** Le risorse stanno dentro casse che hanno un posto; qualcuno le deve portare. Se aggiungi un contatore da cui si può prendere ovunque, hai tolto metà del gioco: **la distanza deve costare**, ed è la ragione per cui i nastri serviranno.
+11. **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
+12. **La domanda che regge il gioco è "assumo, o me lo faccio bastare?"** Se assumere è sempre giusto, non c'è partita. E la domanda di roba deve crescere sempre più in fretta della produzione: se un giorno hai abbastanza di tutto, il gioco è finito.
+13. **Uno sblocco dà un verbo nuovo, non un numero più grande.**
 
 ## Comandi
 

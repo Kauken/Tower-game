@@ -64,6 +64,19 @@ L'isola non è tutta accessibile. Ogni pezzo è chiuso da un ostacolo che si tog
 
 **Aprire una zona non è "più spazio": è un pezzo di gioco nuovo.** Ogni zona porta una materia prima e un ramo di lavorazioni.
 
+## 5b. Le cose stanno in un posto — **niente magazzino centrale**
+
+> *"Non voglio una sorta di Age of Empires che ha un magazzino principale, ma invece voglio una sorta di inventario, dove le risorse devono essere spostate manualmente all'inizio, magari al colono dire dove scaricare, poi automatizzare con i nastri."*
+
+È la regola che rende possibile tutto il pezzo Factorio, e va difesa:
+
+- **Le risorse non compaiono in un contatore.** Stanno dentro **casse**, che hanno un posto preciso sull'isola.
+- Il bracciante ha uno **zaino piccolo**. Raccoglie, si riempie, e allora smette di lavorare e va a scaricare.
+- **Dove scarica lo dici tu**, bracciante per bracciante: lo tocchi, premi *Dove scarica*, tocchi una cassa.
+- **Costruire paga davvero dalle casse.** Quello che c'è dentro sparisce: non è un contatore.
+
+Da qui nasce l'unica cosa che conta: **la distanza costa.** Una cassa vicino al lavoro fa risparmiare tutta la strada, e quella camminata è il motivo per cui più avanti i **nastri** saranno un sollievo invece che un gadget. Se la roba comparisse da sola, non ci sarebbe niente da trasportare e i nastri non servirebbero a niente.
+
 ## 6. Le catene — la parte Factorio
 
 > grano → *Mulino* → farina → *Forno* → **pane**, che vale molto di più
@@ -74,9 +87,9 @@ Il valore si moltiplica a ogni passaggio, e ogni lavorazione chiede materiali di
 
 ### I tre gradini dell'automazione
 
-1. **Ordini tu, ogni volta.** Tocchi ogni albero.
+1. **Porti tu, con le gambe degli altri.** Ordini, e il bracciante va, lavora e riporta indietro. La strada la fa lui, ma la fa tutta.
 2. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
-3. **Il portatore**: porta la roba da una postazione all'altra. **Adesso la catena gira senza di te.**
+3. **I nastri**: la roba si sposta da sola da una cassa all'altra. **Adesso la catena gira senza di te.**
 
 Il terzo gradino è il momento del gioco. Tutta la ricerca su Factorio e Satisfactory dice che la gioia vera è una sola: **vedere il sistema funzionare da solo mentre guardi da un'altra parte**, e tornare trovando le casse piene.
 

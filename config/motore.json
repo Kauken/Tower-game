@@ -97,6 +97,33 @@
         "colore": "#fff3c4",
         "spessore": 4
       }
+    },
+    "cassa": {
+      "_nota": "Le casse: dove finisce la roba. Si disegnano quadrate, con dentro una barra che dice quanto sono piene. Il pieno si deve vedere da lontano, perche' una cassa piena e' il motivo per cui un bracciante si ferma.",
+      "raggio": 0.34,
+      "spessore_bordo": 3,
+      "ombra": "#0000004d",
+      "barra": {
+        "altezza": 0.13,
+        "margine": 0.1,
+        "colore_fondo": "#00000077"
+      }
+    },
+    "scelta": {
+      "_nota": "Cosa hai scelto col dito: un anello attorno, e una linea verso la cassa dove quel bracciante scarica. Senza la linea non si potrebbe sapere dove va a scaricare senza aspettarlo.",
+      "colore": "#ffffff",
+      "spessore": 3,
+      "raggio_extra": 8,
+      "colore_filo": "#f0c95cbb",
+      "spessore_filo": 3,
+      "tratteggio_filo": 9
+    },
+    "carico": {
+      "_nota": "Il pallino sopra la testa di chi porta qualcosa: e' il modo per vedere a colpo d'occhio chi sta tornando carico.",
+      "raggio": 5,
+      "distanza_sopra": 15,
+      "colore_bordo": "#0b0f0b",
+      "spessore_bordo": 2
     }
   },
   "area": {

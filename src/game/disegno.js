@@ -4,7 +4,19 @@
 // si alloca niente: niente stringhe composte, niente measureText, niente
 // oggetti nuovi. Gli scratch stanno qui sopra e vengono riusati.
 
-import { area, grafica, risorse, terreni, tessera } from './config.js'
+import {
+  area,
+  elencoMateriali,
+  grafica,
+  risorse,
+  terreni,
+  tessera,
+  trovaCostruzione
+} from './config.js'
+
+// i colori della cassa si leggono una volta sola: dentro il ciclo di gioco
+// non si cerca niente in configurazione
+const aspettoCassa = trovaCostruzione('cassa')
 import {
   colonne,
   filari,
@@ -193,6 +205,100 @@ function disegnaOrdini(ctx, camera, lavori) {
   ctx.setLineDash([])
 }
 
+// Le casse. Quadrate, con la barra del pieno: una cassa piena e' il motivo
+// per cui un bracciante si ferma, quindi si deve vedere da lontano.
+function disegnaCasse(ctx, camera, casse) {
+  const stile = grafica.cassa
+  const zoom = camera.stato.zoom
+  const lato = tessera * zoom
+
+  for (let i = 0; i < casse.length; i++) {
+    const cassa = casse[i]
+    // il casotto e' gia' disegnato come risorsa sulla mappa
+    if (cassa.eIlCasotto) {
+      continue
+    }
+    camera.versoSchermo(
+      cassa.tx * tessera + tessera / 2,
+      cassa.ty * tessera + tessera / 2,
+      punto
+    )
+    const raggio = stile.raggio * lato
+
+    ctx.fillStyle = stile.ombra
+    ctx.beginPath()
+    ctx.ellipse(punto.x, punto.y + raggio, raggio, raggio * 0.4, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    ctx.fillStyle = aspettoCassa.colore
+    ctx.fillRect(punto.x - raggio, punto.y - raggio, raggio * 2, raggio * 2)
+    ctx.lineWidth = stile.spessore_bordo
+    ctx.strokeStyle = aspettoCassa.colore_bordo
+    ctx.strokeRect(punto.x - raggio, punto.y - raggio, raggio * 2, raggio * 2)
+
+    // quanto e' piena
+    const barra = stile.barra
+    const quota = cassa.capienza > 0 ? cassa.dentro / cassa.capienza : 0
+    const larghezza = raggio * 2 - barra.margine * lato
+    const altezza = barra.altezza * lato
+    const sinistra = punto.x - larghezza / 2
+    const alto = punto.y + raggio - altezza - barra.margine * lato * 0.4
+    ctx.fillStyle = barra.colore_fondo
+    ctx.fillRect(sinistra, alto, larghezza, altezza)
+    ctx.fillStyle = aspettoCassa.colore_pieno
+    ctx.fillRect(sinistra, alto, larghezza * quota, altezza)
+  }
+}
+
+// L'anello attorno a quello che hai scelto, e il filo verso la cassa dove quel
+// bracciante scarica: senza il filo non si potrebbe sapere dove va senza
+// stargli dietro.
+function disegnaScelta(ctx, camera, squadra, casse, braccianteScelto, cassaScelta) {
+  const stile = grafica.scelta
+  const zoom = camera.stato.zoom
+
+  if (braccianteScelto >= 0 && braccianteScelto < squadra.length) {
+    const b = squadra[braccianteScelto]
+    camera.versoSchermo(b.x, b.y, punto)
+    const cx = punto.x
+    const cy = punto.y
+
+    if (b.scaricaA) {
+      camera.versoSchermo(
+        b.scaricaA.tx * tessera + tessera / 2,
+        b.scaricaA.ty * tessera + tessera / 2,
+        punto
+      )
+      ctx.strokeStyle = stile.colore_filo
+      ctx.lineWidth = stile.spessore_filo
+      ctx.setLineDash([stile.tratteggio_filo, stile.tratteggio_filo])
+      ctx.beginPath()
+      ctx.moveTo(cx, cy)
+      ctx.lineTo(punto.x, punto.y)
+      ctx.stroke()
+      ctx.setLineDash([])
+    }
+
+    ctx.strokeStyle = stile.colore
+    ctx.lineWidth = stile.spessore
+    ctx.beginPath()
+    ctx.arc(cx, cy, grafica.bracciante.raggio * zoom + stile.raggio_extra, 0, Math.PI * 2)
+    ctx.stroke()
+  }
+
+  if (cassaScelta) {
+    camera.versoSchermo(
+      cassaScelta.tx * tessera + tessera / 2,
+      cassaScelta.ty * tessera + tessera / 2,
+      punto
+    )
+    const raggio = grafica.cassa.raggio * tessera * zoom + stile.raggio_extra
+    ctx.strokeStyle = stile.colore
+    ctx.lineWidth = stile.spessore
+    ctx.strokeRect(punto.x - raggio, punto.y - raggio, raggio * 2, raggio * 2)
+  }
+}
+
 function disegnaBraccianti(ctx, camera, squadra) {
   const stile = grafica.bracciante
   const zoom = camera.stato.zoom
@@ -214,6 +320,31 @@ function disegnaBraccianti(ctx, camera, squadra) {
     ctx.lineWidth = stile.spessore_bordo
     ctx.strokeStyle = bracciante.coloreBordo
     ctx.stroke()
+
+    // il pallino di chi porta qualcosa: si vede a colpo d'occhio chi sta
+    // tornando carico invece di andare a lavorare
+    if (bracciante.carico > 0) {
+      const segno = grafica.carico
+      let colore = ''
+      for (let m = 0; m < elencoMateriali.length && !colore; m++) {
+        if (bracciante.zaino[elencoMateriali[m].id] > 0) {
+          colore = elencoMateriali[m].colore
+        }
+      }
+      ctx.beginPath()
+      ctx.arc(
+        punto.x,
+        punto.y - raggio - segno.distanza_sopra * zoom,
+        segno.raggio * zoom,
+        0,
+        Math.PI * 2
+      )
+      ctx.fillStyle = colore
+      ctx.fill()
+      ctx.lineWidth = segno.spessore_bordo
+      ctx.strokeStyle = segno.colore_bordo
+      ctx.stroke()
+    }
 
     // la barra del lavoro: senza, un bracciante che lavora sembra impallato
     if (bracciante.stato !== 'lavora' || bracciante.lavoroTotaleMs <= 0) {
@@ -240,14 +371,24 @@ function disegnaBraccianti(ctx, camera, squadra) {
   }
 }
 
-export function disegnaIsola(ctx, camera, lavori, squadra) {
+export function disegnaIsola(
+  ctx,
+  camera,
+  lavori,
+  squadra,
+  casse,
+  braccianteScelto,
+  cassaScelta
+) {
   camera.tessereVisibili(vista)
   disegnaFuori(ctx)
   disegnaTerreno(ctx, camera)
   disegnaRisorse(ctx, camera)
+  disegnaCasse(ctx, camera, casse)
   // gli anelli vanno SOPRA alle cose, e piu' larghi di loro: sotto finivano
   // coperti dalla chioma dell'albero e l'ordine sembrava non essere partito
   disegnaOrdini(ctx, camera, lavori)
+  disegnaScelta(ctx, camera, squadra, casse, braccianteScelto, cassaScelta)
   disegnaBraccianti(ctx, camera, squadra)
 }
 

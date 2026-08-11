@@ -28,13 +28,17 @@ versione è la più grande di tutte, quindi contano il doppio.
 
 1. **L'isola, la telecamera e il primo ordine.** — **FATTO** (2026-08-11). Un'isola di 24×30 tessere che non sembra una scacchiera: erba, sabbia, mare, riva. Si trascina col dito, un pulsante allontana la vista. Tocchi un albero o un masso e dai un ordine; lo tocchi di nuovo e lo annulli. Due braccianti — un taglialegna e un cavatore — prendono i lavori che sanno fare, ci vanno, li fanno, e il legno e la pietra arrivano in magazzino.
 
-> ### 🛑 Verifica dopo il punto 1 — non si va avanti senza
-> **Guardare l'isola e comandarla col dito è piacevole?** Il trascinamento è
-> naturale? Si capisce sempre cosa hai già ordinato e chi ci sta andando?
-> Se il posto non è piacevole, si risolve qui — nel disegno e nel comando —
-> non aggiungendo contenuto sopra.
+> ### ✅ Verifica dopo il punto 1 — **passata** (2026-08-11)
+> *"Va bene, sembra un posto"* e *"Funziona, si capisce tutto"*.
 
-2. **Il magazzino ha un posto.** La roba non compare dal nulla in un contatore: viene portata al casotto. È il primo pezzo di logistica, e la ragione per cui più avanti servirà un portatore.
+> ### 🛑 Verifica dopo il punto 2 — non si va avanti senza
+> **Si sente che la distanza costa?** Guardare un bracciante camminare avanti e
+> indietro deve far venire voglia di mettergli una cassa vicino. Se costruire
+> una cassa più vicina non cambia niente di percepibile, lo zaino è troppo
+> grande o l'isola troppo piccola — e senza quel costo i nastri non serviranno
+> a niente.
+
+2. **Le cose stanno in un posto — niente magazzino centrale.** — **FATTO** (2026-08-11). Le risorse stanno dentro **casse**, non in un contatore. Il bracciante ha uno zaino da 12: raccoglie, si riempie, smette di lavorare e va a scaricare. **Dove scarica lo dici tu**: lo tocchi, premi *Dove scarica*, tocchi una cassa, e un filo tratteggiato ti fa vedere dove va. Si costruiscono casse nuove pagando **davvero** dalle casse esistenti. Il casotto è la prima cassa e c'è già all'avvio.
 3. **Assumere e pagare.** Il giorno che passa, i salari a sera, il riepilogo. Assumere un bracciante è una spesa che torna ogni giorno.
 
 > ### 🛑 Verifica dopo il punto 3
@@ -49,7 +53,7 @@ versione è la più grande di tutte, quindi contano il doppio.
 6. **La prima lavorazione**: il Mulino (grano → farina), costruito col rame. Colture e minerali diventano un gioco solo.
 7. **La catena a due passaggi**: il Forno (farina → pane). Il valore si moltiplica a ogni passaggio.
 8. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
-9. **Il portatore**: porta la roba fra le postazioni. **È il momento in cui la catena gira senza di te**, ed è il cuore della parte Factorio.
+9. **I nastri**: la roba si sposta da sola da una cassa all'altra. **È il momento in cui la catena gira senza di te**, ed è il cuore della parte Factorio. Ha senso solo perché il punto 2 ha reso il trasporto un costo vero.
 
 > ### 🛑 Verifica dopo il punto 9
 > **Guardare la catena girare da sola dà soddisfazione?** Se no, manca il
@@ -73,8 +77,8 @@ versione è la più grande di tutte, quindi contano il doppio.
 ## Semplificazioni note del punto 1, da sistemare quando serviranno
 
 - **I braccianti vanno in linea retta.** Attraversano gli alberi. Sull'isola aperta non si nota; col punto 11 arriva un percorso vero.
-- **La resa compare in magazzino appena il lavoro finisce**, senza essere portata. È il punto 2.
-- **Nessuno paga nessuno.** È il punto 3.
+- **Nessuno paga nessuno.** I salari sono in configurazione ma non li legge nessuno. È il punto 3.
+- **Una cassa piena** fa ripiegare il bracciante sulla più vicina con spazio, invece di bloccarlo. Va bene così finché non ci sono i nastri.
 
 ## Cosa è stato tolto, e perché
 
