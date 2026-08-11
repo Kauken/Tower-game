@@ -1,124 +1,125 @@
-# Documento di design — v4.0
+# Documento di design — v5.0
 
-**Grano e Ferro** — gestionale di fattoria con catene di produzione.
+**Grano e Ferro** — un'isola da mandare avanti.
 Per telefono, verticale, una mano sola.
 
-> Sostituisce la v3.0 (fattoria a griglia con puzzle di vicinanze), che sbagliava
-> genere: metteva la scarsità **sullo spazio** e ne usciva un puzzle game.
-> Qui la scarsità sta su **semi e soldi**, che è come funziona un farmer.
+> Sostituisce la v4.0. Quella metteva il gioco su una **scacchiera**, e l'autore
+> l'ha rifiutata: *"non voglio questa cosa a scacchiera, voglio stile Stardew
+> Valley, Graveyard Keeper. Un'isola con possibilità di accedere ad altre zone.
+> E mettere anche un po' di Factorio e Satisfactory."*
 >
-> Se trovi documenti o codice che parlano di **reclute, ondate, nemici, castello,
-> torri, sentiero, postazioni**, o di **Filare e Rotazione**, sono resti da
-> rimuovere, non funzionalità da mantenere.
+> Se trovi codice o documenti che parlano di **reclute, ondate, nemici,
+> castello, torri, sentiero, postazioni, Filare, Rotazione, appezzamenti**,
+> sono resti da rimuovere.
 
 ---
 
 ## 1. Il gioco in una riga
 
-**Stardew Valley per il ciclo economico, Minecraft moddato tecnico per la scala di produzione, un pizzico di RimWorld per chi ci lavora.** Compri semi, coltivi, vendi o consegni, e con quello che guadagni allarghi il campo, sblocchi lavorazioni e assumi gente che lavori al posto tuo.
+**Un'isola vista dall'alto. Non c'è nessuno da guidare: sei tu il gestore.** Tocchi le cose e dai ordini; a camminare e a lavorare sono i braccianti. Apri zone nuove costruendo il passaggio, e le materie prime che ne escono alimentano catene di lavorazione sempre più lunghe.
+
+**Stardew Valley** per il ciclo economico, **Graveyard Keeper** per le zone e per chi lavora al posto tuo, **Factorio e Satisfactory** per le catene.
 
 ## 2. Il ruolo del giocatore
 
+> **Niente personaggio.** L'autore l'ha rifiutato tre volte, in tre versioni diverse. Il giocatore non è dentro lo schermo: è sopra.
+
 Zero riflessi, zero fretta, **non si può perdere**. Quattro decisioni che si ripetono:
 
-1. **Cosa piantare** — i semi costano, e ognuno ha un tempo, un prezzo e una resa diversi.
-2. **Vendere o tenere da parte** — il mercato paga subito, le commesse pagano molto di più ma vogliono roba precisa.
-3. **Reinvestire o mettere da parte** — ogni giorno la fattoria ha delle spese.
-4. **Assumere o comprare la macchina** — chi lavora costa ogni giorno, la macchina costa tanto una volta sola.
+1. **Cosa ordinare** — cosa serve adesso, e in che ordine.
+2. **Chi assumere** — un altro taglialegna, o un cavatore?
+3. **Vendere o tenere da parte** — il mercato paga subito, le commesse molto di più.
+4. **Quale zona aprire** — costa, e apre un ramo di gioco.
 
-> Non ottimizzi una griglia: **mandi avanti una fattoria.**
+## 3. Come si comanda
 
-## 3. Il ciclo
+**Il dito fa due cose sole:**
 
-> **Semi → pianti → cresce → raccogli → vendi o consegni → compri semi migliori, attrezzi e lavorazioni → ricomincia più in grande.**
+- **Trascini** → sposti l'isola.
+- **Appoggi e alzi su una cosa** → dai un ordine. La tocchi di nuovo → lo annulli.
 
-**All'inizio non puoi riempire il campo neanche volendo**, perché non hai i semi. Piantare ne consuma uno. È quello che rende difficile l'inizio, e quel problema si scioglie da solo man mano che vendi: è la sensazione di "piano piano questo passo diventa più facile".
+Un pulsante allontana la vista per guardare tutta l'isola. Due livelli di zoom soltanto: uno per lavorare, uno per guardare. Una zoomata continua col pizzico, su uno schermo stretto e con un pollice solo, si perde subito.
 
-## 4. Il campo
+**L'ordine si vede sempre**: un anello attorno alla cosa, **giallo** se aspetta qualcuno, **verde** se qualcuno ci sta già andando. Senza quel segno non si può sapere cosa si è già comandato.
 
-Una griglia verticale. Ogni casella è in uno di tre stati:
+## 4. Chi lavora
 
-| Stato | Cosa vuol dire |
-| --- | --- |
-| **Incolto** | terra selvatica. Va dissodata, e costa |
-| **Arato** | ci puoi piantare |
-| **Occupato** | c'è una coltura, una roccia, una macchina |
+**Ogni bracciante fa un mestiere solo.** Sta fermo finché non c'è in coda un lavoro che sa fare, poi ci va, lo fa, e torna fermo. Lo paghi ogni giorno.
 
-**Dissodare è la spesa che allarga la fattoria**, e ogni casella arata aumenta la manutenzione giornaliera. Espandere è una scommessa, non un regalo.
+> **Perché non le priorità di RimWorld.** Là ogni colono ha una griglia di priorità da 1 a 4 per ogni tipo di lavoro. È la parte più profonda di quel gioco, ed è anche un foglio di calcolo: su un telefono, con un dito, sarebbe illeggibile. E ne nasce un difetto documentato — col trasporto a priorità alta i coloni attraversano tutta la mappa per un oggetto solo, e il giocatore non capisce perché nessuno stia lavorando.
+>
+> Qui, se il legno non arriva, basta guardare: **hai un taglialegna solo.**
 
-### Le vicinanze, ridimensionate
+## 5. Le zone
 
-Resta **solo l'acqua**: una coltura che tocca un canale cresce molto più in fretta. Irrigare è agricoltura, si capisce senza spiegazioni.
+L'isola non è tutta accessibile. Ogni pezzo è chiuso da un ostacolo che si toglie **costruendo qualcosa**, non trovando una chiave — è il modo di Graveyard Keeper.
 
-Le regole astratte di moltiplicatori (monocoltura contro varietà) **sono state tolte**: erano un puzzle, e questo non è un puzzle game. I veri problemi di disposizione arriveranno dalle macchine — cosa alimenta cosa, dove sta il magazzino — e nasceranno dalla simulazione, non da regole inventate.
+| Zona | Cosa porta | Come si apre |
+| --- | --- | --- |
+| **La radura** | i campi, il casotto | sei lì dall'inizio |
+| **Il bosco** | legno, resina | serve un'ascia |
+| **La cava** | pietra, rame, ferro | va sgomberata la frana |
+| **Il molo** | il mercante e le commesse | va riparato il pontile |
+| **L'isola vicina** | un ramo intero nuovo | va costruita una barca |
 
-## 5. Il giorno
+**Aprire una zona non è "più spazio": è un pezzo di gioco nuovo.** Ogni zona porta una materia prima e un ramo di lavorazioni.
 
-Il **giorno è il battito del gioco**. Dura pochi minuti mentre l'app è aperta. A fine giornata:
-
-- si paga la **manutenzione** e i **salari**
-- i **prezzi di mercato** cambiano un po'
-- ogni tanto **succede qualcosa** (una settimana secca, un mercante di passaggio con un seme raro)
-- un **riepilogo**: cosa hai raccolto, venduto, speso
-
-È il meccanismo del *"vabbè, ancora un giorno"*, che è il motore vero di Stardew: ogni giornata ti avvicina in modo visibile a qualcosa che vuoi.
-
-## 6. La scala tecnica — la parte Minecraft
-
-È quello che separa questo gioco dall'ennesimo giochino di fattoria.
-
-**L'albero non è una lista, è un grafo di dipendenze.** Il valore si moltiplica a ogni passaggio, e ogni macchina chiede materiali di *un'altra* catena:
+## 6. Le catene — la parte Factorio
 
 > grano → *Mulino* → farina → *Forno* → **pane**, che vale molto di più
 >
-> ma il Mulino si costruisce col **rame**, e il rame lo devi scavare
+> ma il Mulino si costruisce col **rame**, e il rame va scavato
 
-È così che colture e minerali diventano un gioco solo invece di due appiccicati.
+Il valore si moltiplica a ogni passaggio, e ogni lavorazione chiede materiali di *un'altra* catena. È così che le zone diventano un gioco solo invece di rami appiccicati.
 
-**E avanzare deve costringere a rifare pezzi di fattoria.** Nei modpack tecnici è la cosa che tiene vivo il gioco per centinaia di ore: la macchina migliore non si infila dove stava la vecchia. È anche la risposta al difetto noto del genere — *quando è tutto automatico non hai più niente da fare* — senza bisogno di nessun puzzle inventato.
+### I tre gradini dell'automazione
 
-## 7. Il mercato e le commesse
+1. **Ordini tu, ogni volta.** Tocchi ogni albero.
+2. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
+3. **Il portatore**: porta la roba da una postazione all'altra. **Adesso la catena gira senza di te.**
 
-- **Il mercato** compra qualunque cosa, subito, a un prezzo che oscilla. È la rete di sicurezza.
-- **Le commesse** chiedono roba precisa, pagano molto di più e **sbloccano lavorazioni**.
+Il terzo gradino è il momento del gioco. Tutta la ricerca su Factorio e Satisfactory dice che la gioia vera è una sola: **vedere il sistema funzionare da solo mentre guardi da un'altra parte**, e tornare trovando le casse piene.
 
-> **Il fornaio chiede:** 20 grano, 5 farina
-> **Paga:** 300 monete + sblocca il **Forno**
+### "The factory must grow"
 
-Le commesse sono il "non vedo l'ora": **vedi cosa ti chiedono prima di poterlo dare.** E producono la decisione che si ripete di più: *vendo adesso, o tengo da parte?*
+Il motore che non si spegne mai, e viene dritto da Factorio: **la domanda di roba basilare deve crescere sempre più in fretta di quanto tu riesca a produrre.** Commesse e costruzioni devono chiedere più di quanto la fattoria dia. Se un giorno hai abbastanza di tutto, il gioco è finito.
 
-## 8. Chi lavora — la parte RimWorld
+## 7. Il giorno e le spese
 
-*Deciso il 2026-08-11: prima i braccianti, poi le macchine.*
+Il **giorno** dura pochi minuti. A sera si pagano i **salari** e la manutenzione, i prezzi di mercato si muovono, e un riepilogo dice cosa è successo.
 
-**I braccianti.** Assumi persone. Ognuna fa **un mestiere solo** (raccoglie, semina, scava) in **una zona** che le assegni. E le **paghi ogni giorno**: non è un bottone che premi una volta, è un costo fisso che la fattoria deve coprire.
+È il meccanismo del *"vabbè, ancora un giorno"*, il motore vero dell'engagement di Stardew.
 
-**Le macchine.** Arrivano dopo e fanno lo stesso lavoro: costano molto di più subito, ma **niente dopo**.
+**Non si perde mai.** Se non riesci a pagare, un bracciante se ne va: la fattoria si rimpicciolisce e riparti. Niente schermata di sconfitta.
 
-Da lì nasce una decisione economica che non smette mai: **assumo, o compro la macchina?** Dipende da quanto pensi di durare su quella coltura, e da quanti soldi hai adesso.
+## 8. Le tessere
 
-## 9. Le spese fisse
+L'isola è fatta di tessere, **ma non si devono vedere.** Servono solo a far agganciare le cose, esattamente come in Factorio — che è una griglia, e non sembra una scacchiera.
 
-*Deciso il 2026-08-11.*
+Regole di disegno che ne discendono, e sono vincolanti:
+- **Le tessere non hanno bordi. Mai.**
+- La variazione del terreno è una **macchia tonda** sfalsata, non un quadrato più chiaro. Un quadrato dentro una griglia di quadrati si legge come una scacchiera.
+- La riva è una linea chiara dove la terra tocca l'acqua: è quella che fa leggere l'isola come un'isola.
 
-Ogni giorno la fattoria costa: **manutenzione** per casella arata, e **salari** per chi hai assunto.
-
-È quello che rende difficile l'inizio e che tiene viva ogni decisione di espansione. Senza, allargarsi sarebbe sempre la mossa giusta e non ci sarebbe partita.
-
-**Non si perde mai.** Se non riesci a pagare, i braccianti se ne vanno e le caselle tornano incolte: la fattoria si rimpicciolisce e riparti. Niente schermata di sconfitta, niente run azzerata.
-
-## 10. Cosa questo gioco **non** è
+## 9. Cosa questo gioco **non** è
 
 Guardrail, da difendere in ogni decisione futura:
 
-- **Non è un puzzle game.** Se una decisione si risolve incastrando forme su una griglia, è progettata male.
+- **Non c'è un personaggio da muovere.** Rifiutato tre volte: non riproporlo.
+- **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
 - **Non si perde e non si sbaglia in modo irreversibile.**
-- **Non c'è fretta.** Niente timer che scadono, niente raccolti che marciscono se non torni.
+- **Non c'è fretta.** Niente timer che scadono, niente che marcisce.
 - **Non è un idle da guardare.** Se in una giornata non c'è almeno una decisione, il gioco è rotto lì.
 - **Niente valuta premium, niente pubblicità, niente attese che si pagano.**
 
-## 11. La domanda che regge tutto
+## 10. La domanda che regge tutto
 
-> ### Alla fine di una giornata, hai voglia di farne un'altra?
+> ### Guardare l'isola e comandarla col dito è piacevole?
 
-Se sì, tutto il resto è contenuto. Se no, nessuna quantità di macchine, commesse e braccianti lo salva. **È la verifica obbligatoria del punto 3 della roadmap.**
+Se sì, tutto il resto è contenuto. Se no, nessuna quantità di catene, zone e braccianti lo salva. **È la verifica obbligatoria del punto 1 della roadmap.**
+
+## 11. Una nota sulla dimensione
+
+Questa versione è **molto più grande di tutte le precedenti messe insieme**: un mondo a tessere, una telecamera, braccianti che si muovono, zone, catene di produzione. Non è una settimana di lavoro.
+
+Il rischio non è che l'idea sia sbagliata — **Graveyard Keeper è esattamente questo gioco, esiste e funziona.** Il rischio è la dimensione. Per questo la roadmap costruisce il *posto* prima di qualunque catena, e si ferma a farlo provare.

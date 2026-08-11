@@ -11,7 +11,7 @@ Sei responsabile dell'equilibrio e del **ritmo degli sblocchi**.
 Metodo, sempre in quest'ordine:
 
 1. Leggi `docs/GDD.md` per capire l'intenzione di design, e i file `config/` interessati.
-2. Ricostruisci il quadro numerico: per ogni coltura il **guadagno per giorno per casella** (resa x prezzo diviso il tempo di crescita), il costo del seme, in quanto si ripaga, e quanto pesa la manutenzione rispetto a quello che entra. Mostralo in una tabella.
+2. Ricostruisci il quadro numerico: per ogni mestiere quanto materiale porta al minuto (resa diviso tempo di lavoro, piu' il tempo di cammino), quanto costa di salario, e in quanto si ripaga. Mostralo in una tabella.
 3. Individua **una sola causa principale**. Non elencare dieci ipotesi.
 4. Proponi la correzione **prima di applicarla**, indicando valore vecchio → valore nuovo e l'effetto atteso.
 5. Applica solo dopo conferma, e cambia poche cose per volta: più di 3-4 valori insieme e non si capisce più cosa ha funzionato.

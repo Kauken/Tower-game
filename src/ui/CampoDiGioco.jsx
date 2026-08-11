@@ -1,28 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { creaMotore } from '../game/motore.js'
-import { area, grafica, interfaccia } from '../game/config.js'
+import { area, grafica, interfaccia, telecamera } from '../game/config.js'
 import Cruscotto from './Cruscotto.jsx'
-import PannelloCasella from './PannelloCasella.jsx'
-import Mercato from './Mercato.jsx'
-import Riepilogo from './Riepilogo.jsx'
 import Bottone from './Bottone.jsx'
 
 const VISTA_INIZIALE = {
-  monete: 0,
-  giorno: 1,
-  oraDelGiorno: 0,
-  spesaGiornaliera: 0,
-  costoDissodare: 0,
-  selezionata: -1,
-  statoSelezionata: '',
-  contenutoSelezionato: '',
-  selezionataIrrigata: false,
   magazzino: '',
-  semi: '',
-  prezzi: '',
-  valoreMagazzino: 0,
-  mostraRiepilogo: false,
-  riepilogo: ''
+  lavoriInAttesa: 0,
+  braccantiFermi: 0,
+  braccantiTotali: 0,
+  zoomLontano: false,
+  ultimoEsito: ''
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -44,34 +32,17 @@ function copia(stato) {
   return nuova
 }
 
-// "grano:12,rapa:0" -> {grano: 12, rapa: 0}. Il motore manda una stringa sola
-// invece di un oggetto, cosi' l'interfaccia capisce con un confronto se e'
-// cambiata qualcosa e non ridisegna per niente.
-function leggiConti(riga) {
-  const conti = {}
-  if (!riga) {
-    return conti
-  }
-  const pezzi = riga.split(',')
-  for (let i = 0; i < pezzi.length; i++) {
-    const punto = pezzi[i].indexOf(':')
-    conti[pezzi[i].slice(0, punto)] = Number(pezzi[i].slice(punto + 1))
-  }
-  return conti
-}
-
-// React monta i canvas e l'interfaccia. Non partecipa al ciclo di gioco:
+// React monta il canvas e l'interfaccia. Non partecipa al ciclo di gioco:
 // legge lo stato a intervalli (10 volte al secondo), non a ogni frame.
 export default function CampoDiGioco() {
   const contenitore = useRef(null)
-  const canvasSfondo = useRef(null)
   const canvasGioco = useRef(null)
   const motoreRef = useRef(null)
+  const gesto = useRef({ premuto: false, x: 0, y: 0, inizio: 0, spostato: 0 })
   const [vista, impostaVista] = useState(VISTA_INIZIALE)
-  const [mercatoAperto, apriMercato] = useState(false)
 
   useEffect(() => {
-    const motore = creaMotore(canvasSfondo.current, canvasGioco.current)
+    const motore = creaMotore(canvasGioco.current)
     motoreRef.current = motore
 
     const elemento = contenitore.current
@@ -99,127 +70,121 @@ export default function CampoDiGioco() {
     }
   }, [])
 
-  // Il tocco arriva in pixel dello schermo: qui diventa una coordinata logica
-  // del campo, e il motore ne ricava la casella. Si usa il rettangolo vero del
-  // canvas invece della scala, cosi' funziona a qualunque dimensione.
-  const tocca = useCallback((evento) => {
-    const canvas = canvasGioco.current
-    if (!canvas || !motoreRef.current) {
-      return
+  // Da pixel dello schermo a pixel logici del campo. Si usa il rettangolo vero
+  // del canvas invece della scala, cosi' funziona a qualunque dimensione.
+  const logico = useCallback((evento) => {
+    const riquadro = canvasGioco.current.getBoundingClientRect()
+    return {
+      x: ((evento.clientX - riquadro.left) / riquadro.width) * area.larghezza,
+      y: ((evento.clientY - riquadro.top) / riquadro.height) * area.altezza,
+      scala: area.larghezza / riquadro.width
     }
-    const riquadro = canvas.getBoundingClientRect()
-    motoreRef.current.toccaPunto(
-      ((evento.clientX - riquadro.left) / riquadro.width) * area.larghezza,
-      ((evento.clientY - riquadro.top) / riquadro.height) * area.altezza
-    )
   }, [])
 
-  const selezionata = () => motoreRef.current.leggiStato().selezionata
+  // Lo stesso dito fa due cose: se lo muovi sposti la mappa, se lo appoggi e
+  // lo alzi dai un ordine. La soglia sta in configurazione perche' e' una
+  // misura di sensazione, non un dettaglio tecnico.
+  const inizio = useCallback(
+    (evento) => {
+      evento.currentTarget.setPointerCapture(evento.pointerId)
+      gesto.current = {
+        premuto: true,
+        x: evento.clientX,
+        y: evento.clientY,
+        inizio: performance.now(),
+        spostato: 0
+      }
+    },
+    []
+  )
 
-  const pianta = useCallback((id) => motoreRef.current.pianta(selezionata(), id), [])
-  const dissoda = useCallback(() => motoreRef.current.dissoda(selezionata()), [])
-  const estirpa = useCallback(() => motoreRef.current.estirpa(selezionata()), [])
-  const chiudi = useCallback(() => motoreRef.current.chiudi(), [])
-  const compra = useCallback((id) => motoreRef.current.compra(id), [])
-  const vendi = useCallback((id) => motoreRef.current.vendi(id), [])
-  const vendiTutto = useCallback(() => motoreRef.current.vendiTutto(), [])
-  const chiudiRiepilogo = useCallback(() => motoreRef.current.chiudiRiepilogo(), [])
+  const muovi = useCallback(
+    (evento) => {
+      const g = gesto.current
+      if (!g.premuto || !motoreRef.current) {
+        return
+      }
+      const dx = evento.clientX - g.x
+      const dy = evento.clientY - g.y
+      g.spostato += Math.abs(dx) + Math.abs(dy)
+      g.x = evento.clientX
+      g.y = evento.clientY
 
-  const stileCanvas = {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    touchAction: 'none'
-  }
+      const scala = logico(evento).scala
+      motoreRef.current.trascina(dx * scala, dy * scala)
+    },
+    [logico]
+  )
 
-  const semi = leggiConti(vista.semi)
-  const magazzino = leggiConti(vista.magazzino)
-  const prezzi = leggiConti(vista.prezzi)
-  const pannelloCasellaAperto = vista.selezionata >= 0 && !mercatoAperto
+  const fine = useCallback(
+    (evento) => {
+      const g = gesto.current
+      g.premuto = false
+      if (!motoreRef.current) {
+        return
+      }
+      const durata = performance.now() - g.inizio
+      if (
+        g.spostato <= telecamera.soglia_trascinamento &&
+        durata <= telecamera.durata_tocco_ms
+      ) {
+        const punto = logico(evento)
+        motoreRef.current.tocca(punto.x, punto.y)
+      }
+    },
+    [logico]
+  )
+
+  const zoom = useCallback(() => motoreRef.current.zoom(), [])
 
   return (
     <div
+      ref={contenitore}
       style={{
         position: 'fixed',
         inset: 0,
         overflow: 'hidden',
-        background: grafica.colore_fuori_area
+        background: grafica.colore_fuori_area,
+        touchAction: 'none'
       }}
     >
-      {/* Il campo vive qui dentro, fra il cruscotto e il pulsante del mercato.
-          Misurando il canvas su questo riquadro invece che su tutto lo schermo,
-          il campo non puo' mai finire sotto ai comandi. */}
-      <div
-        ref={contenitore}
+      <canvas
+        ref={canvasGioco}
+        onPointerDown={inizio}
+        onPointerMove={muovi}
+        onPointerUp={fine}
+        onPointerCancel={fine}
         style={{
           position: 'absolute',
-          left: 0,
-          right: 0,
-          top: `calc(${interfaccia.spazio_magazzino}px + env(safe-area-inset-top))`,
-          bottom: `calc(${interfaccia.spazio_sotto}px + env(safe-area-inset-bottom))`
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          touchAction: 'none'
         }}
-      >
-        <canvas ref={canvasSfondo} style={stileCanvas} />
-        <canvas ref={canvasGioco} style={stileCanvas} onPointerDown={tocca} />
-      </div>
-
-      <Cruscotto
-        monete={vista.monete}
-        giorno={vista.giorno}
-        oraDelGiorno={vista.oraDelGiorno}
-        spesaGiornaliera={vista.spesaGiornaliera}
       />
 
-      {pannelloCasellaAperto ? (
-        <PannelloCasella
-          stato={vista.statoSelezionata}
-          contenuto={vista.contenutoSelezionato}
-          irrigata={vista.selezionataIrrigata}
-          monete={vista.monete}
-          costoDissodare={vista.costoDissodare}
-          semi={semi}
-          onPianta={pianta}
-          onDissoda={dissoda}
-          onEstirpa={estirpa}
-          onChiudi={chiudi}
-        />
-      ) : null}
-
-      {mercatoAperto ? (
-        <Mercato
-          monete={vista.monete}
-          magazzino={magazzino}
-          prezzi={prezzi}
-          valoreMagazzino={vista.valoreMagazzino}
-          onCompra={compra}
-          onVendi={vendi}
-          onVendiTutto={vendiTutto}
-          onChiudi={() => apriMercato(false)}
-        />
-      ) : null}
-
-      {vista.mostraRiepilogo ? (
-        <Riepilogo dati={vista.riepilogo} onChiudi={chiudiRiepilogo} />
-      ) : null}
+      <Cruscotto
+        magazzino={vista.magazzino}
+        lavoriInAttesa={vista.lavoriInAttesa}
+        braccantiFermi={vista.braccantiFermi}
+        braccantiTotali={vista.braccantiTotali}
+        esito={vista.ultimoEsito}
+      />
 
       <div
         style={{
           position: 'absolute',
-          left: interfaccia.spaziatura,
           right: interfaccia.spaziatura,
           bottom: `calc(${interfaccia.spaziatura}px + env(safe-area-inset-bottom))`,
+          width: 132,
           display: 'flex'
         }}
       >
         <Bottone
-          titolo={mercatoAperto ? 'Chiudi il mercato' : 'Mercato'}
-          dettaglio={
-            mercatoAperto ? undefined : 'vendi il raccolto, compra semi'
-          }
-          colore={interfaccia.pannello.colore_mercato}
+          titolo={vista.zoomLontano ? 'Avvicina' : 'Allontana'}
+          colore={interfaccia.pannello.colore_azione}
           largo
-          onTocco={() => apriMercato((aperto) => !aperto)}
+          onTocco={zoom}
         />
       </div>
     </div>

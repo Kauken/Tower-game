@@ -1,135 +1,111 @@
 // Ciclo di gioco: passo fisso di simulazione, disegno alla frequenza dello
 // schermo. Dentro aggiorna() e disegna() non si creano oggetti nuovi.
 //
-// Le azioni dell'interfaccia (tocca, pianta, dissoda, compra, vendi) entrano
-// da una coda di comandi e vengono eseguite dentro un passo di simulazione:
-// cosi' due tocchi ravvicinati non possono spendere due volte le stesse monete.
+// Il giocatore non ha un personaggio: guarda l'isola dall'alto, la sposta col
+// dito, e **da' ordini**. Le azioni dell'interfaccia entrano da una coda di
+// comandi e vengono eseguite dentro un passo di simulazione.
 
-import { area, limiti, simulazione, tempo, trovaContenuto } from './config.js'
-import { disegnaSfondo } from './sfondo.js'
-import { disegnaFattoria } from './disegno.js'
+import { area, elencoMateriali, limiti, simulazione, tessera } from './config.js'
+import { disegnaIsola } from './disegno.js'
 import { adattaCanvas } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
-import { creaFattoria } from './fattoria.js'
-import { creaEconomia } from './economia.js'
-import { creaGiorno } from './giorno.js'
+import { creaCamera } from './camera.js'
+import { creaLavori } from './lavori.js'
+import { creaBraccianti } from './braccianti.js'
 import { creaGestoreEffetti } from './effetti.js'
-import { casellaSotto, centroX, centroY } from './griglia.js'
+import { centroTessera, risorsaIn, tessereDaMondo } from './mondo.js'
 
-export function creaMotore(canvasSfondo, canvasGioco) {
+export function creaMotore(canvasGioco) {
+  const camera = creaCamera()
+  const lavori = creaLavori()
   const effetti = creaGestoreEffetti()
-  const economia = creaEconomia()
 
-  // il campo e' cambiato forma: lo sfondo va rifatto, ma solo allora
-  let sfondoDaRifare = true
+  const magazzino = {}
+  for (let i = 0; i < elencoMateriali.length; i++) {
+    magazzino[elencoMateriali[i].id] = 0
+  }
 
-  const fattoria = creaFattoria({
-    allaRaccolta: (indice) => {
-      effetti.raccolta(centroX(indice), centroY(indice))
-      giorno.segnaRaccolto()
+  const centro = { x: 0, y: 0 }
+
+  const squadra = creaBraccianti({
+    allaResa: (materiale, quantita, tx, ty) => {
+      magazzino[materiale] += quantita
+      centroTessera(tx, ty, centro)
+      camera.versoSchermo(centro.x, centro.y, centro)
+      effetti.raccolta(centro.x, centro.y)
     },
-    alCambioDelCampo: () => {
-      sfondoDaRifare = true
-    }
+    alCambioDelMondo: () => {}
   })
-
-  const giorno = creaGiorno(economia, fattoria, {
-    allAlba: () => {}
-  })
-
-  economia.reimposta(fattoria.caselleArate())
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
     tipo: '',
-    indice: -1,
-    id: ''
+    x: 0,
+    y: 0
   }))
-
-  let selezionata = -1
 
   // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
   // aggiornato sul posto, non ricreato.
   const vetrina = {
-    monete: 0,
-    giorno: 1,
-    oraDelGiorno: 0,
-    spesaGiornaliera: 0,
-    costoDissodare: 0,
-    selezionata: -1,
-    // 'incolto' | 'vuota' | 'coltura' | 'matura' | 'terreno'
-    statoSelezionata: '',
-    contenutoSelezionato: '',
-    selezionataIrrigata: false,
-    // stringhe, non oggetti: l'interfaccia le confronta per capire se sono
-    // cambiate, e confrontare un oggetto a ogni lettura costerebbe di piu'
+    // stringa e non oggetto: l'interfaccia la confronta per capire se e'
+    // cambiata, e confrontare un oggetto a ogni lettura costerebbe di piu'
     magazzino: '',
-    semi: '',
-    prezzi: '',
-    valoreMagazzino: 0,
-    mostraRiepilogo: false,
-    riepilogo: ''
+    lavoriInAttesa: 0,
+    braccantiFermi: 0,
+    braccantiTotali: 0,
+    zoomLontano: false,
+    // cosa e' stato toccato per ultimo, per l'avviso a schermo
+    ultimoEsito: ''
   }
 
-  let ctxSfondo = null
   let ctxGioco = null
   let ultimoTempo = 0
   let accumulato = 0
   let richiesta = 0
+  let esito = ''
 
-  function accodaComando(tipo, indice, id) {
+  function accodaComando(tipo, x, y) {
     const comando = primoLibero(comandi)
     if (!comando) {
       return
     }
     comando.attivo = true
     comando.tipo = tipo
-    comando.indice = indice === undefined ? -1 : indice
-    comando.id = id || ''
+    comando.x = x || 0
+    comando.y = y || 0
   }
 
-  // Toccare una casella fa la cosa ovvia: se c'e' da raccogliere raccoglie,
-  // altrimenti seleziona. Un tocco che non fa niente sembra un guasto.
-  function tocca(indice) {
-    if (indice < 0) {
-      selezionata = -1
-      return
-    }
-    if (fattoria.caselle[indice].matura) {
-      fattoria.raccogli(indice)
-      selezionata = -1
-      return
-    }
-    selezionata = selezionata === indice ? -1 : indice
-  }
+  const mondoTocco = { x: 0, y: 0 }
+  const tessereTocco = { tx: 0, ty: 0 }
 
-  function pianta(indice, idContenuto) {
-    if (fattoria.piazza(indice, idContenuto)) {
-      selezionata = -1
-    }
-  }
+  // Toccare una cosa sull'isola da' un ordine. Toccarla di nuovo lo disdice.
+  // Toccare il terreno vuoto non fa niente e non deve sembrare un guasto.
+  function tocca(xSchermo, ySchermo) {
+    camera.versoMondo(xSchermo, ySchermo, mondoTocco)
+    tessereDaMondo(mondoTocco.x, mondoTocco.y, tessereTocco)
 
-  function dissoda(indice) {
-    if (indice < 0 || fattoria.caselle[indice].arata) {
+    const cosa = risorsaIn(tessereTocco.tx, tessereTocco.ty)
+    if (!cosa) {
+      esito = ''
       return
     }
-    const costo = economia.stato.costoDissodare
-    if (!economia.dissoda(fattoria.caselleArate() + 1)) {
-      return
-    }
-    giorno.segnaSpesa(costo)
-    fattoria.dissoda(indice)
-    economia.ricalcola(fattoria.caselleArate())
-    selezionata = -1
-  }
 
-  function compraSeme(idContenuto) {
-    const dati = trovaContenuto(idContenuto)
-    if (!economia.paga(dati.costo_seme)) {
+    const gia = lavori.trovaSuTessera(tessereTocco.tx, tessereTocco.ty)
+    if (gia) {
+      if (gia.preso) {
+        esito = 'ci sta già andando qualcuno'
+      } else {
+        lavori.ordina(tessereTocco.tx, tessereTocco.ty, cosa)
+        esito = 'ordine annullato'
+      }
       return
     }
-    giorno.segnaSpesa(dati.costo_seme)
-    fattoria.aggiungiSeme(idContenuto, 1)
+
+    if (lavori.ordina(tessereTocco.tx, tessereTocco.ty, cosa)) {
+      esito = ''
+    } else {
+      esito = 'nessuno lo sa fare'
+    }
   }
 
   function eseguiComandi() {
@@ -140,50 +116,28 @@ export function creaMotore(canvasSfondo, canvasGioco) {
       }
       comando.attivo = false
       if (comando.tipo === 'tocca') {
-        tocca(comando.indice)
-      } else if (comando.tipo === 'pianta') {
-        pianta(comando.indice, comando.id)
-      } else if (comando.tipo === 'dissoda') {
-        dissoda(comando.indice)
-      } else if (comando.tipo === 'estirpa') {
-        fattoria.rimuovi(comando.indice)
-        selezionata = -1
-      } else if (comando.tipo === 'compra') {
-        compraSeme(comando.id)
-      } else if (comando.tipo === 'vendi') {
-        giorno.segnaIncasso(economia.vendi(fattoria.magazzino, comando.id))
-      } else if (comando.tipo === 'vendi_tutto') {
-        giorno.segnaIncasso(economia.vendiTutto(fattoria.magazzino))
-      } else if (comando.tipo === 'chiudi') {
-        selezionata = -1
-      } else if (comando.tipo === 'chiudi_riepilogo') {
-        giorno.chiudiRiepilogo()
+        tocca(comando.x, comando.y)
+      } else if (comando.tipo === 'trascina') {
+        camera.trascina(comando.x, comando.y)
+      } else if (comando.tipo === 'zoom') {
+        camera.cambiaZoom()
       }
     }
   }
 
   function ridimensiona(larghezzaDisponibile, altezzaDisponibile) {
-    ctxSfondo = adattaCanvas(canvasSfondo, area, larghezzaDisponibile, altezzaDisponibile)
     ctxGioco = adattaCanvas(canvasGioco, area, larghezzaDisponibile, altezzaDisponibile)
-    sfondoDaRifare = true
   }
 
   function aggiorna() {
     eseguiComandi()
-    fattoria.aggiorna(simulazione.passo_ms)
-    giorno.aggiorna(simulazione.passo_ms)
+    squadra.aggiorna(lavori, simulazione.passo_ms, simulazione.passo_ms / 1000)
     effetti.aggiorna(simulazione.passo_ms)
   }
 
   function disegna() {
-    // lo sfondo si rifa' solo quando il campo cambia forma: dissodare succede
-    // poche volte in una partita, ridisegnarlo a ogni frame sarebbe uno spreco
-    if (sfondoDaRifare && ctxSfondo) {
-      disegnaSfondo(ctxSfondo, fattoria.caselle)
-      sfondoDaRifare = false
-    }
     ctxGioco.clearRect(0, 0, area.larghezza, area.altezza)
-    disegnaFattoria(ctxGioco, fattoria.caselle, selezionata)
+    disegnaIsola(ctxGioco, camera, lavori, squadra.squadra)
     effetti.disegna(ctxGioco)
   }
 
@@ -206,6 +160,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   }
 
   function avvia() {
+    // si comincia guardando il casotto: e' il centro della fattoria
+    camera.guarda(camera.stato.x, camera.stato.y)
     ultimoTempo = performance.now()
     accumulato = 0
     richiesta = requestAnimationFrame(frame)
@@ -218,71 +174,18 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   // --- comunicazione con l'interfaccia ---
 
-  function statoDi(indice) {
-    const casella = fattoria.caselle[indice]
-    if (!casella.arata) {
-      return 'incolto'
-    }
-    if (!casella.contenuto) {
-      return 'vuota'
-    }
-    if (casella.matura) {
-      return 'matura'
-    }
-    return casella.famiglia === 'coltura' ? 'coltura' : 'terreno'
-  }
-
   function leggiStato() {
-    vetrina.monete = Math.floor(economia.stato.monete)
-    vetrina.giorno = giorno.stato.giorno
-    vetrina.oraDelGiorno = giorno.stato.trascorsoMs / tempo.giorno_ms
-    vetrina.spesaGiornaliera = economia.stato.spesaGiornaliera
-    vetrina.costoDissodare = economia.stato.costoDissodare
-
-    vetrina.selezionata = selezionata
-    vetrina.statoSelezionata = selezionata >= 0 ? statoDi(selezionata) : ''
-    vetrina.contenutoSelezionato =
-      selezionata >= 0 ? fattoria.caselle[selezionata].contenuto : ''
-    vetrina.selezionataIrrigata =
-      selezionata >= 0 ? fattoria.caselle[selezionata].irrigata : false
-
     let riga = ''
-    for (const materiale in fattoria.magazzino) {
-      riga += (riga ? ',' : '') + materiale + ':' + fattoria.magazzino[materiale]
+    for (const materiale in magazzino) {
+      riga += (riga ? ',' : '') + materiale + ':' + magazzino[materiale]
     }
     vetrina.magazzino = riga
-
-    let semi = ''
-    for (const id in fattoria.semi) {
-      semi += (semi ? ',' : '') + id + ':' + fattoria.semi[id]
-    }
-    vetrina.semi = semi
-
-    let prezzi = ''
-    for (const materiale in fattoria.magazzino) {
-      prezzi += (prezzi ? ',' : '') + materiale + ':' + economia.prezzo(materiale)
-    }
-    vetrina.prezzi = prezzi
-    vetrina.valoreMagazzino = economia.valoreDi(fattoria.magazzino)
-
-    vetrina.mostraRiepilogo = giorno.stato.mostraRiepilogo
-    vetrina.riepilogo = giorno.stato.mostraRiepilogo
-      ? giorno.riepilogo.giorno +
-        ',' +
-        giorno.riepilogo.incassato +
-        ',' +
-        giorno.riepilogo.speso +
-        ',' +
-        giorno.riepilogo.raccolti +
-        ',' +
-        giorno.riepilogo.abbandonate
-      : ''
-
+    vetrina.lavoriInAttesa = lavori.quantiInAttesa()
+    vetrina.braccantiFermi = squadra.quantiFermi()
+    vetrina.braccantiTotali = squadra.squadra.length
+    vetrina.zoomLontano = camera.stato.livello > 0
+    vetrina.ultimoEsito = esito
     return vetrina
-  }
-
-  function toccaPunto(xLogica, yLogica) {
-    accodaComando('tocca', casellaSotto(xLogica, yLogica))
   }
 
   return {
@@ -290,14 +193,10 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     ferma,
     ridimensiona,
     leggiStato,
-    toccaPunto,
-    pianta: (indice, id) => accodaComando('pianta', indice, id),
-    dissoda: (indice) => accodaComando('dissoda', indice),
-    estirpa: (indice) => accodaComando('estirpa', indice),
-    compra: (id) => accodaComando('compra', undefined, id),
-    vendi: (id) => accodaComando('vendi', undefined, id),
-    vendiTutto: () => accodaComando('vendi_tutto'),
-    chiudi: () => accodaComando('chiudi'),
-    chiudiRiepilogo: () => accodaComando('chiudi_riepilogo')
+    tocca: (x, y) => accodaComando('tocca', x, y),
+    trascina: (dx, dy) => accodaComando('trascina', dx, dy),
+    zoom: () => accodaComando('zoom'),
+    // serve al tocco: da pixel dello schermo a pixel logici del campo
+    misuraLogica: tessera
   }
 }

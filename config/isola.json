@@ -1,0 +1,144 @@
+{
+  "_nota": "L'isola. E' una mappa a tessere, ma NON deve sembrare una scacchiera: le tessere servono solo a far agganciare le cose, come in Factorio. Sopra ci va un posto — erba, sabbia, acqua, alberi, sassi.",
+  "_nota_legenda": "Ogni carattere della mappa e' una tessera. ~ acqua (non calpestabile), , sabbia, . erba, T albero, R masso, F frana (blocca la cava, va sgomberata), C casotto/deposito.",
+  "tessera": 64,
+  "mappa": [
+    "~~~~~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~,,,,,,,,,~~~~~~~~",
+    "~~~~~,,,.......,,,~~~~~~",
+    "~~~~,,..TT.......,,~~~~~",
+    "~~~,,...TTT.......,,~~~~",
+    "~~,,....TT.........,,~~~",
+    "~~,,......T........,,~~~",
+    "~,,................,,,~~",
+    "~,,......RR.........,,~~",
+    "~,,.....RRR..........,~~",
+    "~,,......RR..........,~~",
+    "~,,..................,~~",
+    "~,,..................,~~",
+    "~,,......C...........,~~",
+    "~,,..................,~~",
+    "~,,..................,~~",
+    "~,,..................,~~",
+    "~,,....FFF...........,~~",
+    "~,,....FFF..........,,~~",
+    "~,,..................,~~",
+    "~,,......TT..........,~~",
+    "~,,.....TTTT.........,~~",
+    "~,,......TT..........,~~",
+    "~~,,................,,~~",
+    "~~,,...............,,~~~",
+    "~~~,,.............,,~~~~",
+    "~~~~,,...........,,~~~~~",
+    "~~~~~,,,.......,,,~~~~~~",
+    "~~~~~~~,,,,,,,,,~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~~~~~"
+  ],
+  "legenda": {
+    "~": "acqua",
+    ",": "sabbia",
+    ".": "erba",
+    "T": "albero",
+    "R": "masso",
+    "F": "frana",
+    "C": "casotto"
+  },
+  "terreni": {
+    "_nota": "I fondi calpestabili o no. Il colore di base piu' una variazione, cosi' il terreno non e' una tinta piatta e non si legge come una griglia.",
+    "acqua": {
+      "colore": "#1d3a4d",
+      "variazione": "#24485e",
+      "calpestabile": false
+    },
+    "sabbia": {
+      "colore": "#8a7a4f",
+      "variazione": "#96865a",
+      "calpestabile": true
+    },
+    "erba": {
+      "colore": "#3d5c2a",
+      "variazione": "#456533",
+      "calpestabile": true
+    }
+  },
+  "risorse": {
+    "_nota": "Quello che sta sopra al terreno e si puo' ordinare di togliere. tempo_lavoro_ms e' quanto ci mette un bracciante; resa e' cosa finisce in magazzino. mestiere dice chi lo sa fare.",
+    "albero": {
+      "nome": "Albero",
+      "mestiere": "taglialegna",
+      "tempo_lavoro_ms": 3200,
+      "resa": {
+        "materiale": "legno",
+        "quantita": 4
+      },
+      "colore": "#2f4a1e",
+      "colore_chioma": "#4a7031",
+      "colore_tronco": "#4a3a24",
+      "raggio": 0.42,
+      "blocca": true
+    },
+    "masso": {
+      "nome": "Masso",
+      "mestiere": "cavatore",
+      "tempo_lavoro_ms": 5200,
+      "resa": {
+        "materiale": "pietra",
+        "quantita": 3
+      },
+      "colore": "#5b5f63",
+      "colore_chioma": "#7c8288",
+      "colore_tronco": "#3e4247",
+      "raggio": 0.38,
+      "blocca": true
+    },
+    "frana": {
+      "nome": "Frana",
+      "mestiere": "cavatore",
+      "tempo_lavoro_ms": 8000,
+      "resa": {
+        "materiale": "pietra",
+        "quantita": 5
+      },
+      "colore": "#4a4038",
+      "colore_chioma": "#6b5c4a",
+      "colore_tronco": "#332c26",
+      "raggio": 0.46,
+      "blocca": true
+    },
+    "casotto": {
+      "nome": "Casotto",
+      "mestiere": "",
+      "tempo_lavoro_ms": 0,
+      "resa": null,
+      "colore": "#6b4a32",
+      "colore_chioma": "#8a6242",
+      "colore_tronco": "#3f2b1c",
+      "raggio": 0.45,
+      "blocca": true,
+      "squadrata": true,
+      "_nota": "L'unica cosa costruita da qualcuno: si disegna quadrata fra le sagome tonde della natura."
+    }
+  },
+  "materiali": [
+    {
+      "id": "legno",
+      "nome": "Legno",
+      "colore": "#8a6242"
+    },
+    {
+      "id": "pietra",
+      "nome": "Pietra",
+      "colore": "#7c8288"
+    }
+  ],
+  "telecamera": {
+    "_nota": "Si trascina col dito per spostarsi, e un pulsante allontana la vista. Due livelli soltanto: uno per lavorare, uno per guardare tutta l'isola. Una zoomata continua col pizzico su un telefono stretto si perde subito.",
+    "zoom": [
+      1,
+      0.55
+    ],
+    "margine_tessere": 1,
+    "soglia_trascinamento": 10,
+    "durata_tocco_ms": 400
+  }
+}

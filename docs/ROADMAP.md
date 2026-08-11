@@ -1,85 +1,92 @@
-# Lista di costruzione — v8
+# Lista di costruzione — v9
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
-Il gioco è quello del `GDD.md` v4.0: **gestionale di fattoria con catene di
-produzione** — Stardew per l'economia, Minecraft moddato per la scala tecnica,
-un pizzico di RimWorld per chi ci lavora.
+Il gioco è quello del `GDD.md` v5.0: **un'isola da mandare avanti** — Stardew per
+l'economia, Graveyard Keeper per le zone e i braccianti, Factorio e Satisfactory
+per le catene. **Nessun personaggio: si comanda col dito.**
 
 ## Come è ordinata
 
-Ogni punto deve lasciare qualcosa di **giocabile col pollice**, e la domanda più
-grossa riceve risposta per prima:
+La domanda più grossa riceve risposta per prima:
 
-> **Alla fine di una giornata, hai voglia di farne un'altra?**
+> **Guardare l'isola e comandarla col dito è piacevole?**
 
-Ci si arriva al punto 3. Macchine, commesse, braccianti e appezzamenti sono
-tutti inutili se lì la risposta è no.
+Ci si arriva al punto 1. Catene, zone, commesse e macchine sono tutti inutili
+se lì la risposta è no.
 
-**La lezione delle versioni precedenti:** il progetto è morto ogni volta perché
-abbiamo costruito il gioco intero prima di sapere se il pezzo centrale era
-divertente. I blocchi di verifica non sono una formalità.
+**La lezione delle sei versioni precedenti:** il progetto è morto ogni volta
+perché abbiamo costruito il gioco intero prima di sapere se il pezzo centrale
+era divertente. I blocchi di verifica non sono una formalità — e questa
+versione è la più grande di tutte, quindi contano il doppio.
 
 ---
 
-## Fase A — il ciclo economico deve funzionare
+## Fase A — il posto deve funzionare
 
-1. **I semi costano e si consumano.** — **FATTO** (2026-08-11). Piantare consuma un seme. Le caselle hanno tre stati: incolto (con i ciuffi d'erba), arato, occupato. Si parte con 6 caselle arate, 4 semi di rapa e 60 monete: non puoi riempire il campo neanche volendo. Estirpare restituisce il seme.
-2. **Vendere e comprare.** — **FATTO** (2026-08-11). Il mercato compra il raccolto a prezzi che oscillano ogni giorno, e vende i semi. Quelli che non ti puoi permettere restano visibili ma spenti: vedere quanto manca al Lino e' meta' del motivo per tornare domani. Dissodare costa, e il costo sale a ogni casella aperta.
-3. **Il giorno.** — **FATTO** (2026-08-11). Dura 90 secondi; il cruscotto mostra sempre quanto manca a sera e quanto si paghera'. A fine giornata si paga la manutenzione (3 per casella arata), i prezzi si rifanno, e un riepilogo dice raccolti, incassato, speso e saldo. Se non bastano i soldi una casella vuota torna incolta: **non si perde mai**.
+1. **L'isola, la telecamera e il primo ordine.** — **FATTO** (2026-08-11). Un'isola di 24×30 tessere che non sembra una scacchiera: erba, sabbia, mare, riva. Si trascina col dito, un pulsante allontana la vista. Tocchi un albero o un masso e dai un ordine; lo tocchi di nuovo e lo annulli. Due braccianti — un taglialegna e un cavatore — prendono i lavori che sanno fare, ci vanno, li fanno, e il legno e la pietra arrivano in magazzino.
 
-> ### 🛑 Verifica dopo il punto 3 — non si va avanti senza
-> **Alla fine di una giornata, hai voglia di farne un'altra?** E soprattutto:
-> **decidere cosa piantare è una decisione vera**, o c'è sempre un seme
-> ovviamente migliore? Se è ovvio, si risolve qui coi numeri, non aggiungendo
-> contenuto sopra.
+> ### 🛑 Verifica dopo il punto 1 — non si va avanti senza
+> **Guardare l'isola e comandarla col dito è piacevole?** Il trascinamento è
+> naturale? Si capisce sempre cosa hai già ordinato e chi ci sta andando?
+> Se il posto non è piacevole, si risolve qui — nel disegno e nel comando —
+> non aggiungendo contenuto sopra.
 
-4. **Le commesse.** La bacheca che chiede roba precisa, paga molto di più del mercato e sblocca lavorazioni. È il "non vedo l'ora", ed è la decisione *vendo o tengo da parte*.
-5. **Lo scavo e i minerali.** Le rocce sul campo: tocchi, si crepa, si spacca. È l'unica cosa attiva del gioco.
+2. **Il magazzino ha un posto.** La roba non compare dal nulla in un contatore: viene portata al casotto. È il primo pezzo di logistica, e la ragione per cui più avanti servirà un portatore.
+3. **Assumere e pagare.** Il giorno che passa, i salari a sera, il riepilogo. Assumere un bracciante è una spesa che torna ogni giorno.
 
-## Fase B — la scala tecnica
+> ### 🛑 Verifica dopo il punto 3
+> **"Assumo o me lo faccio bastare" è una decisione difficile?** Se assumere è
+> sempre giusto, i salari sono troppo bassi.
 
-6. **La prima lavorazione**: il Mulino (grano → farina), costruito con rame. È il momento in cui colture e minerali diventano un gioco solo.
+4. **I campi.** Dissodare, seminare, raccogliere: il contadino come terzo mestiere. I semi si comprano e si consumano.
+5. **Il mercato e le commesse.** Vendere al molo, e la bacheca che chiede roba precisa e paga molto di più. È il "non vedo l'ora".
+
+## Fase B — le catene
+
+6. **La prima lavorazione**: il Mulino (grano → farina), costruito col rame. Colture e minerali diventano un gioco solo.
 7. **La catena a due passaggi**: il Forno (farina → pane). Il valore si moltiplica a ogni passaggio.
-8. **I braccianti**: assumi, assegni un mestiere e una zona, li paghi ogni giorno.
+8. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
+9. **Il portatore**: porta la roba fra le postazioni. **È il momento in cui la catena gira senza di te**, ed è il cuore della parte Factorio.
 
-> ### 🛑 Verifica dopo il punto 8
-> **"Assumo o me lo faccio da solo" è una decisione difficile?** Se assumere è
-> sempre giusto o sempre sbagliato, i salari sono tarati male.
+> ### 🛑 Verifica dopo il punto 9
+> **Guardare la catena girare da sola dà soddisfazione?** Se no, manca il
+> motivo per cui esiste tutto il resto.
 
-9. **Le macchine che sostituiscono i braccianti**: costano molto di più subito, niente dopo. Nasce la decisione *assumo o compro*.
-10. **Il secondo appezzamento** e la ristrutturazione: la macchina migliore non entra dove stava la vecchia.
+## Fase C — l'isola intera
 
-> ### 🛑 Verifica dopo il punto 10
-> **C'è qualcosa che non vedi l'ora di sbloccare?** Se guardi la bacheca e non
-> desideri niente, gli sblocchi stanno dando numeri invece di verbi.
-
-## Fase C — il gioco intero
-
-11. **Gli eventi**: la settimana secca, il mercante di passaggio col seme raro. Poco e ben distanziato, come lo storyteller di RimWorld.
-12. **Le stagioni**, se la decisione aperta 5 si chiude a favore.
-13. **Salvataggio e ripresa**, con la produzione a app chiusa.
-14. **Altre colture, minerali, lavorazioni e commesse** con l'agente `designer-contenuti`.
-15. **Il ritmo degli sblocchi**: nessun buco noioso, misurato con la simulazione headless.
-16. **Rifinitura**: suoni, animazioni, il piacere del gesto, con l'agente `rifinitore`.
-17. **Impacchettamento mobile** con Capacitor.
+10. **Le zone**: la frana da sgomberare, il pontile da riparare. Ognuna porta una materia prima e un ramo di lavorazioni.
+11. **Il percorso vero dei braccianti.** Adesso vanno in linea retta: basta su un'isola aperta, non basterà con recinti e capanne.
+12. **Le macchine** che sostituiscono i braccianti: molto più care subito, niente dopo. Nasce la decisione *assumo o compro*.
+13. **L'isola vicina** e la barca.
+14. **Gli eventi**: la settimana secca, il mercante di passaggio. Poco e ben distanziato, come lo storyteller di RimWorld.
+15. **Salvataggio e ripresa**, con la produzione a app chiusa.
+16. **Altri materiali, lavorazioni e commesse** con l'agente `designer-contenuti`.
+17. **Il ritmo**: nessun buco noioso, misurato con la simulazione headless.
+18. **Rifinitura**: suoni, animazioni, il piacere del gesto, con l'agente `rifinitore`.
+19. **Impacchettamento mobile** con Capacitor.
 
 ---
+
+## Semplificazioni note del punto 1, da sistemare quando serviranno
+
+- **I braccianti vanno in linea retta.** Attraversano gli alberi. Sull'isola aperta non si nota; col punto 11 arriva un percorso vero.
+- **La resa compare in magazzino appena il lavoro finisce**, senza essere portata. È il punto 2.
+- **Nessuno paga nessuno.** È il punto 3.
 
 ## Cosa è stato tolto, e perché
 
-**Il puzzle di vicinanze (2026-08-11).** Filare (monocoltura) e Rotazione
-(varietà) erano regole nate per fare un puzzle di incastro. L'autore ha
-chiarito che non vuole un puzzle game ma un farmer, quindi sono state rimosse.
-**Resta solo l'acqua**, perché irrigare è agricoltura e si capisce senza
-spiegazioni.
+**La scacchiera (2026-08-11, sera tardi).** L'autore: *"non voglio questa cosa a
+scacchiera"*. Le tessere restano **sotto**, invisibili, a far agganciare le cose —
+come in Factorio, che è una griglia e non sembra una scacchiera. Sopra ci va
+un'isola.
 
-I veri problemi di disposizione arriveranno dalle macchine — cosa alimenta
-cosa, dove sta il magazzino — e nasceranno dalla simulazione, non da
-moltiplicatori inventati.
+**Il personaggio da muovere.** Rifiutato dall'autore tre volte in tre versioni
+diverse: *"non vorrei un personaggio ma più da gestionale che col dito comando"*.
+Non riproporlo.
 
-**Il tower defense (2026-08-11).** Si è salvata solo l'impalcatura: motore a
-passo fisso, strutture preallocate, canvas separato da React, coda dei comandi,
-numeri solo in `config/`, e la simulazione headless.
+**Il tower defense, il roguelike a stanze, il puzzle di vicinanze.** Si è salvata
+solo l'impalcatura: motore a passo fisso, strutture preallocate, canvas separato
+da React, coda dei comandi, numeri solo in `config/`.

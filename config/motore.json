@@ -8,7 +8,7 @@
     "_nota": "Dimensione delle strutture preallocate: oltre questi numeri il gioco non crea niente di nuovo.",
     "comandi_massimi": 8,
     "effetti_massimi": 24,
-    "vicini_massimi": 4
+    "lavori_massimi": 64
   },
   "interfaccia": {
     "_nota": "Misure dei comandi a schermo. altezza_minima_tocco non deve mai scendere sotto 44. L'interfaccia legge lo stato del gioco al massimo aggiornamenti_al_secondo volte, mai a ogni frame.",
@@ -26,84 +26,82 @@
     "colore_testo": "#ece7d6",
     "colore_testo_debole": "#9aa38c",
     "colore_scelto": "#f0c95c",
-    "_nota_spazi": "Quanto spazio si tiene libero sopra per il cruscotto e sotto per il pulsante del mercato. Il canvas viene misurato su quello che resta, non su tutto lo schermo: e' cosi' che il campo non finisce mai sotto ai comandi.",
-    "spazio_magazzino": 78,
-    "spazio_sotto": 88,
-    "magazzino": {
-      "_nota": "La striscia in alto con quello che hai raccolto. E' l'unico punteggio del gioco: serve a confrontare due disposizioni della griglia.",
-      "altezza_pastiglia": 34,
-      "raggio_pastiglia": 17,
-      "peso_numero": 700
-    },
+    "_nota_spazi": "Quanto spazio si tiene libero sopra per il cruscotto e sotto per i comandi. Il canvas riempie tutto lo schermo: la telecamera ci disegna sopra, e l'interfaccia ci galleggia.",
     "pannello": {
-      "_nota": "Il foglio che sale dal basso quando tocchi una casella. Sale solo quando serve, cosi' la griglia resta la cosa piu' grande sullo schermo.",
+      "_nota": "I fogli che salgono dal basso e i pulsanti che ci stanno dentro.",
       "peso_titolo": 700,
       "spessore_bordo": 2,
-      "colore_rimuovi": "#6b3f3f",
+      "colore_azione": "#3a5340",
+      "colore_annulla": "#6b3f3f",
       "colore_chiudi": "#2b3226",
-      "colore_mercato": "#3a5340",
-      "colore_dissoda": "#4a4030",
       "colore_spento": "#262c20",
       "colore_testo_spento": "#6d7565"
     },
-    "colore_monete": "#f0c95c",
-    "colore_spesa": "#d9805f"
+    "spazio_cruscotto": 74,
+    "colore_accento": "#f0c95c"
   },
   "grafica": {
-    "colore_fuori_area": "#0c0f08",
-    "campo": {
-      "_nota": "Il terreno e le caselle. Si ridisegna solo quando il campo cambia forma, mai a ogni frame. La terra incolta ha dei ciuffi: si deve capire a colpo d'occhio quale pezzo di campo e' gia' tuo e quale va ancora aperto.",
-      "colore_terreno": "#1b2413",
-      "colore_casella": "#2c3a20",
-      "colore_bordo_casella": "#3f5130",
-      "spessore_bordo_casella": 3,
-      "raggio_casella": 14,
-      "colore_incolto": "#243018",
-      "colore_bordo_incolto": "#31401f",
-      "colore_ciuffi": "#4a6030",
-      "spessore_ciuffi": 3,
-      "quanti_ciuffi": 3
+    "colore_fuori_area": "#0b1410",
+    "mondo": {
+      "_nota": "Il terreno. La variazione NON e' un quadrato: e' una macchia tonda dentro la tessera, sfalsata in modo stabile. Un quadrato piu' chiaro dentro una griglia di quadrati si legge come una scacchiera, ed e' esattamente la cosa che l'autore ha rifiutato. Le tessere non hanno bordi, mai.",
+      "colore_mare_fuori": "#16303f",
+      "opacita_variazione": 0.35,
+      "riva": {
+        "_nota": "Un bordo chiaro dove la sabbia tocca l'acqua: e' quello che fa leggere l'isola come un'isola.",
+        "colore": "#b0a070",
+        "spessore": 3
+      },
+      "macchia": {
+        "_nota": "Raggio e scarto della macchia, in frazioni di tessera. Lo scarto la sposta fuori centro cosi' non si allinea con le vicine.",
+        "raggio_minimo": 0.26,
+        "raggio_massimo": 0.44,
+        "scarto_massimo": 0.3
+      }
     },
-    "contenuto": {
-      "_nota": "Come si disegna quello che sta in una casella. La coltura si riempie dal basso mentre cresce: e' il modo piu' leggibile di far vedere il tempo che passa senza scrivere numeri.",
-      "margine": 12,
-      "raggio": 11,
-      "spessore_bordo": 3,
-      "opacita_acerbo": 0.3,
-      "colore_maturo": "#fff3c4",
-      "spessore_anello_maturo": 4,
-      "raggio_anello_maturo": 5
+    "risorsa": {
+      "_nota": "Alberi, massi, frane e casotto, disegnati come sagome tonde con un'ombra sotto. Le misure sono frazioni della tessera, cosi' cambiare la dimensione della tessera non rompe niente.",
+      "ombra": "#0000003d",
+      "scarto_ombra": 0.08,
+      "spessore_bordo": 2,
+      "raggio_tronco": 0.12,
+      "altezza_tronco": 0.22
     },
-    "legame": {
-      "_nota": "Il segno che si accende fra due caselle in sinergia. E' il momento piu' importante del gioco: e' li' che si capisce di aver incastrato bene. Va visto prima di leggere qualunque numero.",
-      "spessore": 9,
+    "ordine": {
+      "_nota": "Il segno su quello a cui hai dato un ordine. Si disegna SOPRA alla cosa e piu' largo di lei: sotto finiva coperto dalla chioma dell'albero e l'ordine sembrava non essere partito. Deve vedersi da lontano, perche' e' l'unico modo per sapere cosa hai gia' comandato.",
       "colore": "#f0c95c",
-      "opacita": 0.85,
-      "raggio_nodo": 6
-    },
-    "distintivo": {
-      "_nota": "La goccia sulla casella irrigata. Niente testo: un segno si legge di colpo, un numero va letto.",
-      "colore_fondo": "#9fd8e4",
-      "altezza": 22
-    },
-    "selezione": {
-      "_nota": "La casella toccata: un contorno acceso, cosi' si sa sempre su cosa si sta agendo.",
-      "colore": "#ece7d6",
+      "colore_preso": "#8fe3a0",
       "spessore": 4,
-      "raggio": 14
+      "raggio": 0.52,
+      "tratteggio": 7
+    },
+    "bracciante": {
+      "_nota": "Chi lavora. Un cerchio col colore del mestiere. La barra sopra la testa dice a che punto e' il lavoro: e' l'unico modo per capire che sta facendo qualcosa invece di essere impallato.",
+      "raggio": 13,
+      "spessore_bordo": 3,
+      "ombra": "#0000004d",
+      "barra": {
+        "larghezza": 32,
+        "altezza": 6,
+        "distanza_sopra": 12,
+        "colore_fondo": "#00000099",
+        "colore_pieno": "#f0c95c",
+        "colore_bordo": "#0b0f0b",
+        "spessore_bordo": 2
+      }
     },
     "effetti": {
-      "_nota": "Feedback visivi. Durate in millisecondi, distanze in pixel logici.",
-      "piazzamento": {
-        "durata_ms": 260,
-        "scala_iniziale": 0.55
-      },
+      "_nota": "Feedback visivi: anelli che si allargano e sfumano.",
       "raccolta": {
-        "durata_ms": 340,
-        "raggio_massimo": 46,
+        "durata_ms": 420,
+        "raggio_massimo": 52,
         "colore": "#fff3c4",
         "spessore": 4
       }
     }
+  },
+  "area": {
+    "_nota": "L'area logica dello SCHERMO, non del mondo. L'isola e' piu' grande e la telecamera ne mostra un pezzo per volta.",
+    "larghezza": 720,
+    "altezza": 1440
   }
 }

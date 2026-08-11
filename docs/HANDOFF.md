@@ -1,76 +1,61 @@
 # Consegne — stato del progetto
 
-Ultimo aggiornamento: 2026-08-11 (sera). Questo file fotografa dove siamo: chi riprende il lavoro parte da qui, poi approfondisce con `PROCESSO.md`, `ROADMAP.md`, `DECISIONI.md` e `GDD.md`.
+Ultimo aggiornamento: 2026-08-11 (sera tardi). Chi riprende il lavoro parte da qui, poi approfondisce con `PROCESSO.md`, `ROADMAP.md`, `DECISIONI.md` e `GDD.md`.
 
-## ⚠️ Il gioco è cambiato due volte l'11 agosto
+## ⚠️ Il gioco adesso è un'isola
 
-Adesso è un **gestionale di fattoria con catene di produzione** (`GDD.md` v4.0, roadmap v8): **Stardew Valley** per il ciclo economico, **Minecraft moddato tecnico** per la scala di produzione, un pizzico di **RimWorld** per chi ci lavora.
+`GDD.md` v5.0, roadmap v9. **Stardew Valley** per il ciclo economico, **Graveyard Keeper** per le zone e per chi lavora al posto tuo, **Factorio e Satisfactory** per le catene di produzione.
 
-**Non esistono più:** il tower defense (reclute, ondate, nemici, castello, torri, sentiero, postazioni) e la versione a puzzle durata un giorno solo (Filare, Rotazione, moltiplicatori di resa, appezzamenti). Se ne trovi traccia, sono resti da rimuovere.
+**Non esistono più:** il tower defense, il roguelike a stanze, la fattoria a scacchiera, il puzzle di vicinanze. Se ne trovi traccia sono resti da rimuovere.
+
+## Le due regole che non si toccano
+
+1. **NIENTE PERSONAGGIO DA MUOVERE.** L'autore l'ha rifiutato **tre volte in tre versioni diverse**. Il giocatore non è dentro lo schermo: è sopra, e comanda col dito.
+2. **LE TESSERE NON SI DEVONO VEDERE.** Il mondo è a tessere — come Factorio, che è una griglia e non sembra una scacchiera — ma niente bordi, mai, e la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro.
 
 ## Cos'è il gioco
 
-> **Semi → pianti → cresce → raccogli → vendi o consegni → compri semi migliori, attrezzi e lavorazioni → ricomincia più in grande.**
+Un'isola vista dall'alto. **Tocchi una cosa e dai un ordine**; il lavoro va in coda e un bracciante libero lo prende. Ogni bracciante fa **un mestiere solo** e si paga ogni giorno.
 
-**La cosa che scarseggia sono i semi e i soldi, non lo spazio.** Piantare consuma un seme: all'inizio non puoi riempire il campo neanche volendo, e vendendo quel problema si scioglie da solo.
+Le zone si aprono **costruendo il passaggio** (sgomberare la frana, riparare il pontile, costruire la barca), e ognuna porta una materia prima e un ramo di lavorazioni.
 
-**Ogni sera la fattoria ha delle spese**, che crescono con le caselle arate. Quindi allargarsi è una scommessa, non un regalo. **Non si può perdere:** se non paghi, una casella torna incolta e riparti.
-
-**La domanda che regge tutto:** *reinvesto adesso, o metto da parte perché stasera devo pagare?*
+Il motore che non si spegne viene da Factorio: **la domanda deve crescere più in fretta della produzione.** E la gioia vera del genere è vedere la catena girare da sola mentre guardi da un'altra parte.
 
 ## Stato del codice
 
-**Punti 1, 2 e 3 della roadmap FATTI.** C'è il ciclo economico completo: caselle incolte da dissodare, semi che si comprano e si consumano, colture che crescono e si raccolgono (e ricominciano), il mercato che compra e vende a prezzi che oscillano, il giorno che passa e le spese che si pagano a sera, col riepilogo.
+**Punto 1 della roadmap FATTO.**
 
-Provato nel browser a 390×780, e i conti tornano esatti:
-
-> 60 monete → semino 4 rape → raccolgo 8 rape → vendo a 16 l'una = **128** → 188 monete → compro un seme (−12) → 176 → sera **−18** → **158 monete, giorno 2**.
-
-Il riepilogo di fine giornata compare e si chiude da solo. Nessun errore in console.
+Provato nel browser a 390×780: si ordina l'abbattimento di tre alberi e la rottura di un masso, i due braccianti ci vanno, lavorano, e arrivano **12 legno e 3 pietra** (3×4 e 1×3, esatti). Toccare di nuovo una cosa già ordinata annulla l'ordine. Trascinare sposta la mappa e **non** dà ordini. Nessun errore in console.
 
 | File | Cosa fa |
 | --- | --- |
 | `src/game/config.js` | Legge `config/*.json` e verifica all'avvio che sia coerente |
-| `src/game/griglia.js` | La geometria: indici, posizioni, vicini precalcolati |
-| `src/game/fattoria.js` | Le caselle (incolto/arato/occupato), semi, magazzino, crescita, raccolta |
-| `src/game/economia.js` | Monete, prezzi di mercato, vendite, costo del dissodare, spese |
-| `src/game/giorno.js` | Il giorno che passa, la sera che si paga, il riepilogo |
-| `src/game/disegno.js` | Disegno di colture, crescita, irrigazione e selezione |
-| `src/game/sfondo.js` | Terreno e caselle; si rifà solo quando il campo cambia forma |
+| `src/game/mondo.js` | L'isola: fondo, risorse, cosa è calpestabile, le macchie del terreno |
+| `src/game/camera.js` | Dove si guarda, il trascinamento, i due livelli di zoom, i limiti |
+| `src/game/lavori.js` | La coda degli ordini: chi li può prendere, come si annullano |
+| `src/game/braccianti.js` | Chi lavora: prende un lavoro, ci va, lo fa, torna fermo |
+| `src/game/disegno.js` | Disegna l'isola attraverso la telecamera, solo le tessere visibili |
 | `src/game/motore.js` | Ciclo a passo fisso, coda dei comandi, ponte con React |
-| `src/ui/CampoDiGioco.jsx` | Monta i canvas, traduce il tocco in casella |
-| `src/ui/Cruscotto.jsx` | Monete, giorno, spesa di stasera, quanto manca a sera |
-| `src/ui/PannelloCasella.jsx` | Il foglio che sale: dissoda / semina / estirpa |
-| `src/ui/Mercato.jsx` | Vendi il raccolto e compra semi, nello stesso posto |
-| `src/ui/Riepilogo.jsx` | Il foglio di fine giornata |
+| `src/ui/CampoDiGioco.jsx` | Il canvas, e il dito che distingue tocco da trascinamento |
+| `src/ui/Cruscotto.jsx` | Magazzino e quanti braccianti stanno lavorando |
 
 | Configurazione | Cosa contiene |
 | --- | --- |
-| `config/griglia.json` | Area logica, colonne, righe, dimensione delle caselle |
-| `config/contenuti.json` | Colture e terreni, col costo del seme; i materiali col prezzo base |
-| `config/economia.json` | **Il cuore**: partenza, spese, costo del dissodare, oscillazione dei prezzi |
-| `config/tempo.json` | Quanto dura un giorno, quanto resta il riepilogo |
-| `config/vicinanze.json` | Ne è rimasta una: l'irrigazione |
+| `config/isola.json` | La mappa disegnata a caratteri, i terreni, le risorse, la telecamera |
+| `config/braccianti.json` | Mestieri, velocità, salari, chi c'è all'inizio |
 | `config/motore.json` | Valori tecnici e di aspetto. Il bilanciatore non lo tocca |
+
+## Semplificazioni note, e non sono difetti
+
+- **I braccianti vanno in linea retta** e attraversano gli alberi. Sull'isola aperta non si nota; il percorso vero è il punto 11.
+- **La resa compare in magazzino appena il lavoro finisce**, senza essere portata al casotto. È il punto 2.
+- **Nessuno paga nessuno**: i salari sono in configurazione ma non li legge nessuno. È il punto 3.
 
 ## La prossima cosa da fare
 
-**Fermarsi e provare.** C'è un blocco di verifica dopo il punto 3, e non è una formalità: il progetto è stato buttato sei volte per aver costruito il gioco intero prima di sapere se il pezzo centrale funzionava.
+**Fermarsi e provare.** C'è un blocco di verifica dopo il punto 1, e conta doppio: questa versione è la più grande di tutte, e il progetto è già stato buttato sette volte per aver costruito troppo prima di verificare.
 
-Le due domande a cui rispondere giocando:
+La domanda: **guardare l'isola e comandarla col dito è piacevole?** Il trascinamento è naturale? Si capisce sempre cosa hai ordinato e chi ci sta andando?
 
-1. **Alla fine di una giornata, hai voglia di farne un'altra?**
-2. **Decidere cosa piantare è una decisione vera**, o c'è sempre un seme ovviamente migliore?
-
-- Se va → **punto 4, le commesse**: la bacheca che chiede roba precisa, paga più del mercato e sblocca lavorazioni. È il "non vedo l'ora", ed è quello che rende viva la decisione *vendo o tengo da parte*.
-- Se non va → non si aggiunge contenuto sopra: si risolve nei numeri di `config/economia.json` e `config/contenuti.json`, con l'agente `bilanciatore`.
-
-## Un limite noto, da tenere d'occhio
-
-Le colture regrowono senza riseminare, quindi **una volta che ti puoi permettere il Lino, il Lino è sempre la scelta migliore**. Adesso la decisione vera è un'altra — *dissodo un'altra casella o compro un seme più caro?* — e regge, ma la varietà di semina diventerà davvero interessante solo col punto 4 (commesse che chiedono roba precisa) e col punto 6 (lavorazioni che consumano un materiale specifico).
-
-Il codice ha un controllo all'avvio contro la coltura dominante, ma copre solo il caso ovvio: seme, tempo e guadagno tutti migliori insieme.
-
-## Cosa manca ancora (e non è un difetto)
-
-Commesse, rocce e minerali, lavorazioni (Mulino, Forno), braccianti, macchine, eventi, stagioni, salvataggio. Sono tutti punti della roadmap dal 4 in poi: **arrivano dopo la verifica**, non prima.
+- Se va → **punto 2**: il magazzino ha un posto, e la roba ci viene portata. È il primo pezzo di logistica e la ragione per cui più avanti serve un portatore.
+- Se non va → si risolve nel disegno e nel comando, non aggiungendo contenuto sopra.

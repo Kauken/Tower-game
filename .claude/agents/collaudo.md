@@ -12,10 +12,10 @@ Esegui in ordine:
 2. Verifica che ogni file in `config/` sia JSON valido.
 3. **Coerenza incrociata**, la parte più importante:
    - ogni tag usato nei potenziamenti è dichiarato fra i tag validi, e le sinergie non nominano mai un potenziamento specifico
-   - ogni `id` nominato in `vicinanze.json` e `sblocchi.json` esiste davvero in `contenuti.json`
-   - la geometria di `griglia.json` e' coerente: la griglia intera sta dentro l'area, e niente finisce sotto il cruscotto in alto o sotto i pulsanti in basso
-   - **nessuna coltura domina**: se una e' migliore di un'altra sotto ogni aspetto (seme, tempo e guadagno), scegliere cosa piantare non e' una decisione. Il codice lo controlla da solo all'avvio: se `npm run build` passa ma il gioco non parte nel browser, guarda qui
-   - **si puo' cominciare**: con le monete e i semi di partenza si deve poter piantare qualcosa e arrivare al primo raccolto senza restare bloccati a zero
+   - ogni risorsa di `isola.json` nomina un mestiere che esiste in `braccianti.json` e un materiale che esiste
+   - la mappa di `isola.json` ha tutte le righe lunghe uguale e ogni carattere nella legenda
+   - **ogni mestiere serve a qualcosa**: un bracciante che non ha nessuna risorsa da lavorare e' pagato per stare fermo. Il codice lo controlla da solo all'avvio: se `npm run build` passa ma il gioco non parte nel browser, guarda qui
+   - **le tessere non si vedono**: nessun bordo, e la variazione del terreno e' una macchia tonda. Se il campo sembra una scacchiera e' un difetto bloccante, non un dettaglio estetico
    - nessun valore negativo dove non ha senso (vita, danno, costi, quantità)
 4. Cerca numeri scritti a mano dentro `src/` che dovrebbero stare in configurazione. Segnalali, non correggerli.
 5. Cerca **macerie**: blocchi di configurazione che nessuno legge più, funzioni esportate e mai usate, commenti e testi che nominano cose cancellate. Questo progetto è stato riscritto più volte, ed è così che si riempie di resti.

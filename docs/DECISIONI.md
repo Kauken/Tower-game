@@ -2,17 +2,32 @@
 
 Regola: quando una decisione viene presa, si sposta in "Decise" con data e motivazione in una riga, e si aggiorna `docs/GDD.md`. Nessuna decisione si prende implicitamente dentro un lavoro di codice.
 
-**Questo registro è stato azzerato il 2026-08-11** col passaggio al farming (`GDD.md` v4.0). Le decisioni dei giochi precedenti sono cadute con loro e non sono riportate: valevano per giochi che non esistono più.
+**Questo registro è stato azzerato il 2026-08-11** col passaggio al farming, e aggiornato la sera stessa col passaggio all'isola (`GDD.md` v5.0). Le decisioni dei giochi precedenti sono cadute con loro e non sono riportate: valevano per giochi che non esistono più.
 
 ## Aperte
 
-1. **Quanti semi diversi servono perché "cosa pianto" sia una decisione vera.** Tre bastano per la verifica del punto 3, se hanno profili diversi (tempo, costo del seme, prezzo di vendita). Da rivedere dopo il punto 4.
+1. **Quanto grande deve diventare l'isola.** Adesso 24x30 tessere. Se le catene chiedono spazio, o serve piu' isola o serve l'isola vicina. Da decidere al punto 10.
+2. **Come si assume.** Al molo? Con una commessa? Semplicemente pagando? Da decidere al punto 3.
+3. **Se i braccianti hanno un nome e una faccia.** RimWorld regge sui coloni che non sono intercambiabili. Darebbe calore, ma anche una schermata in piu' da gestire col pollice. Da valutare dopo il punto 3.
+4. **Quanti semi diversi servono perché "cosa pianto" sia una decisione vera.** Tre bastano per la verifica del punto 3, se hanno profili diversi (tempo, costo del seme, prezzo di vendita). Da rivedere dopo il punto 4.
 2. **Quanto pesano le spese fisse.** La manutenzione per casella arata e i salari devono mordere senza soffocare. Da tarare con l'agente `bilanciatore` subito dopo il punto 3, con la simulazione headless.
 3. **Cosa succede quando non riesci a pagare.** Il GDD dice che i braccianti se ne vanno e le caselle tornano incolte. Quanto in fretta, e in che ordine? Da decidere al punto 8.
 4. **Se le stagioni esistono.** Darebbero un ritmo lungo e renderebbero le scelte di semina più interessanti, ma introducono attesa e obsolescenza — due cose che il GDD §10 tiene sotto controllo. Da valutare dopo il punto 4.
 5. **Quanto è grande il campo alla fine.** Adesso 5x8; se le macchine chiedono spazio serve piu' campo o un secondo appezzamento. Da decidere al punto 10.
 
 ## Decise
+
+- 2026-08-11 (sera tardi): **NIENTE SCACCHIERA: UN'ISOLA.** Correzione dell'autore: *"Non voglio questa cosa a scacchiera, voglio stile Stardew Valley, Graveyard Keeper. Un'isola con possibilità di accedere ad altre zone, magari anche che in futuro sbloccare altre zone. E mettere anche un po' di Factorio e Satisfactory."* **La scoperta della ricerca:** Stardew, Graveyard Keeper e Factorio sono tutti a tessere sotto il cofano — Factorio *e'* una griglia. Quello che l'autore rifiutava non era la griglia, era che **sembrasse una scacchiera e non ci fosse un posto dentro cui stare**. Quindi le tessere restano sotto, invisibili, e sopra ci va un'isola. Ne discendono regole di disegno vincolanti: nessun bordo sulle tessere, la variazione del terreno e' una macchia tonda sfalsata e non un quadrato piu' chiaro, e la riva e' una linea chiara dove la terra tocca l'acqua.
+
+- 2026-08-11 (sera tardi): **NESSUN PERSONAGGIO. SI COMANDA COL DITO.** Correzione dell'autore: *"Non vorrei un personaggio ma più da gestionale che col dito comando"*. **E' la terza volta in tre versioni diverse che rifiuta l'omino che si muove** — la prima fu *"non l'omino che si muove"* mesi fa. Non riproporlo mai piu'. Conseguenza di design, ed e' un miglioramento: senza personaggio non c'e' nessuna fatica da sopportare in attesa che qualcuno te la tolga, quindi **il lavoro e' degli altri dal primo minuto** e la domanda diventa subito quella giusta: *quanta gente mi serve, e a fare cosa?*
+
+- 2026-08-11 (sera tardi): **Un bracciante, un mestiere. Niente griglia di priorita'.** In RimWorld ogni colono ha priorita' da 1 a 4 per ogni tipo di lavoro: e' la parte piu' profonda di quel gioco ed e' anche un foglio di calcolo, illeggibile su un telefono con un dito. E ne nasce un difetto documentato — col trasporto a priorita' alta i coloni attraversano tutta la mappa per un oggetto solo, e il giocatore non capisce perche' nessuno stia lavorando. Qui se il legno non arriva basta guardare: **hai un taglialegna solo**.
+
+- 2026-08-11 (sera tardi): **Due livelli di zoom, non la zoomata continua.** Domanda posta all'autore fra verticale a una mano, orizzontale a due mani, e verticale con la possibilita' di allontanare. Risposta: **verticale con l'allontanamento**. Il pizzico continuo su uno schermo stretto e con un pollice solo si perde subito: due livelli, uno per lavorare e uno per guardare tutta l'isola.
+
+- 2026-08-11 (sera tardi): **Le zone si aprono costruendo, non trovando una chiave.** E' il modo di Graveyard Keeper. Aprire una zona non e' "piu' spazio": **porta una materia prima nuova e un ramo di lavorazioni nuovo**.
+
+- 2026-08-11 (sera tardi): **"The factory must grow" e' il motore.** Dritto da Factorio: la domanda di roba basilare deve crescere sempre piu' in fretta di quanto si riesca a produrre. Commesse e costruzioni devono chiedere piu' di quanto la fattoria dia. Se un giorno si ha abbastanza di tutto, il gioco e' finito. E la gioia vera del genere, secondo tutta la ricerca, e' una sola: **vedere il sistema funzionare da solo mentre si guarda da un'altra parte**.
 
 - 2026-08-11 (sera): **NON È UN PUZZLE GAME, È UN FARMER.** Correzione dell'autore: *"Non vorrei però un puzzle game, vorrei più un farmer. Dove trovo i semi o li compro, poi devo fare obiettivi o vendere per comprare altro. Non dev'essere facile poter mettere tutti i semi subito. Poi piano piano diventa questo step più facile."* Riferimenti citati: **Stardew Valley, Minecraft moddato tecnico, RimWorld.** Conseguenza: **la scarsità si sposta dallo spazio ai semi e ai soldi.** Piantare consuma un seme; all'inizio non puoi riempire il campo neanche volendo; vendendo, quel problema si scioglie da solo.
 
