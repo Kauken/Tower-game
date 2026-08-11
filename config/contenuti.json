@@ -1,0 +1,70 @@
+{
+  "_nota": "Tutto quello che si puo' mettere in una casella. Ogni voce occupa esattamente una casella: e' una regola di design, non un limite tecnico. In questa versione piazzare e' gratis, perche' la cosa che scarseggia sono le caselle, non i materiali: e' quello che si sta mettendo alla prova.",
+  "_nota_famiglie": "coltura = cresce da sola e si raccoglie toccandola, poi ricomincia a crescere. terreno = non produce niente, serve solo alle vicinanze. Le altre famiglie (roccia, macchina, automazione) arrivano coi punti 3, 4 e 7 della roadmap.",
+  "contenuti": [
+    {
+      "id": "grano",
+      "nome": "Grano",
+      "famiglia": "coltura",
+      "descrizione": "Cresce in fretta e sta bene in mezzo ad altro grano.",
+      "colore": "#d9a441",
+      "colore_bordo": "#f5dfa8",
+      "tempo_crescita_ms": 9000,
+      "resa": {
+        "materiale": "grano",
+        "quantita": 3
+      }
+    },
+    {
+      "id": "rapa",
+      "nome": "Rapa",
+      "famiglia": "coltura",
+      "descrizione": "La piu' rapida, ma rende poco.",
+      "colore": "#c9628f",
+      "colore_bordo": "#f0c4d8",
+      "tempo_crescita_ms": 6000,
+      "resa": {
+        "materiale": "rapa",
+        "quantita": 2
+      }
+    },
+    {
+      "id": "lino",
+      "nome": "Lino",
+      "famiglia": "coltura",
+      "descrizione": "Lento, ma vale il doppio quando ha buoni vicini.",
+      "colore": "#7fa9d6",
+      "colore_bordo": "#cfe4f5",
+      "tempo_crescita_ms": 14000,
+      "resa": {
+        "materiale": "lino",
+        "quantita": 4
+      }
+    },
+    {
+      "id": "canale",
+      "nome": "Canale",
+      "famiglia": "terreno",
+      "descrizione": "Non produce niente. Fa crescere molto piu' in fretta tutto quello che tocca.",
+      "colore": "#3f7d8c",
+      "colore_bordo": "#9fd8e4"
+    }
+  ],
+  "materiali": [
+    {
+      "id": "grano",
+      "nome": "Grano",
+      "colore": "#d9a441"
+    },
+    {
+      "id": "rapa",
+      "nome": "Rapa",
+      "colore": "#c9628f"
+    },
+    {
+      "id": "lino",
+      "nome": "Lino",
+      "colore": "#7fa9d6"
+    }
+  ]
+}

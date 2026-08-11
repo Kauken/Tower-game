@@ -1,55 +1,56 @@
 ---
 name: td-config-schema
-description: Schema e regole dei file di configurazione del gioco (percorso, nemici, reclute, ondate, economia, motore, potenziamenti, sinergie). Consulta questa skill ogni volta che leggi, scrivi o modifichi un file dentro config/, o quando aggiungi un valore nuovo che dovrà essere configurabile.
+description: Schema e regole dei file di configurazione del gioco (griglia, colture, minerali, macchine, vicinanze, sblocchi, tempo, motore). Consulta questa skill ogni volta che leggi, scrivi o modifichi un file dentro config/, o quando aggiungi un valore nuovo che dovrà essere configurabile.
 ---
 
 # Schema delle configurazioni
 
 Principio generale: il codice **legge** questi file, non contiene mai i valori. Se serve un numero nuovo, si aggiunge qui.
 
-Tutte le chiavi sono in italiano, in `snake_case`. Le distanze sono in pixel logici, i tempi in millisecondi, le velocità in pixel al secondo. Ogni blocco può avere un `_nota` che spiega a cosa serve: si scrive per l'autore, che non programma.
+Tutte le chiavi sono in italiano, in `snake_case`. Le distanze sono in pixel logici, i tempi in millisecondi. Ogni blocco può avere un `_nota` che spiega a cosa serve: si scrive per l'autore, che non programma.
 
-> **Aggiornato il 2026-08-02 col gioco nuovo** (`GDD.md` v2.0, tower defense con reclute). Se trovi riferimenti a `stanza.json`, `personaggio.json`, `torri.json`, `mappe.json`, `alleati.json` o `pressione.json`, sono file cancellati di giochi precedenti: non vanno ricreati.
+> **Aggiornato il 2026-08-11 col gioco nuovo** (`GDD.md` v3.0, fattoria cozy su griglia). Se trovi riferimenti a `percorso.json`, `nemici.json`, `reclute.json`, `ondate.json`, `economia.json`, `potenziamenti.json` o `sinergie.json`, sono file cancellati del tower defense: non vanno ricreati.
 
-## percorso.json
-Il campo di battaglia. Geometria pura: nessun valore di bilanciamento.
+## griglia.json
+La forma del campo. Geometria pura: nessun valore di bilanciamento.
 - `area`: `larghezza`, `altezza` — la risoluzione logica su cui poggia tutto.
-- `campo.sentiero`: elenco di punti `{x, y}`. Il primo è da dove escono i nemici, l'ultimo è il castello. I nemici lo percorrono in avanti, le reclute all'indietro.
-- `campo.larghezza_sentiero`: quanto è largo il disegno della strada.
-- `campo.scarti_sentiero`: gli scostamenti laterali usati a rotazione, così i combattenti non si sovrappongono. **Sono solo estetici**: gli scontri si decidono sulla distanza lungo il sentiero, non in linea d'aria.
-- `campo.castello`, `campo.uscita_nemici`: rettangoli `{x, y, larghezza, altezza}`.
-- `campo.torri_rendita`: le due torri che producono oro, `{x, y}`.
+- `griglia`: `colonne`, `righe`, `lato_casella`, `spazio_fra_caselle`.
+- `griglia.caselle_iniziali`: quante caselle sono già sbloccate all'inizio, e quali.
 
-## nemici.json
-Elenco di oggetti: `id`, `nome`, `vita`, `velocita`, `danno`, `cadenza_ms`, `raggio_ingaggio`, `riduzione_danno`, `danno_castello`, `oro_rilasciato`, `dimensione`.
-Più `scalatura`: quanto crescono ondata dopo ondata (`vita_per_ondata`, `danno_per_ondata`, `oro_per_ondata`, moltiplicatori elevati a `ondata - 1`).
+## contenuti.json
+Tutto quello che si può mettere in una casella, in un elenco solo. Ogni voce ha `id`, `nome`, `famiglia` e `descrizione`, più i campi della sua famiglia.
 
-## reclute.json
-Elenco di oggetti: `id`, `nome`, `categoria`, `costo`, `vita`, `velocita`, `danno`, `cadenza_ms`, `raggio_ingaggio`, `riduzione_danno`, `dimensione`.
-Più `recluta_iniziale`: l'id di quella comprabile dall'inizio.
-Le reclute **non si potenziano con l'oro**: l'oro compra unità nuove e rendita. A cambiarle sono gli oggetti.
+Le famiglie sono:
+- `coltura` — cresce da sola: `tempo_crescita_ms`, `resa` (`{materiale, quantita}`), `costo_semina`.
+- `roccia` — si scava a mano: `colpi`, `resa`, `si_esaurisce`.
+- `macchina` — trasforma: `ingredienti` (array), `produce`, `tempo_ciclo_ms`.
+- `automazione` — toglie un lavoro: `sostituisce` (`raccolta` | `semina` | `trasporto` | `scavo`), `raggio`.
+- `terreno` — non produce, serve alle vicinanze: per esempio il canale d'acqua.
 
-## ondate.json
-Il ritmo. Quantità e cadenza si ricavano da una formula, **mai scritte a mano ondata per ondata**: `nemico_id`, `quantita_base`, `quantita_aggiunta_per_ondata`, `intervallo_uscita_ms`, `riduzione_intervallo_per_ondata_ms`, `intervallo_minimo_ms`, `attesa_prima_ondata_ms`, `pausa_fra_ondate_ms`.
-Le pause non sono tempo morto: sono il tempo in cui l'oro sale e si decide come spenderlo.
+**Ogni voce occupa esattamente una casella.** Non esistono contenuti che ne occupano due: è una regola di design, non una limitazione tecnica.
 
-## economia.json
-Il cuore del gioco: questi numeri devono rendere difficile la domanda "compro adesso o investo nella rendita?".
-- `partita`: `oro_iniziale`, `vita_castello`.
-- `rendita`: `oro_per_ciclo`, `ciclo_ms`, `oro_aggiunto_per_livello`, `costo_primo_potenziamento`, `crescita_costo_potenziamento`, `livello_massimo`.
-- `ricompense`: `oro_base_per_ondata`, `crescita_per_ondata`.
-- `cristalli`: valuta permanente, nessuno la legge ancora (serve al punto 14).
+## vicinanze.json
+Il cuore del gioco. Elenco di regole, ognuna con:
+- `id`, `nome`, `descrizione` — leggibili dall'autore
+- `chi` — la famiglia o l'id che riceve il bonus
+- `accanto_a` — cosa deve stargli adiacente
+- `quante` — quante adiacenze servono perché scatti (1 per default; l'alveare ne vuole 4 **diverse**)
+- `diverse` — `true` se le adiacenze devono essere di tipo diverso fra loro
+- `effetto` — `{statistica, moltiplicatore}` oppure `{statistica, aggiunta}`
 
-## potenziamenti.json
-`id`, `nome`, `famiglia`, `tag` (array), `rarita`, `descrizione`, `effetto` (oggetto strutturato, mai codice).
-**Regola del GDD:** ogni oggetto deve cambiare **come** combattono le reclute, non solo di quanto.
+**Regola non negoziabile:** devono esistere sia regole che premiano la monocoltura sia regole che premiano la varietà. Se tutte tirano dalla stessa parte, il piazzamento ha una risposta ovvia e il gioco non esiste.
 
-## sinergie.json
-Elenco di regole: `tag_richiesti` (array di 2 tag), `nome`, `descrizione`, `effetto`.
-Una sinergia non nomina mai un potenziamento specifico: solo tag.
+## sblocchi.json
+La bacheca. Elenco ordinato, ognuno con `id`, `nome`, `descrizione`, `costo` (array di `{materiale, quantita}`), `richiede` (id di altri sblocchi), `sblocca` (id di contenuti).
+
+**Regola del GDD:** uno sblocco deve dare **un verbo nuovo**, non un numero più grande. I "+15%" non vanno qui.
+
+## tempo.json
+- `giorno_ms` — quanto dura un giorno mentre l'app è aperta.
+- `offline`: `frazione_di_velocita`, `tetto_ms` — quanto e fino a quando la fattoria produce a app chiusa.
 
 ## motore.json
-Valori tecnici e di aspetto, non di bilanciamento: `simulazione` (passo fisso in ms, passi massimi per frame), `limiti` (dimensione dei pool preallocati), `interfaccia` (misure e colori dei comandi a schermo), `grafica` (colori e spessori di campo, castello, torri, nemici, reclute, effetti).
+Valori tecnici e di aspetto, non di bilanciamento: `simulazione` (passo fisso in ms, passi massimi per frame), `limiti` (dimensione dei pool preallocati), `interfaccia` (misure e colori dei comandi a schermo), `grafica` (colori della griglia, dei contenuti, degli effetti, del segno di vicinanza).
 L'agente `bilanciatore` **non tocca questo file**.
 
 ## Regole di modifica

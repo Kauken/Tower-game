@@ -1,55 +1,80 @@
-# Lista di costruzione — v6
+# Lista di costruzione — v7
 
-Un punto alla volta, testando dopo ognuno.
+Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
-Il gioco è quello del `GDD.md` v2.0: **tower defense roguelike in cui si comprano
-reclute invece di piazzare torri.**
+Il gioco è quello del `GDD.md` v3.0: **una fattoria cozy su griglia, con minerali,
+tecnologie e automazioni.**
 
 ## Come è ordinata
 
 Ogni punto deve lasciare qualcosa di **giocabile col pollice**, e la domanda più
 grossa riceve risposta per prima:
 
-> **Guardare l'oro salire e decidere quando spenderlo è soddisfacente?**
+> **Piazzare una cosa sulla griglia e vedere che si incastra con le vicine è soddisfacente?**
 
-Ci si arriva al punto 1. Tutto il resto — categorie, pool, negozi, boss, biomi —
-è inutile se lì la risposta è no.
+Ci si arriva al punto 2. Tecnologie, appezzamenti, automazioni e bacheca sono
+tutti inutili se lì la risposta è no.
+
+**La lezione delle cinque versioni precedenti:** il progetto è morto ogni volta
+perché abbiamo costruito il gioco intero prima di sapere se il pezzo centrale
+era divertente. Il blocco della verifica dopo il punto 2 non è una formalità.
 
 ---
 
 ## Fase A — il nucleo deve funzionare
 
-1. **Il ciclo dell'oro.** — **FATTO** (2026-08-02). Sentiero, castello con la vita, due torri che producono oro, un pulsante per comprare la recluta base, un pulsante per potenziare la rendita, ondate di nemici che scendono. Si perde se il castello cade.
+1. **La griglia.** — **FATTO** (2026-08-11). Griglia 5x8 verticale che riempie lo schermo del telefono. Tocchi una casella vuota, scegli fra Grano, Rapa, Lino e Canale, la vedi riempirsi dal basso mentre cresce, la raccogli toccandola e ricomincia. Magazzino in alto col contatore delle caselle usate. Si puo' togliere quello che si e' messo, altrimenti non si potrebbe provare a incastrare.
+2. **Le vicinanze, e che si vedano.** — **FATTO** (2026-08-11). Tre regole in `config/vicinanze.json`: **Filare** (grano vicino a grano, si moltiplica per ogni vicino), **Irrigazione** (qualunque coltura che tocca un canale cresce piu' del doppio), **Rotazione** (una coltura circondata da due colture diverse da lei rende molto di piu'). Filare e Rotazione si contraddicono apposta. Fra due caselle in sinergia si accende un legame giallo, e sulla casella compare la pastiglia col moltiplicatore.
 
-> ### 🛑 Verifica dopo il punto 1
-> **Decidere quando spendere è soddisfacente?** E soprattutto: **la scelta fra
-> comprare adesso e investire nella rendita è una scelta vera**, o comprare è
-> sempre giusto? Se è sempre giusto, il gioco non esiste ancora e si risolve qui.
+> ### 🛑 Verifica dopo il punto 2 — non si va avanti senza
+> **Piazzare e incastrare è soddisfacente?** Ti viene voglia di spostare le cose
+> per farle combaciare meglio, o stai solo riempiendo caselle? Se stai solo
+> riempiendo, il gioco non esiste ancora e si risolve qui: si cambiano le regole
+> di vicinanza, non si aggiunge contenuto sopra.
 
-2. **Le categorie di recluta.** — **FATTO** (2026-08-02). Milite (il metro), Guardia (regge e protegge), Arciere (colpisce da dietro la prima fila), Ratto (costa poco e arriva subito). Un pulsante per ciascuna, col colore che hanno in campo.
-3. **Nemici che valgono.** — **FATTO** (2026-08-02). Fante (base), Corridore (veloce, dall'ondata 4), Bruto (lento e corazzato, dalla 9), Balestriere (colpisce da lontano, dalla 13). Entrano un tipo alla volta, e ognuno punisce una difesa sbilanciata.
-4. **La pool: tre oggetti, ne scegli uno.** — **PARZIALE** (2026-08-02). Esiste la scelta a inizio partita con 8 oggetti. Manca la scelta ricorrente dalle ondate tesoro, che arriva col punto 5.
+3. **Lo scavo.** Le rocce sulla griglia. Tocchi, si crepa, si spacca, escono minerali. È l'unica cosa attiva del gioco e deve essere piacevole da fare a vuoto.
+4. **La prima macchina.** Qualcosa che consuma da una catena e produce nell'altra (il Mulino: grano → farina, costruito con rame). È il momento in cui colture e minerali diventano un gioco solo.
+5. **Il tempo.** Il giorno che passa mentre guardi, e la produzione a app chiusa con il suo tetto.
 
-## Fase B — il livello
+> ### 🛑 Verifica dopo il punto 5
+> **Una sessione da tre minuti contiene almeno una decisione?** Se apri, raccogli
+> e chiudi senza aver scelto niente, manca il gioco.
 
-5. **La sequenza delle ondate**: normale, speciale, negozio, mini boss, tesoro, boss. Con l'indicatore di cosa sta arrivando.
-6. **Il negozio** fra un'ondata e l'altra.
-7. **Mini boss e boss di bioma**, e il passaggio al livello successivo.
-8. **Le ondate speciali**: vincoli e stranezze che cambiano una singola ondata.
+## Fase B — l'avanzamento
 
-> ### 🛑 Verifica dopo il punto 7
-> **Due run di fila sono diverse fra loro?** Se si somigliano, mancano oggetti
-> o mancano sinergie, e si sta lì.
+6. **La bacheca degli sblocchi.** Le cose bloccate in ombra, col costo e con quanto manca. È il motore del "non vedo l'ora".
+7. **Le prime automazioni**, con il loro costo in caselle: spaventapasseri (raccoglie) e semina automatica (ripianta).
+8. **L'espansione**: comprare caselle nuove.
+9. **Il secondo appezzamento** (la Collina), con la sua risorsa e le sue macchine.
+
+> ### 🛑 Verifica dopo il punto 9
+> **C'è qualcosa che non vedi l'ora di sbloccare?** Se guardi la bacheca e non
+> desideri niente in particolare, gli sblocchi stanno dando numeri invece di verbi.
 
 ## Fase C — il gioco intero
 
-9. **Sistema tag e prime 6 sinergie.**
-10. **Il tetto di equipaggiamento**: porti poche categorie su molte, e la pool si piega su quelle.
-11. **Altri oggetti e altre reclute** con l'agente `designer-contenuti`.
-12. **Il secondo e terzo bioma.**
-13. **Salvataggio e ripresa.**
-14. **Progressione permanente**: cristalli e sblocchi.
-15. **Bilanciamento e rifinitura** con gli agenti dedicati.
-16. **Impacchettamento mobile** con Capacitor, e rivalutazione del motore.
+10. **Il trasporto fra caselle** (il Carretto) e gli ordini permanenti.
+11. **Il terzo appezzamento** (il Bosco) e le vicinanze di biodiversità.
+12. **Salvataggio e ripresa**, con la produzione offline.
+13. **Altre colture, minerali, macchine e vicinanze** con l'agente `designer-contenuti`.
+14. **Il ritmo degli sblocchi**: nessun buco noioso, misurato con la simulazione headless.
+15. **Rifinitura**: suoni, animazioni, il piacere del gesto, con l'agente `rifinitore`.
+16. **Impacchettamento mobile** con Capacitor.
+
+---
+
+## Cosa resta del progetto precedente
+
+Il tower defense è stato abbandonato il 2026-08-11. **Si è salvata l'impalcatura,
+non il gioco:**
+
+- il motore a passo fisso, i pool preallocati, canvas separato da React, la coda dei comandi
+- la regola dei **numeri solo in `config/`**
+- la **simulazione headless**, che qui vale ancora di più: simula ore di fattoria in un secondo e verifica che il ritmo degli sblocchi non abbia buchi
+- le convenzioni touch
+
+Sono spariti: `combattenti.js`, `ondate.js`, `percorso.js`, `oggetti.js`,
+`economia.js`, `partita.js`, `effetti.js`, `sfondo.js` e tutte le configurazioni
+del tower defense.

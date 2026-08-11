@@ -27,16 +27,16 @@ Chi scrive non è un programmatore e lavora dal telefono: le richieste arrivano 
 - Se la richiesta contiene più cose, **non farle tutte**: elencale, proponi l'ordine, chiedi da quale iniziare. Un lavoro alla volta è una regola del progetto.
 - Se la richiesta contraddice `docs/GDD.md`, segnalalo prima di eseguire: potrebbe essere un cambio di design voluto, oppure una dimenticanza.
 - Se la richiesta implica un numero, non inventarlo nel codice: va in `config/`.
-- Se la richiesta è di bilanciamento travestita da funzionalità ("i nemici sono troppo forti"), passala all'agente `bilanciatore`.
+- Se la richiesta e' di bilanciamento travestita da funzionalita' ("ci vuole troppo per sbloccare la serra"), passala all'agente `bilanciatore`.
 - Non ampliare mai la richiesta di tua iniziativa. Se noti qualcosa che manca, mettilo in fondo come suggerimento separato.
 
 ## Esempio
 
-Richiesta: *"quando uccido i nemici non si capisce niente"*
+Richiesta: *"quando piazzo una cosa non si capisce niente"*
 
 Specifica:
-**Cosa faccio** — feedback visivo alla morte del nemico.
-**Comportamento atteso** — il nemico lampeggia bianco quando colpito; alla morte svanisce in 150 ms; l'oro guadagnato appare come numero che sale e sfuma.
+**Cosa faccio** — feedback visivo al piazzamento e all'accensione delle vicinanze.
+**Comportamento atteso** — la casella si illumina sotto il dito; il contenuto compare con un rimbalzo di 150 ms; ogni vicinanza che scatta accende un segno verso il vicino, uno dopo l'altro.
 **Cosa NON tocco** — bilanciamento, altre entità, interfaccia in alto.
 **File coinvolti** — `src/game/`, effetti da pool; nessun valore nuovo in config.
-**Come si verifica** — compra una recluta, guarda un nemico morire: devi vedere lampo, dissolvenza e l'oro salire.
+**Come si verifica** — piazza un grano accanto a un altro grano: devi vedere il rimbalzo e il segno che si accende fra le due caselle.

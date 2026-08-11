@@ -1,0 +1,59 @@
+{
+  "_nota": "Il cuore del gioco: quello che metti vicino a cosa cambia quanto rende. Le vicinanze si calcolano sugli indici della griglia (sopra, sotto, destra, sinistra), mai in linea d'aria, e si ricalcolano solo quando la griglia cambia — mai a ogni frame.",
+  "_nota_regola": "REGOLA NON NEGOZIABILE: devono esistere sia regole che premiano la monocoltura (Filare) sia regole che premiano la varieta' (Rotazione). Se tutte tirano dalla stessa parte, il piazzamento ha una risposta ovvia e il gioco non esiste. Vedi GDD sezione 4.",
+  "_nota_campi": "chi = a chi va il bonus (per id o per famiglia). accanto_a = cosa deve stargli adiacente. quante = quante adiacenze servono perche' scatti. diverse = true se devono essere di tipo diverso fra loro e dal soggetto. per_ogni = true se l'effetto si ripete per ogni vicino trovato invece di scattare una volta sola. statistica = 'resa' oppure 'velocita'.",
+  "vicinanze": [
+    {
+      "id": "filare",
+      "nome": "Filare",
+      "descrizione": "Il grano vicino ad altro grano rende di piu'.",
+      "chi": {
+        "id": "grano"
+      },
+      "accanto_a": {
+        "id": "grano"
+      },
+      "quante": 1,
+      "per_ogni": true,
+      "effetto": {
+        "statistica": "resa",
+        "moltiplicatore": 1.25
+      }
+    },
+    {
+      "id": "irrigazione",
+      "nome": "Irrigazione",
+      "descrizione": "Qualunque coltura che tocca un canale cresce molto piu' in fretta.",
+      "chi": {
+        "famiglia": "coltura"
+      },
+      "accanto_a": {
+        "id": "canale"
+      },
+      "quante": 1,
+      "per_ogni": false,
+      "effetto": {
+        "statistica": "velocita",
+        "moltiplicatore": 2.2
+      }
+    },
+    {
+      "id": "rotazione",
+      "nome": "Rotazione",
+      "descrizione": "Una coltura circondata da due colture diverse da lei rende molto di piu'.",
+      "chi": {
+        "famiglia": "coltura"
+      },
+      "accanto_a": {
+        "famiglia": "coltura"
+      },
+      "quante": 2,
+      "diverse": true,
+      "per_ogni": false,
+      "effetto": {
+        "statistica": "resa",
+        "moltiplicatore": 1.8
+      }
+    }
+  ]
+}

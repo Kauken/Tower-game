@@ -1,94 +1,56 @@
 # Consegne — stato del progetto
 
-Ultimo aggiornamento: 2026-08-02. Questo file fotografa dove siamo: chi riprende il lavoro (una nuova sessione di Claude o l'autore che torna dopo tempo) parte da qui, poi approfondisce con `PROCESSO.md`, `ROADMAP.md`, `DECISIONI.md` e `GDD.md`.
+Ultimo aggiornamento: 2026-08-11. Questo file fotografa dove siamo: chi riprende il lavoro (una nuova sessione di Claude o l'autore che torna dopo tempo) parte da qui, poi approfondisce con `PROCESSO.md`, `ROADMAP.md`, `DECISIONI.md` e `GDD.md`.
 
-## ⚠️ Il gioco è cambiato il 2026-08-02
+## ⚠️ Il gioco è cambiato il 2026-08-11
 
-Il gioco è un **tower defense roguelike in cui non si piazzano torri: si comprano reclute** (`GDD.md` v2.0, roadmap v6).
+Il gioco è una **fattoria cozy su griglia, con colture, minerali, tecnologie e automazioni** (`GDD.md` v3.0, roadmap v7).
 
-Le versioni precedenti — tower defense a labirinto, battaglia a corsie, assedio a campo aperto, **action roguelike a stanze con un seguito di minion** — non esistono più. Se trovi codice, configurazione o documenti che nominano **stanze, porte, piani, minimappa, seguito di minion, piedistalli, levetta o personaggio da muovere**, sono resti da rimuovere, non funzionalità da mantenere.
+Le versioni precedenti — tower defense a labirinto, battaglia a corsie, assedio a campo aperto, action roguelike a stanze, **tower defense in cui si compravano reclute** — non esistono più. Se trovi codice, configurazione o documenti che nominano **reclute, ondate, nemici, castello, torri, sentiero, postazioni, stanze, minion, levetta**, sono resti da rimuovere, non funzionalità da mantenere.
 
 ## Cos'è il gioco
 
-Un sentiero va dalla breccia in alto al tuo castello in basso. I nemici lo scendono, le tue reclute lo risalgono, e si fermano a combattere dove si incontrano. Due torri ai lati non sparano: **producono oro**. Tu non muovi niente e non miri: **decidi solo come spendere**.
+Una griglia verticale di caselle. Ci piazzi colture, canali, e più avanti rocce e macchine. **Lo spazio è l'unica cosa che scarseggia**, e **quello che metti vicino a cosa cambia quanto rende**. Non si può perdere, non c'è fretta, non c'è nessun combattimento.
 
-**La domanda che regge tutto il gioco è una sola: compro una recluta adesso, o investo nella rendita per comprare di più fra poco?** Se comprare è sempre la mossa giusta, il gioco non esiste. Ogni decisione futura di bilanciamento deve difendere quella tensione.
+**La domanda che regge tutto il gioco è una sola: piazzare una cosa e vederla incastrarsi con le vicine è soddisfacente?** Se lì la risposta è no, nessuna quantità di tecnologie e automazioni lo salva.
 
-Si perde quando abbastanza nemici arrivano in fondo: il castello ha una vita che scende, e **la sconfitta si vede arrivare** in tempo per spendere diversamente.
+Le vicinanze si contraddicono apposta: il **Filare** premia il grano vicino al grano, la **Rotazione** premia la coltura circondata da colture diverse. Sulla stessa griglia non puoi avere entrambe, ed è da lì che nasce la decisione.
 
 ## Stato del codice
 
-**Punto 1 della roadmap FATTO.** C'è il ciclo completo: sentiero, castello con la vita, due torri che producono oro a intervalli, i due pulsanti (compra Milite / potenzia Rendita), le ondate che partono da sole e crescono, e la schermata di sconfitta con "Ricomincia".
+**Punti 1 e 2 della roadmap FATTI.** C'è la griglia 5×8, il piazzamento, la crescita nel tempo, la raccolta, il magazzino, e le tre regole di vicinanza con il segno che si accende fra le caselle.
 
-Provato nel browser: senza comprare niente il castello cade all'ondata 3 con quasi 400 d'oro mai speso, e il pulsante Ricomincia riparte pulito.
+Provato nel browser a 390×780: il grano al centro di un filare di tre prende ×1.6 (1.25 due volte), la rapa circondata da grano e lino prende ×1.8 di Rotazione, il canale accelera il lino che tocca, e il magazzino si riempie raccogliendo. Nessun errore in console.
 
 | File | Cosa fa |
 | --- | --- |
+| `src/game/config.js` | Legge `config/*.json` e verifica all'avvio che sia coerente |
+| `src/game/griglia.js` | La geometria: indici, posizioni, vicini precalcolati |
+| `src/game/fattoria.js` | Lo stato: cosa c'è su ogni casella, crescita, raccolta, ricalcolo delle vicinanze |
+| `src/game/disegno.js` | Disegno di legami, contenuti, distintivi e selezione |
+| `src/game/sfondo.js` | Terreno e reticolo, disegnati una volta sola |
 | `src/game/motore.js` | Ciclo a passo fisso, coda dei comandi, ponte con React |
-| `src/game/percorso.js` | La geometria del sentiero: la distanza percorsa e la posizione che ne deriva |
-| `src/game/combattenti.js` | Nemici e reclute: marcia, fila, ingaggio, danno, disegno |
-| `src/game/ondate.js` | Quando parte un'ondata, quanti nemici escono e quando è finita |
-| `src/game/economia.js` | L'oro: rendita delle torri, costi, potenziamenti |
-| `src/game/partita.js` | Ondata corrente, vita del castello, fase |
-| `src/game/sfondo.js` | Terreno, sentiero, breccia, castello, torri (disegnati una volta sola) |
-| `src/ui/Cruscotto.jsx` | Ondata, castello, oro, nemici — in alto |
-| `src/ui/Comandi.jsx` | I due pulsanti, in basso sotto il pollice |
+| `src/game/effetti.js` | Anelli di feedback, da pool preallocato |
+| `src/ui/CampoDiGioco.jsx` | Monta i canvas, traduce il tocco in casella |
+| `src/ui/Magazzino.jsx` | La striscia in alto: materiali e caselle usate |
+| `src/ui/PannelloCasella.jsx` | Il foglio che sale dal basso quando tocchi una casella |
 
-**Non esiste ancora niente** di: categorie di recluta, tipi di nemico diversi, oggetti e pool, negozio, mini boss e boss, tipi di ondata speciali, sinergie, salvataggio, progressione permanente.
+| Configurazione | Cosa contiene |
+| --- | --- |
+| `config/griglia.json` | Area logica, colonne, righe, dimensione delle caselle |
+| `config/contenuti.json` | Colture e terreni piazzabili, e i materiali |
+| `config/vicinanze.json` | Le regole di adiacenza — **il cuore del gioco** |
+| `config/motore.json` | Valori tecnici e di aspetto. Il bilanciatore non lo tocca |
 
-## Prossime mosse
+## La prossima cosa da fare
 
-1. **Verifica obbligatoria del punto 1**, prima di aggiungere qualunque cosa: *decidere quando spendere è soddisfacente?* E soprattutto: **la scelta fra comprare adesso e investire nella rendita è una scelta vera, o comprare è sempre giusto?** Se è sempre giusto, si risolve lì con l'agente `bilanciatore` e non si va avanti.
-2. **Punto 2**: le quattro categorie di recluta, un pulsante per ciascuna.
-3. **Punto 3**: quattro tipi di nemico e la crescita ondata dopo ondata.
+**Fermarsi e provare.** C'è un blocco di verifica dopo il punto 2 in `ROADMAP.md`, e non è una formalità: il progetto è stato buttato cinque volte per aver costruito il gioco intero prima di sapere se il pezzo centrale funzionava.
 
-## Cosa è già deciso e non si rimette in discussione
+La domanda a cui rispondere giocando: **ti viene voglia di spostare le cose per farle combaciare meglio, o stai solo riempiendo caselle?**
 
-- **Le ondate partono da sole**: niente pulsante per chiamarle in anticipo.
-- **Un livello è una sequenza fissa di tipi di ondata** che finisce col boss del bioma.
-- **La pool è "tre oggetti, ne scegli uno"** (ribaltata la scelta alla Isaac del gioco precedente).
-- **Si resta sul web**, niente Godot: l'autore prova il gioco aprendo un link dal telefono. Da rivedere al punto 16.
-- **Il giocatore non si muove e non mira.** Se una richiesta lo presuppone, è un fraintendimento da chiarire.
+- Se **sì** → punto 3 (lo scavo) e poi punto 4 (la prima macchina).
+- Se **no** → non si aggiunge contenuto sopra: si cambiano le regole in `config/vicinanze.json`, che è il posto dove vive la decisione.
 
-## L'economia e il ritmo, come stanno adesso (misurati)
+## Cosa manca ancora (e non è un difetto)
 
-Rifatti il 2026-08-02 dopo che l'autore ha detto "sembra noiosa, le truppe si fermano impalate al centro, ed è molto lento". Misurato con la simulazione headless che gira sul motore vero.
-
-| Come si gioca | Ondata | Durata | Tocchi/min |
-| --- | --- | --- | --- |
-| Compra appena puoi | 23 | 7 min | 10 |
-| Potenzia se puoi, altrimenti compra | 24 | 8 min | 12 |
-| Niente reclute fino a rendita 2 | 24 | 8 min | 12 |
-| Niente reclute fino a rendita 4 | 3 | 1 min | — |
-
-L'ultima riga è voluta: chi non compra niente per troppo tempo viene travolto. L'avidità si paga.
-
-**Come rimisurare:** c'è una simulazione headless che importa i moduli veri del gioco e gira una partita in un secondo. Sta nello scratchpad della sessione (`sorgente-sim.js` + `prove.js`, bundle con esbuild). Va rifatta a ogni cambio di `economia.json`, `reclute.json`, `nemici.json` o `ondate.json`: ragionare a tavolino su questi numeri non funziona, e questa sessione lo ha dimostrato tre volte.
-
-### Le tre regole che ho imparato tarando, e che valgono per il futuro
-
-1. **Il ritmo delle ondate e la rendita al secondo sono la stessa manopola.** Dimezzare la durata di un'ondata dimezza l'oro che entra: ogni volta che si accorcia il ritmo, la rendita va rialzata o il gioco diventa impossibile.
-2. **Uno scontro che non si risolve blocca l'ondata per sempre.** Colpi deboli contro molta vita producono stalli in cui nessuno vince: meglio danni alti e vite basse, che fanno anche muovere il fronte invece di tenerlo fermo.
-3. **Il numero di tocchi al minuto è un valore di design, non un effetto collaterale.** Si controlla col rapporto fra costo e rendita, e con quanti uomini parte una squadra. Il bersaglio è 10-15 al minuto.
-
-## Problemi noti## Problemi noti## Problemi noti (nessuno urgente)
-
-- Il bilanciamento non è mai stato fatto: **tutti i numeri sono messi a occhio** e la prima cosa da tarare è l'economia.
-- L'ingaggio riscandaglia l'intera schiera avversaria a ogni passo: da far guardare a `revisore-mobile` quando i nemici saranno tanti.
-- Le reclute sopravvissute risalgono fino alla breccia e restano lì: i nemici dell'ondata dopo escono addosso a loro e si sovrappongono per un istante nel disegno.
-- Sulla schermata di sconfitta il cruscotto mostra "Nemici 0" anche se sul campo ne restano.
-- `index.html` duplica a mano due colori di `motore.json`.
-- In orizzontale il campo diventa minuscolo: prima o poi va bloccato il verticale.
-- Le torri sono lontane dal sentiero e non "fanno" niente di visibile oltre al lampo della rendita.
-
-## Grafica: piano concordato
-
-Grafica procedurale su canvas (forme, colori), da migliorare con l'agente `rifinitore`. Gli sprite veri arrivano dopo che il gioco è divertente: pacchetto consigliato Kenney (CC0). **Nota tecnica**: da questo ambiente non si possono scaricare i siti di asset (rete ristretta) — l'autore dovrà allegare lo zip in chat, poi si integra.
-
-## Come si lavora (promemoria)
-
-- `/punto N` → esegue il punto N della roadmap col protocollo completo.
-- `/richiesta` + testo libero → trasforma in specifica e aspetta conferma.
-- "decidiamo la N" → apre la voce N di `DECISIONI.md` col `consulente-design`.
-- Ogni fine lavoro: agente `collaudo`, punto segnato FATTO, resoconto con "Cosa provare".
-- L'autore non programma e lavora dal telefono: italiano pratico, niente gergo, un lavoro alla volta.
+Rocce e minerali, macchine, la bacheca degli sblocchi, le automazioni, l'espansione delle caselle, gli appezzamenti, il salvataggio, il tempo compresso col giorno che passa. Sono tutti punti della roadmap dal 3 in poi: **arrivano dopo la verifica**, non prima.

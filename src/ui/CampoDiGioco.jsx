@@ -1,26 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { creaMotore } from '../game/motore.js'
-import { grafica, interfaccia } from '../game/config.js'
-import Comandi from './Comandi.jsx'
-import AvvisoOndata from './AvvisoOndata.jsx'
-import Cruscotto from './Cruscotto.jsx'
-import SceltaOggetto from './SceltaOggetto.jsx'
-import SchermataFine from './SchermataFine.jsx'
+import { area, grafica, interfaccia } from '../game/config.js'
+import Magazzino from './Magazzino.jsx'
+import PannelloCasella from './PannelloCasella.jsx'
 
 const VISTA_INIZIALE = {
-  oro: 0,
-  oroPerCiclo: 0,
-  livelloRendita: 0,
-  costoPotenziamento: 0,
-  renditaAlMassimo: false,
-  vitaCastello: 0,
-  vitaCastelloMassima: 0,
-  ondata: 0,
-  fase: 'attesa',
-  secondiAllOndata: 0,
-  quantitaProssimaOndata: 0,
-  nemiciNuovi: '',
-  nemiciRimanenti: 0
+  selezionata: -1,
+  contenutoSelezionato: '',
+  selezionataMatura: false,
+  bonusSelezionato: '',
+  selezionataIrrigata: false,
+  magazzino: '',
+  caselleUsate: 0
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -50,7 +41,6 @@ export default function CampoDiGioco() {
   const canvasGioco = useRef(null)
   const motoreRef = useRef(null)
   const [vista, impostaVista] = useState(VISTA_INIZIALE)
-  const [offerta, impostaOfferta] = useState([])
 
   useEffect(() => {
     const motore = creaMotore(canvasSfondo.current, canvasGioco.current)
@@ -73,12 +63,6 @@ export default function CampoDiGioco() {
     const campionamento = setInterval(() => {
       const stato = motore.leggiStato()
       impostaVista((precedente) => (uguali(precedente, stato) ? precedente : copia(stato)))
-      // l'offerta cambia solo quando si apre la scelta: si legge qui invece di
-      // tenerla nello stato del gioco, che verrebbe ricopiato a ogni giro
-      impostaOfferta((precedente) => {
-        const attuale = stato.fase === 'scelta' ? motore.leggiOfferta() : precedente
-        return precedente.length === attuale.length ? precedente : attuale
-      })
     }, 1000 / interfaccia.aggiornamenti_al_secondo)
 
     return () => {
@@ -89,22 +73,31 @@ export default function CampoDiGioco() {
     }
   }, [])
 
-  const compra = useCallback((idRecluta) => {
-    motoreRef.current.compra(idRecluta)
+  // Il tocco arriva in pixel dello schermo: qui diventa una coordinata logica
+  // del campo, e il motore ne ricava la casella. Si usa il rettangolo vero del
+  // canvas invece della scala, cosi' funziona a qualunque dimensione.
+  const tocca = useCallback((evento) => {
+    const canvas = canvasGioco.current
+    if (!canvas || !motoreRef.current) {
+      return
+    }
+    const riquadro = canvas.getBoundingClientRect()
+    motoreRef.current.toccaPunto(
+      ((evento.clientX - riquadro.left) / riquadro.width) * area.larghezza,
+      ((evento.clientY - riquadro.top) / riquadro.height) * area.altezza
+    )
   }, [])
 
-  const potenzia = useCallback(() => {
-    motoreRef.current.potenzia()
+  const piazza = useCallback((idContenuto) => {
+    motoreRef.current.piazza(motoreRef.current.leggiStato().selezionata, idContenuto)
   }, [])
 
-  const ricomincia = useCallback(() => {
-    motoreRef.current.riparti()
-    impostaOfferta([])
+  const rimuovi = useCallback(() => {
+    motoreRef.current.rimuovi(motoreRef.current.leggiStato().selezionata)
   }, [])
 
-  const scegli = useCallback((idOggetto) => {
-    motoreRef.current.scegli(idOggetto)
-    impostaOfferta([])
+  const chiudi = useCallback(() => {
+    motoreRef.current.chiudi()
   }, [])
 
   const stileCanvas = {
@@ -124,60 +117,34 @@ export default function CampoDiGioco() {
         background: grafica.colore_fuori_area
       }}
     >
-      {/* Il campo vive qui dentro, fra il cruscotto e i pulsanti. Misurando il
-          canvas su questo riquadro invece che su tutto lo schermo, il castello
-          non puo' finire sotto ai comandi su nessun telefono. */}
+      {/* Il campo vive qui dentro, sotto al magazzino. Misurando il canvas su
+          questo riquadro invece che su tutto lo schermo, la griglia non puo'
+          mai finire sotto alla striscia in alto. */}
       <div
         ref={contenitore}
         style={{
           position: 'absolute',
           left: 0,
           right: 0,
-          top: `calc(${interfaccia.spazio_cruscotto}px + env(safe-area-inset-top))`,
-          bottom: `calc(${interfaccia.spazio_comandi}px + env(safe-area-inset-bottom))`
+          top: `calc(${interfaccia.spazio_magazzino}px + env(safe-area-inset-top))`,
+          bottom: `calc(${interfaccia.spazio_sotto}px + env(safe-area-inset-bottom))`
         }}
       >
         <canvas ref={canvasSfondo} style={stileCanvas} />
-        <canvas ref={canvasGioco} style={stileCanvas} />
+        <canvas ref={canvasGioco} style={stileCanvas} onPointerDown={tocca} />
       </div>
 
-      <Cruscotto
-        oro={vista.oro}
-        oroPerCiclo={vista.oroPerCiclo}
-        vitaCastello={vista.vitaCastello}
-        vitaCastelloMassima={vista.vitaCastelloMassima}
-        ondata={vista.ondata}
-        fase={vista.fase}
-        secondiAllOndata={vista.secondiAllOndata}
-        nemiciRimanenti={vista.nemiciRimanenti}
-      />
+      <Magazzino magazzino={vista.magazzino} caselleUsate={vista.caselleUsate} />
 
-      {vista.fase === 'attesa' ? (
-        <AvvisoOndata
-          ondata={vista.ondata}
-          quantita={vista.quantitaProssimaOndata}
-          nemiciNuovi={vista.nemiciNuovi}
-          secondi={vista.secondiAllOndata}
+      {vista.selezionata >= 0 ? (
+        <PannelloCasella
+          contenuto={vista.contenutoSelezionato}
+          bonus={vista.bonusSelezionato}
+          irrigata={vista.selezionataIrrigata}
+          onPiazza={piazza}
+          onRimuovi={rimuovi}
+          onChiudi={chiudi}
         />
-      ) : null}
-
-      <Comandi
-        oro={vista.oro}
-        costoPotenziamento={vista.costoPotenziamento}
-        livelloRendita={vista.livelloRendita}
-        oroPerCiclo={vista.oroPerCiclo}
-        renditaAlMassimo={vista.renditaAlMassimo}
-        attivi={vista.fase !== 'sconfitta'}
-        onCompra={compra}
-        onPotenzia={potenzia}
-      />
-
-      {vista.fase === 'scelta' && offerta.length > 0 ? (
-        <SceltaOggetto offerta={offerta} onScegli={scegli} />
-      ) : null}
-
-      {vista.fase === 'sconfitta' ? (
-        <SchermataFine ondata={vista.ondata} onRicomincia={ricomincia} />
       ) : null}
     </div>
   )

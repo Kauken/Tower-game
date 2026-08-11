@@ -1,87 +1,52 @@
 // Ciclo di gioco: passo fisso di simulazione, disegno alla frequenza dello
 // schermo. Dentro aggiorna() e disegna() non si creano oggetti nuovi.
 //
-// Le azioni dell'interfaccia (compra, potenzia, ricomincia) entrano da una
-// coda di comandi e vengono eseguite dentro un passo di simulazione: cosi' due
-// tocchi ravvicinati non possono spendere due volte lo stesso oro.
+// Le azioni dell'interfaccia (tocca una casella, piazza, rimuovi) entrano da
+// una coda di comandi e vengono eseguite dentro un passo di simulazione: cosi'
+// due tocchi ravvicinati non possono piazzare due cose sulla stessa casella.
 
-import {
-  area,
-  campo,
-  limiti,
-  oggettiOfferti,
-  simulazione,
-  trovaRecluta
-} from './config.js'
+import { area, limiti, simulazione } from './config.js'
 import { disegnaSfondo } from './sfondo.js'
+import { disegnaFattoria } from './disegno.js'
 import { adattaCanvas } from './schermo.js'
 import { creaPool, primoLibero } from './pool.js'
-import { creaGestoreCombattenti } from './combattenti.js'
+import { creaFattoria } from './fattoria.js'
 import { creaGestoreEffetti } from './effetti.js'
-import { creaEconomia } from './economia.js'
-import { creaGestoreOndate } from './ondate.js'
-import { colpisciCastello, creaStatoPartita, reimposta } from './partita.js'
-import { creaOggetti, pescaOfferta } from './oggetti.js'
+import { casellaSotto, centroX, centroY } from './griglia.js'
 
 export function creaMotore(canvasSfondo, canvasGioco) {
-  const passoSecondi = simulazione.passo_ms / 1000
-  const accumuloMassimo = simulazione.passi_massimi_per_frame * simulazione.passo_ms
-
-  const partita = creaStatoPartita()
   const effetti = creaGestoreEffetti()
-  const oggetti = creaOggetti()
 
-  const economia = creaEconomia({
-    oggetti,
-    allaProduzione: () => {
-      for (let i = 0; i < campo.torri_rendita.length; i++) {
-        effetti.rendita(campo.torri_rendita[i].x, campo.torri_rendita[i].y)
-      }
-    }
+  const fattoria = creaFattoria({
+    allaRaccolta: (indice) => effetti.raccolta(centroX(indice), centroY(indice))
   })
 
-  const combattenti = creaGestoreCombattenti({
-    allImpatto: (x, y) => effetti.impatto(x, y),
-    allaMorte: (x, y) => effetti.morte(x, y),
-    allaComparsa: (x, y) => effetti.comparsa(x, y),
-    allArrivoAlCastello: (danno, x, y) => {
-      effetti.esplosione(x, y)
-      colpisciCastello(partita, danno)
-    },
-    allOroRaccolto: (quantita) => economia.incassa(quantita),
-    oggetti
-  })
-
-  const ondate = creaGestoreOndate(combattenti, partita, {
-    allaFineOndata: (numeroOndata) => economia.ricompensaOndata(numeroOndata)
-  })
-
-  // il comando porta con se' quale recluta: cosi' due tocchi ravvicinati su
-  // pulsanti diversi non si confondono
+  // il comando porta con se' su cosa agisce: cosi' due tocchi ravvicinati su
+  // caselle diverse non si confondono
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
     tipo: '',
-    idRecluta: ''
+    indice: -1,
+    idContenuto: ''
   }))
+
+  // quale casella e' selezionata: e' su quella che agisce il pannello in basso
+  let selezionata = -1
 
   // Oggetto unico riletto dall'interfaccia 10 volte al secondo: viene
   // aggiornato sul posto, non ricreato.
   const vetrina = {
-    oro: 0,
-    oroPerCiclo: 0,
-    livelloRendita: 0,
-    costoPotenziamento: 0,
-    renditaAlMassimo: false,
-    vitaCastello: 0,
-    vitaCastelloMassima: 0,
-    ondata: 0,
-    fase: 'attesa',
-    secondiAllOndata: 0,
-    nemiciRimanenti: 0,
-    quantitaProssimaOndata: 0,
-    // stringa, non elenco: l'interfaccia la confronta per capire se e'
-    // cambiata, e confrontare due elenchi a ogni lettura sarebbe piu' caro
-    nemiciNuovi: ''
+    selezionata: -1,
+    contenutoSelezionato: '',
+    selezionataMatura: false,
+    // le vicinanze accese sulla casella toccata, gia' pronte da leggere: e'
+    // il modo in cui il giocatore capisce perche' quella casella rende di piu'
+    bonusSelezionato: '',
+    selezionataIrrigata: false,
+    // stringa e non oggetto: l'interfaccia la confronta per capire se e'
+    // cambiata, e confrontare un oggetto a ogni lettura costerebbe di piu'
+    magazzino: '',
+    caselleUsate: 0
   }
 
   let ctxSfondo = null
@@ -90,59 +55,31 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   let accumulato = 0
   let richiesta = 0
 
-  function accodaComando(tipo, idRecluta) {
+  function accodaComando(tipo, indice, idContenuto) {
     const comando = primoLibero(comandi)
     if (!comando) {
       return
     }
     comando.attivo = true
     comando.tipo = tipo
-    comando.idRecluta = idRecluta || ''
+    comando.indice = indice === undefined ? -1 : indice
+    comando.idContenuto = idContenuto || ''
   }
 
-  // L'offerta di oggetti: si pesca una volta sola, alla scelta. Dentro il
-  // ciclo di gioco non si tira mai a caso e non si alloca niente.
-  let offerta = []
-
-  function apriSceltaOggetti() {
-    offerta = pescaOfferta(oggetti, oggettiOfferti)
-    partita.fase = 'scelta'
-  }
-
-  function scegliOggetto(idOggetto) {
-    if (partita.fase !== 'scelta') {
+  // Toccare una casella fa la cosa ovvia: se c'e' da raccogliere raccoglie,
+  // altrimenti seleziona. Un tocco che non fa niente sembra un guasto.
+  function tocca(indice) {
+    if (indice < 0) {
+      selezionata = -1
       return
     }
-    oggetti.prendi(idOggetto)
-    economia.rileggiOggetti()
-    offerta = []
-    ondate.reimposta()
-  }
-
-  function ricomincia() {
-    combattenti.svuota()
-    effetti.svuota()
-    oggetti.svuota()
-    economia.reimposta()
-    reimposta(partita)
-    ondate.reimposta()
-    apriSceltaOggetti()
-  }
-
-  function compraRecluta(idRecluta) {
-    if (partita.fase === 'sconfitta') {
+    const casella = fattoria.caselle[indice]
+    if (casella.matura) {
+      fattoria.raccogli(indice)
+      selezionata = -1
       return
     }
-    // il posto si controlla prima di pagare: senza spazio per tutta la squadra
-    // l'oro sarebbe speso per una squadra a meta'
-    if (!combattenti.cePostoPerUnaSquadra(idRecluta)) {
-      return
-    }
-    const dati = trovaRecluta(idRecluta)
-    if (!economia.spendi(economia.costoReale(dati.costo))) {
-      return
-    }
-    combattenti.faiPartireRecluta(idRecluta)
+    selezionata = selezionata === indice ? -1 : indice
   }
 
   function eseguiComandi() {
@@ -152,14 +89,21 @@ export function creaMotore(canvasSfondo, canvasGioco) {
         continue
       }
       comando.attivo = false
-      if (comando.tipo === 'ricomincia') {
-        ricomincia()
-      } else if (comando.tipo === 'scegli_oggetto') {
-        scegliOggetto(comando.idRecluta)
-      } else if (comando.tipo === 'compra_recluta') {
-        compraRecluta(comando.idRecluta)
-      } else if (comando.tipo === 'potenzia_rendita' && partita.fase !== 'sconfitta') {
-        economia.potenziaRendita()
+      if (comando.tipo === 'tocca') {
+        tocca(comando.indice)
+      } else if (comando.tipo === 'piazza') {
+        if (fattoria.piazza(comando.indice, comando.idContenuto)) {
+          selezionata = -1
+        }
+      } else if (comando.tipo === 'rimuovi') {
+        fattoria.rimuovi(comando.indice)
+        selezionata = -1
+      } else if (comando.tipo === 'chiudi') {
+        selezionata = -1
+      } else if (comando.tipo === 'svuota') {
+        fattoria.svuota()
+        effetti.svuota()
+        selezionata = -1
       }
     }
   }
@@ -173,26 +117,13 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   function aggiorna() {
     eseguiComandi()
-
-    // a run finita, e mentre si sceglie un oggetto, il campo sta fermo: gli
-    // effetti finiscono solo di sfumare
-    if (partita.fase === 'sconfitta' || partita.fase === 'scelta') {
-      effetti.aggiorna(simulazione.passo_ms)
-      return
-    }
-
-    // l'oro sale anche mentre non succede niente: e' la pausa fra le ondate
-    // che rende una decisione il momento in cui si spende
-    economia.aggiorna(simulazione.passo_ms)
-    ondate.aggiorna(simulazione.passo_ms)
-    combattenti.aggiorna(simulazione.passo_ms, passoSecondi)
+    fattoria.aggiorna(simulazione.passo_ms)
     effetti.aggiorna(simulazione.passo_ms)
   }
 
   function disegna() {
     ctxGioco.clearRect(0, 0, area.larghezza, area.altezza)
-    combattenti.disegna(ctxGioco)
-    // gli effetti sopra tutto: sono brevi e non coprono niente a lungo
+    disegnaFattoria(ctxGioco, fattoria.caselle, selezionata)
     effetti.disegna(ctxGioco)
   }
 
@@ -202,8 +133,8 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     accumulato += tempo - ultimoTempo
     ultimoTempo = tempo
     // evita la spirale della morte quando l'app torna in primo piano
-    if (accumulato > accumuloMassimo) {
-      accumulato = accumuloMassimo
+    if (accumulato > simulazione.passi_massimi_per_frame * simulazione.passo_ms) {
+      accumulato = simulazione.passi_massimi_per_frame * simulazione.passo_ms
     }
     while (accumulato >= simulazione.passo_ms) {
       aggiorna()
@@ -214,7 +145,6 @@ export function creaMotore(canvasSfondo, canvasGioco) {
   }
 
   function avvia() {
-    apriSceltaOggetti()
     ultimoTempo = performance.now()
     accumulato = 0
     richiesta = requestAnimationFrame(frame)
@@ -227,47 +157,42 @@ export function creaMotore(canvasSfondo, canvasGioco) {
 
   // --- comunicazione con l'interfaccia ---
 
-  // L'interfaccia legge, non chiede: nessun oggetto nuovo a ogni lettura.
+  // L'interfaccia legge, non chiede: nessun oggetto nuovo a ogni lettura,
+  // tranne la stringa del magazzino, che cambia di rado.
+  let magazzinoPrecedente = ''
+
   function leggiStato() {
-    vetrina.oro = Math.floor(economia.stato.oro)
-    vetrina.oroPerCiclo = economia.stato.oroPerCiclo
-    vetrina.livelloRendita = economia.stato.livelloRendita
-    vetrina.costoPotenziamento = economia.stato.costoPotenziamento
-    vetrina.renditaAlMassimo = economia.stato.renditaAlMassimo
-    vetrina.vitaCastello = partita.vitaCastello
-    vetrina.vitaCastelloMassima = partita.vitaCastelloMassima
-    vetrina.ondata = partita.ondata
-    vetrina.fase = partita.fase
-    // arrotondato per eccesso: il conto alla rovescia non deve mostrare 0
-    // mentre l'ondata non e' ancora partita
-    vetrina.secondiAllOndata =
-      partita.fase === 'attesa' ? Math.ceil(partita.attesaMs / 1000) : 0
-    vetrina.nemiciRimanenti = partita.fase === 'ondata' ? partita.nemiciRimanenti : 0
-    vetrina.quantitaProssimaOndata = partita.quantitaProssimaOndata
-    vetrina.nemiciNuovi = partita.nemiciNuovi.join(', ')
+    vetrina.selezionata = selezionata
+    vetrina.contenutoSelezionato =
+      selezionata >= 0 ? fattoria.caselle[selezionata].contenuto : ''
+    vetrina.selezionataMatura =
+      selezionata >= 0 ? fattoria.caselle[selezionata].matura : false
+    vetrina.bonusSelezionato =
+      selezionata >= 0 ? fattoria.caselle[selezionata].etichetta : ''
+    vetrina.selezionataIrrigata =
+      selezionata >= 0 ? fattoria.caselle[selezionata].irrigata : false
+
+    let riga = ''
+    let usate = 0
+    for (const materiale in fattoria.magazzino) {
+      riga += (riga ? ',' : '') + materiale + ':' + fattoria.magazzino[materiale]
+    }
+    for (let i = 0; i < fattoria.caselle.length; i++) {
+      if (fattoria.caselle[i].contenuto) {
+        usate++
+      }
+    }
+    if (riga !== magazzinoPrecedente) {
+      magazzinoPrecedente = riga
+      vetrina.magazzino = riga
+    }
+    vetrina.caselleUsate = usate
     return vetrina
   }
 
-  function compra(idRecluta) {
-    accodaComando('compra_recluta', idRecluta)
-  }
-
-  function potenzia() {
-    accodaComando('potenzia_rendita')
-  }
-
-  function riparti() {
-    accodaComando('ricomincia')
-  }
-
-  function scegli(idOggetto) {
-    accodaComando('scegli_oggetto', idOggetto)
-  }
-
-  // l'offerta cambia solo quando si apre la scelta: l'interfaccia la legge
-  // direttamente, senza che il ciclo debba ricopiarla a ogni lettura
-  function leggiOfferta() {
-    return offerta
+  // Il tocco arriva in coordinate dello schermo: qui diventa una casella.
+  function toccaPunto(xLogica, yLogica) {
+    accodaComando('tocca', casellaSotto(xLogica, yLogica))
   }
 
   return {
@@ -275,10 +200,10 @@ export function creaMotore(canvasSfondo, canvasGioco) {
     ferma,
     ridimensiona,
     leggiStato,
-    leggiOfferta,
-    compra,
-    potenzia,
-    scegli,
-    riparti
+    toccaPunto,
+    piazza: (indice, idContenuto) => accodaComando('piazza', indice, idContenuto),
+    rimuovi: (indice) => accodaComando('rimuovi', indice),
+    chiudi: () => accodaComando('chiudi'),
+    svuota: () => accodaComando('svuota')
   }
 }

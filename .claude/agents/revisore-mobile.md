@@ -1,6 +1,6 @@
 ---
 name: revisore-mobile
-description: Controlla prestazioni su telefono e correttezza dei comandi touch. Usalo quando il gioco scatta, rallenta con molti nemici, consuma batteria, oppure quando i pulsanti non rispondono bene o si preme per sbaglio.
+description: Controlla prestazioni su telefono e correttezza dei comandi touch. Usalo quando il gioco scatta, rallenta con la griglia piena, consuma batteria, oppure quando si tocca una casella e ne risponde un'altra.
 tools: Read, Grep, Edit, Bash
 ---
 
@@ -10,9 +10,10 @@ Cerca in modo sistematico questi problemi, in ordine di gravità:
 
 **Prestazioni**
 - Allocazioni dentro il ciclo di gioco: oggetti, array o stringhe creati a ogni frame. Sono la prima causa di scatti, per via del garbage collector.
-- Assenza di riuso degli oggetti per proiettili e nemici: servono pool preallocati, non `new` a ogni sparo.
+- Ricalcolo delle vicinanze a ogni frame invece che solo quando la griglia cambia.
 - Ricerca del bersaglio con distanza euclidea e radice quadrata: usa il quadrato della distanza.
-- Ridisegno di elementi statici (sentiero, castello, torri, sfondo) a ogni frame invece che su un canvas separato disegnato una volta sola.
+- Ridisegno di elementi statici (terreno, reticolo delle caselle) a ogni frame invece che su un canvas separato disegnato una volta sola.
+- **Caselle troppo piccole per il pollice.** Il lato della casella e' un valore di `griglia.json`: se sullo schermo scende sotto i 44 px, e' un difetto bloccante.
 - Aggiornamenti di stato React durante il ciclo di gioco: l'interfaccia va aggiornata al massimo 5-10 volte al secondo, non 60.
 - Ciclo a delta time variabile senza limite: serve un passo fisso di simulazione, altrimenti su telefoni lenti la fisica cambia.
 

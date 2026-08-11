@@ -1,120 +1,142 @@
-# Documento di design — v2.0
+# Documento di design — v3.0
 
-**Questo documento sostituisce tutto quello che c'era prima.** Le versioni precedenti (tower defense a labirinto, battaglia a corsie, assedio a campo aperto, roguelike a stanze) sono cancellate.
+**Grano e Ferro** — una fattoria cozy su griglia, con minerali, tecnologie e automazioni.
+Per telefono, verticale, una mano sola.
 
-> I numeri sono **valori di partenza da tarare**. Ciò che è marcato `[DA DECIDERE]` va chiuso prima di scrivere il codice relativo.
+> Questa versione sostituisce completamente la v2.0 (tower defense a reclute).
+> Se trovi documenti, codice o configurazioni che parlano di **reclute, ondate,
+> nemici, castello, torri, sentiero, postazioni** sono resti da rimuovere, non
+> funzionalità da mantenere.
 
 ---
 
 ## 1. Il gioco in una riga
 
-**Un tower defense roguelike per telefono in cui non piazzi torri: compri reclute.** Due torri tue producono oro da sole; tu decidi cosa comprare e quando, e se investire nella rendita invece che nell'esercito. Le reclute partono, marciano e combattono senza di te. Gli oggetti che trovi le trasformano.
+**Una fattoria su una griglia, dove lo spazio è l'unica cosa che scarseggia davvero.** Coltivi, scavi, costruisci macchine. Ogni cosa che sblocchi occupa una casella, e le caselle sono poche: quindi ogni sblocco non è una spesa, è un **puzzle di incastro**.
 
 ## 2. Il ruolo del giocatore
 
-Zero riflessi, zero mira, zero schivate. Tre decisioni che si ripetono:
+Zero riflessi, zero fretta, zero fallimento. **Non si può perdere.** Tre cose che si ripetono:
 
-1. **Quale recluta comprare, e quando.**
-2. **Esercito adesso o rendita per dopo** — potenziare le torri costa oro che non stai spendendo in truppe.
-3. **Quale oggetto prendere**, quando la pool ne offre tre.
+1. **Cosa sbloccare adesso** — la bacheca ti mostra sempre più cose di quante puoi permetterti.
+2. **Dove metterlo** — è qui che sta il gioco, per via delle vicinanze.
+3. **Cosa scavare** — l'unica cosa attiva, e il ponte fra le due catene.
 
-> Non guardi: **spendi**.
+> Non ottimizzi un foglio di calcolo: **incastri una griglia.**
 
-È questo che tiene il gioco lontano dall'essere uno spettacolo. Se comprare fosse sempre la mossa giusta non ci sarebbe partita: è **la scelta fra rendita ed esercito** a renderla una partita, e va difesa in ogni decisione futura di bilanciamento.
+## 3. Il campo: la griglia
 
-## 3. Il campo
+Una griglia di caselle quadrate, verticale, che sta tutta in uno schermo di telefono. Si parte piccoli (indicativamente 5×6) e si espande comprando caselle, che è la spesa più desiderata del gioco.
 
-Un **sentiero** che va dal punto di uscita dei nemici, in alto, al **tuo castello**, in basso.
+Ogni casella contiene **una cosa sola**: una coltura, una roccia, una macchina, un canale. Toccare una casella vuota apre cosa ci si può mettere; toccare una casella piena dice cosa fa e con chi sta andando in sinergia.
 
-- I **nemici** scendono lungo il sentiero verso il tuo castello.
-- Le tue **reclute** salgono lungo lo stesso sentiero e li incontrano a metà strada. Dove si incontrano si fermano e combattono.
-- Un nemico che arriva in fondo **toglie vita al tuo castello**. A zero, la run finisce.
-- Le tue **due torri** stanno ai lati e non sparano: **producono oro**. Sono fisse, non si piazzano, e si possono potenziare.
+## 4. Il cuore: le vicinanze
 
-## 4. Le reclute
+**Quello che metti vicino a cosa cambia quanto rende.** È la meccanica su cui è costruito tutto il resto.
 
-Si comprano con un pulsante, quando hai l'oro. Partono dal tuo lato e camminano: **non si piazzano**. Il sentiero è uno solo, e scegliere dove metterle non sarebbe una decisione — solo una fatica in più.
+| Esempio | Effetto |
+| --- | --- |
+| Grano adiacente a Grano | +10% a testa — la monocoltura rende |
+| Canale d'acqua adiacente | la coltura cresce molto più in fretta |
+| Miniera su una vena di roccia | scava molto di più |
+| Forno attaccato al Mulino | la farina passa da sola, niente trasporto |
+| **Alveare toccato da 4 colture diverse** | bonus grosso — la biodiversità rende |
 
-- Divise in **categorie** (per esempio Fanteria, Bestie, Arcani, Meccanismi).
-- Ognuna ha costo, vita, danno, velocità, portata.
-- Se ne sbloccano di nuove giocando.
+**Le vicinanze si contraddicono apposta.** Alcune cose premiano la monocoltura, altre premiano la varietà, e sulla stessa griglia non puoi avere entrambe. È da quella contraddizione che nasce la decisione, senza chiedere al giocatore nessun riflesso.
 
-### Il tetto di equipaggiamento — l'idea che regge la varietà
+**Le vicinanze devono vedersi.** Quando due cose vanno in sinergia si accende un segno fra loro. Una fattoria ben incastrata si riconosce a colpo d'occhio, prima di leggere qualunque numero: è quello che rende il gioco bello da guardare e non solo da calcolare.
 
-Porti in partita **poche categorie su molte** (`[DA DECIDERE]` quante, indicativamente 3 su 12). Questo decide l'identità della run **prima del primo secondo**, e soprattutto piega la pool: un oggetto che potenzia le Bestie è un tesoro se hai due categorie Bestia, carta straccia se non ne hai nessuna.
+## 5. Le due catene
 
-**È qui che nasce la varietà alla Isaac dentro un tower defense.** Se una scelta di design la indebolisce, è la scelta sbagliata.
+- **Colture** — crescono da sole nel tempo. Danno roba morbida: grano, fibra, frutta.
+- **Minerali** — si scavano. Danno roba dura: pietra, rame, ferro.
 
-## 5. La struttura di un livello
+**Le macchine hanno bisogno di tutte e due.** Il mulino vuole legno e rame, la serra vuole vetro e fibra. È questo che tiene insieme colture e minerali invece di farne due giochi appiccicati: nessuna delle due catene si può ignorare.
 
-Un livello è una **sequenza di ondate di tipo diverso**, nello stesso ordine di massima ma con contenuto pescato:
+## 6. Il tempo — *deciso il 2026-08-11*
 
-```
-normale → normale → speciale → negozio → normale → mini boss
-       → tesoro → normale → speciale → BOSS DEL BIOMA
-```
+**Il tempo scorre mentre guardi.** Un giorno dura pochi minuti mentre l'app è aperta: ti siedi un quarto d'ora e vedi passare mezza stagione.
 
-| Ondata | Cosa succede |
-|---|---|
-| **Normale** | Nemici del bioma |
-| **Speciale** | Un vincolo o una stranezza: tutti veloci, tutti corazzati, buio |
-| **Negozio** | Si compra con l'oro: reclute, cure al castello, potenziamenti |
-| **Mini boss** | Un nemico grosso, e una ricompensa |
-| **Tesoro** | La pool: **tre oggetti, ne scegli uno** |
-| **Boss** | Chiude il bioma. Vinto, si passa al livello dopo |
+A app chiusa la fattoria produce comunque, ma **più piano e fino a un tetto**. Così riaprire è sempre premiato, ma aspettare non è mai la strategia migliore: giocare lo è.
 
-Battuto il boss si passa al bioma successivo, con nemici e ambientazione nuovi.
+Perché non tempo reale puro: se il grano cresce in ore vere il gioco è ingiocabile in una sessione: apri, raccogli, chiudi. Non c'è niente da guardare, e guardare è metà del punto.
 
-**L'ordine è fisso, il contenuto è pescato.** È questo che dà una linea di avanzamento: si sa sempre a che punto del livello si è, quanto manca al boss e che tipo di ondata sta arrivando. La ripetizione sta nella forma, la varietà nel riempimento.
+## 7. Lo scavo — *deciso il 2026-08-11*
 
-**Le ondate partono da sole.** Non c'è un pulsante per chiamarle in anticipo in cambio di un premio: sarebbe una seconda scommessa dello stesso tipo di quella fra esercito e rendita, e se la mangerebbe. La pausa fra un'ondata e l'altra è il tempo in cui l'oro sale e si decide.
+**Scavare resta manuale a lungo, ed è l'unica cosa attiva del gioco.** Tocchi una roccia, si crepa, si spacca, escono minerali.
 
-### Come si perde
+Non è un ripiego: è la risposta al difetto noto del genere (vedi §9). Quando tutto il resto va da solo, scavare è quello che ti tiene le mani sullo schermo. Ed è gentile: nessun tempo di reazione, nessun errore possibile, si può smettere a metà.
 
-Il castello ha una **vita**. Ogni nemico che arriva in fondo al sentiero ne toglie un pezzo; a zero la run finisce. Non c'è morte istantanea: la sconfitta si accumula e **si vede arrivare**, in tempo per spendere diversamente.
+Si automatizza tardi, e automatizzarlo è uno degli sblocchi più desiderati proprio perché rinunci a qualcosa che ti piaceva fare.
 
-## 6. Gli oggetti
+## 8. Le automazioni, e il loro costo
 
-Arrivano dalla pool nelle ondate tesoro: **tre, ne scegli uno**. Si accumulano per tutta la run.
+**Ogni sblocco ti toglie un lavoro:**
 
-Ogni oggetto cambia **come combattono le tue reclute**, mai solo di quanto:
+| Sblocco | Ti toglie |
+| --- | --- |
+| Spaventapasseri | raccogliere |
+| Semina automatica | ripiantare |
+| Carretto | portare i materiali da una casella all'altra |
+| Ordine permanente | riscegliere la ricetta ogni volta |
+| Trivella | scavare |
 
-- generici — *"le tue reclute esplodono morendo"*
-- di categoria — *"le Bestie caricano il primo nemico che vedono"*
+La fantasia è **la fattoria che impara a badare a sé stessa**, ed è misurabile: i tocchi al minuto devono scendere partita dopo partita.
 
-### Sistema a tag
+### La regola che tiene in piedi tutto: **l'automazione occupa una casella**
 
-`FUOCO · GELO · FULMINE · VELENO · SACRO · ORO · AREA · RAPIDITÀ`
+Lo spaventapasseri ruba un quadrato al grano. Il carretto ruba un quadrato alla miniera.
 
-Le sinergie sono **regole fra tag, mai fra oggetti specifici**: poche righe generano centinaia di combinazioni.
+**Automatizzare non è mai gratis: baratti produzione per pigrizia.** È la decisione più bella del gioco, e siccome lo spazio non smette mai di essere stretto, la griglia non è mai "risolta" una volta per tutte.
 
-## 7. Progressione permanente
+## 9. Il difetto noto del genere, e come lo evitiamo
 
-A fine run — vinta o persa — si spendono i **cristalli** su potenziamenti permanenti sbloccati giocando: reclute nuove, categorie nuove, rendita di partenza migliore, oggetti che entrano nella pool.
+Nei giochi di automazione c'è un problema documentato e ricorrente: **quando tutto è automatico non hai più niente da fare**, e il gioco muore proprio nel momento in cui hai vinto.
 
-## 8. I comandi
+Le nostre tre risposte, tutte già nel design:
 
-Tutto a pulsanti grandi, nella metà bassa dello schermo:
+1. **L'automazione costa caselle** (§8) — il puzzle di incastro non finisce mai.
+2. **Lo scavo resta manuale** (§7) — c'è sempre un gesto disponibile.
+3. **Gli appezzamenti nuovi ripartono da zero** (§11) — ogni terreno nuovo è una griglia vuota da risolvere daccapo, con una risorsa nuova nel mazzo.
 
-- **Compra recluta** (uno per categoria equipaggiata), con costo e disponibilità visibili
-- **Potenzia rendita**, con costo crescente
-- La schermata **tre oggetti, ne scegli uno**, a tutto schermo
+## 10. La bacheca degli sblocchi
 
-Niente levetta, niente personaggio da muovere. `[DA DECIDERE]` se serve un'abilità attiva con ricarica.
+**Devi vedere quello che ancora non puoi avere.** È l'attesa a creare il desiderio: una ricompensa rimandata vale più di una immediata, ed è esattamente la sensazione che il gioco deve produrre.
 
-## 9. Architettura tecnica
+Quindi **niente albero nascosto**. Una bacheca che si scorre col pollice, con le cose bloccate disegnate in ombra e sotto scritto **esattamente quanto manca**:
 
-Un solo canvas 2D per il campo; React solo per l'interfaccia; **tutti i numeri in `config/*.json`**; salvataggio a ogni fine ondata. Motore: si resta sul web (vedi `DECISIONI.md`).
+> 🏚️ **Serra** — *le colture crescono anche d'inverno*
+> ti mancano **140 ferro**
 
-## 10. Ambito — cosa NON si fa adesso
+Vedi la serra dal primo giorno. Ci pensi mentre scavi.
 
-Sprite disegnati, suono, più biomi, negozio, progressione permanente, categorie multiple, traduzioni. **Prima deve essere soddisfacente guardare l'oro salire e decidere quando spenderlo.**
+**Uno sblocco deve dare un verbo nuovo, non un numero più grande.** Un potenziamento che fa solo "+15% grano" non va in bacheca: va nei potenziamenti minori. In bacheca ci va solo quello che cambia cosa puoi fare.
 
-## 11. Punti aperti
+## 11. Gli appezzamenti
 
-- `[DA DECIDERE]` Quante categorie si portano in partita, e su quante totali
-- `[DA DECIDERE]` Se serve un'abilità attiva con ricarica
-- `[DA DECIDERE]` Le 12 regole di sinergia definitive
-- `[DA DECIDERE]` Quante ondate tesoro dentro un livello, cioè quanti oggetti si prendono per bioma
+La scala grossa dell'avanzamento. Si aprono uno dopo l'altro, e **ognuno porta una risorsa nuova e un tipo di macchina nuovo**, non solo più spazio:
 
-Chiuse il 2026-08-02 (vedi `DECISIONI.md`): **le ondate partono da sole**, non si chiamano in anticipo; **un livello è la sequenza qui sopra e finisce col boss del bioma**; **si perde quando abbastanza nemici arrivano in fondo** e il castello va a zero.
+| Appezzamento | Cosa introduce |
+| --- | --- |
+| **L'Orto** | colture, acqua, le prime vicinanze |
+| **La Collina** | rocce e minerali, lo scavo, le prime macchine |
+| **Il Bosco** | legno e api, le vicinanze di biodiversità |
+| **La Palude** | *[da progettare]* |
+
+## 12. Cosa questo gioco **non** è
+
+Guardrail, da difendere in ogni decisione futura:
+
+- **Non si perde e non si sbaglia in modo irreversibile.** Qualunque piazzamento si può disfare (con un piccolo costo, non a gratis).
+- **Non c'è fretta.** Niente timer che scadono, niente colture che marciscono se non torni.
+- **Non è un idle da guardare.** Se in una sessione da tre minuti non c'è almeno una decisione da prendere, il gioco è rotto lì.
+- **Non è un foglio di calcolo.** Se una scelta si può risolvere leggendo due numeri senza guardare la griglia, quella scelta è progettata male.
+- **Niente valuta premium, niente pubblicità, niente attese che si pagano.**
+
+## 13. La domanda che regge tutto
+
+Come la v2.0 aveva "compro adesso o investo?", questa versione ne ha una sola:
+
+> ### Piazzare una cosa sulla griglia e vedere che si incastra con le vicine è soddisfacente?
+
+Se lì la risposta è sì, tutto il resto è contenuto. Se è no, nessuna quantità di tecnologie, appezzamenti e automazioni lo salva. **È la verifica obbligatoria del punto 1 della roadmap, e si fa prima di costruire qualunque altra cosa.**
