@@ -1,17 +1,28 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { creaMotore } from '../game/motore.js'
 import { area, grafica, interfaccia } from '../game/config.js'
-import Magazzino from './Magazzino.jsx'
+import Cruscotto from './Cruscotto.jsx'
 import PannelloCasella from './PannelloCasella.jsx'
+import Mercato from './Mercato.jsx'
+import Riepilogo from './Riepilogo.jsx'
+import Bottone from './Bottone.jsx'
 
 const VISTA_INIZIALE = {
+  monete: 0,
+  giorno: 1,
+  oraDelGiorno: 0,
+  spesaGiornaliera: 0,
+  costoDissodare: 0,
   selezionata: -1,
+  statoSelezionata: '',
   contenutoSelezionato: '',
-  selezionataMatura: false,
-  bonusSelezionato: '',
   selezionataIrrigata: false,
   magazzino: '',
-  caselleUsate: 0
+  semi: '',
+  prezzi: '',
+  valoreMagazzino: 0,
+  mostraRiepilogo: false,
+  riepilogo: ''
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -33,6 +44,22 @@ function copia(stato) {
   return nuova
 }
 
+// "grano:12,rapa:0" -> {grano: 12, rapa: 0}. Il motore manda una stringa sola
+// invece di un oggetto, cosi' l'interfaccia capisce con un confronto se e'
+// cambiata qualcosa e non ridisegna per niente.
+function leggiConti(riga) {
+  const conti = {}
+  if (!riga) {
+    return conti
+  }
+  const pezzi = riga.split(',')
+  for (let i = 0; i < pezzi.length; i++) {
+    const punto = pezzi[i].indexOf(':')
+    conti[pezzi[i].slice(0, punto)] = Number(pezzi[i].slice(punto + 1))
+  }
+  return conti
+}
+
 // React monta i canvas e l'interfaccia. Non partecipa al ciclo di gioco:
 // legge lo stato a intervalli (10 volte al secondo), non a ogni frame.
 export default function CampoDiGioco() {
@@ -41,6 +68,7 @@ export default function CampoDiGioco() {
   const canvasGioco = useRef(null)
   const motoreRef = useRef(null)
   const [vista, impostaVista] = useState(VISTA_INIZIALE)
+  const [mercatoAperto, apriMercato] = useState(false)
 
   useEffect(() => {
     const motore = creaMotore(canvasSfondo.current, canvasGioco.current)
@@ -58,8 +86,6 @@ export default function CampoDiGioco() {
     const osservatore = new ResizeObserver(adatta)
     osservatore.observe(elemento)
 
-    // campionamento dell'interfaccia: se non e' cambiato niente non si
-    // ridisegna niente, cosi' la batteria ringrazia
     const campionamento = setInterval(() => {
       const stato = motore.leggiStato()
       impostaVista((precedente) => (uguali(precedente, stato) ? precedente : copia(stato)))
@@ -88,17 +114,16 @@ export default function CampoDiGioco() {
     )
   }, [])
 
-  const piazza = useCallback((idContenuto) => {
-    motoreRef.current.piazza(motoreRef.current.leggiStato().selezionata, idContenuto)
-  }, [])
+  const selezionata = () => motoreRef.current.leggiStato().selezionata
 
-  const rimuovi = useCallback(() => {
-    motoreRef.current.rimuovi(motoreRef.current.leggiStato().selezionata)
-  }, [])
-
-  const chiudi = useCallback(() => {
-    motoreRef.current.chiudi()
-  }, [])
+  const pianta = useCallback((id) => motoreRef.current.pianta(selezionata(), id), [])
+  const dissoda = useCallback(() => motoreRef.current.dissoda(selezionata()), [])
+  const estirpa = useCallback(() => motoreRef.current.estirpa(selezionata()), [])
+  const chiudi = useCallback(() => motoreRef.current.chiudi(), [])
+  const compra = useCallback((id) => motoreRef.current.compra(id), [])
+  const vendi = useCallback((id) => motoreRef.current.vendi(id), [])
+  const vendiTutto = useCallback(() => motoreRef.current.vendiTutto(), [])
+  const chiudiRiepilogo = useCallback(() => motoreRef.current.chiudiRiepilogo(), [])
 
   const stileCanvas = {
     position: 'absolute',
@@ -107,6 +132,11 @@ export default function CampoDiGioco() {
     transform: 'translate(-50%, -50%)',
     touchAction: 'none'
   }
+
+  const semi = leggiConti(vista.semi)
+  const magazzino = leggiConti(vista.magazzino)
+  const prezzi = leggiConti(vista.prezzi)
+  const pannelloCasellaAperto = vista.selezionata >= 0 && !mercatoAperto
 
   return (
     <div
@@ -117,9 +147,9 @@ export default function CampoDiGioco() {
         background: grafica.colore_fuori_area
       }}
     >
-      {/* Il campo vive qui dentro, sotto al magazzino. Misurando il canvas su
-          questo riquadro invece che su tutto lo schermo, la griglia non puo'
-          mai finire sotto alla striscia in alto. */}
+      {/* Il campo vive qui dentro, fra il cruscotto e il pulsante del mercato.
+          Misurando il canvas su questo riquadro invece che su tutto lo schermo,
+          il campo non puo' mai finire sotto ai comandi. */}
       <div
         ref={contenitore}
         style={{
@@ -134,18 +164,64 @@ export default function CampoDiGioco() {
         <canvas ref={canvasGioco} style={stileCanvas} onPointerDown={tocca} />
       </div>
 
-      <Magazzino magazzino={vista.magazzino} caselleUsate={vista.caselleUsate} />
+      <Cruscotto
+        monete={vista.monete}
+        giorno={vista.giorno}
+        oraDelGiorno={vista.oraDelGiorno}
+        spesaGiornaliera={vista.spesaGiornaliera}
+      />
 
-      {vista.selezionata >= 0 ? (
+      {pannelloCasellaAperto ? (
         <PannelloCasella
+          stato={vista.statoSelezionata}
           contenuto={vista.contenutoSelezionato}
-          bonus={vista.bonusSelezionato}
           irrigata={vista.selezionataIrrigata}
-          onPiazza={piazza}
-          onRimuovi={rimuovi}
+          monete={vista.monete}
+          costoDissodare={vista.costoDissodare}
+          semi={semi}
+          onPianta={pianta}
+          onDissoda={dissoda}
+          onEstirpa={estirpa}
           onChiudi={chiudi}
         />
       ) : null}
+
+      {mercatoAperto ? (
+        <Mercato
+          monete={vista.monete}
+          magazzino={magazzino}
+          prezzi={prezzi}
+          valoreMagazzino={vista.valoreMagazzino}
+          onCompra={compra}
+          onVendi={vendi}
+          onVendiTutto={vendiTutto}
+          onChiudi={() => apriMercato(false)}
+        />
+      ) : null}
+
+      {vista.mostraRiepilogo ? (
+        <Riepilogo dati={vista.riepilogo} onChiudi={chiudiRiepilogo} />
+      ) : null}
+
+      <div
+        style={{
+          position: 'absolute',
+          left: interfaccia.spaziatura,
+          right: interfaccia.spaziatura,
+          bottom: `calc(${interfaccia.spaziatura}px + env(safe-area-inset-bottom))`,
+          display: 'flex'
+        }}
+      >
+        <Bottone
+          titolo={mercatoAperto ? 'Chiudi il mercato' : 'Mercato'}
+          dettaglio={
+            mercatoAperto ? undefined : 'vendi il raccolto, compra semi'
+          }
+          colore={interfaccia.pannello.colore_mercato}
+          largo
+          onTocco={() => apriMercato((aperto) => !aperto)}
+        />
+      </div>
     </div>
   )
 }

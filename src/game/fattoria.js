@@ -1,58 +1,56 @@
-// Lo stato della fattoria: cosa c'e' su ogni casella, quanto e' cresciuto, e
-// quali vicinanze sono accese.
+// Lo stato della fattoria: com'e' ogni casella, cosa c'e' in magazzino e
+// quanti semi restano.
 //
-// Regola di prestazione: **le vicinanze non si ricalcolano a ogni frame.** Si
-// ricalcolano solo quando la griglia cambia — un piazzamento, una rimozione —
-// e il risultato resta scritto sulla casella. Dentro aggiorna() non si crea
-// niente e non si cerca niente.
+// Ogni casella e' in uno di tre stati: **incolto** (terra selvatica, va
+// dissodata), **arato** (ci puoi piantare), **occupato**.
+//
+// Piantare **consuma un seme**: e' quella la cosa che scarseggia all'inizio,
+// non lo spazio. All'inizio non puoi riempire il campo neanche volendo, e
+// vendendo il problema si scioglie da solo.
+//
+// Regola di prestazione: le vicinanze si ricalcolano **solo quando la griglia
+// cambia**, mai a ogni frame, e il risultato resta scritto sulla casella.
 
 import {
   elencoMateriali,
+  elencoPiantabili,
   elencoVicinanze,
   limiti,
+  partenza,
   trovaContenuto
 } from './config.js'
 import { quanteCaselle, vicini } from './griglia.js'
 
 function casellaVuota() {
   return {
+    arata: false,
     contenuto: '',
     famiglia: '',
-    // crescita
     crescitaMs: 0,
     tempoMaturazione: 0,
     matura: false,
-    // resa
     materiale: '',
     resaBase: 0,
     // vicinanze, riscritte solo quando la griglia cambia
-    bonusResa: 1,
     bonusVelocita: 1,
+    irrigata: false,
     legami: new Int16Array(limiti.vicini_massimi),
     quantiLegami: 0,
-    // gia' pronta per il disegno: comporre la stringa a ogni frame sarebbe
-    // un'allocazione per casella per fotogramma
-    etichetta: '',
-    irrigata: false,
     // per l'animazione di comparsa
     etaMs: 0
   }
 }
 
-export function creaFattoria({ allaRaccolta }) {
+export function creaFattoria({ allaRaccolta, alCambioDelCampo }) {
   const caselle = []
   for (let i = 0; i < quanteCaselle; i++) {
     caselle.push(casellaVuota())
   }
 
   const magazzino = {}
-  for (let i = 0; i < elencoMateriali.length; i++) {
-    magazzino[elencoMateriali[i].id] = 0
-  }
+  const semi = {}
 
-  // spazi di lavoro preallocati per il ricalcolo delle vicinanze
   const candidati = new Int16Array(limiti.vicini_massimi)
-  const gia_visti = new Array(limiti.vicini_massimi).fill('')
 
   function corrisponde(casella, bersaglio) {
     if (!casella.contenuto) {
@@ -64,62 +62,23 @@ export function creaFattoria({ allaRaccolta }) {
     return casella.famiglia === bersaglio.famiglia
   }
 
-  // Quante caselle vicine soddisfano la regola, e quali. Se la regola chiede
-  // vicini "diversi", conta i tipi distinti e diversi dal soggetto: e' quello
-  // che rende Rotazione il contrario di Filare.
   function contaVicini(indice, regola) {
-    const casella = caselle[indice]
     const elenco = vicini[indice]
     let quanti = 0
-    let quantiDistinti = 0
-
     for (let i = 0; i < elenco.length; i++) {
-      const vicino = caselle[elenco[i]]
-      if (!corrisponde(vicino, regola.accanto_a)) {
-        continue
+      if (corrisponde(caselle[elenco[i]], regola.accanto_a)) {
+        candidati[quanti] = elenco[i]
+        quanti++
       }
-      if (regola.diverse) {
-        if (vicino.contenuto === casella.contenuto) {
-          continue
-        }
-        let ripetuto = false
-        for (let j = 0; j < quantiDistinti; j++) {
-          if (gia_visti[j] === vicino.contenuto) {
-            ripetuto = true
-            break
-          }
-        }
-        if (ripetuto) {
-          continue
-        }
-        gia_visti[quantiDistinti] = vicino.contenuto
-        quantiDistinti++
-      }
-      candidati[quanti] = elenco[i]
-      quanti++
     }
     return quanti
   }
 
-  function aggiungiLegame(casella, indiceVicino) {
-    for (let i = 0; i < casella.quantiLegami; i++) {
-      if (casella.legami[i] === indiceVicino) {
-        return
-      }
-    }
-    if (casella.quantiLegami < casella.legami.length) {
-      casella.legami[casella.quantiLegami] = indiceVicino
-      casella.quantiLegami++
-    }
-  }
-
   function ricalcolaUna(indice) {
     const casella = caselle[indice]
-    casella.bonusResa = 1
     casella.bonusVelocita = 1
-    casella.quantiLegami = 0
     casella.irrigata = false
-    casella.etichetta = ''
+    casella.quantiLegami = 0
 
     if (!casella.contenuto) {
       return
@@ -134,32 +93,15 @@ export function creaFattoria({ allaRaccolta }) {
       if (quanti < regola.quante) {
         continue
       }
-
-      // "per_ogni" moltiplica una volta per vicino: e' cosi' che un filare
-      // lungo vale piu' di una coppia
       const volte = regola.per_ogni ? quanti : 1
       for (let v = 0; v < volte; v++) {
-        if (regola.effetto.statistica === 'resa') {
-          casella.bonusResa *= regola.effetto.moltiplicatore
-        } else {
-          casella.bonusVelocita *= regola.effetto.moltiplicatore
-          casella.irrigata = true
-        }
+        casella.bonusVelocita *= regola.effetto.moltiplicatore
       }
-
-      for (let c = 0; c < quanti; c++) {
-        aggiungiLegame(casella, candidati[c])
+      casella.irrigata = true
+      for (let c = 0; c < quanti && casella.quantiLegami < casella.legami.length; c++) {
+        casella.legami[casella.quantiLegami] = candidati[c]
+        casella.quantiLegami++
       }
-    }
-
-    if (casella.bonusResa > 1) {
-      casella.etichetta = '×' + casella.bonusResa.toFixed(1)
-    }
-
-    // il tempo che manca cambia con la velocita': si ricalcola qui, cosi'
-    // aggiorna() non deve fare conti
-    if (casella.famiglia === 'coltura') {
-      casella.matura = casella.crescitaMs >= casella.tempoMaturazione
     }
   }
 
@@ -167,14 +109,54 @@ export function creaFattoria({ allaRaccolta }) {
     for (let i = 0; i < caselle.length; i++) {
       ricalcolaUna(i)
     }
+    alCambioDelCampo()
   }
 
-  function piazza(indice, idContenuto) {
-    if (indice < 0 || indice >= caselle.length || caselle[indice].contenuto) {
+  function caselleArate() {
+    let quante = 0
+    for (let i = 0; i < caselle.length; i++) {
+      if (caselle[i].arata) {
+        quante++
+      }
+    }
+    return quante
+  }
+
+  function semiDi(idContenuto) {
+    return semi[idContenuto] || 0
+  }
+
+  function aggiungiSeme(idContenuto, quantita) {
+    semi[idContenuto] = (semi[idContenuto] || 0) + (quantita || 1)
+  }
+
+  // Dissodare non paga niente: le monete le muove chi chiama, perche' il
+  // prezzo lo sa l'economia. Qui si cambia solo il terreno.
+  function dissoda(indice) {
+    if (indice < 0 || indice >= caselle.length || caselle[indice].arata) {
       return false
     }
-    const dati = trovaContenuto(idContenuto)
+    caselle[indice].arata = true
+    alCambioDelCampo()
+    return true
+  }
+
+  // Piantare consuma un seme dal magazzino: e' la regola che rende difficile
+  // l'inizio, ed e' il motivo per cui si vende.
+  function piazza(indice, idContenuto) {
+    if (indice < 0 || indice >= caselle.length) {
+      return false
+    }
     const casella = caselle[indice]
+    if (!casella.arata || casella.contenuto) {
+      return false
+    }
+    if (semiDi(idContenuto) <= 0) {
+      return false
+    }
+
+    const dati = trovaContenuto(idContenuto)
+    semi[idContenuto]--
 
     casella.contenuto = dati.id
     casella.famiglia = dati.famiglia
@@ -185,16 +167,18 @@ export function creaFattoria({ allaRaccolta }) {
     casella.materiale = dati.resa ? dati.resa.materiale : ''
     casella.resaBase = dati.resa ? dati.resa.quantita : 0
 
-    // cambia la griglia: cambiano anche i vicini, non solo questa casella
     ricalcolaVicinanze()
     return true
   }
 
+  // Estirpare restituisce il seme: sbagliare a piantare non deve costare, in
+  // un gioco in cui non si perde.
   function rimuovi(indice) {
     if (indice < 0 || indice >= caselle.length || !caselle[indice].contenuto) {
       return false
     }
     const casella = caselle[indice]
+    aggiungiSeme(casella.contenuto, 1)
     casella.contenuto = ''
     casella.famiglia = ''
     casella.crescitaMs = 0
@@ -205,20 +189,32 @@ export function creaFattoria({ allaRaccolta }) {
     return true
   }
 
-  // Raccogliere non toglie la coltura: ricomincia a crescere. Cosi' il
-  // giocatore guarda la disposizione invece di ripiantare in continuazione —
-  // ed e' anche il gesto che lo spaventapasseri gli togliera' (punto 7).
+  // Raccogliere non toglie la coltura: ricomincia a crescere. E' anche il
+  // gesto che il bracciante togliera' di mano al giocatore (punto 8).
   function raccogli(indice) {
     const casella = caselle[indice]
     if (!casella.matura || !casella.materiale) {
       return 0
     }
-    const quantita = Math.max(1, Math.round(casella.resaBase * casella.bonusResa))
-    magazzino[casella.materiale] += quantita
+    magazzino[casella.materiale] += casella.resaBase
     casella.crescitaMs = 0
     casella.matura = false
-    allaRaccolta(indice, quantita)
-    return quantita
+    allaRaccolta(indice, casella.resaBase)
+    return casella.resaBase
+  }
+
+  // Quando non si riesce a pagare: una casella arata e vuota torna incolta.
+  // Mai una casella coltivata, altrimenti si perderebbe un raccolto in corso
+  // e sembrerebbe una punizione.
+  function abbandonaUnaCasellaVuota() {
+    for (let i = caselle.length - 1; i >= 0; i--) {
+      if (caselle[i].arata && !caselle[i].contenuto) {
+        caselle[i].arata = false
+        alCambioDelCampo()
+        return true
+      }
+    }
+    return false
   }
 
   function aggiorna(passoMs) {
@@ -239,14 +235,52 @@ export function creaFattoria({ allaRaccolta }) {
     }
   }
 
-  function svuota() {
+  function reimposta() {
     for (let i = 0; i < caselle.length; i++) {
-      rimuovi(i)
+      const casella = caselle[i]
+      casella.arata = false
+      casella.contenuto = ''
+      casella.famiglia = ''
+      casella.crescitaMs = 0
+      casella.matura = false
+      casella.materiale = ''
+      casella.resaBase = 0
+      casella.quantiLegami = 0
+      casella.bonusVelocita = 1
+      casella.irrigata = false
     }
     for (let i = 0; i < elencoMateriali.length; i++) {
       magazzino[elencoMateriali[i].id] = 0
     }
+    for (let i = 0; i < elencoPiantabili.length; i++) {
+      semi[elencoPiantabili[i].id] = 0
+    }
+    for (let i = 0; i < partenza.semi.length; i++) {
+      semi[partenza.semi[i].id] = partenza.semi[i].quantita
+    }
+    // il campo di partenza: poche caselle gia' pronte, il resto e' selvatico
+    for (let i = 0; i < partenza.caselle_arate && i < caselle.length; i++) {
+      // si parte dal fondo, vicino a casa
+      caselle[caselle.length - 1 - i].arata = true
+    }
+    alCambioDelCampo()
   }
 
-  return { caselle, magazzino, piazza, rimuovi, raccogli, aggiorna, svuota }
+  reimposta()
+
+  return {
+    caselle,
+    magazzino,
+    semi,
+    semiDi,
+    aggiungiSeme,
+    caselleArate,
+    dissoda,
+    piazza,
+    rimuovi,
+    raccogli,
+    abbandonaUnaCasellaVuota,
+    aggiorna,
+    reimposta
+  }
 }

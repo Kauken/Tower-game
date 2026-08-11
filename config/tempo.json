@@ -1,0 +1,13 @@
+{
+  "_nota": "Il giorno e' il battito del gioco. Dura pochi minuti mentre l'app e' aperta: e' il meccanismo del 'vabbe', ancora un giorno'. A fine giornata si pagano le spese, i prezzi si muovono e un riepilogo dice cosa e' successo.",
+  "giorno_ms": 90000,
+  "riepilogo": {
+    "_nota": "Il riepilogo di fine giornata non ferma il gioco: e' un foglio che si puo' chiudere. Fermare la fattoria ogni due minuti sarebbe una tassa, non un momento.",
+    "durata_visibile_ms": 9000
+  },
+  "offline": {
+    "_nota": "Quanto e fino a quando la fattoria va avanti a app chiusa. Serve al punto 13: nessuno lo legge ancora.",
+    "frazione_di_velocita": 0.35,
+    "tetto_ms": 28800000
+  }
+}
