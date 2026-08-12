@@ -1,21 +1,56 @@
-# Registro delle decisioni
+# Le decisioni
 
-Regola: quando una decisione viene presa, si sposta in "Decise" con data e motivazione in una riga, e si aggiorna `docs/GDD.md`. Nessuna decisione si prende implicitamente dentro un lavoro di codice.
+Ogni voce ha la data e, dove si può, **le parole esatte dell'autore**. Riassumerle è il modo in cui si perde l'informazione che conta.
 
-**Questo registro è stato azzerato il 2026-08-11** col passaggio al farming, e aggiornato la sera stessa col passaggio all'isola (`GDD.md` v5.0). Le decisioni dei giochi precedenti sono cadute con loro e non sono riportate: valevano per giochi che non esistono più.
+Si legge dal basso verso l'alto per capire come ci siamo arrivati, dall'alto verso il basso per sapere dove siamo.
 
-## Aperte
+---
 
-1. **Quanto grande deve diventare l'isola.** Adesso 24x30 tessere. Se le catene chiedono spazio, o serve piu' isola o serve l'isola vicina. Da decidere al punto 10.
-2. **Come si assume.** Al molo? Con una commessa? Semplicemente pagando? Da decidere al punto 3.
-3. **Se i braccianti hanno un nome e una faccia.** RimWorld regge sui coloni che non sono intercambiabili. Darebbe calore, ma anche una schermata in piu' da gestire col pollice. Da valutare dopo il punto 3.
-4. **Quanti semi diversi servono perché "cosa pianto" sia una decisione vera.** Tre bastano per la verifica del punto 3, se hanno profili diversi (tempo, costo del seme, prezzo di vendita). Da rivedere dopo il punto 4.
-2. **Quanto pesano le spese fisse.** La manutenzione per casella arata e i salari devono mordere senza soffocare. Da tarare con l'agente `bilanciatore` subito dopo il punto 3, con la simulazione headless.
-3. **Cosa succede quando non riesci a pagare.** Il GDD dice che i braccianti se ne vanno e le caselle tornano incolte. Quanto in fretta, e in che ordine? Da decidere al punto 8.
-4. **Se le stagioni esistono.** Darebbero un ritmo lungo e renderebbero le scelte di semina più interessanti, ma introducono attesa e obsolescenza — due cose che il GDD §10 tiene sotto controllo. Da valutare dopo il punto 4.
-5. **Quanto è grande il campo alla fine.** Adesso 5x8; se le macchine chiedono spazio serve piu' campo o un secondo appezzamento. Da decidere al punto 10.
+## ⚠️ Aperte — vanno decise prima di costruirle
+
+Se un punto della roadmap sta per toccare una di queste, **fermati e falla decidere** (agente `consulente-design`), poi costruisci.
+
+### A1. Le macchine consumano energia?
+
+In Factorio e Satisfactory la corrente è metà del gioco: è quello che rende una fabbrica un sistema invece che una fila di scatole. Ma è **un secondo sistema di reti da imparare su un telefono**, e questo progetto ha già l'inventario, le ricette e il trasporto.
+
+**Raccomandazione: no alla rete elettrica, sì al combustibile su una macchina sola.** La fornace consuma **carbone** in un cassetto suo. Dà al carbone un mestiere, aggiunge una catena che converge (scavi carbone *per poter* fondere il ferro), e non chiede al giocatore di imparare fili e generatori. Se un giorno servirà di più, un cassetto del combustibile si estende; una rete elettrica tolta a metà no.
+
+È il **punto 15** della roadmap, segnato *da confermare*.
+
+### A2. Chi dà le commesse, e con che ritmo?
+
+Le commesse sono il punto 14. Senza il ciclo del giorno **non hanno una scadenza** — ed è giusto così, *non c'è fretta* è una costante. Ma allora resta da decidere cosa le fa arrivare: il tempo che passa? Il fatto che hai sbloccato qualcosa? Una bacheca dove ce ne sono sempre tre e ne scegli una?
+
+**Raccomandazione: tre sulla bacheca, ne accetti una per volta, e quando la consegni ne arriva un'altra.** Nessun orologio, e la scelta fra tre è una decisione vera.
+
+### A3. Quante isole, e cosa porta ognuna?
+
+La seconda è decisa (ferro e carbone). Dalla terza in poi è contenuto, e si decide quando la base è viva. Da non progettare adesso: sarebbe progettare al buio.
+
+---
 
 ## Decise
+
+- 2026-08-12 (notte): **LA SPINA DORSALE È IL TEMPO DELL'OPERAIO.** Non è una richiesta dell'autore, è il modo trovato per tenere insieme tutto quello che ha chiesto: un operaio solo, l'albero tecnologico, il crafting, le trivelle, i nastri, le isole. C'è una persona sola, quindi ogni cosa si misura in **quanti secondi del suo tempo costa e quanti gliene restituisce**. Motivo: senza una lente unica, un gioco con cinque sistemi diventa cinque giochi che non si parlano, ed è come sono morte le versioni precedenti. Ogni proposta futura si giudica con questa frase; se non ci si può giudicare, è fuori posto.
+
+- 2026-08-12 (notte): **TRE ECONOMIE, NON DUE.** Il **tempo** (si libera, non si compra), i **materiali** (dall'isola, costruiscono le cose), le **monete** (dal vendere, comprano i **progetti** — il *diritto* di costruire una cosa). Nasce dalla richiesta dell'autore: *"oltre al sistema di compra vendita ci dev'essere un sistema di crafting per craftare le nuove attrezzature e macchinari."* Motivo: se i progetti si pagassero coi materiali, il mercante sarebbe arredamento; se le macchine si comprassero con le monete, l'isola lo sarebbe. Separandole, **entrambe restano vive per tutta la partita**. È il modello del HUB di Satisfactory: sblocchi il traguardo, poi il capannone lo costruisci comunque tu.
+
+- 2026-08-12 (notte): **NIENTE PARTE SE NON L'HAI PRESO IN MANO.** Parole dell'autore: *"per gli alberi fai in modo che devo selezionarli per piantarli perché se no quando clicco a caso pianta solo e sempre gli alberi."* Il tocco sul terreno vuoto, a mani vuote, **non fa più niente**. Per piazzare qualcosa lo prendi in mano — da una casella dell'inventario o dal menù Costruisci — e resti in mano finché non finisce o non annulli.
+
+  Motivo, e vale per il futuro più che per adesso: l'autore ha chiesto di *"considerare anche cosa dobbiamo implementare in futuro così da capire quali funzionamenti devono avere ora le cose"*. Le cose piazzabili passeranno da una (l'alberello) a dieci (casse, trivelle, macchine, nastri, pontili). **Un'azione di default sul terreno vuoto non regge dieci cose**, e ogni comando inventato dopo sarebbe un gesto in più da imparare. Con la mano, il gesto è **uno solo per sempre** — e i nastri, che vogliono un dito che scorre, sono lo stesso gesto con un trascinamento.
+
+- 2026-08-12 (notte): **VIA IL CICLO DEL GIORNO.** Parole dell'autore: *"il ciclo del giorno penso che puoi rimuoverlo in quanto non abbiamo più i costi per gli operai."* Ha ragione, e il motivo è più profondo di quello che dice: il giorno esisteva per far **scadere i salari**, e i salari sono caduti col passaggio a un operaio solo. Un orologio che gira senza avere denti è solo un'ansia gratuita, e **"non c'è fretta"** è una delle cinque costanti del progetto. Il ritmo lo danno gli **sblocchi**: *mi mancano 40 monete al progetto della trivella* è un motivo per fare un altro viaggio, *sta per finire il giorno* non lo è.
+
+- 2026-08-12 (notte): **I GIACIMENTI NON SI ESAURISCONO, GLI OSTACOLI SÌ.** Richiesta dell'autore: *"considera anche spazi per le vene di materiali così che magari poi siano punti fissi per l'estrazione dei minerali che poi saranno prima fatti a mano e poi con trivelle."* Ne discendono **tre rapporti diversi con la mappa**, ed è deliberato: gli **ostacoli** (alberi, massi, frane) finiscono, danno una resa una volta e liberano spazio — sgomberare è un lavoro che *finisce*, e finire un lavoro è una soddisfazione; i **giacimenti** non finiscono mai e hanno una **ricchezza** (povero ×0,5 / normale ×1 / ricco ×2, come in Satisfactory) che rende i posti diversi fra loro; il **bosco** dipende da te, perché gli alberi non ricrescono e gli alberelli li ripianti.
+
+  Il giacimento è il **rubinetto** dell'isola: il limite non è quanto ce n'è, è **quanto ne esce al minuto**. Ed è quel tetto che rende la crescita un problema invece che una formalità.
+
+- 2026-08-12 (notte): **LE ISOLE SI APRONO COSTRUENDO, E L'OPERAIO SI SPOSTA CON TE.** Richiesta dell'autore: *"magari con un sistema di isole dove su altre isole sblocco altri minerali per crafting avanzati."* La parte aggiunta in fase di progetto è la seconda metà, ed è la cosa più importante della struttura: **mentre l'operaio è sull'isola B, sull'isola A non succede niente a mano** — vanno avanti solo le macchine.
+
+  Motivo: così la seconda isola non è *"più spazio"*, è **il momento in cui la prima deve saper vivere senza di te**. Automatizzare smette di essere una comodità e diventa **il prezzo del biglietto**, senza che il gioco te lo imponga con un cartello. È l'unica struttura trovata in sei versioni in cui l'automazione è obbligatoria per progredire e resta comunque una scelta tua.
+
+- 2026-08-12 (notte): **LE REGOLE DEL BILANCIAMENTO SONO INVARIANTI, NON GUSTI.** Il prezzo di un prodotto sta fra la somma dei suoi ingredienti e due volte e mezzo quella somma (sotto, lavorare è una perdita; sopra, c'è una sola cosa sensata da fare). Ogni macchina si ripaga fra i 3 e i 30 minuti, o è arredamento e va tolta invece che ritoccata. Mai più di tre ingredienti in una ricetta. Ogni livello ne contiene almeno una che fa **incontrare due catene** — è quello che in Factorio rende interessanti i circuiti e noiose le piastre. Tutto in `docs/MATERIALI.md`, e dove si può è **controllato dal codice all'avvio**.
 
 - 2026-08-12 (sera): **NIENTE SI SPOSTA DA SOLO, E NIENTE RICRESCE DA SOLO.** Parole dell'autore: *"Non voglio pero' che gli alberi crescano da soli, ma quando rompo gli alberi mi fa anche gli alberelli cosi' che io poi possa ripiantarli. Fai in modo che il player ha un inventario proprio alla Minecraft... Cosi' anche per la raccolta non viene messa la roba in automatico in una chest specifica ma seleziono un inventario e poso la roba che voglio lasciare li', cosi' da dare poi anche il senso all'automazione per il trasporto anche degli oggetti dalla fonte alla lavorazione del prodotto."*
 
@@ -70,3 +105,11 @@ Regola: quando una decisione viene presa, si sposta in "Decise" con data e motiv
 - 2026-08-11: **Non si può perdere.** Nessun fallimento, nessun timer che scade, niente che marcisce se non torni. Motivo: è la definizione di cozy, ed è il vincolo che l'autore ha tenuto costante in tutte le versioni senza mai nominarlo.
 
 - 2026-08-11: **Si resta sul web (Vite + React + canvas), niente Godot.** Decisione confermata dal progetto precedente e ancora più valida qui: una griglia 2D non ha bisogno di un motore. Il motivo che pesa di più resta **come l'autore prova il gioco** — un link che si apre sul telefono due minuti dopo la modifica.
+
+---
+
+## Archivio — le versioni morte
+
+Le voci qui sopra datate **2026-08-11 o prima** appartengono in parte a generi abbandonati (il tower defense a reclute, la fattoria a scacchiera, il puzzle di vicinanze). **Non sono state cancellate di proposito:** dicono *perché* una strada è stata lasciata, ed è l'unica cosa che impedisce di riproporla fra tre settimane.
+
+Quando leggi una voce vecchia, controlla la data prima di agire.

@@ -9,7 +9,7 @@ Chi scrive non è un programmatore e lavora dal telefono: le richieste arrivano 
 
 ## Procedura
 
-1. **Traduci nel vocabolario del progetto** usando la skill `td-glossario`. "Le carte", "le caselle", "i moduli" hanno un significato preciso nel codice.
+1. **Traduci nel vocabolario del progetto** usando la skill `isola-glossario`. "La casella", "la mano", "il giacimento", "il progetto" hanno un significato preciso nel codice. E **controlla il registro dei rifiuti**: se quello che stai per proporre e' gia' stato rifiutato, dillo invece di costruirlo.
 2. **Distingui il sintomo dalla richiesta.** "Il gioco è noioso all'inizio" non è una richiesta di funzionalità: è un sintomo. Risali a cosa lo causa prima di proporre soluzioni.
 3. **Riformula come specifica**, in questa forma:
 
@@ -32,11 +32,11 @@ Chi scrive non è un programmatore e lavora dal telefono: le richieste arrivano 
 
 ## Esempio
 
-Richiesta: *"quando piazzo una cosa non si capisce niente"*
+Richiesta: *"quando do un ordine non si capisce se è partito"*
 
 Specifica:
-**Cosa faccio** — feedback visivo al piazzamento e all'accensione delle vicinanze.
-**Comportamento atteso** — la casella si illumina sotto il dito; il contenuto compare con un rimbalzo di 150 ms; ogni vicinanza che scatta accende un segno verso il vicino, uno dopo l'altro.
-**Cosa NON tocco** — bilanciamento, altre entità, interfaccia in alto.
-**File coinvolti** — `src/game/`, effetti da pool; nessun valore nuovo in config.
-**Come si verifica** — piazza un grano accanto a un altro grano: devi vedere il rimbalzo e il segno che si accende fra le due caselle.
+**Cosa faccio** — feedback visivo alla presa in carico di un ordine.
+**Comportamento atteso** — l'anello giallo compare sulla cosa toccata entro 100 ms; diventa verde quando l'operaio prende in carico quel lavoro; sparisce quando è fatto.
+**Cosa NON tocco** — bilanciamento, la coda degli ordini, l'interfaccia in basso.
+**File coinvolti** — `src/game/disegno.js` ed effetti da pool; i colori in `config/motore.json` → `grafica.ordine`.
+**Come si verifica** — ordina tre alberi di fila: il primo deve essere verde e gli altri due gialli.

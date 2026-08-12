@@ -52,7 +52,7 @@ Ogni lezione va in **un file**, scelto in base a cosa è:
 | Che tipo di lezione | Dove va |
 | --- | --- |
 | Una regola di lavoro | una regola numerata in `CLAUDE.md` |
-| Una cosa che l'autore ha rifiutato | l'elenco delle parole vietate in `td-glossario` |
+| Una cosa che l'autore ha rifiutato | l'elenco delle parole vietate in `isola-glossario` |
 | Una scelta di design e il suo perché | `docs/DECISIONI.md`, con le parole dell'autore |
 | Lo stato di cosa esiste adesso | `docs/HANDOFF.md` |
 
@@ -64,9 +64,11 @@ Una regola scritta si può dimenticare. **Un controllo che fa fallire il gioco a
 
 Esempi già in piedi in questo progetto, tutti nati da un errore vero:
 
-- il gioco si rifiuta di partire se una coltura ne domina un'altra sotto ogni aspetto → *scegliere cosa piantare non sarebbe una decisione*
-- si rifiuta di partire se un mestiere non ha niente da lavorare → *sarebbe un bracciante pagato per stare fermo*
 - si rifiuta di partire se la mappa ha righe di lunghezza diversa o un carattere fuori legenda
+- si rifiuta di partire se un materiale non ha un prezzo o una pila → *non si potrebbe né vendere né mettere in una casella*
+- si rifiuta di partire se un materiale pianta qualcosa che non sa quanto ci mette a crescere → *pianteresti e non nascerebbe mai niente*
+- si rifiuta di partire se una tecnologia usa la chiave sbagliata per il suo tipo di effetto → *darebbe un effetto che non si vede e che nessuno collegherebbe alla configurazione*
+- **da mettere al punto 5:** si rifiuta di partire se una ricetta produce un materiale che consuma → *materia infinita, e nessun bilanciamento la aggiusta*
 
 Prima di chiudere il post mortem chiediti: **posso rendere questo errore impossibile invece che sconsigliato?** Un controllo all'avvio, una verifica dell'agente `collaudo`, una prova nel browser. Se sì, fallo adesso.
 
