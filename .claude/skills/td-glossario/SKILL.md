@@ -32,6 +32,22 @@ L'autore parla di gioco, non di codice. Questa è la mappa fra le due lingue.
 | "le commesse", "gli obiettivi" | richieste di roba precisa: pagano molto piu' del mercato e sbloccano lavorazioni |
 | "allontanare", "lo zoom" | il pulsante che fa vedere tutta l'isola. Due livelli soltanto, non il pizzico |
 
+## Il registro dei rifiuti — leggilo prima di proporre
+
+Queste cose l'autore le ha **rifiutate esplicitamente**. Un rifiuto e' un fatto negativo, e i fatti negativi non sopravvivono in un documento che descrive quello che il gioco *e'*: per questo stanno qui, con la data e le parole esatte.
+
+| Cosa | Quando | Le sue parole |
+| --- | --- | --- |
+| **Un personaggio da guidare** | rifiutato **tre volte** | *"non l'omino che si muove"* · *"non vorrei un personaggio ma piu' da gestionale che col dito comando"* |
+| **La scacchiera** | 2026-08-11 | *"non voglio questa cosa a scacchiera"* |
+| **Il magazzino centrale** | 2026-08-11 | *"non voglio una sorta di Age of Empires che ha un magazzino principale"* |
+| **Il puzzle di incastro** | 2026-08-11 | *"non vorrei pero' un puzzle game, vorrei piu' un farmer"* |
+| **Il tower defense** | 2026-08-11 | *"sembra molto noioso da vedere e giocare"* |
+
+**Riproporre una di queste e' l'errore piu' caro che puoi fare:** costa la fiducia dell'autore, non solo il tempo.
+
+## Parole che appartengono ai progetti vecchi
+
 Se compaiono, **non sono richieste**: sono resti di giochi cancellati. Vanno chiarite prima di eseguire qualunque cosa.
 
 **la recluta · l'ondata · il nemico · il castello · la torre · il sentiero · la postazione · l'oro · i cristalli · la pool · il boss · la stanza · il piano · la minimappa · il seguito di minion · la levetta · il personaggio da muovere · schivare · corsia**

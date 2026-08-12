@@ -1,4 +1,4 @@
-# Lista di costruzione — v9
+# Lista di costruzione — v10
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
@@ -12,9 +12,9 @@ per le catene. **Nessun personaggio: si comanda col dito.**
 
 La domanda più grossa riceve risposta per prima:
 
-> **Guardare l'isola e comandarla col dito è piacevole?**
+> **Apri l'isola e sai già cosa vuoi fare?**
 
-Ci si arriva al punto 1. Catene, zone, commesse e macchine sono tutti inutili
+Ci si arriva al punto 4. Catene, zone, nastri e macchine sono tutti inutili
 se lì la risposta è no.
 
 **La lezione delle sei versioni precedenti:** il progetto è morto ogni volta
@@ -24,60 +24,75 @@ versione è la più grande di tutte, quindi contano il doppio.
 
 ---
 
-## Fase A — il posto deve funzionare
+## Fase A — il posto (fatta)
 
-1. **L'isola, la telecamera e il primo ordine.** — **FATTO** (2026-08-11). Un'isola di 24×30 tessere che non sembra una scacchiera: erba, sabbia, mare, riva. Si trascina col dito, un pulsante allontana la vista. Tocchi un albero o un masso e dai un ordine; lo tocchi di nuovo e lo annulli. Due braccianti — un taglialegna e un cavatore — prendono i lavori che sanno fare, ci vanno, li fanno, e il legno e la pietra arrivano in magazzino.
+1. **L'isola, la telecamera e il primo ordine.** — **FATTO** (2026-08-11).
+2. **Le cose stanno in un posto — niente magazzino centrale.** — **FATTO** (2026-08-11). Casse con un posto preciso, zaino da 12, *dove scarica lo dici tu*, costruzioni pagate davvero dalle casse.
 
-> ### ✅ Verifica dopo il punto 1 — **passata** (2026-08-11)
-> *"Va bene, sembra un posto"* e *"Funziona, si capisce tutto"*.
+> ### ✅ Verifiche passate
+> Punto 1: *"va bene, sembra un posto"*, *"funziona, si capisce tutto"*.
+> Punto 2: *"perfetto funziona"*.
 
-> ### 🛑 Verifica dopo il punto 2 — non si va avanti senza
-> **Si sente che la distanza costa?** Guardare un bracciante camminare avanti e
-> indietro deve far venire voglia di mettergli una cassa vicino. Se costruire
-> una cassa più vicina non cambia niente di percepibile, lo zaino è troppo
-> grande o l'isola troppo piccola — e senza quel costo i nastri non serviranno
-> a niente.
+## Fase B — farlo diventare un gioco
 
-2. **Le cose stanno in un posto — niente magazzino centrale.** — **FATTO** (2026-08-11). Le risorse stanno dentro **casse**, non in un contatore. Il bracciante ha uno zaino da 12: raccoglie, si riempie, smette di lavorare e va a scaricare. **Dove scarica lo dici tu**: lo tocchi, premi *Dove scarica*, tocchi una cassa, e un filo tratteggiato ti fa vedere dove va. Si costruiscono casse nuove pagando **davvero** dalle casse esistenti. Il casotto è la prima cassa e c'è già all'avvio.
-3. **Assumere e pagare.** Il giorno che passa, i salari a sera, il riepilogo. Assumere un bracciante è una spesa che torna ogni giorno.
+**Adesso non c'è nessuna ragione per fare niente.** Tagli alberi perché puoi. Questi due punti, e solo questi due, trasformano un giocattolo in un gioco: uno mette la **pressione**, l'altro il **desiderio**. Tutto il resto della roadmap è contenuto.
 
-> ### 🛑 Verifica dopo il punto 3
-> **"Assumo o me lo faccio bastare" è una decisione difficile?** Se assumere è
-> sempre giusto, i salari sono troppo bassi.
+3. **Il giorno e i salari.** Il giorno passa, a sera si paga chi hai assunto, e arriva il riepilogo. Assumere diventa una scommessa invece che un regalo.
+4. **Le commesse.** Qualcuno ti chiede roba precisa e paga molto più del mercato. È il "non vedo l'ora", ed è la prima volta che il legno serve a qualcosa.
 
-4. **I campi.** Dissodare, seminare, raccogliere: il contadino come terzo mestiere. I semi si comprano e si consumano.
-5. **Il mercato e le commesse.** Vendere al molo, e la bacheca che chiede roba precisa e paga molto di più. È il "non vedo l'ora".
+> ### 🛑 Verifica dopo il punto 4 — non si va avanti senza
+> **Apri l'isola e sai già cosa vuoi fare?** Se dopo il riepilogo della sera non
+> c'è una cosa che vuoi, mancano pressione o desiderio, e si risolve qui.
 
-## Fase B — le catene
+## Fase C — le fondamenta che costano care se si rimandano
 
-6. **La prima lavorazione**: il Mulino (grano → farina), costruito col rame. Colture e minerali diventano un gioco solo.
-7. **La catena a due passaggi**: il Forno (farina → pane). Il valore si moltiplica a ogni passaggio.
-8. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
-9. **I nastri**: la roba si sposta da sola da una cassa all'altra. **È il momento in cui la catena gira senza di te**, ed è il cuore della parte Factorio. Ha senso solo perché il punto 2 ha reso il trasporto un costo vero.
+Tre cose che non aggiungono niente da giocare, ma che **triplicano di costo** se arrivano dopo le catene invece che prima.
 
-> ### 🛑 Verifica dopo il punto 9
-> **Guardare la catena girare da sola dà soddisfazione?** Se no, manca il
-> motivo per cui esiste tutto il resto.
+5. **Il salvataggio.** *(spostato dal 15° posto)* Adesso chiudere la pagina cancella tutto. Un gioco da telefono giocato a spizzichi che perde il progresso **non verrà mai giocato abbastanza da poter essere giudicato** — e senza sessioni lunghe le verifiche della roadmap non valgono niente. Costo dichiarato: finché il modello cambia spesso, un salvataggio vecchio va buttato invece che convertito. Si fa con la versione dentro il file, come dice la skill `td-salvataggio`.
+6. **Il percorso vero dei braccianti.** *(spostato dall'11° posto)* Adesso vanno in linea retta e attraversano gli alberi. Sull'isola aperta non si nota, ma **appena ci sono edifici e nastri diventa visibile e sbagliato** — e rifare i nastri dopo costa più che fare il percorso adesso.
+7. **La simulazione headless.** Una prova che gira senza disegnare e misura in un secondo quello che a occhio non si vede: *quanto legno al minuto con N braccianti e una cassa a distanza D?* Questo gioco **è** una questione di portata: senza misura, ogni scelta di bilanciamento è un'opinione. Nel tower defense la stessa simulazione trovò un difetto di combattimento che nessuno aveva visto giocando.
 
-## Fase C — l'isola intera
+## Fase D — le catene, cioè il pezzo Factorio
 
-10. **Le zone**: la frana da sgomberare, il pontile da riparare. Ognuna porta una materia prima e un ramo di lavorazioni.
-11. **Il percorso vero dei braccianti.** Adesso vanno in linea retta: basta su un'isola aperta, non basterà con recinti e capanne.
-12. **Le macchine** che sostituiscono i braccianti: molto più care subito, niente dopo. Nasce la decisione *assumo o compro*.
-13. **L'isola vicina** e la barca.
-14. **Gli eventi**: la settimana secca, il mercante di passaggio. Poco e ben distanziato, come lo storyteller di RimWorld.
-15. **Salvataggio e ripresa**, con la produzione a app chiusa.
+8. **La prima lavorazione**: il Mulino (grano → farina), costruito col rame. Le zone diventano un gioco solo.
+9. **La catena a due passaggi**: il Forno (farina → pane). Il valore si moltiplica a ogni passaggio.
+10. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
+11. **I nastri**: la roba si sposta da sola fra le casse. **È il momento in cui la catena gira senza di te**, e ha senso solo perché il punto 2 ha reso il trasporto un costo vero.
+
+> ### 🛑 Verifica dopo il punto 11
+> **Guardare la catena girare da sola dà soddisfazione?** È la gioia su cui è
+> costruito tutto il genere: se non c'è, manca il motivo di tutto il resto.
+
+## Fase E — l'isola intera
+
+12. **Le zone**: la frana da sgomberare, il pontile da riparare. Ognuna porta una materia prima e un ramo di lavorazioni.
+13. **Le macchine** che sostituiscono i braccianti: molto più care subito, niente dopo. Nasce la decisione *assumo o compro*.
+14. **L'isola vicina** e la barca.
+15. **Gli eventi**: la settimana secca, il mercante di passaggio. Poco e ben distanziato, come lo storyteller di RimWorld.
 16. **Altri materiali, lavorazioni e commesse** con l'agente `designer-contenuti`.
-17. **Il ritmo**: nessun buco noioso, misurato con la simulazione headless.
+17. **Il ritmo**: nessun buco noioso, misurato con la simulazione del punto 7.
 18. **Rifinitura**: suoni, animazioni, il piacere del gesto, con l'agente `rifinitore`.
 19. **Impacchettamento mobile** con Capacitor.
 
 ---
 
+## Perché quest'ordine, e cosa è stato spostato
+
+Riordinata il 2026-08-11 dopo un post mortem (skill `post-mortem`). Tre spostamenti, tutti con lo stesso criterio: **prima quello che rende giudicabile il gioco, poi quello che costa di più se rimandato, poi il contenuto.**
+
+| Cosa | Da | A | Perché |
+| --- | --- | --- | --- |
+| **Salvataggio** | 15 | 5 | Senza, nessuno gioca abbastanza a lungo da poter dire se funziona |
+| **Percorso vero** | 11 | 6 | È una fondazione: rifare i nastri dopo costa più che farlo adesso |
+| **Simulazione headless** | — | 7 | Il gioco è una questione di portata: senza misura si tira a indovinare |
+
+E una cosa che **non** è stata spostata, di proposito: le catene e i nastri restano dopo salari e commesse. Sono la parte più divertente da costruire, ed è esattamente per questo che vanno dopo — **il gioco è stato buttato sette volte per aver costruito la parte divertente prima di quella che dà un motivo per giocarci.**
+
 ## Semplificazioni note del punto 1, da sistemare quando serviranno
 
 - **I braccianti vanno in linea retta.** Attraversano gli alberi. Sull'isola aperta non si nota; col punto 11 arriva un percorso vero.
 - **Nessuno paga nessuno.** I salari sono in configurazione ma non li legge nessuno. È il punto 3.
+- **Chiudere la pagina cancella tutto.** È il punto 5.
 - **Una cassa piena** fa ripiegare il bracciante sulla più vicina con spazio, invece di bloccarlo. Va bene così finché non ci sono i nastri.
 
 ## Cosa è stato tolto, e perché

@@ -66,7 +66,13 @@ Nessun errore in console.
 
 **Fermarsi e provare.** C'è un blocco di verifica dopo il punto 1, e conta doppio: questa versione è la più grande di tutte, e il progetto è già stato buttato sette volte per aver costruito troppo prima di verificare.
 
-La domanda del punto 2: **si sente che la distanza costa?** Guardare un bracciante camminare avanti e indietro deve far venire voglia di mettergli una cassa vicino.
+La verifica del punto 2 è **passata**: *"perfetto funziona"*.
 
-- Se va → **punto 3**: il giorno che passa e i salari da pagare a sera. Assumere diventa una scommessa.
-- Se costruire una cassa più vicina non cambia niente di percepibile → lo zaino è troppo grande o l'isola troppo piccola, e senza quel costo i nastri non serviranno a niente. Si risolve in `config/braccianti.json`.
+**Adesso il gioco non ha ancora una ragione per esistere:** tagli alberi perché puoi. I prossimi due punti, e solo quelli, lo trasformano in un gioco.
+
+- **Punto 3 — il giorno e i salari.** La pressione. A sera si paga chi hai assunto, e assumere diventa una scommessa.
+- **Punto 4 — le commesse.** Il desiderio. Qualcuno ti chiede roba precisa e paga molto più del mercato: è la prima volta che il legno serve a qualcosa.
+
+Poi la **Fase C**, tre fondamenta che costano il triplo se si rimandano: il **salvataggio** (spostato dal 15° posto: senza, nessuno gioca abbastanza a lungo da poter giudicare), il **percorso vero** (spostato dall'11°: rifare i nastri dopo costa di più), e la **simulazione headless** (questo gioco è una questione di portata, e senza misura si tira a indovinare).
+
+Il perché di ogni spostamento è in fondo a `ROADMAP.md`.

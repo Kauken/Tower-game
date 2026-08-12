@@ -62,6 +62,25 @@ L'autore lavora solo da qui: non ha un'altra chat di supporto. Quindi:
 - Se chiede "e adesso?" o sembra perso, orientalo con `docs/PROCESSO.md` e `docs/ROADMAP.md`: digli a che punto è e le 2-3 mosse possibili.
 - A ogni fine lavoro, oltre a "cosa provare", indica qual è la mossa successiva più sensata.
 
+## Le costanti — quello che non è mai cambiato in nove versioni del design
+
+Il gioco è cambiato nove volte. **Queste cinque cose no, mai:**
+
+1. **Telefono, verticale, una mano sola.**
+2. **Nessun riflesso, nessuna mira, nessuna fretta.**
+3. **Contano le decisioni e gli sblocchi**, non l'abilità.
+4. **Non si deve poter perdere.**
+5. **Nessun personaggio da guidare.** Il giocatore è sopra lo schermo, non dentro.
+
+> **Prima di proporre un genere, un sistema o una meccanica, controllala contro queste cinque.** Sei riscritture su sette sono nate da un genere che ne contraddiceva una: il tower defense ha bisogno di tensione (contro la 2 e la 4), il puzzle ha bisogno di pressione di ottimizzazione (contro la 3). Se una proposta ne contraddice una, **è la proposta a essere sbagliata**: dillo, non costruirla.
+
 ## La lezione delle versioni precedenti
 
-Il progetto è stato buttato sette volte. Ogni volta per lo stesso motivo: **abbiamo costruito il gioco intero prima di sapere se il pezzo centrale era divertente.** I blocchi di verifica in `ROADMAP.md` non sono una formalità: quando ne incontri uno, fermati e fallo provare davvero prima di andare avanti.
+Il progetto è stato buttato sette volte. I post mortem (skill `post-mortem`) hanno trovato quattro schemi; questi due sono i più cari:
+
+- **Costruire il gioco intero prima di sapere se il pezzo centrale era divertente.** I blocchi di verifica in `ROADMAP.md` non sono una formalità: quando ne incontri uno, fermati e fallo provare davvero.
+- **Riproporre una cosa già rifiutata.** Il personaggio che cammina è stato riproposto **tre volte**. Le cose rifiutate stanno nel registro in `td-glossario`, con la data e le parole esatte: **leggilo prima di proporre.**
+
+E una regola che vale ogni volta che l'autore reagisce a **come si vede** una cosa:
+
+> Quando dice *"sembra una scacchiera"*, *"è spento"*, *"è noioso da guardare"*, sta parlando dell'aspetto — **non necessariamente della meccanica sotto.** Prima di riprogettare il sistema, controlla se un gioco che gli piace usa la stessa meccanica. Factorio è una griglia e non sembra una scacchiera: quella verifica ha salvato il sistema a tessere invece di farlo buttare.
