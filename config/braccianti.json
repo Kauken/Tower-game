@@ -5,13 +5,22 @@
   "_nota_squadra": "Resta un elenco anche se ne contiene uno: se un giorno servisse un secondo operaio, e' un valore di configurazione, non una riscrittura.",
   "velocita": 96,
   "distanza_arrivo": 18,
-  "zaino": 12,
   "operaio": {
     "nome": "Operaio",
     "colore": "#c9a45c",
     "colore_bordo": "#f5e2b4"
   },
   "iniziali": [
-    { "tessera": [10, 14] }
-  ]
+    {
+      "tessera": [
+        10,
+        14
+      ]
+    }
+  ],
+  "_nota_zaino": "L'inventario e' a CASELLE con pile, come in Minecraft: ogni casella tiene una pila di un materiale solo. Quando sono tutte piene l'operaio SI FERMA e non scarica da nessuna parte da solo. Dove mettere la roba lo decidi tu, ed e' quella fatica che piu' avanti rendera' i nastri una liberazione invece che un gadget. Quattro caselle sono circa sette alberi per viaggio.",
+  "slot": 4,
+  "tempo_piantata_ms": 1400,
+  "tempo_scambio_ms": 600,
+  "_nota_tempi": "tempo_piantata_ms e' quanto ci mette a mettere a dimora un alberello. tempo_scambio_ms e' quanto ci mette a posare o prendere roba da una cassa: basta che si veda che l'ha fatto, non deve essere una fila alla posta."
 }

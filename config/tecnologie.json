@@ -10,15 +10,22 @@
       "descrizione": "Abbatti gli alberi molto piu' in fretta.",
       "costo": 120,
       "colore": "#7ea653",
-      "effetto": { "tipo": "tempo_lavoro", "risorsa": "albero", "moltiplicatore": 0.6 }
+      "effetto": {
+        "tipo": "tempo_lavoro",
+        "risorsa": "albero",
+        "moltiplicatore": 0.6
+      }
     },
     {
       "id": "zaino_grande",
       "nome": "Zaino grande",
-      "descrizione": "Porti quasi il doppio prima di dover tornare a scaricare.",
+      "descrizione": "Tre tasche in piu': torni a svuotare molto meno spesso.",
       "costo": 160,
       "colore": "#c9a45c",
-      "effetto": { "tipo": "zaino", "moltiplicatore": 1.85 }
+      "effetto": {
+        "tipo": "slot",
+        "aggiunta": 3
+      }
     },
     {
       "id": "stivali",
@@ -26,7 +33,10 @@
       "descrizione": "Cammini molto piu' in fretta. Si sente su tutto.",
       "costo": 210,
       "colore": "#b58c5a",
-      "effetto": { "tipo": "velocita", "moltiplicatore": 1.45 }
+      "effetto": {
+        "tipo": "velocita",
+        "moltiplicatore": 1.45
+      }
     },
     {
       "id": "piccone_pesante",
@@ -35,26 +45,39 @@
       "costo": 260,
       "colore": "#8892a6",
       "richiede": "ascia_affilata",
-      "effetto": { "tipo": "tempo_lavoro", "risorsa": "masso", "moltiplicatore": 0.55 }
+      "effetto": {
+        "tipo": "tempo_lavoro",
+        "risorsa": "masso",
+        "moltiplicatore": 0.55
+      }
     },
     {
       "id": "vivaio",
       "nome": "Vivaio",
-      "descrizione": "Gli alberi ricrescono in meta' tempo: il bosco non ti lascia mai a mani vuote.",
+      "descrizione": "Gli alberelli che pianti diventano alberi in meta' tempo.",
       "costo": 450,
       "colore": "#4a7031",
       "richiede": "ascia_affilata",
-      "effetto": { "tipo": "ricrescita", "moltiplicatore": 0.5 }
+      "effetto": {
+        "tipo": "crescita",
+        "moltiplicatore": 0.5
+      }
     },
     {
       "id": "carriola",
       "nome": "Carriola",
-      "descrizione": "Porti il triplo, ma cammini un po' piu' piano.",
+      "descrizione": "Altre quattro tasche, ma cammini un po' piu' piano.",
       "costo": 520,
       "colore": "#a0763f",
       "richiede": "zaino_grande",
-      "effetto": { "tipo": "zaino", "moltiplicatore": 1.7 },
-      "effetto_secondario": { "tipo": "velocita", "moltiplicatore": 0.85 }
+      "effetto": {
+        "tipo": "slot",
+        "aggiunta": 4
+      },
+      "effetto_secondario": {
+        "tipo": "velocita",
+        "moltiplicatore": 0.85
+      }
     }
   ]
 }

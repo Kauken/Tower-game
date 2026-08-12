@@ -5,29 +5,25 @@
 // differenza fra questo gioco e un gestionale alla Age of Empires, ed e' la
 // ragione per cui piu' avanti i nastri avranno senso: se la roba comparisse
 // da sola in un contatore, non ci sarebbe niente da trasportare.
+//
+// Una cassa e' **un inventario a slot come quello dell'operaio**: stesso
+// modulo, stesse pile, stesso gesto. E niente ci entra da solo — la roba ci
+// arriva perche' gliel'hai detto tu.
 
-import { costruzioni, elencoMateriali, isola } from './config.js'
+import { costruzioni, isola } from './config.js'
+import { creaInventario } from './inventario.js'
 import { colonne, filari, indiceDi, sopra } from './mondo.js'
-
-function contenutoVuoto() {
-  const contenuto = {}
-  for (let i = 0; i < elencoMateriali.length; i++) {
-    contenuto[elencoMateriali[i].id] = 0
-  }
-  return contenuto
-}
 
 export function creaCasse() {
   const elenco = []
 
-  function aggiungi(tx, ty, capienza, eIlCasotto) {
+  function aggiungi(tx, ty, slot, eIlCasotto) {
     const cassa = {
       tx,
       ty,
-      capienza,
+      slot,
       eIlCasotto: !!eIlCasotto,
-      contenuto: contenutoVuoto(),
-      dentro: 0
+      inventario: creaInventario(slot, slot)
     }
     elenco.push(cassa)
     return cassa
@@ -42,73 +38,28 @@ export function creaCasse() {
     return null
   }
 
-  function spazioIn(cassa) {
-    return cassa.capienza - cassa.dentro
+  function pienaDel(cassa) {
+    return cassa.inventario.occupati() + '/' + cassa.slot
   }
 
-  // Quanto e' entrato davvero: una cassa piena non accetta tutto, e il
-  // bracciante si tiene il resto addosso invece di perderlo.
-  function metti(cassa, materiale, quantita) {
-    const entra = Math.min(quantita, spazioIn(cassa))
-    if (entra <= 0) {
-      return 0
-    }
-    cassa.contenuto[materiale] += entra
-    cassa.dentro += entra
-    return entra
-  }
-
-  function togli(cassa, materiale, quantita) {
-    const esce = Math.min(quantita, cassa.contenuto[materiale] || 0)
-    cassa.contenuto[materiale] -= esce
-    cassa.dentro -= esce
-    return esce
-  }
-
-  // Il totale su tutta l'isola: serve solo a farlo vedere in alto. Non e' un
-  // magazzino — nessuno puo' prendere da qui, si prende da una cassa precisa.
+  // Il totale su tutta l'isola: serve solo a farlo vedere. **Non e' un
+  // magazzino** — nessuno puo' prendere da qui, si prende da una cassa precisa.
   function totale(materiale) {
     let quanti = 0
     for (let i = 0; i < elenco.length; i++) {
-      quanti += elenco[i].contenuto[materiale] || 0
+      quanti += elenco[i].inventario.quanti(materiale)
     }
     return quanti
   }
 
-  // Quanto materiale c'e' in tutte le casse insieme: serve a sapere se ci si
-  // puo' permettere una costruzione.
-  function abbastanzaPer(costo) {
-    for (let i = 0; i < costo.length; i++) {
-      if (totale(costo[i].materiale) < costo[i].quantita) {
-        return false
-      }
-    }
-    return true
-  }
-
-  // Paga prendendo da tutte le casse che hanno qualcosa. Si paga davvero: la
-  // roba sparisce dalle casse, non da un contatore.
-  function paga(costo) {
-    if (!abbastanzaPer(costo)) {
-      return false
-    }
-    for (let i = 0; i < costo.length; i++) {
-      let manca = costo[i].quantita
-      for (let c = 0; c < elenco.length && manca > 0; c++) {
-        manca -= togli(elenco[c], costo[i].materiale, manca)
-      }
-    }
-    return true
-  }
-
-  // La cassa piu' vicina con ancora spazio: e' il ripiego quando quella
-  // assegnata e' piena.
+  // La cassa piu' vicina con ancora spazio: serve solo a suggerire dove andare,
+  // non a mandarci qualcuno da solo.
   function piuVicinaConSpazio(tx, ty) {
     let migliore = null
     let minima = 0
     for (let i = 0; i < elenco.length; i++) {
       const cassa = elenco[i]
-      if (spazioIn(cassa) <= 0) {
+      if (cassa.inventario.pieno()) {
         continue
       }
       const dx = cassa.tx - tx
@@ -124,12 +75,12 @@ export function creaCasse() {
 
   function reimposta() {
     elenco.length = 0
-    // il casotto e' gia' una cassa all'avvio e non si paga: senza, il primo
-    // bracciante non saprebbe dove scaricare e sembrerebbe rotto
+    // il casotto e' gia' una cassa all'avvio e non si paga: senza, non ci
+    // sarebbe nessun posto dove posare la prima bracciata di legno
     for (let ty = 0; ty < filari; ty++) {
       for (let tx = 0; tx < colonne; tx++) {
         if (sopra[indiceDi(tx, ty)] === 'casotto') {
-          aggiungi(tx, ty, costruzioni.capienza_casotto, true)
+          aggiungi(tx, ty, costruzioni.slot_casotto, true)
         }
       }
     }
@@ -141,12 +92,8 @@ export function creaCasse() {
     elenco,
     aggiungi,
     in: in_,
-    spazioIn,
-    metti,
-    togli,
+    pienaDel,
     totale,
-    abbastanzaPer,
-    paga,
     piuVicinaConSpazio,
     reimposta
   }

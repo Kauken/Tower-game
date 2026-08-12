@@ -1,25 +1,94 @@
 import React from 'react'
 import { elencoCostruzioni, elencoMateriali, interfaccia } from '../game/config.js'
 import Bottone from './Bottone.jsx'
+import { Casella, leggiCaselle, sommaCaselle } from './Zaino.jsx'
 
 const stile = interfaccia.pannello
 
-// "legno:12,pietra:0" -> {legno: 12, pietra: 0}. Il motore manda una stringa
-// sola invece di un oggetto, cosi' l'interfaccia capisce con un confronto se
-// e' cambiata qualcosa e non ridisegna per niente.
-export function leggiConti(riga) {
-  const conti = {}
-  if (!riga) {
-    return conti
+// La griglia di caselle di un contenitore, come quando apri una cassa in
+// Minecraft: si vede subito quanto e' piena e cosa c'e' dentro.
+function Griglia({ inventario, vuotoDice }) {
+  const caselle = leggiCaselle(inventario)
+  if (caselle.length === 0 || caselle.every((casella) => !casella)) {
+    return (
+      <span
+        style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
+      >
+        {vuotoDice}
+      </span>
+    )
   }
-  const pezzi = riga.split(',')
-  for (let i = 0; i < pezzi.length; i++) {
-    const punto = pezzi[i].indexOf(':')
-    conti[pezzi[i].slice(0, punto)] = Number(pezzi[i].slice(punto + 1))
-  }
-  return conti
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6, 1fr)',
+        gap: 5
+      }}
+    >
+      {caselle.map((casella, indice) => (
+        <div key={indice} style={{ aspectRatio: '1 / 1' }}>
+          <Casella casella={casella} />
+        </div>
+      ))}
+    </div>
+  )
 }
 
+// Una riga di pastiglie da premere, una per materiale. E' cosi' che si sposta
+// la roba: **un tocco solo per materiale**, non un trascinamento per pila.
+// Su un telefono trascinare otto pile sarebbe una punizione, non una scelta.
+function Sposta({ conti, verso, onSposta }) {
+  const presenti = elencoMateriali.filter((m) => (conti[m.id] || 0) > 0)
+  if (presenti.length === 0) {
+    return null
+  }
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}>
+      {presenti.map((materiale) => (
+        <button
+          key={materiale.id}
+          type="button"
+          onPointerDown={() => onSposta(materiale.id)}
+          style={{
+            flex: '1 1 40%',
+            minHeight: interfaccia.altezza_minima_tocco - 16,
+            padding: '6px 10px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 7,
+            borderRadius: interfaccia.raggio_angoli,
+            border: '1px solid ' + materiale.colore,
+            background: materiale.colore + '2e',
+            color: interfaccia.colore_testo,
+            fontFamily: 'inherit',
+            fontSize: interfaccia.testo_piccolo,
+            touchAction: 'manipulation'
+          }}
+        >
+          <span
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 5,
+              background: materiale.colore,
+              flexShrink: 0
+            }}
+          />
+          <span style={{ fontWeight: stile.peso_titolo }}>{verso}</span>
+          <span style={{ flex: 1, textAlign: 'right', color: interfaccia.colore_testo_debole }}>
+            {materiale.nome} {conti[materiale.id]}
+          </span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// Il foglio che sale dal basso. **Non supera mai l'altezza dello schermo**: se
+// il contenuto e' troppo scorre dentro di se'. Un pannello che sborda in alto
+// si porta via il titolo, e su un telefono non c'e' modo di andarlo a
+// riprendere.
 function Foglio({ titolo, sottotitolo, children }) {
   return (
     <div
@@ -28,6 +97,9 @@ function Foglio({ titolo, sottotitolo, children }) {
         left: interfaccia.spaziatura,
         right: interfaccia.spaziatura,
         bottom: `calc(${interfaccia.altezza_minima_tocco + interfaccia.spaziatura * 2}px + env(safe-area-inset-bottom))`,
+        maxHeight: `calc(100vh - ${interfaccia.altezza_minima_tocco * 2 + interfaccia.spazio_cruscotto + interfaccia.spaziatura * 4}px - env(safe-area-inset-bottom) - env(safe-area-inset-top))`,
+        overflowY: 'auto',
+        overscrollBehavior: 'contain',
         padding: interfaccia.spaziatura,
         borderRadius: interfaccia.raggio_angoli + 6,
         background: interfaccia.colore_pannello,
@@ -40,6 +112,11 @@ function Foglio({ titolo, sottotitolo, children }) {
     >
       <span
         style={{
+          position: 'sticky',
+          top: -interfaccia.spaziatura,
+          margin: `-${interfaccia.spaziatura}px -${interfaccia.spaziatura}px 0`,
+          padding: `${interfaccia.spaziatura}px ${interfaccia.spaziatura}px 6px`,
+          background: interfaccia.colore_pannello,
           fontSize: interfaccia.testo_normale,
           fontWeight: stile.peso_titolo,
           color: interfaccia.colore_testo
@@ -63,77 +140,27 @@ function Foglio({ titolo, sottotitolo, children }) {
   )
 }
 
-// Cosa c'e' dentro qualcosa, materiale per materiale. Se e' vuoto lo dice,
-// invece di mostrare una fila di zeri.
-function Contenuto({ conti, vuotoDice }) {
-  const pieni = elencoMateriali.filter((m) => (conti[m.id] || 0) > 0)
-  if (pieni.length === 0) {
-    return (
-      <span
-        style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
-      >
-        {vuotoDice}
-      </span>
-    )
-  }
-  return (
-    <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta, flexWrap: 'wrap' }}>
-      {pieni.map((materiale) => (
-        <span
-          key={materiale.id}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '4px 10px',
-            borderRadius: 12,
-            background: '#00000044',
-            fontSize: interfaccia.testo_piccolo,
-            color: interfaccia.colore_testo
-          }}
-        >
-          <span
-            style={{
-              width: 9,
-              height: 9,
-              borderRadius: 5,
-              background: materiale.colore,
-              flexShrink: 0
-            }}
-          />
-          {materiale.nome} {conti[materiale.id]}
-        </span>
-      ))}
-    </div>
-  )
-}
-
 const DICE = {
   fermo: 'in attesa di ordini',
   va: 'sta andando a lavorare',
   lavora: 'sta lavorando',
-  porta: 'sta portando la roba alla cassa',
-  bloccato: 'non ha dove scaricare: tutte le casse sono piene'
+  pieno: 'ha lo zaino pieno: tocca una cassa e digli dove posare la roba',
+  bloccato: 'non può fare quello che gli hai chiesto: gli manca qualcosa'
 }
 
-export function PannelloBracciante({ nome, stato, carico, scaricaA, onAssegna, onChiudi }) {
+export function PannelloBracciante({ nome, stato, inventario, slot, puoPiantare, onChiudi }) {
   return (
     <Foglio titolo={nome} sottotitolo={DICE[stato] || ''}>
-      <Contenuto conti={leggiConti(carico)} vuotoDice="Non ha niente addosso." />
+      <Griglia inventario={inventario} vuotoDice="Non ha niente addosso." />
       <span
         style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
       >
-        Scarica a: <b style={{ color: interfaccia.colore_accento }}>{scaricaA}</b>
+        {slot} caselle nello zaino.{' '}
+        {puoPiantare
+          ? 'Ha ' + puoPiantare.toLowerCase() + ' addosso: tocca la terra libera per piantarlo.'
+          : 'Senza alberelli addosso non può piantare niente.'}
       </span>
-      <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
-        <Bottone
-          titolo="Dove scarica"
-          dettaglio="poi tocca una cassa"
-          colore={stile.colore_azione}
-          onTocco={onAssegna}
-        />
-        <Bottone titolo="Chiudi" colore={stile.colore_chiudi} onTocco={onChiudi} />
-      </div>
+      <Bottone titolo="Chiudi" colore={stile.colore_chiudi} largo onTocco={onChiudi} />
     </Foglio>
   )
 }
@@ -142,28 +169,52 @@ export function PannelloBracciante({ nome, stato, carico, scaricaA, onAssegna, o
 // succede in un posto. Al casotto si assume anche.
 export function PannelloCassa({
   contenuto,
+  inventarioOperaio,
   pieno,
   valore,
   eIlCasotto,
   monete,
   tecnologie,
+  onDeposita,
+  onPreleva,
   onVendi,
   onStudia,
   onChiudi
 }) {
-  const conti = leggiConti(contenuto)
-  const qualcosaDentro = elencoMateriali.some((m) => (conti[m.id] || 0) > 0)
+  const dentro = sommaCaselle(contenuto)
+  const addosso = sommaCaselle(inventarioOperaio)
+  const qualcosaDentro = elencoMateriali.some((m) => (dentro[m.id] || 0) > 0)
 
   return (
     <Foglio
       titolo={eIlCasotto ? 'Casotto' : 'Cassa'}
       sottotitolo={
         eIlCasotto
-          ? 'Dentro ci sta ' + pieno + '. Qui si vende e si studia.'
-          : 'Dentro ci sta ' + pieno
+          ? 'Occupate ' + pieno + '. Qui si vende e si studia.'
+          : 'Occupate ' + pieno
       }
     >
-      <Contenuto conti={conti} vuotoDice="È vuota." />
+      <Griglia inventario={contenuto} vuotoDice="È vuota." />
+
+      {/* la roba non ci arriva da sola: gliela fai posare tu, e lui ci deve
+          camminare. E' la fatica che piu' avanti rendera' un nastro una
+          liberazione invece che un gadget */}
+      <Sposta conti={addosso} verso="Posa" onSposta={onDeposita} />
+      <Sposta conti={dentro} verso="Prendi" onSposta={onPreleva} />
+      <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
+        <Bottone
+          titolo="Posa tutto"
+          colore={stile.colore_azione}
+          acceso={elencoMateriali.some((m) => (addosso[m.id] || 0) > 0)}
+          onTocco={() => onDeposita('')}
+        />
+        <Bottone
+          titolo="Prendi tutto"
+          colore={stile.colore_azione}
+          acceso={qualcosaDentro}
+          onTocco={() => onPreleva('')}
+        />
+      </div>
 
       <Bottone
         titolo="Vendi tutto"
@@ -195,9 +246,7 @@ export function PannelloCassa({
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: interfaccia.spaziatura_stretta,
-              maxHeight: 260,
-              overflowY: 'auto'
+              gap: interfaccia.spaziatura_stretta
             }}
           >
             {tecnologie.map((t) => {
@@ -341,13 +390,13 @@ export function Riepilogo({ dati, onChiudi }) {
   )
 }
 
-export function PannelloCostruisci({ magazzino, onCostruisci, onChiudi }) {
-  const conti = leggiConti(magazzino)
+export function PannelloCostruisci({ inventarioOperaio, onCostruisci, onChiudi }) {
+  const conti = sommaCaselle(inventarioOperaio)
 
   return (
     <Foglio
       titolo="Cosa costruisci?"
-      sottotitolo="I materiali si prendono dalle casse, non da un magazzino: quello che c'è dentro sparisce davvero."
+      sottotitolo="Si paga con quello che l’operaio ha addosso. Se il legno è in una cassa lontana, prima va a prenderlo."
     >
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}>
         {elencoCostruzioni.map((voce) => {

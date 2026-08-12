@@ -1,4 +1,4 @@
-# Documento di design — v5.0
+# Documento di design — v5.1
 
 **Grano e Ferro** — un'isola da mandare avanti.
 Per telefono, verticale, una mano sola.
@@ -95,11 +95,40 @@ L'isola non è tutta accessibile. Ogni pezzo è chiuso da un ostacolo che si tog
 È la regola che rende possibile tutto il pezzo Factorio, e va difesa:
 
 - **Le risorse non compaiono in un contatore.** Stanno dentro **casse**, che hanno un posto preciso sull'isola.
-- Il bracciante ha uno **zaino piccolo**. Raccoglie, si riempie, e allora smette di lavorare e va a scaricare.
-- **Dove scarica lo dici tu**, bracciante per bracciante: lo tocchi, premi *Dove scarica*, tocchi una cassa.
-- **Costruire paga davvero dalle casse.** Quello che c'è dentro sparisce: non è un contatore.
+- **Non esiste nessun totale dell'isola**, nemmeno scritto in alto. Un numero unico che dice *"hai 40 legno"* farebbe credere di poterlo spendere, mentre quel legno sta dentro una cassa da qualche parte e qualcuno lo deve andare a prendere.
+- **Costruire si paga con quello che l'operaio ha addosso.** Se il legno è in una cassa lontana, prima ci va.
 
 Da qui nasce l'unica cosa che conta: **la distanza costa.** Una cassa vicino al lavoro fa risparmiare tutta la strada, e quella camminata è il motivo per cui più avanti i **nastri** saranno un sollievo invece che un gadget. Se la roba comparisse da sola, non ci sarebbe niente da trasportare e i nastri non servirebbero a niente.
+
+## 5c. L'inventario a caselle, e **niente si sposta da solo**
+
+> *"Fai in modo che il player ha un inventario proprio alla Minecraft, in modo che raccoglie oggetti e ha un vero e proprio inventario. Però non con oggetti selezionabili e usabili, ma più rapidi. Così anche per la raccolta non viene messa la roba in automatico in una chest specifica ma seleziono un inventario e poso la roba che voglio lasciare lì, così da dare poi anche il senso all'automazione per il trasporto."*
+
+Lo zaino dell'operaio **non è un contatore, è una fila di caselle**, e ogni casella tiene una pila di **un materiale solo**. Le casse funzionano allo stesso identico modo: stesso modulo, stesse pile, stesso gesto. Così *"quanto ci sta dentro"* vuol dire la stessa cosa ovunque.
+
+Tre conseguenze, e sono tutte volute:
+
+1. **Quando le caselle finiscono, l'operaio si ferma.** Non va a svuotarsi da solo da nessuna parte. Nel cruscotto c'è scritto **zaino pieno** in giallo — un operaio che si pianta senza spiegazione sembra un guasto, non una regola.
+2. **Posare e prendere sono ordini come tagliare un albero.** Tocchi una cassa, premi *Posa* o *Prendi*, e lui ci cammina. Non è un trascinamento di pile: su un telefono trascinare otto pile sarebbe una punizione, non una scelta. **Un tocco per materiale.**
+3. **Riempirsi non è la stessa cosa di essere pieni.** Con tutte le caselle occupate ma qualcuna a metà ci sta ancora dell'altro *dello stesso materiale*, ma niente di nuovo: aveva posto per il legno, non per la pietra. È la prima volta che il giocatore deve pensare a **cosa** porta, non solo a quanto.
+
+**Perché tutto questo esiste:** è la fatica che rende il trasporto un problema. E un problema che si è sentito addosso per ore è l'unica cosa che può rendere un nastro una **liberazione** invece che un gadget. Togliere lo scarico automatico non è un peggioramento: è mettere il buco che l'automazione dovrà riempire.
+
+### Le pile sono strette apposta
+
+Con pile larghe l'operaio non si riempirebbe mai e niente di quanto sopra esisterebbe. Quattro caselle e queste pile fanno **circa sette alberi per viaggio**. I numeri stanno in `isola.json` e `braccianti.json`, sono **ragionati ma non misurati**, e vanno tarati col bilanciatore quando esisterà la simulazione headless (punto 7).
+
+## 5d. Il bosco non ricresce: **lo ripianti tu**
+
+> *"Non voglio però che gli alberi crescano da soli, ma quando rompo gli alberi mi fa anche gli alberelli così che io poi possa ripiantarli."*
+
+Un albero tagliato **sparisce**. Quello che torna indietro è nello zaino: 4 legno **e 1 alberello**. Se lo ripianti il bosco continua, se lo vendi no — vale una moneta, e quella moneta è una tentazione vera quando ti manca poco per l'ascia.
+
+- Per piantare **non si equipaggia niente e non si sceglie nessuno strumento**: basta avere l'alberello addosso e toccare la terra libera.
+- L'alberello piantato si disegna piccolo e smorto e cresce mentre il tempo passa: si capisce a colpo d'occhio che c'è ma non si tocca ancora.
+- Il **Vivaio** dimezza l'attesa. È la prima tecnologia che cambia un ritmo invece di un numero.
+
+Questa è la prima decisione di spesa vera del gioco, ed è la forma che tutte le altre dovranno avere: **il bosco è una cosa che gestisci, non una che aspetti.**
 
 ## 6. Le catene e l'albero tecnologico — la parte Factorio
 
@@ -116,9 +145,11 @@ Preso alla lettera, *"1 legno diventa 3 legno"* **rompe il gioco in modo irrepar
 > 1 tronco → *Segheria* → **3 tavole**. Le tavole non rientrano nella segheria.
 > 1 masso → *Frantoio* → **2 ghiaia** → *Fornace* → **1 lingotto**.
 
-Il valore si moltiplica lo stesso — le tavole valgono più di un tronco e servono per costruire — ma **il ciclo è chiuso**: la materia prima entra solo dall'isola, dove è limitata dagli alberi che ricrescono e dai massi che no.
+Il valore si moltiplica lo stesso — le tavole valgono più di un tronco e servono per costruire — ma **il ciclo è chiuso**: la materia prima entra solo dall'isola, dove è limitata da quanti alberi ti sei preso la briga di ripiantare e dai massi, che non tornano.
 
 **Questa regola va controllata dal codice**, non ricordata: al punto 8, il gioco deve rifiutarsi di partire se una ricetta ha in uscita un materiale che ha in entrata. È il tipo di guardrail che la skill `post-mortem` chiede di mettere.
+
+I primi guardrail di questo tipo ci sono già e fermano l'avvio: un materiale che pianta qualcosa che non esiste o che non sa quanto ci mette a crescere, un materiale senza pila, un contenitore senza caselle, una tecnologia che apre tasche senza dire quante.
 
 ### I livelli di lavorazione
 
@@ -135,9 +166,13 @@ Salire di livello **non è un potenziamento: è una ricostruzione.** La macchina
 
 ### I tre gradini dell'automazione
 
-1. **Ordini tu, ogni volta.** Tocchi ogni albero.
-2. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
+Sono ricalcati sull'arco di **Satisfactory**, che è la cosa che questo gioco copia meglio: prima raccogli a mano, poi hai un attrezzo che accumula ma **non si può collegare a un nastro**, e solo dopo arriva la macchina fissa che al nastro ci si attacca. Ogni gradino toglie un gesto che stavi facendo tu.
+
+1. **Ordini tu, ogni volta.** Tocchi ogni albero, e **porti tu la roba**: raccogli, ti riempi, gli dici dove posarla. È dove siamo adesso.
+2. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale. Resta da portare.
 3. **I nastri**: la roba si sposta da sola fra le casse. **Adesso la catena gira senza di te.**
+
+Il gradino 3 vale qualcosa **solo se il gradino 1 ha fatto male**. È per questo che non c'è lo scarico automatico: sarebbe un pezzo di gradino 3 regalato all'inizio, e regalarlo svuoterebbe i nastri di senso prima ancora di scriverli.
 
 ### "The factory must grow"
 
@@ -195,6 +230,8 @@ Regole di disegno che ne discendono, e sono vincolanti:
 Guardrail, da difendere in ogni decisione futura:
 
 - **Non c'è un personaggio da muovere.** Rifiutato tre volte: non riproporlo.
+- **Niente si sposta da solo.** Nessuno scarico automatico, nessuna cassa assegnata, nessun totale dell'isola. Ogni comodità di trasporto va **guadagnata** con l'automazione, mai regalata.
+- **Niente ricresce da solo.** Se il bosco torna senza che tu faccia niente, ripiantare non è una decisione.
 - **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
 - **Non si perde e non si sbaglia in modo irreversibile.**
 - **Non c'è fretta.** Niente timer che scadono, niente che marcisce.

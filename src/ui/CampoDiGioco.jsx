@@ -13,7 +13,6 @@ import {
 import { elencoTecnologie } from '../game/config.js'
 
 const VISTA_INIZIALE = {
-  magazzino: '',
   lavoriInAttesa: 0,
   braccantiFermi: 0,
   braccantiTotali: 0,
@@ -24,8 +23,6 @@ const VISTA_INIZIALE = {
   braccianteScelto: -1,
   nomeScelto: '',
   statoScelto: '',
-  caricoScelto: '',
-  scaricaAScelto: '',
   cassaScelta: false,
   contenutoCassa: '',
   pienoCassa: '',
@@ -34,7 +31,11 @@ const VISTA_INIZIALE = {
   monete: 0,
   giorno: 1,
   oraDelGiorno: 0,
-  zaino: 0,
+  slotOperaio: 0,
+  inventario: '',
+  zainoPieno: false,
+  statoOperaio: '',
+  puoPiantare: '',
   mostraRiepilogo: false,
   riepilogo: '',
   tecnologie: ''
@@ -176,7 +177,8 @@ export default function CampoDiGioco() {
   )
 
   const zoom = useCallback(() => motoreRef.current.zoom(), [])
-  const assegna = useCallback(() => motoreRef.current.assegna(), [])
+  const deposita = useCallback((id) => motoreRef.current.deposita(id), [])
+  const preleva = useCallback((id) => motoreRef.current.preleva(id), [])
   const annulla = useCallback(() => {
     motoreRef.current.annulla()
     apriCostruzione(false)
@@ -216,14 +218,15 @@ export default function CampoDiGioco() {
       />
 
       <Cruscotto
-        magazzino={vista.magazzino}
         lavoriInAttesa={vista.lavoriInAttesa}
         braccantiFermi={vista.braccantiFermi}
         braccantiTotali={vista.braccantiTotali}
         monete={vista.monete}
         giorno={vista.giorno}
         oraDelGiorno={vista.oraDelGiorno}
-        zaino={vista.zaino}
+        inventario={vista.inventario}
+        zainoPieno={vista.zainoPieno}
+        statoOperaio={vista.statoOperaio}
         esito={vista.esito}
       />
 
@@ -235,11 +238,9 @@ export default function CampoDiGioco() {
           il pollice arriva prima in basso */}
       {vista.modo === 'costruisci' ? (
         <Avviso testo="Tocca dove metterla" onAnnulla={annulla} />
-      ) : vista.modo === 'assegna' ? (
-        <Avviso testo="Tocca la cassa dove deve scaricare" onAnnulla={annulla} />
       ) : costruzioneAperta ? (
         <PannelloCostruisci
-          magazzino={vista.magazzino}
+          inventarioOperaio={vista.inventario}
           onCostruisci={costruisci}
           onChiudi={() => apriCostruzione(false)}
         />
@@ -247,19 +248,22 @@ export default function CampoDiGioco() {
         <PannelloBracciante
           nome={vista.nomeScelto}
           stato={vista.statoScelto}
-          carico={vista.caricoScelto}
-          scaricaA={vista.scaricaAScelto}
-          onAssegna={assegna}
+          inventario={vista.inventario}
+          slot={vista.slotOperaio}
+          puoPiantare={vista.puoPiantare}
           onChiudi={annulla}
         />
       ) : vista.cassaScelta ? (
         <PannelloCassa
           contenuto={vista.contenutoCassa}
+          inventarioOperaio={vista.inventario}
           pieno={vista.pienoCassa}
           valore={vista.valoreCassa}
           eIlCasotto={vista.cassaEIlCasotto}
           monete={vista.monete}
           tecnologie={leggiTecnologie(vista.tecnologie)}
+          onDeposita={deposita}
+          onPreleva={preleva}
           onVendi={vendi}
           onStudia={studia}
           onChiudi={annulla}

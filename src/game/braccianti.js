@@ -1,35 +1,39 @@
 // L'operaio: quello che il lavoro lo fa davvero.
 //
 // **E' uno solo, e fa tutto.** Sta fermo finche' non c'e' un lavoro in coda,
-// poi ci va, lo fa, si mette la roba nello zaino, e quando lo zaino e' pieno
-// la porta alla cassa che gli hai detto tu. Una cosa per volta.
+// poi ci va, lo fa, e si mette la roba **nello zaino a slot**. Una cosa per
+// volta.
 //
 // Non e' un personaggio da guidare: non ha una levetta, non lo si muove. Gli
 // si danno ordini toccando le cose, e ci va lui.
 //
+// **Quando lo zaino e' pieno si ferma.** Non va a svuotarsi da solo da nessuna
+// parte: dove posare la roba lo decidi tu, toccando una cassa. E' la fatica
+// che rende il trasporto un problema — e un problema che si sente e' l'unica
+// ragione per cui piu' avanti un nastro sara' una liberazione invece che un
+// gadget.
+//
 // **A crescere non e' la squadra, e' la tecnologia.** Con un operaio solo
-// l'unico modo di fare di piu' e' migliorare l'ascia, lo zaino, gli stivali —
+// l'unico modo di fare di piu' e' migliorare l'ascia, le tasche, gli stivali —
 // che e' la forma di Factorio e Satisfactory, dove sei una persona sola e a
 // crescere e' la fabbrica.
 //
-// **Non esiste un magazzino centrale**: la roba non compare da nessuna parte,
-// va portata. Quella camminata e' il costo che rende utile mettere una cassa
-// vicino al lavoro — e piu' avanti e' la ragione per cui i nastri serviranno.
-//
 // Il percorso e' una linea dritta. L'isola e' aperta, quindi basta; quando
-// arriveranno recinti e capanne servira' un percorso vero (punto 11).
+// arriveranno recinti e capanne servira' un percorso vero (punto 6).
 
 import {
   braccianti as datiBraccianti,
-  elencoMateriali,
   operaio as aspettoOperaio,
   risorse,
   tessera
 } from './config.js'
+import { creaInventario, travasa } from './inventario.js'
 import {
   calpestabile,
   centroTessera,
   maturoIn,
+  pianta,
+  piantabile,
   raccogliRisorsa,
   risorsaIn,
   tesseraAccanto
@@ -42,18 +46,10 @@ const meta = { x: 0, y: 0 }
 export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMondo, alRaccolto }) {
   const squadra = []
 
-  function zainoVuoto() {
-    const zaino = {}
-    for (let i = 0; i < elencoMateriali.length; i++) {
-      zaino[elencoMateriali[i].id] = 0
-    }
-    return zaino
-  }
-
-  // Quanto porta adesso: le tecnologie lo cambiano, quindi si chiede invece
-  // di ricordarselo.
-  function capienzaZaino() {
-    return Math.round(datiBraccianti.zaino * tecnologie.moltiplicatore('zaino', ''))
+  // Quante tasche puo' arrivare ad avere: le caselle si creano tutte all'avvio
+  // e restano spente finche' una tecnologia non le apre.
+  function slotAdesso() {
+    return datiBraccianti.slot + tecnologie.aggiunta('slot')
   }
 
   function velocita() {
@@ -69,17 +65,14 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
       coloreBordo: aspettoOperaio.colore_bordo,
       x: posto.x,
       y: posto.y,
-      // 'fermo' | 'va' | 'lavora' | 'porta' | 'bloccato'
+      // 'fermo' | 'va' | 'lavora' | 'pieno' | 'bloccato'
       stato: 'fermo',
       lavoro: null,
       metaX: 0,
       metaY: 0,
       lavoroMs: 0,
       lavoroTotaleMs: 0,
-      // lo zaino, e dove lo svuota
-      zaino: zainoVuoto(),
-      carico: 0,
-      scaricaA: null
+      inventario: creaInventario(datiBraccianti.slot + tecnologie.aggiuntaMassima('slot'), slotAdesso())
     })
     return squadra[squadra.length - 1]
   }
@@ -93,80 +86,108 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
     bracciante.stato = 'fermo'
   }
 
-  function vaiVerso(bracciante, tx, ty, stato) {
+  function vaiVerso(bracciante, tx, ty) {
     centroTessera(tx, ty, meta)
     bracciante.metaX = meta.x
     bracciante.metaY = meta.y
-    bracciante.stato = stato
+    bracciante.stato = 'va'
   }
 
-  // Va a svuotare lo zaino. Se la cassa che gli hai assegnato e' piena ripiega
-  // sulla piu' vicina con spazio: restare impalati con lo zaino pieno
-  // sembrerebbe un guasto, non una regola.
-  function vaiAScaricare(bracciante) {
-    let dove = bracciante.scaricaA
-    if (!dove || casse.spazioIn(dove) <= 0) {
-      dove = casse.piuVicinaConSpazio(
-        Math.floor(bracciante.x / tessera),
-        Math.floor(bracciante.y / tessera)
+  // Quanto ci mette. Si legge quando il lavoro comincia, mai a ogni frame.
+  function durataDi(lavoro) {
+    if (lavoro.azione === 'raccogli') {
+      return (
+        risorse[lavoro.tipo].tempo_lavoro_ms *
+        tecnologie.moltiplicatore('tempo_lavoro', lavoro.tipo)
       )
     }
-    if (!dove) {
-      bracciante.stato = 'bloccato'
-      return
+    if (lavoro.azione === 'pianta') {
+      return datiBraccianti.tempo_piantata_ms
     }
-    if (!tesseraAccanto(dove.tx, dove.ty, puntoDiLavoro)) {
-      bracciante.stato = 'bloccato'
-      return
-    }
-    bracciante.metaCassa = dove
-    vaiVerso(bracciante, puntoDiLavoro.tx, puntoDiLavoro.ty, 'porta')
+    return datiBraccianti.tempo_scambio_ms
   }
 
-  function scarica(bracciante) {
-    const cassa = bracciante.metaCassa
-    if (!cassa) {
-      bracciante.stato = 'fermo'
+  // Puo' farlo adesso? E' l'unico posto dove lo zaino pieno cambia qualcosa:
+  // una raccolta che non ci sta non si comincia nemmeno, mentre posare la roba
+  // in una cassa resta sempre possibile e passa avanti.
+  function puoFare(bracciante, lavoro) {
+    if (lavoro.azione === 'raccogli') {
+      const rese = risorse[lavoro.tipo].rese
+      for (let i = 0; i < rese.length; i++) {
+        if (bracciante.inventario.spazioPer(rese[i].materiale) < rese[i].quantita) {
+          return false
+        }
+      }
+      return true
+    }
+    if (lavoro.azione === 'pianta') {
+      return bracciante.inventario.quanti(lavoro.materiale) > 0
+    }
+    return true
+  }
+
+  // Il lavoro e' finito: succede la cosa. Si ricontrolla tutto, perche' fra
+  // l'ordine e adesso il mondo puo' essere cambiato.
+  function concludi(bracciante, lavoro) {
+    if (lavoro.azione === 'raccogli') {
+      if (risorsaIn(lavoro.tx, lavoro.ty) !== lavoro.tipo || !maturoIn(lavoro.tx, lavoro.ty)) {
+        return
+      }
+      const rese = risorse[lavoro.tipo].rese
+      raccogliRisorsa(lavoro.tx, lavoro.ty)
+      let presi = 0
+      for (let i = 0; i < rese.length; i++) {
+        presi += bracciante.inventario.metti(rese[i].materiale, rese[i].quantita)
+      }
+      alRaccolto(presi)
+      alCambioDelMondo()
       return
     }
-    for (let i = 0; i < elencoMateriali.length; i++) {
-      const id = elencoMateriali[i].id
-      if (bracciante.zaino[id] <= 0) {
-        continue
+
+    if (lavoro.azione === 'pianta') {
+      if (!piantabile(lavoro.tx, lavoro.ty)) {
+        return
       }
-      const entrato = casse.metti(cassa, id, bracciante.zaino[id])
-      bracciante.zaino[id] -= entrato
-      bracciante.carico -= entrato
+      if (bracciante.inventario.togli(lavoro.materiale, 1) <= 0) {
+        return
+      }
+      pianta(lavoro.tx, lavoro.ty, lavoro.tipo, tecnologie.moltiplicatore('crescita', lavoro.tipo))
+      alCambioDelMondo()
+      return
+    }
+
+    const cassa = casse.in(lavoro.tx, lavoro.ty)
+    if (!cassa) {
+      return
+    }
+    if (lavoro.azione === 'deposita') {
+      travasa(bracciante.inventario, cassa.inventario, lavoro.materiale)
+    } else {
+      travasa(cassa.inventario, bracciante.inventario, lavoro.materiale)
     }
     alloScarico(cassa)
-    bracciante.metaCassa = null
-    bracciante.stato = 'fermo'
   }
 
   function aggiorna(lavori, passoMs, passoSecondi) {
     for (let i = 0; i < squadra.length; i++) {
       const bracciante = squadra[i]
+      // le tecnologie possono aver aperto altre tasche mentre era per strada
+      bracciante.inventario.apri(slotAdesso())
 
-      if (bracciante.stato === 'bloccato') {
-        // riprova appena si libera dello spazio da qualche parte
-        if (casse.piuVicinaConSpazio(0, 0)) {
-          bracciante.stato = 'fermo'
-        }
-        continue
-      }
-
-      if (bracciante.stato === 'fermo') {
-        // prima si svuota lo zaino, poi si prende altro lavoro: uno zaino
-        // pieno non puo' ricevere niente
-        if (bracciante.carico >= capienzaZaino()) {
-          vaiAScaricare(bracciante)
-          continue
-        }
-        const lavoro = lavori.prossimo()
+      if (bracciante.stato === 'fermo' || bracciante.stato === 'pieno' || bracciante.stato === 'bloccato') {
+        const lavoro = lavori.prossimo((voce) => puoFare(bracciante, voce))
         if (!lavoro) {
-          // niente da fare: se ha ancora roba addosso la porta via
-          if (bracciante.carico > 0) {
-            vaiAScaricare(bracciante)
+          // Fermo con degli ordini in coda vuol dire che non ne puo' fare
+          // **nessuno**, e il perche' si deve poter leggere: un operaio che si
+          // pianta senza spiegazione sembra un guasto, non una regola.
+          //
+          // Quasi sempre e' lo zaino: nessuna casella libera, e quindi niente
+          // di nuovo ci puo' entrare. Se invece le caselle ci sono, gli manca
+          // qualcos'altro — un alberello da mettere a dimora, per esempio.
+          if (lavori.quantiInAttesa() > 0) {
+            bracciante.stato = bracciante.inventario.caselleLibere() === 0 ? 'pieno' : 'bloccato'
+          } else {
+            bracciante.stato = 'fermo'
           }
           continue
         }
@@ -178,7 +199,7 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
         }
         lavoro.preso = true
         bracciante.lavoro = lavoro
-        vaiVerso(bracciante, puntoDiLavoro.tx, puntoDiLavoro.ty, 'va')
+        vaiVerso(bracciante, puntoDiLavoro.tx, puntoDiLavoro.ty)
         continue
       }
 
@@ -188,23 +209,15 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
         continue
       }
 
-      if (bracciante.stato === 'va' || bracciante.stato === 'porta') {
+      if (bracciante.stato === 'va') {
         const dx = bracciante.metaX - bracciante.x
         const dy = bracciante.metaY - bracciante.y
         const distanza = Math.sqrt(dx * dx + dy * dy)
 
         if (distanza <= datiBraccianti.distanza_arrivo) {
-          if (bracciante.stato === 'porta') {
-            scarica(bracciante)
-          } else {
-            bracciante.stato = 'lavora'
-            bracciante.lavoroMs = 0
-            // le tecnologie accorciano il lavoro: si legge quando comincia,
-            // mai a ogni frame
-            bracciante.lavoroTotaleMs =
-              risorse[bracciante.lavoro.tipo].tempo_lavoro_ms *
-              tecnologie.moltiplicatore('tempo_lavoro', bracciante.lavoro.tipo)
-          }
+          bracciante.stato = 'lavora'
+          bracciante.lavoroMs = 0
+          bracciante.lavoroTotaleMs = durataDi(bracciante.lavoro)
           continue
         }
 
@@ -221,17 +234,7 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
       }
 
       const lavoro = bracciante.lavoro
-      // qualcun altro potrebbe averla gia' tolta: si controlla prima di dare
-      // la resa, altrimenti un albero varrebbe due volte
-      if (risorsaIn(lavoro.tx, lavoro.ty) === lavoro.tipo && maturoIn(lavoro.tx, lavoro.ty)) {
-        const resa = risorse[lavoro.tipo].resa
-        raccogliRisorsa(lavoro.tx, lavoro.ty)
-        // la roba va nello zaino, non in un magazzino: qualcuno la deve portare
-        bracciante.zaino[resa.materiale] += resa.quantita
-        bracciante.carico += resa.quantita
-        alRaccolto(resa.quantita)
-        alCambioDelMondo()
-      }
+      concludi(bracciante, lavoro)
       lavoro.attivo = false
       lascia(bracciante)
     }
@@ -240,7 +243,8 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
   function quantiFermi() {
     let quanti = 0
     for (let i = 0; i < squadra.length; i++) {
-      if (squadra[i].stato === 'fermo') {
+      const stato = squadra[i].stato
+      if (stato === 'fermo' || stato === 'pieno' || stato === 'bloccato') {
         quanti++
       }
     }
@@ -262,15 +266,9 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
       }
       assumi(tx, ty)
     }
-    // all'avvio scaricano tutti al casotto: senza una destinazione il primo
-    // bracciante sembrerebbe rotto
-    const casotto = casse.elenco.find((cassa) => cassa.eIlCasotto) || casse.elenco[0]
-    for (let i = 0; i < squadra.length; i++) {
-      squadra[i].scaricaA = casotto || null
-    }
   }
 
   reimposta()
 
-  return { squadra, assumi, aggiorna, quantiFermi, capienzaZaino, reimposta }
+  return { squadra, assumi, aggiorna, quantiFermi, slotAdesso, reimposta }
 }

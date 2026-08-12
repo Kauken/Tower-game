@@ -77,14 +77,46 @@ for (let y = 0; y < righe.length; y++) {
   }
 }
 
-// Una risorsa lavorabile deve produrre un materiale che esiste, altrimenti
+// Una risorsa lavorabile deve produrre materiali che esistono, altrimenti
 // l'ordine si puo' dare ma non ne esce niente.
 for (const nome in risorse) {
   const risorsa = risorse[nome]
-  if (risorsa.lavorabile) {
-    if (!risorsa.resa || !elencoMateriali.some((m) => m.id === risorsa.resa.materiale)) {
-      throw new Error(`La risorsa "${nome}" produce un materiale che non esiste in isola.json`)
+  if (!risorsa.lavorabile) {
+    continue
+  }
+  if (!Array.isArray(risorsa.rese)) {
+    throw new Error(`La risorsa "${nome}" non ha un elenco "rese" in isola.json`)
+  }
+  for (let i = 0; i < risorsa.rese.length; i++) {
+    if (!elencoMateriali.some((m) => m.id === risorsa.rese[i].materiale)) {
+      throw new Error(
+        `La risorsa "${nome}" produce "${risorsa.rese[i].materiale}", che non e un materiale di isola.json`
+      )
     }
+  }
+}
+
+// **Niente ricresce da solo.** Una risorsa che si puo' raccogliere e che non
+// torna in nessun modo prosciugherebbe l'isola in silenzio: o esce un materiale
+// che la ripianta, o e' una scelta consapevole (i massi) e va scritta cosi'.
+// Qui si controlla solo il contrario: un materiale che dice di piantare
+// qualcosa deve piantare qualcosa che esiste e che sa quanto ci mette a
+// crescere, altrimenti pianti e non nasce mai niente.
+for (let i = 0; i < elencoMateriali.length; i++) {
+  const materiale = elencoMateriali[i]
+  if (!materiale.pianta) {
+    continue
+  }
+  const cresce = risorse[materiale.pianta]
+  if (!cresce) {
+    throw new Error(
+      `Il materiale "${materiale.id}" pianta "${materiale.pianta}", che non e una risorsa dell'isola`
+    )
+  }
+  if (!(cresce.tempo_crescita_ms > 0)) {
+    throw new Error(
+      `La risorsa "${materiale.pianta}" si puo piantare ma non ha tempo_crescita_ms: piantata non diventerebbe mai adulta`
+    )
   }
 }
 
@@ -103,6 +135,21 @@ for (let i = 0; i < elencoTecnologie.length; i++) {
       `La tecnologia "${t.id}" agisce su "${t.effetto.risorsa}", che non e una risorsa dell'isola`
     )
   }
+  // Le tasche si sommano, tutto il resto si moltiplica. Sbagliare la parola
+  // qui darebbe un effetto che non si vede e che nessuno collegherebbe alla
+  // configurazione: meglio fermarsi.
+  for (const effetto of [t.effetto, t.effetto_secondario]) {
+    if (!effetto) {
+      continue
+    }
+    if (effetto.tipo === 'slot') {
+      if (!(effetto.aggiunta > 0)) {
+        throw new Error(`La tecnologia "${t.id}" apre delle tasche ma non dice quante (aggiunta)`)
+      }
+    } else if (!(effetto.moltiplicatore > 0)) {
+      throw new Error(`L'effetto "${effetto.tipo}" della tecnologia "${t.id}" non ha un moltiplicatore`)
+    }
+  }
 }
 
 // Ogni costruzione deve costare materiali che esistono, e il casotto deve
@@ -117,11 +164,29 @@ for (let i = 0; i < elencoCostruzioni.length; i++) {
     }
   }
 }
-// Un materiale senza prezzo non si potrebbe vendere.
+// Un materiale senza prezzo non si potrebbe vendere, e uno senza pila non
+// starebbe in nessuna casella dell'inventario.
 for (let i = 0; i < elencoMateriali.length; i++) {
   if (!(elencoMateriali[i].prezzo > 0)) {
     throw new Error(`Il materiale "${elencoMateriali[i].id}" non ha un prezzo in isola.json`)
   }
+  if (!(elencoMateriali[i].pila > 0)) {
+    throw new Error(
+      `Il materiale "${elencoMateriali[i].id}" non ha una pila in isola.json: non si saprebbe quanti ne stanno in una casella`
+    )
+  }
+}
+
+// Ogni contenitore deve avere delle caselle, altrimenti esiste ma non tiene
+// niente.
+for (let i = 0; i < elencoCostruzioni.length; i++) {
+  const voce = elencoCostruzioni[i]
+  if (voce.slot !== undefined && !(voce.slot > 0)) {
+    throw new Error(`La costruzione "${voce.id}" ha zero caselle in costruzioni.json`)
+  }
+}
+if (!(costruzioniJson.slot_casotto > 0)) {
+  throw new Error('Il casotto non ha caselle in costruzioni.json: non ci si potrebbe posare niente')
 }
 if (!isolaJson.mappa.some((riga) => riga.indexOf('C') >= 0)) {
   throw new Error(
@@ -131,4 +196,12 @@ if (!isolaJson.mappa.some((riga) => riga.indexOf('C') >= 0)) {
 
 if (braccantiJson.iniziali.length < 1) {
   throw new Error('Serve almeno un operaio in braccianti.json, altrimenti non lavora nessuno')
+}
+if (!(braccantiJson.slot > 0)) {
+  throw new Error('L\'operaio non ha caselle nello zaino in braccianti.json: non potrebbe raccogliere niente')
+}
+for (const voce of ['tempo_piantata_ms', 'tempo_scambio_ms']) {
+  if (!(braccantiJson[voce] >= 0)) {
+    throw new Error(`Manca "${voce}" in braccianti.json`)
+  }
 }

@@ -1,10 +1,10 @@
-# Lista di costruzione — v10
+# Lista di costruzione — v11
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice "fai il punto N", si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
-Il gioco è quello del `GDD.md` v5.0: **un'isola da mandare avanti** — Stardew per
+Il gioco è quello del `GDD.md` v5.1: **un'isola da mandare avanti** — Stardew per
 l'economia, Graveyard Keeper per le zone e i braccianti, Factorio e Satisfactory
 per le catene. **Nessun personaggio: si comanda col dito.**
 
@@ -27,7 +27,7 @@ versione è la più grande di tutte, quindi contano il doppio.
 ## Fase A — il posto (fatta)
 
 1. **L'isola, la telecamera e il primo ordine.** — **FATTO** (2026-08-11).
-2. **Le cose stanno in un posto — niente magazzino centrale.** — **FATTO** (2026-08-11). Casse con un posto preciso, zaino da 12, *dove scarica lo dici tu*, costruzioni pagate davvero dalle casse.
+2. **Le cose stanno in un posto — niente magazzino centrale.** — **FATTO** (2026-08-11), poi **rifatto meglio il 2026-08-12** (vedi 3c).
 
 > ### ✅ Verifiche passate
 > Punto 1: *"va bene, sembra un posto"*, *"funziona, si capisce tutto"*.
@@ -41,7 +41,18 @@ versione è la più grande di tutte, quindi contano il doppio.
 
    > **Salari e assunzioni sono stati costruiti e poi tolti lo stesso giorno**, quando l'autore ha chiesto un operaio solo. Con uno solo un salario è una tassa fissa, non una decisione. È rimasto tutto il resto: il giorno, il riepilogo, la vendita dalla cassa.
 
-3b. **Gli alberi ricrescono.** — **FATTO** (2026-08-11). Trovato provando: con 24 alberi finiti e i salari da pagare, l'isola arrivava a un **vicolo cieco** — niente più da raccogliere e nessun modo di uscirne. Adesso un albero tagliato lascia un germoglio che ricresce, disegnato piccolo e smorto. È anche il primo pezzo di **stato per tessera**, cioè la fondazione su cui poggeranno le piantagioni e le macchine.
+3b. **Gli alberi ricrescevano.** — **TOLTO** (2026-08-12). Era nato per risolvere un vicolo cieco trovato provando: con gli alberi finiti e i salari da pagare non c'era modo di uscirne. La ricrescita automatica lo risolveva, ma **toglieva la decisione**: se il bosco torna da solo, ripiantare non serve. Sostituito dal punto 3c, che risolve lo stesso vicolo cieco lasciandolo in mano al giocatore.
+
+3c. **L'inventario a caselle, gli alberelli, e niente più scarico automatico.** — **FATTO** (2026-08-12). Tre cose che sono una cosa sola:
+
+   - **Zaino a caselle alla Minecraft**, quattro all'inizio, ogni casella una pila di un materiale solo. Le casse usano lo stesso modulo. Quando le caselle finiscono **l'operaio si ferma**, e il cruscotto scrive *zaino pieno* in giallo.
+   - **Gli alberi non ricrescono.** Tagliandone uno escono 4 legno **e 1 alberello**, e sei tu a decidere dove ripiantarlo — o se venderlo. Tocchi la terra libera e lo pianta: niente da equipaggiare, basta averlo addosso.
+   - **Niente scarico automatico e niente cassa assegnata.** Tocchi una cassa e premi *Posa* o *Prendi*, un tocco per materiale. Costruire si paga con quello che l'operaio ha **addosso**, non con la somma di tutte le casse — quella somma era un magazzino centrale travestito da contatore, ed è sparita anche dal cruscotto.
+
+   > **Perché toglie comodità di proposito:** i nastri del punto 11 valgono qualcosa solo se portare la roba a mano ha fatto male. Lo scarico automatico era un pezzo di automazione regalato all'inizio, e regalarlo avrebbe svuotato i nastri di senso prima ancora di scriverli. È l'arco di Satisfactory: mano → attrezzo che accumula ma non si collega → macchina fissa col nastro.
+
+   > **Numeri da tarare:** quattro caselle, pile da 12/10/8, circa sette alberi per viaggio. Ragionati, **non misurati**. Sono il primo lavoro del bilanciatore appena c'è la simulazione headless (punto 7).
+
 4. **Le commesse.** Qualcuno ti chiede roba precisa e paga molto più del mercato. È il "non vedo l'ora", ed è la prima volta che il legno serve a qualcosa.
 
 > ### 🛑 Verifica dopo il punto 4 — non si va avanti senza

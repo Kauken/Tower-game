@@ -6,9 +6,12 @@
       "nome": "Cassa",
       "descrizione": "Ci si scarica dentro la roba. Una cassa vicina al lavoro fa risparmiare tutta la strada.",
       "costo": [
-        { "materiale": "legno", "quantita": 8 }
+        {
+          "materiale": "legno",
+          "quantita": 8
+        }
       ],
-      "capienza": 120,
+      "slot": 12,
       "colore": "#7a5a34",
       "colore_bordo": "#c9a172",
       "colore_pieno": "#e0b878",
@@ -16,5 +19,6 @@
     }
   ],
   "_nota_prima_cassa": "La cassa del casotto c'e' gia' all'avvio e non si paga: senza, il primo bracciante non saprebbe dove scaricare e sembrerebbe rotto.",
-  "capienza_casotto": 200
+  "slot_casotto": 18,
+  "_nota_slot": "Una cassa e' un inventario a slot, esattamente come quello dell'operaio: ogni slot tiene una pila di un materiale. Cosi' 'quanto ci sta dentro' vuol dire la stessa cosa ovunque, e spostare roba e' sempre lo stesso gesto."
 }

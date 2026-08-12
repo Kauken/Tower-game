@@ -44,14 +44,34 @@ Queste cose l'autore le ha **rifiutate esplicitamente**. Un rifiuto e' un fatto 
 | **Piu' coloni** | 2026-08-12 | *"invece di piu' coloni, mi va bene un singolo solo"* — si cresce con la tecnologia, non assumendo |
 | **Il puzzle di incastro** | 2026-08-11 | *"non vorrei pero' un puzzle game, vorrei piu' un farmer"* |
 | **Il tower defense** | 2026-08-11 | *"sembra molto noioso da vedere e giocare"* |
+| **Gli alberi che ricrescono da soli** | 2026-08-12 | *"non voglio pero' che gli alberi crescano da soli, ma quando rompo gli alberi mi fa anche gli alberelli cosi' che io poi possa ripiantarli"* |
+| **Lo scarico automatico in una cassa** | 2026-08-12 | *"per la raccolta non viene messa la roba in automatico in una chest specifica ma seleziono un inventario e poso la roba che voglio lasciare li'"* — e il perche', detto da lui: *"cosi' da dare poi anche il senso all'automazione per il trasporto"* |
 
 **Riproporre una di queste e' l'errore piu' caro che puoi fare:** costa la fiducia dell'autore, non solo il tempo.
+
+### Il filo che tiene insieme gli ultimi due rifiuti
+
+Non sono due dettagli, sono **una regola sola**, e l'autore l'ha detta meglio di quanto l'avessimo capita: **un'automazione vale quanto la fatica che toglie.** Ogni comodita' messa all'inizio e' un pezzo di sblocco futuro buttato via — se lo scarico e' gia' automatico, il nastro non e' una liberazione ma un gadget; se il bosco torna da solo, ripiantare non e' una decisione.
+
+Prima di aggiungere qualunque comodita', chiediti: **quale sblocco futuro sto svuotando?**
 
 ## Parole che appartengono ai progetti vecchi
 
 Se compaiono, **non sono richieste**: sono resti di giochi cancellati. Vanno chiarite prima di eseguire qualunque cosa.
 
 **la recluta · l'ondata · il nemico · il castello · la torre · il sentiero · la postazione · l'oro · i cristalli · la pool · il boss · la stanza · il piano · la minimappa · il seguito di minion · la levetta · il personaggio da muovere · schivare · corsia**
+
+## Parole di adesso, e cosa vogliono dire
+
+| Parola | Cosa intende l'autore |
+| --- | --- |
+| **la casella** | uno slot dell'inventario, alla Minecraft. Ne tiene **una pila di un materiale solo** |
+| **la pila** | quanti pezzi stanno in una casella. Sta in `isola.json`, materiale per materiale |
+| **lo zaino pieno** | tutte le caselle occupate. **Non** vuol dire che siano piene fino all'orlo: ci sta ancora del legno, ma non un sasso |
+| **l'alberello** | quello che esce tagliando un albero e che si ripianta. Averlo addosso basta: non si equipaggia niente |
+| **posare / prendere** | spostare roba fra lo zaino e una cassa. **E' un ordine**, non un gesto: lui ci deve camminare |
+| **la cassa** | un contenitore con un posto preciso. Usa le stesse caselle dello zaino |
+| **il casotto** | la cassa che c'e' gia' all'avvio. E' anche il mercato: li' si vende e si studia |
 
 E dalle versioni a griglia: **il Filare · la Rotazione · il moltiplicatore di resa · l'incastro · l'appezzamento · la scacchiera · dissodare la casella**.
 

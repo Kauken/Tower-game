@@ -1,30 +1,41 @@
 import React from 'react'
-import { elencoMateriali, interfaccia } from '../game/config.js'
+import { interfaccia } from '../game/config.js'
+import Zaino from './Zaino.jsx'
 
-// Quello che hai, e chi sta lavorando. Le due cose che devono stare sempre
-// sotto gli occhi: se il legno non arriva, deve bastare guardare qui per
-// capire perche' — non hai abbastanza braccianti, o non hai dato ordini.
+// Quello che hai addosso, e cosa sta facendo l'operaio. Le due cose che devono
+// stare sempre sotto gli occhi.
+//
+// **Non c'e' nessun totale dell'isola**, e non e' una dimenticanza: un numero
+// unico che dice "hai 40 legno" farebbe credere di poterlo spendere, mentre
+// quel legno sta dentro una cassa da qualche parte e qualcuno lo deve andare a
+// prendere. Il solo numero che conta davvero e' quello nello zaino.
 export default function Cruscotto({
-  magazzino,
-  lavoriInAttesa,
-  braccantiFermi,
-  braccantiTotali,
   monete,
   giorno,
   oraDelGiorno,
-  zaino,
+  inventario,
+  zainoPieno,
+  statoOperaio,
+  lavoriInAttesa,
+  braccantiFermi,
+  braccantiTotali,
   esito
 }) {
-  // arriva come "legno:12,pietra:0": una stringa sola invece di un oggetto,
-  // cosi' l'interfaccia capisce con un confronto se e' cambiata
-  const quantita = {}
-  const pezzi = magazzino ? magazzino.split(',') : []
-  for (let i = 0; i < pezzi.length; i++) {
-    const punto = pezzi[i].indexOf(':')
-    quantita[pezzi[i].slice(0, punto)] = pezzi[i].slice(punto + 1)
-  }
-
   const staLavorando = braccantiTotali - braccantiFermi > 0
+  // Un operaio che si pianta deve dire perche'. "In arrivo" mentre e' fermo
+  // con lo zaino pieno sarebbe una bugia, e una bugia qui si legge come un
+  // guasto del gioco.
+  const dice =
+    statoOperaio === 'pieno'
+      ? 'zaino pieno'
+      : statoOperaio === 'bloccato'
+        ? 'gli manca qualcosa'
+        : staLavorando
+          ? 'al lavoro'
+          : lavoriInAttesa > 0
+            ? 'in arrivo'
+            : 'fermo'
+  const allarme = statoOperaio === 'pieno' || statoOperaio === 'bloccato'
 
   return (
     <div
@@ -39,9 +50,7 @@ export default function Cruscotto({
         pointerEvents: 'none'
       }}
     >
-      {/* monete, giorno e quanto costa stasera: le tre cose che decidono se
-          puoi assumere. La barra dice quanto manca a sera, cosi' la spesa non
-          arriva di sorpresa */}
+      {/* monete e giorno. La barra dice quanto manca a sera */}
       <div
         style={{
           padding: '7px 12px',
@@ -66,13 +75,17 @@ export default function Cruscotto({
             monete
           </span>
           <span style={{ flex: 1 }} />
+          <span
+            style={{
+              fontSize: interfaccia.testo_piccolo,
+              fontWeight: allarme ? 700 : 400,
+              color: allarme ? interfaccia.colore_accento : interfaccia.colore_testo_debole
+            }}
+          >
+            {dice}
+          </span>
           <span style={{ fontSize: interfaccia.testo_normale, color: interfaccia.colore_testo }}>
             giorno {giorno}
-          </span>
-          <span
-            style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
-          >
-            zaino {zaino}
           </span>
         </div>
         <div
@@ -94,62 +107,8 @@ export default function Cruscotto({
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
-        {elencoMateriali.map((materiale) => (
-          <div
-            key={materiale.id}
-            style={{
-              flex: 1,
-              padding: '7px 12px',
-              borderRadius: 17,
-              background: interfaccia.colore_pannello,
-              border: '1px solid ' + interfaccia.colore_bordo_pannello,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 7
-            }}
-          >
-            <span
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 5,
-                background: materiale.colore,
-                flexShrink: 0
-              }}
-            />
-            <span
-              style={{
-                fontSize: interfaccia.testo_normale,
-                fontWeight: 700,
-                color: interfaccia.colore_testo
-              }}
-            >
-              {quantita[materiale.id] || 0}
-            </span>
-          </div>
-        ))}
-
-        <div
-          style={{
-            padding: '7px 12px',
-            borderRadius: 17,
-            background: interfaccia.colore_pannello,
-            border: '1px solid ' + interfaccia.colore_bordo_pannello,
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: interfaccia.testo_piccolo,
-            color:
-              lavoriInAttesa > 0 && braccantiFermi === 0
-                ? interfaccia.colore_accento
-                : interfaccia.colore_testo_debole,
-            whiteSpace: 'nowrap'
-          }}
-        >
-          {staLavorando ? 'al lavoro' : lavoriInAttesa > 0 ? 'in arrivo' : 'fermo'}
-        </div>
-      </div>
+      {/* lo zaino a caselle: quando finiscono, l'operaio si ferma */}
+      <Zaino inventario={inventario} pieno={zainoPieno} />
 
       {/* l'avviso compare solo quando un tocco non ha fatto quello che ti
           aspettavi: un ordine che non parte senza spiegazione sembra un guasto */}

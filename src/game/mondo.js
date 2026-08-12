@@ -3,6 +3,9 @@
 // E' una mappa a tessere, ma le tessere **non si vedono**: servono solo a far
 // agganciare le cose, esattamente come in Factorio. Sopra ci va un posto.
 //
+// Gli alberi non ricrescono da soli: tagliandone uno ti resta in mano un
+// alberello, e sei tu a decidere dove ripiantarlo.
+//
 // La mappa si legge una volta sola all'avvio e diventa due elenchi piatti:
 // il fondo (acqua, sabbia, erba) e quello che ci sta sopra (alberi, massi,
 // frane, il casotto). Dentro il ciclo di gioco non si rilegge niente.
@@ -57,10 +60,15 @@ for (let y = 0; y < filari; y++) {
   }
 }
 
-// Quanto manca perche' quello che sta su una tessera torni maturo. Zero vuol
-// dire maturo. E' il primo pezzo di **stato per tessera**: senza, un albero
-// tagliato sparirebbe per sempre e l'isola finirebbe.
-export const ricrescitaMs = new Float32Array(colonne * filari)
+// Quanto manca perche' quello che sta su una tessera diventi adulto, e quanto
+// ci metteva in tutto. Zero vuol dire maturo.
+//
+// **Niente ricresce da solo.** Un albero tagliato sparisce, e al suo posto ti
+// resta in mano un alberello: se lo ripianti il bosco continua, se lo vendi no.
+// Il bosco e' una cosa che gestisci, non una che aspetti — ed e' la prima
+// decisione di spesa vera del gioco.
+export const crescitaMs = new Float32Array(colonne * filari)
+export const crescitaTotaleMs = new Float32Array(colonne * filari)
 
 export function dentro(tx, ty) {
   return tx >= 0 && ty >= 0 && tx < colonne && ty < filari
@@ -92,38 +100,62 @@ export function calpestabile(tx, ty) {
   if (!cosa || !risorse[cosa].blocca) {
     return true
   }
-  // un germoglio non blocca: e' piccolo
-  return ricrescitaMs[indice] > 0
+  // un alberello appena piantato non blocca: e' piccolo
+  return crescitaMs[indice] > 0
+}
+
+// Ci si puo' piantare qualcosa? Serve terra libera: non l'acqua, non una
+// tessera dove c'e' gia' qualcosa.
+export function piantabile(tx, ty) {
+  if (!dentro(tx, ty)) {
+    return false
+  }
+  const indice = indiceDi(tx, ty)
+  return terreni[fondo[indice]].calpestabile && !sopra[indice]
 }
 
 // Maturo vuol dire "si puo' raccogliere". Un albero appena ricresciuto c'e'
 // ma non si tocca ancora.
 export function maturoIn(tx, ty) {
-  return dentro(tx, ty) && ricrescitaMs[indiceDi(tx, ty)] <= 0
+  return dentro(tx, ty) && crescitaMs[indiceDi(tx, ty)] <= 0
 }
 
-// Raccogliere non fa sparire quello che ricresce: lo rimette a zero e riparte
-// il tempo. E' quello che impedisce all'isola di finire e alla fattoria di
-// arrivare a un vicolo cieco senza piu' niente da fare.
+// Raccogliere fa sparire quello che c'era. Punto. Quello che torna indietro e'
+// nello zaino dell'operaio, ed e' li' che si decide se il bosco continua.
 export function raccogliRisorsa(tx, ty) {
   if (!dentro(tx, ty)) {
     return
   }
   const indice = indiceDi(tx, ty)
-  const dati = risorse[sopra[indice]]
-  if (dati && dati.ricresce_ms > 0) {
-    ricrescitaMs[indice] = dati.ricresce_ms
-    return
-  }
   sopra[indice] = ''
+  crescitaMs[indice] = 0
+  crescitaTotaleMs[indice] = 0
+}
+
+// Mettere a dimora. Il moltiplicatore arriva dalle tecnologie (il Vivaio
+// dimezza l'attesa) e si legge qui una volta sola, non a ogni passo.
+export function pianta(tx, ty, nomeRisorsa, moltiplicatoreCrescita) {
+  if (!piantabile(tx, ty)) {
+    return false
+  }
+  const dati = risorse[nomeRisorsa]
+  if (!dati) {
+    return false
+  }
+  const indice = indiceDi(tx, ty)
+  sopra[indice] = nomeRisorsa
+  const quanto = dati.tempo_crescita_ms * moltiplicatoreCrescita
+  crescitaMs[indice] = quanto
+  crescitaTotaleMs[indice] = quanto
+  return true
 }
 
 export function aggiornaMondo(passoMs) {
-  for (let i = 0; i < ricrescitaMs.length; i++) {
-    if (ricrescitaMs[i] > 0) {
-      ricrescitaMs[i] -= passoMs
-      if (ricrescitaMs[i] < 0) {
-        ricrescitaMs[i] = 0
+  for (let i = 0; i < crescitaMs.length; i++) {
+    if (crescitaMs[i] > 0) {
+      crescitaMs[i] -= passoMs
+      if (crescitaMs[i] < 0) {
+        crescitaMs[i] = 0
       }
     }
   }

@@ -26,7 +26,8 @@ import {
   macchiaR,
   macchiaX,
   macchiaY,
-  ricrescitaMs,
+  crescitaMs,
+  crescitaTotaleMs,
   risorsaIn,
   sopra
 } from './mondo.js'
@@ -134,12 +135,13 @@ function disegnaRisorse(ctx, camera) {
       const dati = risorse[nome]
       camera.versoSchermo(tx * tessera + tessera / 2, ty * tessera + tessera / 2, punto)
 
-      // un germoglio si vede piccolo e smorto: si deve capire a colpo d'occhio
-      // che c'e' ma non si tocca ancora
-      const quantoManca = ricrescitaMs[indiceDi(tx, ty)]
+      // un alberello si vede piccolo e smorto, e cresce mentre il tempo passa:
+      // si deve capire a colpo d'occhio che c'e' ma non si tocca ancora
+      const quantoManca = crescitaMs[indiceDi(tx, ty)]
+      const quantoInTutto = crescitaTotaleMs[indiceDi(tx, ty)]
       let raggio = dati.raggio * lato
-      if (quantoManca > 0 && dati.ricresce_ms > 0) {
-        const cresciuto = 1 - quantoManca / dati.ricresce_ms
+      if (quantoManca > 0 && quantoInTutto > 0) {
+        const cresciuto = 1 - quantoManca / quantoInTutto
         raggio *= stile.germoglio_minimo + (1 - stile.germoglio_minimo) * cresciuto
         ctx.globalAlpha = stile.opacita_germoglio
       }
@@ -190,7 +192,8 @@ function disegnaRisorse(ctx, camera) {
 
 // Il segno su quello a cui hai dato un ordine. Giallo se aspetta, verde se
 // qualcuno ci sta gia' andando: e' l'unico modo per sapere se il comando e'
-// stato raccolto senza cercare chi si sta muovendo.
+// stato raccolto senza cercare chi si sta muovendo. Vale per tutti gli ordini
+// allo stesso modo — raccogliere, piantare, posare in una cassa.
 function disegnaOrdini(ctx, camera, lavori) {
   const stile = grafica.ordine
   const zoom = camera.stato.zoom
@@ -249,7 +252,7 @@ function disegnaCasse(ctx, camera, casse) {
 
     // quanto e' piena
     const barra = stile.barra
-    const quota = cassa.capienza > 0 ? cassa.dentro / cassa.capienza : 0
+    const quota = cassa.slot > 0 ? cassa.inventario.occupati() / cassa.slot : 0
     const larghezza = raggio * 2 - barra.margine * lato
     const altezza = barra.altezza * lato
     const sinistra = punto.x - larghezza / 2
@@ -273,22 +276,6 @@ function disegnaScelta(ctx, camera, squadra, casse, braccianteScelto, cassaScelt
     camera.versoSchermo(b.x, b.y, punto)
     const cx = punto.x
     const cy = punto.y
-
-    if (b.scaricaA) {
-      camera.versoSchermo(
-        b.scaricaA.tx * tessera + tessera / 2,
-        b.scaricaA.ty * tessera + tessera / 2,
-        punto
-      )
-      ctx.strokeStyle = stile.colore_filo
-      ctx.lineWidth = stile.spessore_filo
-      ctx.setLineDash([stile.tratteggio_filo, stile.tratteggio_filo])
-      ctx.beginPath()
-      ctx.moveTo(cx, cy)
-      ctx.lineTo(punto.x, punto.y)
-      ctx.stroke()
-      ctx.setLineDash([])
-    }
 
     ctx.strokeStyle = stile.colore
     ctx.lineWidth = stile.spessore
@@ -334,11 +321,12 @@ function disegnaBraccianti(ctx, camera, squadra) {
 
     // il pallino di chi porta qualcosa: si vede a colpo d'occhio chi sta
     // tornando carico invece di andare a lavorare
-    if (bracciante.carico > 0) {
+    if (bracciante.inventario.stato.pezzi > 0) {
       const segno = grafica.carico
+      const addosso = bracciante.inventario.primoMateriale()
       let colore = ''
       for (let m = 0; m < elencoMateriali.length && !colore; m++) {
-        if (bracciante.zaino[elencoMateriali[m].id] > 0) {
+        if (elencoMateriali[m].id === addosso) {
           colore = elencoMateriali[m].colore
         }
       }

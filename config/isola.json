@@ -66,52 +66,59 @@
     "albero": {
       "nome": "Albero",
       "tempo_lavoro_ms": 3200,
-      "resa": {
-        "materiale": "legno",
-        "quantita": 4
-      },
       "colore": "#2f4a1e",
       "colore_chioma": "#4a7031",
       "colore_tronco": "#4a3a24",
       "raggio": 0.42,
       "blocca": true,
-      "ricresce_ms": 55000,
-      "lavorabile": true
+      "lavorabile": true,
+      "rese": [
+        {
+          "materiale": "legno",
+          "quantita": 4
+        },
+        {
+          "materiale": "alberello",
+          "quantita": 1
+        }
+      ],
+      "tempo_crescita_ms": 70000
     },
     "masso": {
       "nome": "Masso",
       "tempo_lavoro_ms": 5200,
-      "resa": {
-        "materiale": "pietra",
-        "quantita": 3
-      },
       "colore": "#5b5f63",
       "colore_chioma": "#7c8288",
       "colore_tronco": "#3e4247",
       "raggio": 0.38,
       "blocca": true,
-      "ricresce_ms": 0,
-      "lavorabile": true
+      "lavorabile": true,
+      "rese": [
+        {
+          "materiale": "pietra",
+          "quantita": 3
+        }
+      ]
     },
     "frana": {
       "nome": "Frana",
       "tempo_lavoro_ms": 8000,
-      "resa": {
-        "materiale": "pietra",
-        "quantita": 5
-      },
       "colore": "#4a4038",
       "colore_chioma": "#6b5c4a",
       "colore_tronco": "#332c26",
       "raggio": 0.46,
       "blocca": true,
-      "ricresce_ms": 0,
-      "lavorabile": true
+      "lavorabile": true,
+      "rese": [
+        {
+          "materiale": "pietra",
+          "quantita": 5
+        }
+      ]
     },
     "casotto": {
       "nome": "Casotto",
       "tempo_lavoro_ms": 0,
-      "resa": null,
       "colore": "#6b4a32",
       "colore_chioma": "#8a6242",
       "colore_tronco": "#3f2b1c",
@@ -119,7 +126,6 @@
       "blocca": true,
       "squadrata": true,
       "_nota": "L'unica cosa costruita da qualcuno: si disegna quadrata fra le sagome tonde della natura.",
-      "ricresce_ms": 0,
       "lavorabile": false
     }
   },
@@ -128,13 +134,23 @@
       "id": "legno",
       "nome": "Legno",
       "colore": "#8a6242",
-      "prezzo": 3
+      "prezzo": 3,
+      "pila": 12
     },
     {
       "id": "pietra",
       "nome": "Pietra",
       "colore": "#7c8288",
-      "prezzo": 4
+      "prezzo": 4,
+      "pila": 10
+    },
+    {
+      "id": "alberello",
+      "nome": "Alberello",
+      "colore": "#5f9440",
+      "prezzo": 1,
+      "pila": 8,
+      "pianta": "albero"
     }
   ],
   "telecamera": {
@@ -147,6 +163,7 @@
     "soglia_trascinamento": 10,
     "durata_tocco_ms": 400
   },
-  "_nota_materiali": "prezzo e' quanto paga il mercante per un pezzo. La materia prima vale poco apposta: e' la LAVORAZIONE a farle valere di piu' (punti 8-11), non la raccolta.",
-  "_nota_ricrescita": "ricresce_ms: quanto ci mette a tornare raccoglibile. Senza, l'isola finisce e la fattoria arriva a un vicolo cieco: niente piu' da raccogliere, salari da pagare, e nessun modo di uscirne. Gli alberi ricrescono da soli; i massi no, perche' un masso non ricresce e perche' la pietra deve restare la cosa che costringe ad aprire zone nuove."
+  "_nota_materiali": "prezzo e' quanto paga il mercante per un pezzo. pila e' quanti ne stanno in UNA CASELLA dell'inventario, come in Minecraft. pianta dice che AVERLO nell'inventario permette di piantare quella risorsa: non si equipaggia niente e non si sceglie nessuno strumento, basta averlo addosso.",
+  "_nota_ricrescita": "GLI ALBERI NON RICRESCONO DA SOLI. Tagliandone uno esce anche un alberello, e sei tu a ripiantarlo dove vuoi: il bosco e' una cosa che gestisci, non una che aspetti. tempo_crescita_ms e' quanto ci mette un alberello piantato a diventare un albero adulto.",
+  "_nota_pile": "Le pile sono strette apposta. Con pile larghe l'operaio non si riempirebbe mai, il trasporto non si sentirebbe, e i nastri sarebbero un gadget invece che una liberazione. Quattro caselle e queste pile fanno circa sette alberi per viaggio: e' un numero ragionato, NON misurato — va tarato col bilanciatore quando esistera' la simulazione headless (punto 7)."
 }

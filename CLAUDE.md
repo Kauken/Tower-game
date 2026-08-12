@@ -35,6 +35,8 @@ L'autore non sa programmare e lavora dal telefono. Quindi:
 11. **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
 12. **C'è UN OPERAIO SOLO, e non si assume.** L'unica via di crescita è la **tecnologia**: attrezzi migliori, poi macchine, poi nastri. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato: si risolve con un pezzo di albero tecnologico. E la domanda di roba deve crescere sempre più in fretta della produzione — *the factory must grow*: se un giorno hai abbastanza di tutto, il gioco è finito.
 13. **Uno sblocco dà un verbo nuovo, non un numero più grande.**
+14. **NIENTE SI SPOSTA DA SOLO E NIENTE RICRESCE DA SOLO.** Nessuno scarico automatico, nessuna cassa assegnata, nessun totale dell'isola, nessun albero che torna da sé. Sono tutte comodità che **vanno guadagnate** con l'automazione, mai regalate all'inizio. La regola dietro: **un'automazione vale quanto la fatica che toglie** — se il problema non è mai esistito, il nastro che lo risolve è un gadget. Se stai per aggiungere una comodità, chiediti quale sblocco futuro stai svuotando.
+15. **Se l'operaio si ferma, deve essere scritto perché.** Un operaio che si pianta senza spiegazione sembra un guasto, non una regola. Vale per tutto: ogni volta che il gioco rifiuta di fare una cosa, l'interfaccia lo deve dire con parole normali.
 
 ## Comandi
 

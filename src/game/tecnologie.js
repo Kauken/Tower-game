@@ -3,8 +3,8 @@
 // Con un operaio solo, **questa e' l'unica via di crescita**: non si assume,
 // si migliora. Ogni voce si compra una volta sola e resta per sempre.
 //
-// Il codice non conosce nessuna tecnologia per nome: sa leggere quattro tipi
-// di effetto e basta. Aggiungerne una e' scrivere una voce in
+// Il codice non conosce nessuna tecnologia per nome: sa leggere dei tipi di
+// effetto e basta, e sa se un tipo si moltiplica o si somma. Aggiungerne una e' scrivere una voce in
 // `config/tecnologie.json`, non toccare questo file.
 
 import { elencoTecnologie } from './config.js'
@@ -59,9 +59,52 @@ export function creaTecnologie() {
     return valore
   }
 
+  // Non tutto si moltiplica. Le tasche dello zaino si **sommano**: tre in piu' e
+  // quattro in piu' fanno sette, non dodici. Un moltiplicatore sulle caselle di
+  // un inventario darebbe numeri che non si possono ne' leggere ne' bilanciare.
+  function aggiunta(tipo, risorsa) {
+    let quante = 0
+    for (let i = 0; i < prese.length; i++) {
+      const dati = elencoTecnologie.find((voce) => voce.id === prese[i])
+      if (riguarda(dati.effetto, tipo, risorsa)) {
+        quante += dati.effetto.aggiunta
+      }
+      if (riguarda(dati.effetto_secondario, tipo, risorsa)) {
+        quante += dati.effetto_secondario.aggiunta
+      }
+    }
+    return quante
+  }
+
+  // Quanto potrebbe arrivare a valere prendendo tutto: serve a preallocare, non
+  // a giocare. Le caselle dell'inventario nascono tutte all'avvio e restano
+  // spente finche' una tecnologia non le apre.
+  function aggiuntaMassima(tipo) {
+    let quante = 0
+    for (let i = 0; i < elencoTecnologie.length; i++) {
+      const dati = elencoTecnologie[i]
+      if (dati.effetto && dati.effetto.tipo === tipo) {
+        quante += dati.effetto.aggiunta
+      }
+      if (dati.effetto_secondario && dati.effetto_secondario.tipo === tipo) {
+        quante += dati.effetto_secondario.aggiunta
+      }
+    }
+    return quante
+  }
+
   function svuota() {
     prese.length = 0
   }
 
-  return { prese, hoGiaPreso, disponibile, prendi, moltiplicatore, svuota }
+  return {
+    prese,
+    hoGiaPreso,
+    disponibile,
+    prendi,
+    moltiplicatore,
+    aggiunta,
+    aggiuntaMassima,
+    svuota
+  }
 }

@@ -41,7 +41,7 @@ export function creaEconomia() {
     let totale = 0
     for (let i = 0; i < elencoMateriali.length; i++) {
       const id = elencoMateriali[i].id
-      totale += (cassa.contenuto[id] || 0) * prezzo(id)
+      totale += cassa.inventario.quanti(id) * prezzo(id)
     }
     return Math.round(totale)
   }
@@ -52,11 +52,11 @@ export function creaEconomia() {
     let incasso = 0
     for (let i = 0; i < elencoMateriali.length; i++) {
       const id = elencoMateriali[i].id
-      const quanti = cassa.contenuto[id] || 0
+      const quanti = cassa.inventario.quanti(id)
       if (quanti <= 0) {
         continue
       }
-      casse.togli(cassa, id, quanti)
+      cassa.inventario.togli(id, quanti)
       incasso += quanti * prezzo(id)
     }
     incasso = Math.round(incasso)
