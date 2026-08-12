@@ -4,13 +4,14 @@
 // riepilogo dice cosa e' successo. E' il meccanismo del "vabbe', ancora un
 // giorno": ogni giornata deve avvicinare in modo visibile a qualcosa che vuoi.
 //
-// **Non si perde mai.** Se non bastano i soldi si paga quello che c'e' e il
-// bracciante che costa di piu' se ne va: l'isola si rimpicciolisce e si
-// riparte, senza nessuna schermata di sconfitta.
+// **Non si perde mai, e adesso nemmeno un po'.** Con un operaio solo non ci
+// sono salari da pagare: la sera e' un ritmo e un riepilogo, non una scadenza.
+// La pressione non viene dai soldi che escono, viene da quanto ti chiedono —
+// "the factory must grow".
 
 import { tempo } from './config.js'
 
-export function creaGiorno(economia, squadra, { allAlba }) {
+export function creaGiorno(economia, { allAlba }) {
   const stato = {
     giorno: 1,
     trascorsoMs: 0,
@@ -22,9 +23,7 @@ export function creaGiorno(economia, squadra, { allAlba }) {
   const riepilogo = {
     giorno: 0,
     incassato: 0,
-    salari: 0,
-    raccolto: 0,
-    andatoVia: ''
+    raccolto: 0
   }
 
   let incassatoOggi = 0
@@ -53,23 +52,9 @@ export function creaGiorno(economia, squadra, { allAlba }) {
   }
 
   function faiSera() {
-    const dovuto = squadra.salariTotali()
-    let andatoVia = ''
-
-    if (economia.paga(dovuto)) {
-      riepilogo.salari = dovuto
-    } else {
-      // non ci sono i soldi: si paga quello che c'e' e se ne va il piu' caro.
-      // Mai una sconfitta, solo un'isola piu' piccola.
-      riepilogo.salari = Math.floor(economia.stato.monete)
-      economia.stato.monete = 0
-      andatoVia = squadra.mandaViaIlPiuCaro()
-    }
-
     riepilogo.giorno = stato.giorno
     riepilogo.incassato = incassatoOggi
     riepilogo.raccolto = raccoltoOggi
-    riepilogo.andatoVia = andatoVia
 
     incassatoOggi = 0
     raccoltoOggi = 0

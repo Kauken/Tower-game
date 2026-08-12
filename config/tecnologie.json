@@ -1,0 +1,60 @@
+{
+  "_nota": "L'albero tecnologico. Con un operaio solo, QUESTA E' L'UNICA VIA DI CRESCITA: non si assume, si migliora. Ogni voce si compra una volta sola e resta.",
+  "_nota_desiderio": "Le tecnologie che non ci si puo' ancora permettere restano VISIBILI ma spente, col loro costo. Vedere quanto manca al Vivaio e' meta' del motivo per tornare: e' l'attesa a creare il desiderio, non la sorpresa.",
+  "_nota_effetti": "Ogni effetto ha un tipo e un moltiplicatore. tempo_lavoro = quanto ci mette a lavorare una risorsa (piu' basso e' meglio, e si puo' limitare a una risorsa sola). velocita = quanto cammina in fretta. zaino = quanto porta. ricrescita = quanto ci mettono gli alberi a tornare. Nessun effetto e' scritto nel codice: il codice sa leggere questi quattro tipi e basta.",
+  "_nota_regola": "REGOLA: una tecnologia deve dare un VERBO NUOVO o togliere un collo di bottiglia che si sente. Un +5% che non si nota non merita di stare in bacheca.",
+  "tecnologie": [
+    {
+      "id": "ascia_affilata",
+      "nome": "Ascia affilata",
+      "descrizione": "Abbatti gli alberi molto piu' in fretta.",
+      "costo": 120,
+      "colore": "#7ea653",
+      "effetto": { "tipo": "tempo_lavoro", "risorsa": "albero", "moltiplicatore": 0.6 }
+    },
+    {
+      "id": "zaino_grande",
+      "nome": "Zaino grande",
+      "descrizione": "Porti quasi il doppio prima di dover tornare a scaricare.",
+      "costo": 160,
+      "colore": "#c9a45c",
+      "effetto": { "tipo": "zaino", "moltiplicatore": 1.85 }
+    },
+    {
+      "id": "stivali",
+      "nome": "Stivali buoni",
+      "descrizione": "Cammini molto piu' in fretta. Si sente su tutto.",
+      "costo": 210,
+      "colore": "#b58c5a",
+      "effetto": { "tipo": "velocita", "moltiplicatore": 1.45 }
+    },
+    {
+      "id": "piccone_pesante",
+      "nome": "Piccone pesante",
+      "descrizione": "Spacchi i massi in poco piu' della meta' del tempo.",
+      "costo": 260,
+      "colore": "#8892a6",
+      "richiede": "ascia_affilata",
+      "effetto": { "tipo": "tempo_lavoro", "risorsa": "masso", "moltiplicatore": 0.55 }
+    },
+    {
+      "id": "vivaio",
+      "nome": "Vivaio",
+      "descrizione": "Gli alberi ricrescono in meta' tempo: il bosco non ti lascia mai a mani vuote.",
+      "costo": 450,
+      "colore": "#4a7031",
+      "richiede": "ascia_affilata",
+      "effetto": { "tipo": "ricrescita", "moltiplicatore": 0.5 }
+    },
+    {
+      "id": "carriola",
+      "nome": "Carriola",
+      "descrizione": "Porti il triplo, ma cammini un po' piu' piano.",
+      "costo": 520,
+      "colore": "#a0763f",
+      "richiede": "zaino_grande",
+      "effetto": { "tipo": "zaino", "moltiplicatore": 1.7 },
+      "effetto_secondario": { "tipo": "velocita", "moltiplicatore": 0.85 }
+    }
+  ]
+}

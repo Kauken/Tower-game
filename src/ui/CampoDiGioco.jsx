@@ -10,7 +10,7 @@ import {
   PannelloCostruisci,
   Riepilogo
 } from './Pannelli.jsx'
-import { mestieri } from '../game/config.js'
+import { elencoTecnologie } from '../game/config.js'
 
 const VISTA_INIZIALE = {
   magazzino: '',
@@ -34,28 +34,22 @@ const VISTA_INIZIALE = {
   monete: 0,
   giorno: 1,
   oraDelGiorno: 0,
-  salariStasera: 0,
+  zaino: 0,
   mostraRiepilogo: false,
   riepilogo: '',
-  assunzioni: ''
+  tecnologie: ''
 }
 
-// "taglialegna:220:40,cavatore:280:50" -> quanto costa assumere ognuno
-function leggiAssunzioni(riga) {
-  if (!riga) {
-    return []
+// "ascia_affilata:presa,vivaio:bloccata" -> l'albero pronto da mostrare
+function leggiTecnologie(riga) {
+  const stati = {}
+  if (riga) {
+    riga.split(',').forEach((pezzo) => {
+      const punto = pezzo.indexOf(':')
+      stati[pezzo.slice(0, punto)] = pezzo.slice(punto + 1)
+    })
   }
-  return riga.split(',').map((pezzo) => {
-    const [id, costo, salario] = pezzo.split(':')
-    const mestiere = mestieri.find((m) => m.id === id)
-    return {
-      id,
-      nome: mestiere ? mestiere.nome : id,
-      colore: mestiere ? mestiere.colore : '#888888',
-      costo: Number(costo),
-      salario: Number(salario)
-    }
-  })
+  return elencoTecnologie.map((t) => ({ ...t, stato: stati[t.id] || 'bloccata' }))
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -192,7 +186,7 @@ export default function CampoDiGioco() {
     apriCostruzione(false)
   }, [])
   const vendi = useCallback(() => motoreRef.current.vendi(), [])
-  const assumi = useCallback((id) => motoreRef.current.assumi(id), [])
+  const studia = useCallback((id) => motoreRef.current.studia(id), [])
   const chiudiRiepilogo = useCallback(() => motoreRef.current.chiudiRiepilogo(), [])
 
   return (
@@ -229,7 +223,7 @@ export default function CampoDiGioco() {
         monete={vista.monete}
         giorno={vista.giorno}
         oraDelGiorno={vista.oraDelGiorno}
-        salariStasera={vista.salariStasera}
+        zaino={vista.zaino}
         esito={vista.esito}
       />
 
@@ -265,9 +259,9 @@ export default function CampoDiGioco() {
           valore={vista.valoreCassa}
           eIlCasotto={vista.cassaEIlCasotto}
           monete={vista.monete}
-          assunzioni={leggiAssunzioni(vista.assunzioni)}
+          tecnologie={leggiTecnologie(vista.tecnologie)}
           onVendi={vendi}
-          onAssumi={assumi}
+          onStudia={studia}
           onChiudi={annulla}
         />
       ) : null}

@@ -9,7 +9,7 @@ Il progetto è stato riscritto più volte. Valgono solo `GDD.md` v5.0 e `ROADMAP
 
 **Un'isola vista dall'alto. Nessun personaggio: sei il gestore.** Tocchi le cose e dai ordini, e a camminare e lavorare sono i braccianti. Apri zone nuove costruendo il passaggio, e quello che ne esce alimenta catene di lavorazione sempre più lunghe.
 
-**Ogni sera si pagano i salari**, quindi assumere è una scommessa e non un regalo. La domanda di roba deve crescere sempre più in fretta di quanto produci: *the factory must grow*.
+**C'è un operaio solo.** All'inizio fa tutto lui, piano. Non se ne assumono altri: si cresce **solo con la tecnologia** — attrezzi migliori, poi macchine, poi nastri — finché la maggior parte del lavoro non la fa più lui.
 
 **Non si può perdere.** Niente fretta, niente timer, niente che marcisce. Se non paghi, un bracciante se ne va: la fattoria si rimpicciolisce e riparti.
 
@@ -33,7 +33,7 @@ L'autore non sa programmare e lavora dal telefono. Quindi:
 9. **Le tessere non si devono vedere.** Servono solo a far agganciare le cose, come in Factorio. Niente bordi sulle tessere, mai; la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro. Un quadrato dentro una griglia di quadrati si legge come una scacchiera, ed è la cosa che l'autore ha rifiutato.
 10. **NIENTE MAGAZZINO CENTRALE.** Le risorse stanno dentro casse che hanno un posto; qualcuno le deve portare. Se aggiungi un contatore da cui si può prendere ovunque, hai tolto metà del gioco: **la distanza deve costare**, ed è la ragione per cui i nastri serviranno.
 11. **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
-12. **La domanda che regge il gioco è "assumo, o me lo faccio bastare?"** Se assumere è sempre giusto, non c'è partita. E la domanda di roba deve crescere sempre più in fretta della produzione: se un giorno hai abbastanza di tutto, il gioco è finito.
+12. **C'è UN OPERAIO SOLO, e non si assume.** L'unica via di crescita è la **tecnologia**: attrezzi migliori, poi macchine, poi nastri. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato: si risolve con un pezzo di albero tecnologico. E la domanda di roba deve crescere sempre più in fretta della produzione — *the factory must grow*: se un giorno hai abbastanza di tutto, il gioco è finito.
 13. **Uno sblocco dà un verbo nuovo, non un numero più grande.**
 
 ## Comandi
@@ -70,7 +70,7 @@ Il gioco è cambiato nove volte. **Queste cinque cose no, mai:**
 2. **Nessun riflesso, nessuna mira, nessuna fretta.**
 3. **Contano le decisioni e gli sblocchi**, non l'abilità.
 4. **Non si deve poter perdere.**
-5. **Nessun personaggio da guidare.** Il giocatore è sopra lo schermo, non dentro.
+5. **Nessun personaggio da guidare.** Il giocatore è sopra lo schermo, non dentro. *(C'è un operaio solo sull'isola, ma non lo si muove: gli si danno ordini toccando le cose. La differenza è tutta lì.)*
 
 > **Prima di proporre un genere, un sistema o una meccanica, controllala contro queste cinque.** Sei riscritture su sette sono nate da un genere che ne contraddiceva una: il tower defense ha bisogno di tensione (contro la 2 e la 4), il puzzle ha bisogno di pressione di ottimizzazione (contro la 3). Se una proposta ne contraddice una, **è la proposta a essere sbagliata**: dillo, non costruirla.
 

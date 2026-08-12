@@ -146,9 +146,9 @@ export function PannelloCassa({
   valore,
   eIlCasotto,
   monete,
-  assunzioni,
+  tecnologie,
   onVendi,
-  onAssumi,
+  onStudia,
   onChiudi
 }) {
   const conti = leggiConti(contenuto)
@@ -159,7 +159,7 @@ export function PannelloCassa({
       titolo={eIlCasotto ? 'Casotto' : 'Cassa'}
       sottotitolo={
         eIlCasotto
-          ? 'Dentro ci sta ' + pieno + '. Qui si vende e si assume.'
+          ? 'Dentro ci sta ' + pieno + '. Qui si vende e si studia.'
           : 'Dentro ci sta ' + pieno
       }
     >
@@ -184,23 +184,87 @@ export function PannelloCassa({
               color: interfaccia.colore_testo_debole
             }}
           >
-            Assumi — poi lo paghi <b>ogni sera</b>, che stia lavorando o no.
+            <b>Tecnologie</b> — hai un operaio solo: l’unico modo di fare di più
+            è migliorare i suoi attrezzi.
           </span>
+
+          {/* le tecnologie che non ti puoi ancora permettere restano visibili
+              col loro costo: vedere quanto manca al Vivaio e' meta' del motivo
+              per tornare. E' l'attesa a creare il desiderio */}
           <div
-            style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: interfaccia.spaziatura_stretta,
+              maxHeight: 260,
+              overflowY: 'auto'
+            }}
           >
-            {assunzioni.map((voce) => (
-              <Bottone
-                key={voce.id}
-                titolo={voce.nome}
-                dettaglio={'poi −' + voce.salario + ' ogni sera'}
-                costo={voce.costo}
-                colore={voce.colore + '44'}
-                coloreBordo={voce.colore}
-                acceso={monete >= voce.costo}
-                onTocco={() => onAssumi(voce.id)}
-              />
-            ))}
+            {tecnologie.map((t) => {
+              const presa = t.stato === 'presa'
+              const bloccata = t.stato === 'bloccata'
+              const puoi = t.stato === 'libera' && monete >= t.costo
+              const richiesta = bloccata
+                ? tecnologie.find((altra) => altra.id === t.richiede)
+                : null
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  disabled={!puoi}
+                  onPointerDown={() => puoi && onStudia(t.id)}
+                  style={{
+                    textAlign: 'left',
+                    padding: '10px 12px',
+                    minHeight: interfaccia.altezza_minima_tocco,
+                    borderRadius: interfaccia.raggio_angoli,
+                    border:
+                      stile.spessore_bordo +
+                      'px solid ' +
+                      (presa ? t.colore : puoi ? t.colore : 'transparent'),
+                    background: presa ? t.colore + '33' : stile.colore_spento,
+                    color: presa || puoi ? interfaccia.colore_testo : stile.colore_testo_spento,
+                    fontFamily: 'inherit',
+                    touchAction: 'manipulation',
+                    opacity: bloccata ? 0.65 : 1
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                    <span
+                      style={{ fontSize: interfaccia.testo_normale, fontWeight: stile.peso_titolo }}
+                    >
+                      {t.nome}
+                    </span>
+                    <span style={{ flex: 1 }} />
+                    <span
+                      style={{
+                        fontSize: interfaccia.testo_piccolo,
+                        fontWeight: stile.peso_titolo,
+                        color: presa
+                          ? t.colore
+                          : puoi
+                            ? interfaccia.colore_accento
+                            : stile.colore_testo_spento
+                      }}
+                    >
+                      {presa ? 'presa' : t.costo + ' monete'}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 3,
+                      fontSize: interfaccia.testo_piccolo,
+                      color: interfaccia.colore_testo_debole,
+                      lineHeight: 1.3
+                    }}
+                  >
+                    {bloccata && richiesta
+                      ? 'prima serve: ' + richiesta.nome
+                      : t.descrizione}
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </>
       ) : null}
@@ -216,10 +280,7 @@ export function Riepilogo({ dati, onChiudi }) {
   const pezzi = dati.split(',')
   const giorno = Number(pezzi[0])
   const incassato = Number(pezzi[1])
-  const salari = Number(pezzi[2])
-  const raccolto = Number(pezzi[3])
-  const andatoVia = pezzi[4] || ''
-  const saldo = incassato - salari
+  const raccolto = Number(pezzi[2])
 
   return (
     <div
@@ -249,13 +310,7 @@ export function Riepilogo({ dati, onChiudi }) {
 
       {[
         ['Raccolto', raccolto, interfaccia.colore_testo],
-        ['Incassato', '+' + incassato, interfaccia.colore_accento],
-        ['Salari', '−' + salari, '#d9805f'],
-        [
-          'In tasca oggi',
-          (saldo >= 0 ? '+' : '') + saldo,
-          saldo >= 0 ? interfaccia.colore_accento : '#d9805f'
-        ]
+        ['Incassato', '+' + incassato, interfaccia.colore_accento]
       ].map(([voce, valore, colore]) => (
         <div
           key={voce}
@@ -271,20 +326,6 @@ export function Riepilogo({ dati, onChiudi }) {
           <span style={{ fontWeight: stile.peso_titolo, color: colore }}>{valore}</span>
         </div>
       ))}
-
-      {andatoVia ? (
-        <div
-          style={{
-            marginTop: 8,
-            fontSize: interfaccia.testo_piccolo,
-            color: '#d9805f',
-            lineHeight: 1.35
-          }}
-        >
-          Non bastavano le monete: <b>{andatoVia}</b> se n’è andato. Non hai perso
-          niente di quello che avevi raccolto — l’isola si è solo rimpicciolita.
-        </div>
-      ) : null}
 
       <div
         style={{

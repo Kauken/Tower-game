@@ -1,46 +1,17 @@
 {
-  "_nota": "Chi lavora. Il giocatore non tocca mai il terreno: mette in coda del lavoro, e un bracciante libero lo prende. Ogni bracciante fa UN MESTIERE SOLO.",
-  "_nota_mestiere": "In RimWorld ogni colono ha una griglia di priorita' per ogni tipo di lavoro. E' la parte piu' profonda di quel gioco ed e' anche un foglio di calcolo: su un telefono, con un dito, sarebbe illeggibile. E ne nasce un difetto noto — col trasporto a priorita' alta i coloni attraversano tutta la mappa per un oggetto solo, e il giocatore non capisce perche' nessuno stia lavorando. Qui un bracciante fa un mestiere e si vede: se il legno non arriva, hai un taglialegna solo.",
+  "_nota": "Chi lavora. IL GIOCATORE NON TOCCA MAI IL TERRENO: mette in coda del lavoro, e l'operaio lo prende. Uno solo, e fa tutto.",
+  "_nota_uno_solo": "Un operaio solo, deciso il 2026-08-12. Con piu' coloni si cresceva assumendo, e la tecnologia diventava un di piu'. Con uno solo si puo' crescere SOLO con la tecnologia — che e' esattamente la forma di Factorio e Satisfactory, dove sei una persona sola e a crescere e' la fabbrica. All'inizio si fa tutto piano, e ogni sblocco si sente addosso.",
+  "_nota_non_e_un_personaggio": "L'operaio NON e' un personaggio da guidare. Non ha una levetta, non lo si muove: gli si danno ordini toccando le cose, e lui ci va. E' la differenza che l'autore ha ribadito tre volte, e resta valida anche adesso che e' uno solo.",
+  "_nota_squadra": "Resta un elenco anche se ne contiene uno: se un giorno servisse un secondo operaio, e' un valore di configurazione, non una riscrittura.",
   "velocita": 96,
   "distanza_arrivo": 18,
-  "mestieri": [
-    {
-      "id": "taglialegna",
-      "nome": "Taglialegna",
-      "descrizione": "Abbatte gli alberi.",
-      "colore": "#7ea653",
-      "colore_bordo": "#d5eab4",
-      "salario": 30,
-      "costo_assunzione": 220
-    },
-    {
-      "id": "cavatore",
-      "nome": "Cavatore",
-      "descrizione": "Spacca i massi e sgombera le frane.",
-      "colore": "#8892a6",
-      "colore_bordo": "#dfe6f2",
-      "salario": 40,
-      "costo_assunzione": 280
-    }
-  ],
-  "iniziali": [
-    {
-      "mestiere": "taglialegna",
-      "tessera": [
-        10,
-        14
-      ]
-    },
-    {
-      "mestiere": "cavatore",
-      "tessera": [
-        12,
-        14
-      ]
-    }
-  ],
-  "_nota_zaino": "Quanto porta addosso un bracciante. E' piccolo apposta: quando e' pieno smette di lavorare e va a scaricare, e quella camminata e' il costo che rende utile mettere una cassa vicino al lavoro. Senza quel costo i nastri non servirebbero a niente.",
   "zaino": 12,
-  "_nota_scarico": "Dove scarica lo decide il giocatore, cassa per cassa. NON c'e' un magazzino centrale in cui la roba compare da sola: e' la differenza fra questo gioco e un gestionale alla Age of Empires, ed e' la ragione per cui piu' avanti i nastri avranno senso.",
-  "_nota_soldi": "Ogni mestiere costa due volte: una all'assunzione (costo_assunzione, una tantum) e una ogni sera (salario). E' il salario a rendere difficile la domanda 'assumo o me lo faccio bastare': un bracciante fermo costa uguale a uno che lavora, quindi non conviene averne piu' di quanti se ne riescono a tenere occupati."
+  "operaio": {
+    "nome": "Operaio",
+    "colore": "#c9a45c",
+    "colore_bordo": "#f5e2b4"
+  },
+  "iniziali": [
+    { "tessera": [10, 14] }
+  ]
 }

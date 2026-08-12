@@ -12,7 +12,7 @@ export default function Cruscotto({
   monete,
   giorno,
   oraDelGiorno,
-  salariStasera,
+  zaino,
   esito
 }) {
   // arriva come "legno:12,pietra:0": una stringa sola invece di un oggetto,
@@ -24,7 +24,7 @@ export default function Cruscotto({
     quantita[pezzi[i].slice(0, punto)] = pezzi[i].slice(punto + 1)
   }
 
-  const alLavoro = braccantiTotali - braccantiFermi
+  const staLavorando = braccantiTotali - braccantiFermi > 0
 
   return (
     <div
@@ -69,8 +69,10 @@ export default function Cruscotto({
           <span style={{ fontSize: interfaccia.testo_normale, color: interfaccia.colore_testo }}>
             giorno {giorno}
           </span>
-          <span style={{ fontSize: interfaccia.testo_piccolo, color: '#d9805f' }}>
-            −{salariStasera} stasera
+          <span
+            style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
+          >
+            zaino {zaino}
           </span>
         </div>
         <div
@@ -145,7 +147,7 @@ export default function Cruscotto({
             whiteSpace: 'nowrap'
           }}
         >
-          {alLavoro}/{braccantiTotali} al lavoro
+          {staLavorando ? 'al lavoro' : lavoriInAttesa > 0 ? 'in arrivo' : 'fermo'}
         </div>
       </div>
 

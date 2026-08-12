@@ -37,14 +37,20 @@ versione è la più grande di tutte, quindi contano il doppio.
 
 **Adesso non c'è nessuna ragione per fare niente.** Tagli alberi perché puoi. Questi due punti, e solo questi due, trasformano un giocattolo in un gioco: uno mette la **pressione**, l'altro il **desiderio**. Tutto il resto della roadmap è contenuto.
 
-3. **Il giorno, i salari, vendere e assumere.** — **FATTO** (2026-08-11). Il giorno dura 90 secondi e il cruscotto mostra sempre quanto manca a sera e quanto pagherai. Si vende **dalla cassa** (anche vendere succede in un posto), si assume **al casotto**, e ogni bracciante costa una volta all'assunzione e poi ogni sera — che lavori o no. Se a sera non bastano le monete, se ne va il più caro: **non si perde mai**. Vendere e assumere erano nel punto 4, ma senza un modo di guadagnare i salari sono solo un conto alla rovescia, e senza assumere non c'è nessuna decisione.
+3. **Il giorno, vendere, e le prime tecnologie.** — **FATTO** (2026-08-12). Il giorno dura 90 secondi e a sera arriva il riepilogo. Si vende **dalla cassa** (anche vendere succede in un posto) e si **studia al casotto**: sei tecnologie che migliorano l'operaio — ascia, zaino, stivali, piccone, vivaio, carriola — con quelle che non ti puoi permettere **visibili ma spente**, col loro costo e con scritto cosa serve prima.
+
+   > **Salari e assunzioni sono stati costruiti e poi tolti lo stesso giorno**, quando l'autore ha chiesto un operaio solo. Con uno solo un salario è una tassa fissa, non una decisione. È rimasto tutto il resto: il giorno, il riepilogo, la vendita dalla cassa.
 
 3b. **Gli alberi ricrescono.** — **FATTO** (2026-08-11). Trovato provando: con 24 alberi finiti e i salari da pagare, l'isola arrivava a un **vicolo cieco** — niente più da raccogliere e nessun modo di uscirne. Adesso un albero tagliato lascia un germoglio che ricresce, disegnato piccolo e smorto. È anche il primo pezzo di **stato per tessera**, cioè la fondazione su cui poggeranno le piantagioni e le macchine.
 4. **Le commesse.** Qualcuno ti chiede roba precisa e paga molto più del mercato. È il "non vedo l'ora", ed è la prima volta che il legno serve a qualcosa.
 
 > ### 🛑 Verifica dopo il punto 4 — non si va avanti senza
-> **Apri l'isola e sai già cosa vuoi fare?** Se dopo il riepilogo della sera non
-> c'è una cosa che vuoi, mancano pressione o desiderio, e si risolve qui.
+> **Apri l'isola e sai già cosa vuoi fare?** Se guardando l'elenco delle
+> tecnologie non c'è una cosa che vuoi, il desiderio non morde e si risolve qui.
+>
+> E la seconda, che è quella che questa versione mette alla prova:
+> **si sente che l'operaio è uno solo?** Guardarlo fare una cosa per volta deve
+> far venire voglia di un'ascia migliore, non di un secondo operaio.
 
 ## Fase C — le fondamenta che costano care se si rimandano
 
@@ -95,6 +101,7 @@ E una cosa che **non** è stata spostata, di proposito: le catene e i nastri res
 
 - **I braccianti vanno in linea retta.** Attraversano gli alberi. Sull'isola aperta non si nota; col punto 11 arriva un percorso vero.
 - **Chiudere la pagina cancella tutto.** È il punto 5.
+- **Non c'è ancora una vera pressione.** I salari sono caduti col passaggio a un operaio solo, e le commesse arrivano al punto 4: fino ad allora le monete servono solo a comprare tecnologia.
 - **Un lavoro non ha origine e destinazione**, solo una tessera. Trasportare vuole due campi in più in `lavori.js`: **va fatto prima dei nastri**, se no i nastri si rifanno. Vedi GDD §6b.
 - **I massi non ricrescono**, e sono otto. Quando finiscono, la pietra arriva solo aprendo la cava (punto 12).
 - **Una cassa piena** fa ripiegare il bracciante sulla più vicina con spazio, invece di bloccarlo. Va bene così finché non ci sono i nastri.

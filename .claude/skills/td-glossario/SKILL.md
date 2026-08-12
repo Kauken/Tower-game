@@ -16,8 +16,8 @@ L'autore parla di gioco, non di codice. Questa è la mappa fra le due lingue.
 | "la zona" | un pezzo di isola chiuso da un ostacolo. Si apre **costruendo il passaggio**, non trovando una chiave |
 | "dare un ordine", "comandare" | toccare una cosa: il lavoro va in coda, e un bracciante libero lo prende |
 | "l'anello", "il segno" | il cerchio tratteggiato sulle cose ordinate. Giallo = aspetta, verde = qualcuno ci sta andando |
-| "i braccianti", "gli operai" | chi fa il lavoro. **Ognuno fa un mestiere solo**, e si paga ogni giorno |
-| "il mestiere" | taglialegna, cavatore, contadino, portatore. Uno per bracciante, mai una griglia di priorita' |
+| "l'operaio" | chi fa il lavoro. **E' UNO SOLO e fa tutto**, una cosa per volta. Non si assume, non si paga |
+| "le tecnologie", "gli sblocchi" | l'**unica via di crescita**: attrezzi migliori, poi macchine, poi nastri. Si comprano al casotto |
 | "le risorse" | quello che sta sull'isola e si puo' ordinare di raccogliere: alberi, massi, frane |
 | "la cassa" | dove finisce la roba. Ha un posto preciso. **NON esiste un magazzino centrale** |
 | "il casotto" | la prima cassa, gia' li' all'avvio |
@@ -41,6 +41,7 @@ Queste cose l'autore le ha **rifiutate esplicitamente**. Un rifiuto e' un fatto 
 | **Un personaggio da guidare** | rifiutato **tre volte** | *"non l'omino che si muove"* · *"non vorrei un personaggio ma piu' da gestionale che col dito comando"* |
 | **La scacchiera** | 2026-08-11 | *"non voglio questa cosa a scacchiera"* |
 | **Il magazzino centrale** | 2026-08-11 | *"non voglio una sorta di Age of Empires che ha un magazzino principale"* |
+| **Piu' coloni** | 2026-08-12 | *"invece di piu' coloni, mi va bene un singolo solo"* — si cresce con la tecnologia, non assumendo |
 | **Il puzzle di incastro** | 2026-08-11 | *"non vorrei pero' un puzzle game, vorrei piu' un farmer"* |
 | **Il tower defense** | 2026-08-11 | *"sembra molto noioso da vedere e giocare"* |
 
@@ -76,7 +77,8 @@ Quando compaiono queste parole, la richiesta è un **sintomo** e va analizzata p
 
 - **Ordine** ≠ **lavoro fatto**: dare un ordine lo mette in coda; qualcuno deve poi prenderlo. L'anello giallo dice "in attesa", il verde "qualcuno ci sta andando".
 - **Risorsa** ≠ **lavorazione**: la risorsa sta gia' sull'isola e si raccoglie; la lavorazione trasforma un materiale in uno che vale di piu'.
-- **Bracciante** ≠ **macchina**: il bracciante si paga ogni giorno, la macchina si paga una volta sola e costa molto di piu'. La scelta fra i due e' il gioco.
+- **Operaio** ≠ **personaggio**: c'e' un operaio sull'isola, ma non lo si muove. Gli si danno ordini toccando le cose. Se una richiesta presuppone di guidarlo, e' un fraintendimento.
+- **Tecnologia** ≠ **costruzione**: la tecnologia si compra una volta e migliora l'operaio ovunque; la costruzione si piazza su una tessera.
 - **Zona** ≠ **spazio**: aprire una zona non da' piu' posto, da' una materia prima nuova e un ramo di lavorazioni nuovo.
 - **Cassa** ≠ **magazzino**: la cassa e' un posto preciso da cui si prende e in cui si mette. Il numero in alto e' solo la somma di tutte le casse, non un posto da cui si puo' attingere.
 - **Tessera** ≠ **quello che si vede**: le tessere ci sono ma non si disegnano mai.

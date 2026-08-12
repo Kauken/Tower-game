@@ -42,13 +42,37 @@ Un pulsante allontana la vista per guardare tutta l'isola. Due livelli di zoom s
 
 **L'ordine si vede sempre**: un anello attorno alla cosa, **giallo** se aspetta qualcuno, **verde** se qualcuno ci sta già andando. Senza quel segno non si può sapere cosa si è già comandato.
 
-## 4. Chi lavora
+## 4. Chi lavora — **uno solo**
 
-**Ogni bracciante fa un mestiere solo.** Sta fermo finché non c'è in coda un lavoro che sa fare, poi ci va, lo fa, e torna fermo. Lo paghi ogni giorno.
+*Deciso il 2026-08-12.*
 
-> **Perché non le priorità di RimWorld.** Là ogni colono ha una griglia di priorità da 1 a 4 per ogni tipo di lavoro. È la parte più profonda di quel gioco, ed è anche un foglio di calcolo: su un telefono, con un dito, sarebbe illeggibile. E ne nasce un difetto documentato — col trasporto a priorità alta i coloni attraversano tutta la mappa per un oggetto solo, e il giocatore non capisce perché nessuno stia lavorando.
->
-> Qui, se il legno non arriva, basta guardare: **hai un taglialegna solo.**
+> *"Invece di più coloni, mi va bene un singolo solo che esegue le operazioni che gli dico, così che all'inizio le cose si fanno piano piano e poi più in là ha più senso con l'avanzamento delle automazioni e tecnologie."*
+
+**C'è un operaio solo, e fa tutto.** Sta fermo finché non c'è un lavoro in coda, poi ci va, lo fa, e torna fermo. **Una cosa per volta**, nell'ordine in cui gliel'hai data.
+
+Non è un personaggio da guidare: non ha una levetta e non lo si muove. Gli si danno ordini toccando le cose, e ci va lui.
+
+### È la scelta che rende il gioco quello che deve essere
+
+Con più coloni si cresce **assumendo**, e la tecnologia diventa un di più. Con uno solo si può crescere **solo con la tecnologia** — che è la forma di Factorio e Satisfactory, dove sei una persona sola e a crescere è la fabbrica.
+
+E c'è un secondo effetto, più importante: **il collo di bottiglia si vede.** Con un operaio solo, guardarlo camminare avanti e indietro *è* la spiegazione di cosa ti manca. Con cinque, il problema si nasconde nella folla.
+
+L'arco è questo:
+
+| | Chi fa il lavoro |
+| --- | --- |
+| **All'inizio** | lui, tutto, piano |
+| **Con gli attrezzi** | lui, ma più in fretta |
+| **Con le macchine** | alcune cose non le fa più |
+| **Coi nastri** | non trasporta più |
+| **Alla fine** | costruisce e sistema, non lavora |
+
+### Cosa è caduto con questa decisione
+
+I **salari** e le **assunzioni**, costruiti il giorno prima. Con un operaio solo un salario è una tassa fissa, non una decisione, e *"assumo o me lo faccio bastare"* non esiste più.
+
+Al suo posto la pressione viene da dove il GDD diceva già che dovesse venire: **la domanda cresce più in fretta della produzione.** Non sono i soldi che escono, è quello che ti chiedono.
 
 ## 5. Le zone
 
@@ -147,13 +171,15 @@ L'autore ha chiesto di non arrivare a un punto in cui *"per fare questo dobbiamo
 
 Il valore si moltiplica a ogni passaggio, e ogni lavorazione chiede materiali di *un'altra* catena. È così che le zone diventano un gioco solo invece di rami appiccicati.
 
-## 7. Il giorno e le spese
+## 7. Il giorno
 
-Il **giorno** dura pochi minuti. A sera si pagano i **salari** e la manutenzione, i prezzi di mercato si muovono, e un riepilogo dice cosa è successo.
+Il **giorno** dura pochi minuti. A sera arriva un riepilogo di cosa hai raccolto e incassato.
 
-È il meccanismo del *"vabbè, ancora un giorno"*, il motore vero dell'engagement di Stardew.
+È il meccanismo del *"vabbè, ancora un giorno"*, il motore vero dell'engagement di Stardew — e serve anche da orologio per la ricrescita e, più avanti, per le commesse che si rinnovano.
 
-**Non si perde mai.** Se non riesci a pagare, un bracciante se ne va: la fattoria si rimpicciolisce e riparti. Niente schermata di sconfitta.
+**Non ci sono spese fisse.** Con un operaio solo un salario sarebbe una tassa, non una decisione. I soldi servono a **comprare tecnologia**, che è l'unica via di crescita.
+
+**Non si perde mai**, e adesso nemmeno un po'.
 
 ## 8. Le tessere
 

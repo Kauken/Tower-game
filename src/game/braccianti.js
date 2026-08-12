@@ -1,8 +1,16 @@
-// I braccianti: quelli che il lavoro lo fanno davvero.
+// L'operaio: quello che il lavoro lo fa davvero.
 //
-// Ognuno fa **un mestiere solo**. Sta fermo finche' non c'e' in coda un lavoro
-// che sa fare, poi ci va, lo fa, si mette la roba nello zaino, e quando lo
-// zaino e' pieno la porta alla cassa che gli hai detto tu.
+// **E' uno solo, e fa tutto.** Sta fermo finche' non c'e' un lavoro in coda,
+// poi ci va, lo fa, si mette la roba nello zaino, e quando lo zaino e' pieno
+// la porta alla cassa che gli hai detto tu. Una cosa per volta.
+//
+// Non e' un personaggio da guidare: non ha una levetta, non lo si muove. Gli
+// si danno ordini toccando le cose, e ci va lui.
+//
+// **A crescere non e' la squadra, e' la tecnologia.** Con un operaio solo
+// l'unico modo di fare di piu' e' migliorare l'ascia, lo zaino, gli stivali —
+// che e' la forma di Factorio e Satisfactory, dove sei una persona sola e a
+// crescere e' la fabbrica.
 //
 // **Non esiste un magazzino centrale**: la roba non compare da nessuna parte,
 // va portata. Quella camminata e' il costo che rende utile mettere una cassa
@@ -14,9 +22,9 @@
 import {
   braccianti as datiBraccianti,
   elencoMateriali,
+  operaio as aspettoOperaio,
   risorse,
-  tessera,
-  trovaMestiere
+  tessera
 } from './config.js'
 import {
   calpestabile,
@@ -31,7 +39,7 @@ import {
 const puntoDiLavoro = { tx: 0, ty: 0 }
 const meta = { x: 0, y: 0 }
 
-export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolto }) {
+export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMondo, alRaccolto }) {
   const squadra = []
 
   function zainoVuoto() {
@@ -42,15 +50,23 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolt
     return zaino
   }
 
-  function assumi(idMestiere, tx, ty) {
-    const mestiere = trovaMestiere(idMestiere)
+  // Quanto porta adesso: le tecnologie lo cambiano, quindi si chiede invece
+  // di ricordarselo.
+  function capienzaZaino() {
+    return Math.round(datiBraccianti.zaino * tecnologie.moltiplicatore('zaino', ''))
+  }
+
+  function velocita() {
+    return datiBraccianti.velocita * tecnologie.moltiplicatore('velocita', '')
+  }
+
+  function assumi(tx, ty) {
     const posto = { x: 0, y: 0 }
     centroTessera(tx, ty, posto)
     squadra.push({
-      mestiere: idMestiere,
-      nome: mestiere.nome,
-      colore: mestiere.colore,
-      coloreBordo: mestiere.colore_bordo,
+      nome: aspettoOperaio.nome,
+      colore: aspettoOperaio.colore,
+      coloreBordo: aspettoOperaio.colore_bordo,
       x: posto.x,
       y: posto.y,
       // 'fermo' | 'va' | 'lavora' | 'porta' | 'bloccato'
@@ -63,8 +79,7 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolt
       // lo zaino, e dove lo svuota
       zaino: zainoVuoto(),
       carico: 0,
-      scaricaA: null,
-      salario: mestiere.salario
+      scaricaA: null
     })
     return squadra[squadra.length - 1]
   }
@@ -143,11 +158,11 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolt
       if (bracciante.stato === 'fermo') {
         // prima si svuota lo zaino, poi si prende altro lavoro: uno zaino
         // pieno non puo' ricevere niente
-        if (bracciante.carico >= datiBraccianti.zaino) {
+        if (bracciante.carico >= capienzaZaino()) {
           vaiAScaricare(bracciante)
           continue
         }
-        const lavoro = lavori.prossimoPer(bracciante.mestiere)
+        const lavoro = lavori.prossimo()
         if (!lavoro) {
           // niente da fare: se ha ancora roba addosso la porta via
           if (bracciante.carico > 0) {
@@ -184,12 +199,16 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolt
           } else {
             bracciante.stato = 'lavora'
             bracciante.lavoroMs = 0
-            bracciante.lavoroTotaleMs = risorse[bracciante.lavoro.tipo].tempo_lavoro_ms
+            // le tecnologie accorciano il lavoro: si legge quando comincia,
+            // mai a ogni frame
+            bracciante.lavoroTotaleMs =
+              risorse[bracciante.lavoro.tipo].tempo_lavoro_ms *
+              tecnologie.moltiplicatore('tempo_lavoro', bracciante.lavoro.tipo)
           }
           continue
         }
 
-        const passo = datiBraccianti.velocita * passoSecondi
+        const passo = velocita() * passoSecondi
         bracciante.x += (dx / distanza) * passo
         bracciante.y += (dy / distanza) * passo
         continue
@@ -218,38 +237,6 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolt
     }
   }
 
-  // Quanto costa la squadra ogni sera. Un bracciante fermo costa uguale a uno
-  // che lavora: e' quello che rende difficile la domanda "assumo o no".
-  function salariTotali() {
-    let totale = 0
-    for (let i = 0; i < squadra.length; i++) {
-      totale += squadra[i].salario
-    }
-    return totale
-  }
-
-  // Quando non si riesce a pagare se ne va il piu' caro: e' il piu' facile da
-  // capire, ed e' anche quello che fa piu' male, quindi si vede.
-  function mandaViaIlPiuCaro() {
-    if (squadra.length === 0) {
-      return ''
-    }
-    let quale = 0
-    for (let i = 1; i < squadra.length; i++) {
-      if (squadra[i].salario > squadra[quale].salario) {
-        quale = i
-      }
-    }
-    const nome = squadra[quale].nome
-    const chiSeNeVa = squadra[quale]
-    if (chiSeNeVa.lavoro) {
-      chiSeNeVa.lavoro.preso = false
-      chiSeNeVa.lavoro.attivo = false
-    }
-    squadra.splice(quale, 1)
-    return nome
-  }
-
   function quantiFermi() {
     let quanti = 0
     for (let i = 0; i < squadra.length; i++) {
@@ -273,7 +260,7 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolt
           ty = accanto.ty
         }
       }
-      assumi(voce.mestiere, tx, ty)
+      assumi(tx, ty)
     }
     // all'avvio scaricano tutti al casotto: senza una destinazione il primo
     // bracciante sembrerebbe rotto
@@ -285,13 +272,5 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolt
 
   reimposta()
 
-  return {
-    squadra,
-    assumi,
-    aggiorna,
-    quantiFermi,
-    salariTotali,
-    mandaViaIlPiuCaro,
-    reimposta
-  }
+  return { squadra, assumi, aggiorna, quantiFermi, capienzaZaino, reimposta }
 }

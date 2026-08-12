@@ -62,10 +62,9 @@
     }
   },
   "risorse": {
-    "_nota": "Quello che sta sopra al terreno e si puo' ordinare di togliere. tempo_lavoro_ms e' quanto ci mette un bracciante; resa e' cosa finisce in magazzino. mestiere dice chi lo sa fare.",
+    "_nota": "Quello che sta sopra al terreno e si puo' ordinare di togliere. lavorabile dice se si puo' ordinare; tempo_lavoro_ms quanto ci mette l'operaio; resa cosa finisce nel suo zaino; ricresce_ms quanto ci mette a tornare. Non c'e' piu' un mestiere: l'operaio e' uno solo e fa tutto.",
     "albero": {
       "nome": "Albero",
-      "mestiere": "taglialegna",
       "tempo_lavoro_ms": 3200,
       "resa": {
         "materiale": "legno",
@@ -76,11 +75,11 @@
       "colore_tronco": "#4a3a24",
       "raggio": 0.42,
       "blocca": true,
-      "ricresce_ms": 55000
+      "ricresce_ms": 55000,
+      "lavorabile": true
     },
     "masso": {
       "nome": "Masso",
-      "mestiere": "cavatore",
       "tempo_lavoro_ms": 5200,
       "resa": {
         "materiale": "pietra",
@@ -91,11 +90,11 @@
       "colore_tronco": "#3e4247",
       "raggio": 0.38,
       "blocca": true,
-      "ricresce_ms": 0
+      "ricresce_ms": 0,
+      "lavorabile": true
     },
     "frana": {
       "nome": "Frana",
-      "mestiere": "cavatore",
       "tempo_lavoro_ms": 8000,
       "resa": {
         "materiale": "pietra",
@@ -106,11 +105,11 @@
       "colore_tronco": "#332c26",
       "raggio": 0.46,
       "blocca": true,
-      "ricresce_ms": 0
+      "ricresce_ms": 0,
+      "lavorabile": true
     },
     "casotto": {
       "nome": "Casotto",
-      "mestiere": "",
       "tempo_lavoro_ms": 0,
       "resa": null,
       "colore": "#6b4a32",
@@ -120,7 +119,8 @@
       "blocca": true,
       "squadrata": true,
       "_nota": "L'unica cosa costruita da qualcuno: si disegna quadrata fra le sagome tonde della natura.",
-      "ricresce_ms": 0
+      "ricresce_ms": 0,
+      "lavorabile": false
     }
   },
   "materiali": [

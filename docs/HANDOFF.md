@@ -8,67 +8,66 @@ Ultimo aggiornamento: 2026-08-11 (sera tardi). Chi riprende il lavoro parte da q
 
 **Non esistono più:** il tower defense, il roguelike a stanze, la fattoria a scacchiera, il puzzle di vicinanze. Se ne trovi traccia sono resti da rimuovere.
 
-## Le tre regole che non si toccano
+## Le quattro regole che non si toccano
 
-1. **NIENTE PERSONAGGIO DA MUOVERE.** L'autore l'ha rifiutato **tre volte in tre versioni diverse**. Il giocatore non è dentro lo schermo: è sopra, e comanda col dito.
-2. **LE TESSERE NON SI DEVONO VEDERE.** Il mondo è a tessere — come Factorio, che è una griglia e non sembra una scacchiera — ma niente bordi, mai, e la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro.
-3. **NIENTE MAGAZZINO CENTRALE.** Le risorse stanno dentro casse che hanno un posto; qualcuno le deve portare. **La distanza deve costare**, ed è la ragione per cui i nastri serviranno.
+1. **NIENTE PERSONAGGIO DA GUIDARE.** Rifiutato **tre volte**. C'è un operaio sull'isola, ma non lo si muove: gli si danno ordini toccando le cose.
+2. **LE TESSERE NON SI DEVONO VEDERE.** Niente bordi, mai; la variazione del terreno è una macchia tonda sfalsata.
+3. **NIENTE MAGAZZINO CENTRALE.** Le risorse stanno dentro casse che hanno un posto. **La distanza deve costare.**
+4. **UN OPERAIO SOLO, E NON SI ASSUME.** L'unica via di crescita è la **tecnologia**. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato.
 
 ## Cos'è il gioco
 
-Un'isola vista dall'alto. **Tocchi una cosa e dai un ordine**; il lavoro va in coda e un bracciante libero lo prende. Ogni bracciante fa **un mestiere solo** e si paga ogni giorno.
+Un'isola vista dall'alto. **Tocchi una cosa e dai un ordine**; il lavoro va in coda e **l'operaio** — uno solo — lo fa, una cosa per volta.
 
-Le zone si aprono **costruendo il passaggio** (sgomberare la frana, riparare il pontile, costruire la barca), e ognuna porta una materia prima e un ramo di lavorazioni.
+All'inizio fa tutto lui, piano. Poi arrivano gli attrezzi, poi le macchine, poi i nastri, finché la maggior parte del lavoro non la fa più lui. **È quello l'arco del gioco.**
 
-Il motore che non si spegne viene da Factorio: **la domanda deve crescere più in fretta della produzione.** E la gioia vera del genere è vedere la catena girare da sola mentre guardi da un'altra parte.
+Le zone si aprono **costruendo il passaggio**, e ognuna porta una materia prima e un ramo di lavorazioni. Il motore che non si spegne viene da Factorio: **la domanda deve crescere più in fretta della produzione.**
 
 ## Stato del codice
 
-**Punti 1, 2 e 3 della roadmap FATTI.** La verifica dopo il punto 1 è **passata**: *"va bene, sembra un posto"* e *"funziona, si capisce tutto"*.
+**Punti 1, 2 e 3 della roadmap FATTI.**
 
-Provato nel browser a 390×780. Il pezzo che conta, verificato in modo netto:
-
-> Assegno al **cavatore** una cassa costruita accanto ai massi, gli ordino quattro massi, e aspetto.
-> **Cassa accanto ai massi: 9/120, Pietra 9.** **Casotto: 4/200, Legno 4.**
-> La pietra è finita nella cassa che gli ho detto io, non in un contatore. E i 12 legno erano diventati 4 perché costruire la cassa ne ha spesi 8 **davvero, presi dalle casse**.
-
-Nessun errore in console.
+Provato nel browser a 390×780: ordino quattro alberi e l'operaio li fa **in fila**, si riempie lo zaino a 12, va a scaricare e torna. Al casotto vendo 16 legno per 48 monete, compro l'**Ascia affilata** per 120 (348 → 228), e il **Vivaio** passa da *"prima serve: Ascia affilata"* a comprabile. Nessun errore in console.
 
 | File | Cosa fa |
 | --- | --- |
 | `src/game/config.js` | Legge `config/*.json` e verifica all'avvio che sia coerente |
-| `src/game/mondo.js` | L'isola: fondo, risorse, cosa è calpestabile, le macchie del terreno |
-| `src/game/camera.js` | Dove si guarda, il trascinamento, i due livelli di zoom, i limiti |
-| `src/game/lavori.js` | La coda degli ordini: chi li può prendere, come si annullano |
-| `src/game/braccianti.js` | Chi lavora: prende un lavoro, ci va, lo fa, riempie lo zaino, va a scaricare |
-| `src/game/casse.js` | Dove finisce la roba. **Niente magazzino centrale:** ogni cassa ha un posto |
-| `src/game/disegno.js` | Disegna l'isola attraverso la telecamera, solo le tessere visibili |
+| `src/game/mondo.js` | L'isola: fondo, risorse, **stato per tessera** (la ricrescita) |
+| `src/game/camera.js` | Dove si guarda, il trascinamento, i due livelli di zoom |
+| `src/game/lavori.js` | La coda degli ordini. Ha già i campi origine/destinazione per i nastri |
+| `src/game/braccianti.js` | L'operaio: prende un lavoro, ci va, lo fa, riempie lo zaino, scarica |
+| `src/game/tecnologie.js` | L'albero: cosa hai preso, cosa è disponibile, i moltiplicatori |
+| `src/game/casse.js` | Dove finisce la roba. **Niente magazzino centrale** |
+| `src/game/economia.js` | Monete, prezzi, vendere una cassa |
+| `src/game/giorno.js` | Il giorno che passa e il riepilogo della sera |
+| `src/game/disegno.js` | Disegna l'isola attraverso la telecamera |
 | `src/game/motore.js` | Ciclo a passo fisso, coda dei comandi, ponte con React |
-| `src/ui/CampoDiGioco.jsx` | Il canvas, e il dito che distingue tocco da trascinamento |
-| `src/ui/Cruscotto.jsx` | Il totale in tutte le casse e quanti braccianti stanno lavorando |
-| `src/ui/Pannelli.jsx` | I fogli: bracciante (con *Dove scarica*), cassa, costruzioni, avvisi |
+| `src/ui/` | Canvas, cruscotto, pannelli (operaio, cassa, tecnologie, costruzioni) |
 
 | Configurazione | Cosa contiene |
 | --- | --- |
-| `config/isola.json` | La mappa disegnata a caratteri, i terreni, le risorse, la telecamera |
-| `config/braccianti.json` | Mestieri, velocità, **zaino**, salari, chi c'è all'inizio |
-| `config/costruzioni.json` | Cosa si può costruire: per ora la cassa, col suo costo |
+| `config/isola.json` | La mappa a caratteri, terreni, risorse, prezzi, telecamera |
+| `config/braccianti.json` | L'operaio: velocità, zaino, dove comincia |
+| `config/tecnologie.json` | **L'albero**: costi, effetti, cosa serve prima |
+| `config/costruzioni.json` | Cosa si può costruire: per ora la cassa |
+| `config/economia.json`, `config/tempo.json` | Monete di partenza, durata del giorno |
 | `config/motore.json` | Valori tecnici e di aspetto. Il bilanciatore non lo tocca |
 
 ## Semplificazioni note, e non sono difetti
 
-- **I braccianti vanno in linea retta** e attraversano gli alberi. Sull'isola aperta non si nota; il percorso vero è il punto 11.
-- **Nessuno paga nessuno**: i salari sono in configurazione ma non li legge nessuno. È il punto 3.
-- **Una cassa piena** fa ripiegare il bracciante sulla più vicina con spazio invece di bloccarlo.
-- **I fogli in basso coprono un pezzo di mappa.** Si chiudono, ma se dà fastidio va rivisto.
+- **L'operaio va in linea retta** e attraversa gli alberi. È il punto 6.
+- **Chiudere la pagina cancella tutto.** È il punto 5.
+- **Non c'è ancora una vera pressione.** I salari sono caduti col passaggio a un operaio solo; le commesse arrivano al punto 4.
+- **I massi non ricrescono**, e sono otto: dopo, la pietra arriva solo aprendo la cava.
 
 ## La prossima cosa da fare
 
-**Fermarsi e provare.** La domanda del punto 3-4: **apri l'isola e sai già cosa vuoi fare?**
+**Fermarsi e provare.** Due domande:
 
-Adesso c'è la pressione (i salari) ma manca il desiderio: si vende al mercante e basta. Il **punto 4, le commesse**, è quello che fa venire voglia di una cosa precisa.
+1. **Guardando le tecnologie, ce n'è una che vuoi?**
+2. **Si sente che l'operaio è uno solo?** Guardarlo fare una cosa per volta deve far venire voglia di un'**ascia migliore**, non di un secondo operaio.
 
-Poi la **Fase C**: salvataggio, percorso vero, simulazione headless. Il perché di ogni spostamento è in fondo a `ROADMAP.md`.
+Poi il **punto 4, le commesse** — la pressione che manca.
 
 ## Il muro architetturale, nominato prima di sbatterci
 

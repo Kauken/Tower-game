@@ -4,8 +4,10 @@
 // lavoro, e un bracciante libero lo prende.** E' il modello di RimWorld,
 // ridotto a quello che si comanda con un pollice.
 //
-// Un lavoro nasce quando si tocca qualcosa sull'isola, resta li' finche' non
-// c'e' qualcuno del mestiere giusto che lo prende, e sparisce quando e' fatto.
+// Un lavoro nasce quando si tocca qualcosa sull'isola, resta in coda finche'
+// l'operaio non arriva a farlo, e sparisce quando e' fatto. Con un operaio
+// solo la coda si vede tutta, e l'ordine in cui l'hai data e' l'ordine in cui
+// verra' fatta.
 // Tutto da pool preallocato: dentro il ciclo di gioco non si crea niente.
 
 import { limiti, risorse } from './config.js'
@@ -13,12 +15,19 @@ import { maturoIn } from './mondo.js'
 import { creaPool, primoLibero } from './pool.js'
 
 export function creaLavori() {
+  // Un lavoro ha gia' i campi per un'origine e una destinazione, anche se per
+  // adesso li usa solo come bersaglio: trasportare sara' "prendi X da A e
+  // portalo a B", e aggiungerli dopo aver costruito i nastri costerebbe rifare
+  // i nastri. Vedi GDD 6b.
   const coda = creaPool(limiti.lavori_massimi, () => ({
     attivo: false,
     tipo: '',
-    mestiere: '',
     tx: 0,
     ty: 0,
+    versoTx: -1,
+    versoTy: -1,
+    materiale: '',
+    quantita: 0,
     preso: false
   }))
 
@@ -44,7 +53,7 @@ export function creaLavori() {
     }
 
     const dati = risorse[nomeRisorsa]
-    if (!dati || !dati.mestiere) {
+    if (!dati || !dati.lavorabile) {
       return false
     }
     // un germoglio non si taglia: sta ancora ricrescendo
@@ -58,20 +67,22 @@ export function creaLavori() {
     }
     lavoro.attivo = true
     lavoro.tipo = nomeRisorsa
-    lavoro.mestiere = dati.mestiere
     lavoro.tx = tx
     lavoro.ty = ty
+    lavoro.versoTx = -1
+    lavoro.versoTy = -1
+    lavoro.materiale = ''
+    lavoro.quantita = 0
     lavoro.preso = false
     return true
   }
 
-  // Il primo lavoro libero che quel mestiere sa fare. Nessuna priorita' e
-  // nessuna griglia da compilare: un bracciante, un mestiere.
-  function prossimoPer(mestiere) {
+  // Il primo lavoro libero, nell'ordine in cui l'hai dato. Con un operaio solo
+  // non serve nessuna priorita': fa una cosa per volta, e si vede quale.
+  function prossimo() {
     for (let i = 0; i < coda.length; i++) {
-      const lavoro = coda[i]
-      if (lavoro.attivo && !lavoro.preso && lavoro.mestiere === mestiere) {
-        return lavoro
+      if (coda[i].attivo && !coda[i].preso) {
+        return coda[i]
       }
     }
     return null
@@ -94,5 +105,5 @@ export function creaLavori() {
     }
   }
 
-  return { coda, ordina, prossimoPer, trovaSuTessera, quantiInAttesa, svuota }
+  return { coda, ordina, prossimo, trovaSuTessera, quantiInAttesa, svuota }
 }

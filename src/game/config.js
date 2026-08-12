@@ -5,6 +5,7 @@ import isolaJson from '../../config/isola.json'
 import braccantiJson from '../../config/braccianti.json'
 import costruzioniJson from '../../config/costruzioni.json'
 import economiaJson from '../../config/economia.json'
+import tecnologieJson from '../../config/tecnologie.json'
 import tempoJson from '../../config/tempo.json'
 import motore from '../../config/motore.json'
 
@@ -26,7 +27,9 @@ export const elencoMateriali = isolaJson.materiali
 export const telecamera = isolaJson.telecamera
 
 export const braccianti = braccantiJson
-export const mestieri = braccantiJson.mestieri
+export const operaio = braccantiJson.operaio
+
+export const elencoTecnologie = tecnologieJson.tecnologie
 
 export const costruzioni = costruzioniJson
 export const elencoCostruzioni = costruzioniJson.costruzioni
@@ -43,12 +46,12 @@ export function trovaCostruzione(id) {
   return costruzione
 }
 
-export function trovaMestiere(id) {
-  const mestiere = mestieri.find((voce) => voce.id === id)
-  if (!mestiere) {
-    throw new Error(`Mestiere "${id}" non trovato in braccianti.json`)
+export function trovaTecnologia(id) {
+  const tecnologia = elencoTecnologie.find((voce) => voce.id === id)
+  if (!tecnologia) {
+    throw new Error(`Tecnologia "${id}" non trovata in tecnologie.json`)
   }
-  return mestiere
+  return tecnologia
 }
 
 // Controlli all'avvio: una configurazione sbagliata deve fermare il gioco
@@ -74,20 +77,34 @@ for (let y = 0; y < righe.length; y++) {
   }
 }
 
-// Ogni risorsa deve dire chi la sa lavorare, altrimenti l'ordine si puo' dare
-// ma non lo prende mai nessuno, e sembra un guasto.
+// Una risorsa lavorabile deve produrre un materiale che esiste, altrimenti
+// l'ordine si puo' dare ma non ne esce niente.
 for (const nome in risorse) {
   const risorsa = risorse[nome]
-  if (risorsa.mestiere) {
-    trovaMestiere(risorsa.mestiere)
+  if (risorsa.lavorabile) {
     if (!risorsa.resa || !elencoMateriali.some((m) => m.id === risorsa.resa.materiale)) {
       throw new Error(`La risorsa "${nome}" produce un materiale che non esiste in isola.json`)
     }
   }
 }
 
-// Ogni mestiere presente all'inizio deve esistere, e deve servire a qualcosa:
-// un bracciante senza lavoro da fare e' configurazione morta.
+// Una tecnologia che ne richiede una inesistente sarebbe irraggiungibile, e
+// nessuno se ne accorgerebbe: meglio fermarsi qui.
+for (let i = 0; i < elencoTecnologie.length; i++) {
+  const t = elencoTecnologie[i]
+  if (t.richiede) {
+    trovaTecnologia(t.richiede)
+  }
+  if (!(t.costo > 0)) {
+    throw new Error(`La tecnologia "${t.id}" non ha un costo in tecnologie.json`)
+  }
+  if (t.effetto.risorsa && !risorse[t.effetto.risorsa]) {
+    throw new Error(
+      `La tecnologia "${t.id}" agisce su "${t.effetto.risorsa}", che non e una risorsa dell'isola`
+    )
+  }
+}
+
 // Ogni costruzione deve costare materiali che esistono, e il casotto deve
 // esserci sulla mappa: senza, il primo bracciante non saprebbe dove scaricare.
 for (let i = 0; i < elencoCostruzioni.length; i++) {
@@ -100,35 +117,18 @@ for (let i = 0; i < elencoCostruzioni.length; i++) {
     }
   }
 }
-// Un materiale senza prezzo non si potrebbe vendere, e un mestiere senza
-// salario sarebbe gratis: in un gioco che regge sulla domanda "assumo o me lo
-// faccio bastare", un bracciante gratis toglie la domanda.
+// Un materiale senza prezzo non si potrebbe vendere.
 for (let i = 0; i < elencoMateriali.length; i++) {
   if (!(elencoMateriali[i].prezzo > 0)) {
     throw new Error(`Il materiale "${elencoMateriali[i].id}" non ha un prezzo in isola.json`)
   }
 }
-for (let i = 0; i < mestieri.length; i++) {
-  if (!(mestieri[i].salario > 0) || !(mestieri[i].costo_assunzione > 0)) {
-    throw new Error(
-      `Il mestiere "${mestieri[i].id}" ha bisogno di salario e costo_assunzione in braccianti.json: un bracciante gratis toglie la domanda che regge il gioco`
-    )
-  }
-}
-
 if (!isolaJson.mappa.some((riga) => riga.indexOf('C') >= 0)) {
   throw new Error(
     'Sulla mappa non c\'e il casotto (C): senza, il primo bracciante non saprebbe dove scaricare'
   )
 }
 
-for (let i = 0; i < braccantiJson.iniziali.length; i++) {
-  const id = braccantiJson.iniziali[i].mestiere
-  trovaMestiere(id)
-  const serve = Object.keys(risorse).some((nome) => risorse[nome].mestiere === id)
-  if (!serve) {
-    throw new Error(
-      `Il mestiere "${id}" non sa lavorare nessuna risorsa dell'isola: sarebbe un bracciante pagato per stare fermo`
-    )
-  }
+if (braccantiJson.iniziali.length < 1) {
+  throw new Error('Serve almeno un operaio in braccianti.json, altrimenti non lavora nessuno')
 }
