@@ -1,48 +1,77 @@
 # Istruzioni permanenti
 
-**Un'isola da mandare avanti** — Stardew per l'economia, Graveyard Keeper per le zone e chi ci lavora, Factorio e Satisfactory per le catene di produzione. Per telefono. Web (Vite + React + canvas 2D), poi impacchettato con Capacitor.
-Il documento di design sta in `docs/GDD.md` (v5.0): **leggilo prima di qualunque modifica al gioco.**
+**Un'isola da mandare avanti.** Vista dall'alto, si comanda col dito, e ci lavora **un operaio solo**. Fantasy industriale, per telefono, in verticale. Web (Vite + React + canvas 2D), poi impacchettato con Capacitor.
 
-Il progetto è stato riscritto più volte. Valgono solo `GDD.md` v5.0 e `ROADMAP.md` v9. **Non esistono più** e sono resti da rimuovere, non funzionalità: reclute, ondate, nemici, castello, torri, sentiero, postazioni, stanze da ripulire, personaggio che si muove con la levetta, seguito di minion, corsie, assedio fra due castelli. E dalle versioni a griglia: il Filare, la Rotazione, i moltiplicatori di resa, gli appezzamenti, la scacchiera.
+Il documento di design è `docs/GDD.md` (v6.0): **leggilo prima di qualunque modifica al gioco.** I numeri e le ricette stanno in `docs/MATERIALI.md`. Dove mettere le mani nel codice sta in `docs/ARCHITETTURA.md`.
 
-## Il gioco in tre righe
+## La frase che decide tutto
 
-**Un'isola vista dall'alto. Nessun personaggio: sei il gestore.** Tocchi le cose e dai ordini, e a camminare e lavorare sono i braccianti. Apri zone nuove costruendo il passaggio, e quello che ne esce alimenta catene di lavorazione sempre più lunghe.
+> ### La risorsa scarsa è il **tempo dell'operaio**.
 
-**C'è un operaio solo.** All'inizio fa tutto lui, piano. Non se ne assumono altri: si cresce **solo con la tecnologia** — attrezzi migliori, poi macchine, poi nastri — finché la maggior parte del lavoro non la fa più lui.
+C'è un operaio solo e non se ne assumono altri. Ogni cosa nel gioco si misura in una valuta sola: **quanti secondi del suo tempo costa, e quanti gliene restituisce.** Un'ascia migliore, una cassa vicina, una trivella, un nastro, un'isola nuova — sono tutte la stessa domanda.
 
-**Non si può perdere.** Niente fretta, niente timer, niente che marcisce. Se non paghi, un bracciante se ne va: la fattoria si rimpicciolisce e riparti.
+**Se una decisione non si può giudicare con questa frase, quella decisione è fuori posto.** Dillo invece di costruirla.
+
+## Il progetto è stato riscritto sei volte
+
+Valgono **solo** `GDD.md` v6.0 e `ROADMAP.md` v12. Se trovi tracce di queste cose, sono macerie da rimuovere, **non funzionalità**:
+
+> tower defense · reclute · ondate · castello · torri da piazzare · sentiero · roguelike a stanze · personaggio che si muove con la levetta · seguito di minion · corsie · fattoria a scacchiera · puzzle di vicinanze · salari · assunzioni · il ciclo del giorno
 
 ## Con chi stai lavorando
 
-L'autore non sa programmare e lavora dal telefono. Quindi:
+L'autore **non sa programmare** e lavora **dal telefono**. Quindi:
+
 - Spiega in italiano, in modo pratico, cosa hai fatto e cosa deve provare.
 - Niente gergo inutile. Se un termine tecnico serve, spiegalo in mezza riga.
-- Alla fine di ogni intervento scrivi sempre: **"Cosa provare: ..."** con l'azione concreta da fare nel gioco.
+- Alla fine di ogni intervento scrivi sempre **"Cosa provare: ..."** con l'azione concreta da fare nel gioco, passo per passo.
+- E poi **qual è la mossa successiva più sensata**, perché non ha un'altra chat da cui farsi consigliare.
+- Quando dice *"sembra una scacchiera"*, *"è spento"*, *"non si capisce"*, sta parlando **dell'aspetto** — non necessariamente della meccanica sotto. Chiarisci quale dei due prima di riscrivere un sistema.
 
-## Regole non negoziabili
+## Le regole non negoziabili
 
-1. **Nessun numero nel codice.** Costi dei semi, tempi di crescita, rese, prezzi, spese, curve: tutto in `config/*.json`. Se ti serve un valore nuovo, aggiungilo alla configurazione, non scriverlo nel codice.
-2. **Un sistema alla volta.** Fai solo quello che è stato chiesto. Non aggiungere funzionalità non richieste, nemmeno se sembrano ovvie o utili. Se noti qualcosa che manca, scrivilo alla fine come suggerimento.
-3. **Il campo di gioco è un solo `<canvas>`.** Isola, risorse, braccianti, ordini ed effetti si disegnano lì, attraverso la telecamera. React serve solo per l'interfaccia sopra: cruscotto, mercato, pannelli, riepiloghi. Mai un elemento DOM per una cosa del mondo.
-4. **Mobile prima di tutto.** Verticale, aree toccabili di almeno 44 px, niente `:hover`, niente doppio click, rispetto delle safe area, **una mano sola**.
-5. **Prima di dichiarare finito**, esegui `npm run build`. Se fallisce, non hai finito.
-6. **Non toccare i valori di bilanciamento** di tua iniziativa quando ti viene chiesta una funzionalità. Bilanciare è un compito separato, con il suo agente.
-7. **"Fai il punto N"** significa il punto N della lista in `docs/ROADMAP.md`: a lavoro finito segnalo come FATTO in quel file.
-8. **NIENTE PERSONAGGIO DA MUOVERE.** L'autore l'ha rifiutato tre volte in tre versioni diverse. Il giocatore non è dentro lo schermo: è sopra, e comanda col dito.
-9. **Le tessere non si devono vedere.** Servono solo a far agganciare le cose, come in Factorio. Niente bordi sulle tessere, mai; la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro. Un quadrato dentro una griglia di quadrati si legge come una scacchiera, ed è la cosa che l'autore ha rifiutato.
-10. **NIENTE MAGAZZINO CENTRALE.** Le risorse stanno dentro casse che hanno un posto; qualcuno le deve portare. Se aggiungi un contatore da cui si può prendere ovunque, hai tolto metà del gioco: **la distanza deve costare**, ed è la ragione per cui i nastri serviranno.
-11. **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
-12. **C'è UN OPERAIO SOLO, e non si assume.** L'unica via di crescita è la **tecnologia**: attrezzi migliori, poi macchine, poi nastri. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato: si risolve con un pezzo di albero tecnologico. E la domanda di roba deve crescere sempre più in fretta della produzione — *the factory must grow*: se un giorno hai abbastanza di tutto, il gioco è finito.
-13. **Uno sblocco dà un verbo nuovo, non un numero più grande.**
-14. **NIENTE SI SPOSTA DA SOLO E NIENTE RICRESCE DA SOLO.** Nessuno scarico automatico, nessuna cassa assegnata, nessun totale dell'isola, nessun albero che torna da sé. Sono tutte comodità che **vanno guadagnate** con l'automazione, mai regalate all'inizio. La regola dietro: **un'automazione vale quanto la fatica che toglie** — se il problema non è mai esistito, il nastro che lo risolve è un gadget. Se stai per aggiungere una comodità, chiediti quale sblocco futuro stai svuotando.
-15. **Se l'operaio si ferma, deve essere scritto perché.** Un operaio che si pianta senza spiegazione sembra un guasto, non una regola. Vale per tutto: ogni volta che il gioco rifiuta di fare una cosa, l'interfaccia lo deve dire con parole normali.
+### Come si lavora
+
+1. **Nessun numero nel codice.** Costi, danni, tempi, rese, raggi, curve: tutto in `config/*.json`. Se ti serve un valore nuovo, aggiungilo alla configurazione.
+2. **Un sistema alla volta.** Fai solo quello che è stato chiesto. Se noti qualcosa che manca, scrivilo alla fine come suggerimento separato.
+3. **Prima di dichiarare finito**, esegui `npm run build`. Se fallisce, non hai finito. E per qualunque cosa si veda a schermo, **provala davvero nel browser** prima di dire che funziona.
+4. **Non toccare i valori di bilanciamento** di tua iniziativa quando ti viene chiesta una funzionalità. Bilanciare è un compito separato, con il suo agente e il suo documento.
+5. **"Fai il punto N"** significa il punto N di `docs/ROADMAP.md`: a lavoro finito segnalo come **FATTO** lì.
+6. **Una configurazione incoerente deve fermare il gioco all'avvio** con un errore in italiano che si capisce. Non un'isola vuota e muta. È il modo di questo progetto per non far sopravvivere gli errori.
+
+### Come è fatto il gioco
+
+7. **Il campo di gioco è un solo `<canvas>`.** Terreno, risorse, macchine, operaio ed effetti si disegnano lì. React serve solo per l'interfaccia sopra. **Mai un elemento DOM per un'entità di gioco.**
+8. **Mobile prima di tutto.** Verticale, aree toccabili di almeno 44 px, niente `:hover`, niente doppio click, rispetto delle safe area. Le informazioni in alto, i comandi in basso: il pollice arriva prima in basso.
+9. **NIENTE PERSONAGGIO DA MUOVERE.** Rifiutato **tre volte** in tre versioni. Il giocatore non è dentro lo schermo: è sopra, e comanda col dito.
+10. **C'È UN OPERAIO SOLO, e non si assume.** L'unica via di crescita è la tecnologia. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato.
+11. **Le tessere non si devono vedere.** Niente bordi, mai; la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro. Unica eccezione: la tessera sotto il dito si illumina **solo mentre hai qualcosa in mano**.
+12. **NIENTE MAGAZZINO CENTRALE.** Le risorse stanno dentro contenitori che hanno un posto, e qualcuno le deve portare. Niente totale dell'isola, nemmeno scritto in alto: **la distanza deve costare**.
+
+### Come si aggiunge roba senza rovinare il gioco
+
+13. **Niente si sposta da solo e niente ricresce da solo.** Ogni comodità va **guadagnata** con l'automazione, mai regalata. La regola dietro: **un'automazione vale quanto la fatica che toglie** — se il problema non è mai esistito, la macchina che lo risolve è un gadget. Prima di aggiungere una comodità, chiediti **quale sblocco futuro stai svuotando**.
+14. **Niente parte se non l'hai preso in mano.** Un tocco sul terreno vuoto, a mani vuote, non fa niente. Un'azione che parte senza che il giocatore l'abbia scelta è sempre sbagliata.
+15. **Uno sblocco dà un verbo nuovo, o restituisce tempo in modo che si senta.** Un +5% non merita di stare in bacheca.
+16. **Una ricetta non produce mai un materiale che consuma**, e non ha più di tre ingredienti. Sono controlli all'avvio, non cose da ricordare.
+17. **Se il gioco rifiuta di fare una cosa, deve dire perché**, con parole normali. Un operaio che si pianta in silenzio sembra un guasto, non una regola.
+18. **Non c'è fretta e non si perde mai.** Niente timer che scadono, niente che marcisce, niente di irreversibile.
+
+## Le cinque costanti
+
+Queste cinque cose l'autore le ha volute **in tutte e sei le versioni del progetto**, anche quando cambiava genere. Quando una proposta le contraddice, è la proposta a essere sbagliata:
+
+1. Si gioca **col telefono, in verticale, con una mano**.
+2. **Nessun riflesso da usare.** Niente tempi di reazione, niente mira.
+3. **Le decisioni contano**, e gli sblocchi si desiderano.
+4. **Non si può perdere.**
+5. **Non c'è un personaggio da guidare.**
 
 ## Comandi
 
 - `npm install` — dipendenze
 - `npm run dev` — sviluppo locale
-- `npm run build` — build di produzione (deve passare)
+- `npm run build` — build di produzione (**deve passare**)
 
 ## Pubblicazione
 
@@ -50,39 +79,19 @@ Ogni merge su `main` fa partire il workflow che pubblica su GitHub Pages.
 
 ## Strumenti disponibili
 
-Agenti: `bilanciatore` (solo config), `revisore-mobile` (prestazioni e touch), `designer-contenuti` (nuove risorse, lavorazioni, mestieri e commesse), `collaudo` (verifica finale), `cacciatore-bug` (diagnosi), `rifinitore` (sensazione di gioco), `consulente-design` (decisioni aperte).
+**Agenti:** `bilanciatore` (solo config, usa `MATERIALI.md`), `collaudo` (verifica finale), `cacciatore-bug` (diagnosi), `revisore-mobile` (prestazioni e touch), `rifinitore` (sensazione di gioco), `designer-contenuti` (materiali, ricette, progetti), `consulente-design` (decisioni aperte).
 
-Skill richiamabili: `/richiesta` (trasforma una richiesta vaga in specifica), `/punto N` (esegue il punto N della roadmap).
+**Skill richiamabili:** `/richiesta` (trasforma una richiesta vaga in specifica), `/punto N` (esegue il punto N della roadmap).
 
-Quando una richiesta arriva vaga o descritta per sensazioni, applica `richiesta` prima di eseguire. Consulta sempre `td-glossario` per capire cosa intende l'autore.
+**Skill di consultazione:** `isola-glossario` (cosa intende l'autore quando dice una parola — **consultala sempre**), `isola-config` (schema dei file di configurazione), `isola-motore` (ciclo di gioco e canvas), `isola-tocco` (interfaccia su telefono), `isola-sensazione` (feedback e animazioni), `isola-salvataggio` (formato dei dati salvati), `post-mortem` (quando qualcosa è andato storto più di una volta).
+
+Quando una richiesta arriva vaga o descritta per sensazioni, applica `richiesta` prima di eseguire.
 
 ## Autosufficienza
 
-L'autore lavora solo da qui: non ha un'altra chat di supporto. Quindi:
-- Se una richiesta tocca una voce aperta di `docs/DECISIONI.md`, fermati e falla decidere prima (agente consulente-design), poi costruisci.
-- Quando un punto della roadmap sta per toccare una decisione aperta, avvisalo in anticipo.
-- Se chiede "e adesso?" o sembra perso, orientalo con `docs/PROCESSO.md` e `docs/ROADMAP.md`: digli a che punto è e le 2-3 mosse possibili.
-- A ogni fine lavoro, oltre a "cosa provare", indica qual è la mossa successiva più sensata.
+L'autore lavora solo da qui: non ha un'altra chat di supporto.
 
-## Le costanti — quello che non è mai cambiato in nove versioni del design
-
-Il gioco è cambiato nove volte. **Queste cinque cose no, mai:**
-
-1. **Telefono, verticale, una mano sola.**
-2. **Nessun riflesso, nessuna mira, nessuna fretta.**
-3. **Contano le decisioni e gli sblocchi**, non l'abilità.
-4. **Non si deve poter perdere.**
-5. **Nessun personaggio da guidare.** Il giocatore è sopra lo schermo, non dentro. *(C'è un operaio solo sull'isola, ma non lo si muove: gli si danno ordini toccando le cose. La differenza è tutta lì.)*
-
-> **Prima di proporre un genere, un sistema o una meccanica, controllala contro queste cinque.** Sei riscritture su sette sono nate da un genere che ne contraddiceva una: il tower defense ha bisogno di tensione (contro la 2 e la 4), il puzzle ha bisogno di pressione di ottimizzazione (contro la 3). Se una proposta ne contraddice una, **è la proposta a essere sbagliata**: dillo, non costruirla.
-
-## La lezione delle versioni precedenti
-
-Il progetto è stato buttato sette volte. I post mortem (skill `post-mortem`) hanno trovato quattro schemi; questi due sono i più cari:
-
-- **Costruire il gioco intero prima di sapere se il pezzo centrale era divertente.** I blocchi di verifica in `ROADMAP.md` non sono una formalità: quando ne incontri uno, fermati e fallo provare davvero.
-- **Riproporre una cosa già rifiutata.** Il personaggio che cammina è stato riproposto **tre volte**. Le cose rifiutate stanno nel registro in `td-glossario`, con la data e le parole esatte: **leggilo prima di proporre.**
-
-E una regola che vale ogni volta che l'autore reagisce a **come si vede** una cosa:
-
-> Quando dice *"sembra una scacchiera"*, *"è spento"*, *"è noioso da guardare"*, sta parlando dell'aspetto — **non necessariamente della meccanica sotto.** Prima di riprogettare il sistema, controlla se un gioco che gli piace usa la stessa meccanica. Factorio è una griglia e non sembra una scacchiera: quella verifica ha salvato il sistema a tessere invece di farlo buttare.
+- Se una richiesta tocca una voce **aperta** di `docs/DECISIONI.md`, fermati e falla decidere prima (agente `consulente-design`), poi costruisci.
+- Quando un punto della roadmap sta per toccare una decisione aperta, **avvisalo in anticipo**.
+- Se chiede *"e adesso?"* o sembra perso, orientalo con `docs/PROCESSO.md` e `docs/ROADMAP.md`: digli a che punto è e le due o tre mosse possibili.
+- Se qualcosa è andato storto **più di una volta**, non ripararlo e basta: usa la skill `post-mortem` e metti un **guardrail meccanico**, non una buona intenzione.

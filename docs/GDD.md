@@ -1,251 +1,236 @@
-# Documento di design — v5.1
+# Documento di design — v6.0
 
-**Grano e Ferro** — un'isola da mandare avanti.
-Per telefono, verticale, una mano sola.
+**Un'isola da mandare avanti.** Vista dall'alto, si comanda col dito, e ci lavora **un operaio solo**.
 
-> Sostituisce la v4.0. Quella metteva il gioco su una **scacchiera**, e l'autore
-> l'ha rifiutata: *"non voglio questa cosa a scacchiera, voglio stile Stardew
-> Valley, Graveyard Keeper. Un'isola con possibilità di accedere ad altre zone.
-> E mettere anche un po' di Factorio e Satisfactory."*
->
-> Se trovi codice o documenti che parlano di **reclute, ondate, nemici,
-> castello, torri, sentiero, postazioni, Filare, Rotazione, appezzamenti**,
-> sono resti da rimuovere.
+Riferimenti dichiarati, e cosa si prende da ognuno:
+
+| Gioco | Cosa gli rubiamo |
+| --- | --- |
+| **Satisfactory** | L'arco dell'automazione in tre gradini, e i giacimenti che non finiscono mai |
+| **Factorio** | Le catene che convergono, e *"the factory must grow"* |
+| **Minecraft tecnico** | L'inventario a caselle, e la moltiplicazione dei materiali fatta bene |
+| **Stardew Valley** | Il ciclo economico gentile: raccogli, vendi, compri quello che ti mancava |
+| **Graveyard Keeper** | Le zone che si aprono **costruendo**, e qualcun altro che lavora al posto tuo |
 
 ---
 
 ## 1. Il gioco in una riga
 
-**Un'isola vista dall'alto. Non c'è nessuno da guidare: sei tu il gestore.** Tocchi le cose e dai ordini; a camminare e a lavorare sono i braccianti. Apri zone nuove costruendo il passaggio, e le materie prime che ne escono alimentano catene di lavorazione sempre più lunghe.
+> Tocchi le cose dell'isola per dare ordini. **Un operaio solo** li esegue, uno per volta. Costruisci attrezzi, macchine e nastri finché la maggior parte del lavoro non la fa più lui — e allora puoi salpare per l'isola dopo.
 
-**Stardew Valley** per il ciclo economico, **Graveyard Keeper** per le zone e per chi lavora al posto tuo, **Factorio e Satisfactory** per le catene.
+## 2. La spina dorsale — **la risorsa scarsa è il tempo dell'operaio**
 
-## 2. Il ruolo del giocatore
+Questa è la frase che tiene insieme tutto il resto. Se una decisione futura non si può giudicare con questa frase, quella decisione è fuori posto.
 
-> **Niente personaggio.** L'autore l'ha rifiutato tre volte, in tre versioni diverse. Il giocatore non è dentro lo schermo: è sopra.
+C'è **un operaio solo**, e non se ne assumono altri. Quindi tutto quello che fai si misura in una valuta sola: **quanti secondi del suo tempo costa, e quanti gliene restituisce.**
 
-Zero riflessi, zero fretta, **non si può perdere**. Quattro decisioni che si ripetono:
+- Un'**ascia migliore** gli restituisce tempo su ogni albero.
+- Una **cassa vicino al lavoro** gli restituisce tempo su ogni viaggio.
+- Una **trivella** gli restituisce tutto il tempo dello scavare, ma gliene chiede un po' per svuotarla.
+- Un **nastro** gli restituisce anche quello.
+- Una **seconda isola** gli chiede tutto il tempo che ha, e quindi si può aprire **solo** quando la prima sa vivere senza di lui.
 
-1. **Cosa ordinare** — cosa serve adesso, e in che ordine.
-2. **Chi assumere** — un altro taglialegna, o un cavatore?
-3. **Vendere o tenere da parte** — il mercato paga subito, le commesse molto di più.
-4. **Quale zona aprire** — costa, e apre un ramo di gioco.
+**Il gioco è comprare indietro il tempo di una persona sola.** Da qui discende tutto quello che segue.
 
-## 3. Come si comanda
+## 3. Le tre economie, e perché sono tre
 
-**Il dito fa due cose sole:**
-
-- **Trascini** → sposti l'isola.
-- **Appoggi e alzi su una cosa** → dai un ordine. La tocchi di nuovo → lo annulli.
-
-Un pulsante allontana la vista per guardare tutta l'isola. Due livelli di zoom soltanto: uno per lavorare, uno per guardare. Una zoomata continua col pizzico, su uno schermo stretto e con un pollice solo, si perde subito.
-
-**L'ordine si vede sempre**: un anello attorno alla cosa, **giallo** se aspetta qualcuno, **verde** se qualcuno ci sta già andando. Senza quel segno non si può sapere cosa si è già comandato.
-
-## 4. Chi lavora — **uno solo**
-
-*Deciso il 2026-08-12.*
-
-> *"Invece di più coloni, mi va bene un singolo solo che esegue le operazioni che gli dico, così che all'inizio le cose si fanno piano piano e poi più in là ha più senso con l'avanzamento delle automazioni e tecnologie."*
-
-**C'è un operaio solo, e fa tutto.** Sta fermo finché non c'è un lavoro in coda, poi ci va, lo fa, e torna fermo. **Una cosa per volta**, nell'ordine in cui gliel'hai data.
-
-Non è un personaggio da guidare: non ha una levetta e non lo si muove. Gli si danno ordini toccando le cose, e ci va lui.
-
-### È la scelta che rende il gioco quello che deve essere
-
-Con più coloni si cresce **assumendo**, e la tecnologia diventa un di più. Con uno solo si può crescere **solo con la tecnologia** — che è la forma di Factorio e Satisfactory, dove sei una persona sola e a crescere è la fabbrica.
-
-E c'è un secondo effetto, più importante: **il collo di bottiglia si vede.** Con un operaio solo, guardarlo camminare avanti e indietro *è* la spiegazione di cosa ti manca. Con cinque, il problema si nasconde nella folla.
-
-L'arco è questo:
-
-| | Chi fa il lavoro |
-| --- | --- |
-| **All'inizio** | lui, tutto, piano |
-| **Con gli attrezzi** | lui, ma più in fretta |
-| **Con le macchine** | alcune cose non le fa più |
-| **Coi nastri** | non trasporta più |
-| **Alla fine** | costruisce e sistema, non lavora |
-
-### Cosa è caduto con questa decisione
-
-I **salari** e le **assunzioni**, costruiti il giorno prima. Con un operaio solo un salario è una tassa fissa, non una decisione, e *"assumo o me lo faccio bastare"* non esiste più.
-
-Al suo posto la pressione viene da dove il GDD diceva già che dovesse venire: **la domanda cresce più in fretta della produzione.** Non sono i soldi che escono, è quello che ti chiedono.
-
-## 5. Le zone
-
-L'isola non è tutta accessibile. Ogni pezzo è chiuso da un ostacolo che si toglie **costruendo qualcosa**, non trovando una chiave — è il modo di Graveyard Keeper.
-
-| Zona | Cosa porta | Come si apre |
+| | Da dove viene | Cosa compra |
 | --- | --- | --- |
-| **La radura** | i campi, il casotto | sei lì dall'inizio |
-| **Il bosco** | legno, resina | serve un'ascia |
-| **La cava** | pietra, rame, ferro | va sgomberata la frana |
-| **Il molo** | il mercante e le commesse | va riparato il pontile |
-| **L'isola vicina** | un ramo intero nuovo | va costruita una barca |
+| **Il tempo dell'operaio** | Non si compra. **Si libera.** | Tutto. È la vera valuta |
+| **I materiali** | Dall'isola: alberi, giacimenti, macchine | **Costruire** e **craftare** oggetti veri |
+| **Le monete** | Vendendo al casotto quello che ti avanza | I **progetti**: il *diritto* di costruire una cosa |
 
-**Aprire una zona non è "più spazio": è un pezzo di gioco nuovo.** Ogni zona porta una materia prima e un ramo di lavorazioni.
+**Perché non due.** Se i progetti si pagassero coi materiali, vendere non servirebbe più a niente e il mercante sarebbe arredamento. Se le macchine si comprassero con le monete, l'isola non servirebbe a niente e basterebbe vendere legno all'infinito. Tenendole separate, **tutte e due le vie restano vive per tutta la partita**: devi *scoprire* una cosa con le monete e poi *fabbricarla* coi materiali.
 
-## 5b. Le cose stanno in un posto — **niente magazzino centrale**
+È il modello del HUB di Satisfactory — sblocchi il traguardo, poi il capannone lo costruisci comunque tu.
 
-> *"Non voglio una sorta di Age of Empires che ha un magazzino principale, ma invece voglio una sorta di inventario, dove le risorse devono essere spostate manualmente all'inizio, magari al colono dire dove scaricare, poi automatizzare con i nastri."*
+## 4. Come si comanda — **la mano**
 
-È la regola che rende possibile tutto il pezzo Factorio, e va difesa:
+Il giocatore **non ha un personaggio**. Guarda l'isola dall'alto, la sposta col dito, e dà ordini. L'operaio non si muove: gli si dice cosa fare toccando le cose.
 
-- **Le risorse non compaiono in un contatore.** Stanno dentro **casse**, che hanno un posto preciso sull'isola.
-- **Non esiste nessun totale dell'isola**, nemmeno scritto in alto. Un numero unico che dice *"hai 40 legno"* farebbe credere di poterlo spendere, mentre quel legno sta dentro una cassa da qualche parte e qualcuno lo deve andare a prendere.
-- **Costruire si paga con quello che l'operaio ha addosso.** Se il legno è in una cassa lontana, prima ci va.
+Il modello del tocco è uno solo, e vale per sempre:
 
-Da qui nasce l'unica cosa che conta: **la distanza costa.** Una cassa vicino al lavoro fa risparmiare tutta la strada, e quella camminata è il motivo per cui più avanti i **nastri** saranno un sollievo invece che un gadget. Se la roba comparisse da sola, non ci sarebbe niente da trasportare e i nastri non servirebbero a niente.
+> ### Quello che tocchi dipende da **cosa hai in mano**.
 
-## 5c. L'inventario a caselle, e **niente si sposta da solo**
+**Con le mani vuote** — il tocco è un **ordine**:
+- su un albero, un masso, un giacimento → *vai a lavorarlo*
+- su una cassa o una macchina → *aprila* (e da lì posi, prendi, avvii)
+- sull'operaio → *guarda cosa sta facendo*
+- **sul terreno vuoto → non succede niente.** Mai.
 
-> *"Fai in modo che il player ha un inventario proprio alla Minecraft, in modo che raccoglie oggetti e ha un vero e proprio inventario. Però non con oggetti selezionabili e usabili, ma più rapidi. Così anche per la raccolta non viene messa la roba in automatico in una chest specifica ma seleziono un inventario e poso la roba che voglio lasciare lì, così da dare poi anche il senso all'automazione per il trasporto."*
+**Con qualcosa in mano** — il tocco **piazza**:
+- tocchi una casella dell'inventario (un alberello) oppure una voce del menù Costruisci (una cassa, una trivella, un nastro): **quella cosa è in mano**
+- una striscia in alto dice sempre *cosa* hai in mano e *quanti* te ne restano
+- ogni tocco sulla mappa ne piazza uno, e **resti in mano**: così ne pianti dieci di fila senza rientrare nel menù
+- tocchi di nuovo la stessa casella, o premi **Annulla**, e lo riponi
 
-Lo zaino dell'operaio **non è un contatore, è una fila di caselle**, e ogni casella tiene una pila di **un materiale solo**. Le casse funzionano allo stesso identico modo: stesso modulo, stesse pile, stesso gesto. Così *"quanto ci sta dentro"* vuol dire la stessa cosa ovunque.
+**Perché è così, e perché non cambierà.** Alberelli, casse, trivelle, macchine, nastri: sono decine di cose diverse che devono essere piazzate, e **tutte si piazzano allo stesso modo**. Un gesto imparato una volta vale per tutto il gioco. E i nastri, che vogliono un dito che scorre invece che un tocco, sono lo stesso modo con un trascinamento — non un sistema nuovo da imparare.
 
-Tre conseguenze, e sono tutte volute:
+> **Questa regola nasce da un errore vero.** Nella versione precedente il tocco sul terreno vuoto piantava un alberello *di default*: bastava sbagliare mira per piantare un albero. Un'azione che parte senza che tu l'abbia scelta è sempre sbagliata, e lo sarebbe stata dieci volte tanto con dieci cose piazzabili.
 
-1. **Quando le caselle finiscono, l'operaio si ferma.** Non va a svuotarsi da solo da nessuna parte. Nel cruscotto c'è scritto **zaino pieno** in giallo — un operaio che si pianta senza spiegazione sembra un guasto, non una regola.
-2. **Posare e prendere sono ordini come tagliare un albero.** Tocchi una cassa, premi *Posa* o *Prendi*, e lui ci cammina. Non è un trascinamento di pile: su un telefono trascinare otto pile sarebbe una punizione, non una scelta. **Un tocco per materiale.**
-3. **Riempirsi non è la stessa cosa di essere pieni.** Con tutte le caselle occupate ma qualcuna a metà ci sta ancora dell'altro *dello stesso materiale*, ma niente di nuovo: aveva posto per il legno, non per la pietra. È la prima volta che il giocatore deve pensare a **cosa** porta, non solo a quanto.
+Il resto dei gesti:
+- **trascinare** = spostare la mappa (a mani vuote)
+- **un pulsante** allontana la vista. Due livelli di zoom soltanto: uno per lavorare, uno per guardare tutta l'isola. La zoomata continua col pizzico, su uno schermo stretto e con un pollice solo, si perde subito.
 
-**Perché tutto questo esiste:** è la fatica che rende il trasporto un problema. E un problema che si è sentito addosso per ore è l'unica cosa che può rendere un nastro una **liberazione** invece che un gadget. Togliere lo scarico automatico non è un peggioramento: è mettere il buco che l'automazione dovrà riempire.
+## 5. Chi lavora — **uno solo, e non si assume**
 
-### Le pile sono strette apposta
+Sta fermo finché non c'è un ordine in coda, poi ci va, lo fa, e si mette la roba **nello zaino a caselle**. Una cosa per volta, nell'ordine in cui gliel'hai data.
 
-Con pile larghe l'operaio non si riempirebbe mai e niente di quanto sopra esisterebbe. Quattro caselle e queste pile fanno **circa sette alberi per viaggio**. I numeri stanno in `isola.json` e `braccianti.json`, sono **ragionati ma non misurati**, e vanno tarati col bilanciatore quando esisterà la simulazione headless (punto 7).
+**Non è un personaggio da guidare.** Rifiutato dall'autore tre volte in tre versioni diverse: non ha una levetta, non lo si muove.
 
-## 5d. Il bosco non ricresce: **lo ripianti tu**
+L'unica via di crescita è la **tecnologia**. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato: si risolve con un pezzo di albero tecnologico. È la forma di Factorio e Satisfactory, dove sei una persona sola e a crescere è la fabbrica.
 
-> *"Non voglio però che gli alberi crescano da soli, ma quando rompo gli alberi mi fa anche gli alberelli così che io poi possa ripiantarli."*
+Se si ferma, **deve essere scritto perché**. Un operaio che si pianta senza spiegazione sembra un guasto, non una regola.
 
-Un albero tagliato **sparisce**. Quello che torna indietro è nello zaino: 4 legno **e 1 alberello**. Se lo ripianti il bosco continua, se lo vendi no — vale una moneta, e quella moneta è una tentazione vera quando ti manca poco per l'ascia.
+## 6. L'inventario a caselle, e **niente si sposta da solo**
 
-- Per piantare **non si equipaggia niente e non si sceglie nessuno strumento**: basta avere l'alberello addosso e toccare la terra libera.
-- L'alberello piantato si disegna piccolo e smorto e cresce mentre il tempo passa: si capisce a colpo d'occhio che c'è ma non si tocca ancora.
-- Il **Vivaio** dimezza l'attesa. È la prima tecnologia che cambia un ritmo invece di un numero.
+Lo zaino **non è un contatore, è una fila di caselle**, e ogni casella tiene una pila di **un materiale solo**. Le casse e le macchine usano lo stesso identico sistema: così *"quanto ci sta dentro"* vuol dire la stessa cosa ovunque, e spostare roba è sempre lo stesso gesto.
 
-Questa è la prima decisione di spesa vera del gioco, ed è la forma che tutte le altre dovranno avere: **il bosco è una cosa che gestisci, non una che aspetti.**
+1. **Quando le caselle finiscono, l'operaio si ferma.** Non va a svuotarsi da solo da nessuna parte.
+2. **Posare e prendere sono ordini** come tagliare un albero: tocchi una cassa, premi *Posa* o *Prendi*, e lui ci cammina. **Un tocco per materiale**, mai un trascinamento di pile — su un telefono trascinare otto pile sarebbe una punizione, non una scelta.
+3. **Riempirsi non è la stessa cosa di essere pieni.** Con tutte le caselle occupate ma qualcuna a metà ci sta ancora dell'altro *dello stesso* materiale, ma niente di nuovo: aveva posto per il legno, non per la pietra. È la prima volta che devi pensare a **cosa** porta, non solo a quanto.
 
-## 6. Le catene e l'albero tecnologico — la parte Factorio
+**Non esiste nessun totale dell'isola**, nemmeno scritto in alto. Un numero unico che dice *"hai 40 legno"* farebbe credere di poterlo spendere, mentre quel legno sta dentro una cassa da qualche parte e qualcuno lo deve andare a prendere.
 
-> *"Ora un legno vale un legno, poi passandoli in macchinari 1 legno si duplica e triplica. Stessa cosa per le pietre e altre materie prime."*
+> **La regola dietro tutto questo:** *un'automazione vale quanto la fatica che toglie.* Ogni comodità regalata all'inizio è un pezzo di sblocco futuro buttato via. Se lo scarico è già automatico, il nastro non è una liberazione ma un gadget, perché il problema che doveva risolvere non è mai esistito.
 
-### ⚠️ Il muro: **una lavorazione non produce mai il materiale che consuma**
+## 7. Cosa c'è sull'isola — tre rapporti diversi con la mappa
 
-Preso alla lettera, *"1 legno diventa 3 legno"* **rompe il gioco in modo irreparabile**: rimetti i 3 legno nella macchina, ne escono 9, poi 27. Hai legno infinito, e con esso monete infinite. Non è un problema di numeri — nessun bilanciamento lo aggiusta.
+Non tutto quello che sta sul terreno funziona allo stesso modo, e la differenza è deliberata.
 
-È lo stesso problema che i modpack tecnici di Minecraft hanno risolto una volta per tutte, e la soluzione è una riga:
+### Gli ostacoli — **finiscono, ed è giusto così**
+Alberi, massi, frane. Si tolgono una volta, danno una resa una volta, e **liberano lo spazio** dove poi metterai una macchina. Sgomberare è un lavoro che **finisce**, e finire un lavoro è una soddisfazione che il gioco deve poter dare.
 
-> **La moltiplicazione produce un materiale DIVERSO, che non può rientrare nella stessa macchina.**
->
-> 1 tronco → *Segheria* → **3 tavole**. Le tavole non rientrano nella segheria.
+### I giacimenti — **non finiscono mai**
+Macchie fisse di tessere: rame, ferro, carbone, pietra. Non si esauriscono. Ognuno ha una **ricchezza** — *povero, normale, ricco* — che moltiplica quanto rende.
+
+È il modello di Satisfactory (impuro ×0,5 / normale ×1 / puro ×2), e serve a una cosa sola: **rendere i posti diversi fra loro.** Un giacimento ricco lontano contro due poveri vicini è una decisione vera di dove mettere la fabbrica, e non costa niente costruirla.
+
+Il giacimento è il **rubinetto** dell'isola: la quantità di materia prima che può entrare al minuto ha un tetto fisico, e quel tetto è quello che rende la crescita un problema invece che una formalità.
+
+### Il bosco — **dipende da te**
+Gli alberi **non ricrescono**. Tagliandone uno escono legno **e un alberello**, e sei tu a decidere se ripiantarlo o venderlo. Il legno è l'unica risorsa dell'isola che va **gestita**, ed è per questo che è la più interessante delle tre.
+
+## 8. I tre gradini dell'automazione
+
+Vale per ogni cosa che si può automatizzare, ed è la struttura che Satisfactory tiene in piedi per decine di ore.
+
+| Gradino | Cosa fa | Cosa ti costa ancora |
+| --- | --- | --- |
+| **1 — a mano** | L'operaio ci va e lo fa | Tutto il suo tempo |
+| **2 — la macchina che accumula** | Produce da sola nel suo cassetto | **La devi svuotare tu** |
+| **3 — il nastro** | La roba si sposta da sola | Niente. Adesso gira senza di te |
+
+Il gradino 2 è quello che la gente salterebbe, ed è quello che non si deve saltare: è il *Portable Miner* di Satisfactory, che accumula ma **non si può collegare a un nastro**, di proposito. È lui che fa sentire il gradino 3 come una liberazione.
+
+> **Nessun gradino si salta e nessuno si regala.** Se stai per aggiungere una comodità, chiediti quale sblocco futuro stai svuotando.
+
+## 9. Il crafting — **si fabbrica in un posto**
+
+Non esiste un menù di crafting che funziona ovunque. Si fabbrica **dove c'è chi fabbrica**, ed è quel posto a salire di livello.
+
+- **Il banco da lavoro**, al casotto, c'è dall'inizio. Ricette a mano, una per volta, con i materiali che l'operaio ha **addosso** — perché è lì davanti.
+- **Le macchine** (segheria, fornace, officina) hanno un **cassetto d'entrata** e uno **d'uscita**. Lavorano da sole finché hanno materiale. Riempirle e svuotarle **è il lavoro**, finché non arrivano i nastri.
+
+Le macchine si sbloccano con un **progetto** (monete) e si costruiscono coi **materiali**. Vedi §3.
+
+## 10. I materiali e le ricette — la parte che va fatta bene subito
+
+### ⚠️ Il muro: **una ricetta non produce mai un materiale che consuma**
+
+Preso alla lettera, *"1 legno diventa 3 legno"* rompe il gioco in modo irreparabile: rimetti i 3 legno nella macchina, ne escono 9, poi 27. Non è un problema di numeri — nessun bilanciamento lo aggiusta.
+
+> 1 tronco → *Segheria* → **3 tavole**. Le tavole **non rientrano** nella segheria.
 > 1 masso → *Frantoio* → **2 ghiaia** → *Fornace* → **1 lingotto**.
 
-Il valore si moltiplica lo stesso — le tavole valgono più di un tronco e servono per costruire — ma **il ciclo è chiuso**: la materia prima entra solo dall'isola, dove è limitata da quanti alberi ti sei preso la briga di ripiantare e dai massi, che non tornano.
+Il valore si moltiplica lo stesso, ma **il ciclo è chiuso**: la materia prima entra solo dall'isola, dal rubinetto dei giacimenti.
 
-**Questa regola va controllata dal codice**, non ricordata: al punto 8, il gioco deve rifiutarsi di partire se una ricetta ha in uscita un materiale che ha in entrata. È il tipo di guardrail che la skill `post-mortem` chiede di mettere.
+**Questa regola è controllata dal codice all'avvio**, non ricordata a memoria.
 
-I primi guardrail di questo tipo ci sono già e fermano l'avvio: un materiale che pianta qualcosa che non esiste o che non sa quanto ci mette a crescere, un materiale senza pila, un contenitore senza caselle, una tecnologia che apre tasche senza dire quante.
+### I quattro livelli
 
-### I livelli di lavorazione
+| Livello | Cosa è | Esempi | Come si ottiene |
+| --- | --- | --- | --- |
+| **0** | materia prima | legno, pietra, rame, ferro, carbone | dall'isola |
+| **1** | semilavorato | tavole, ghiaia, lingotti | **1** ingrediente, una macchina |
+| **2** | componente | ingranaggi, lastre, cavi | **2** ingredienti che convergono |
+| **3** | macchinario | trivella, nastro, segheria | 2-3 componenti + un progetto |
 
-Ogni macchina non ha un moltiplicatore suo inventato: appartiene a un **livello**, e il livello dice quanto moltiplica. Così l'albero tecnologico ha una forma leggibile e si può bilanciare.
+### Le regole di forma delle ricette
 
-| Livello | Cosa serve per arrivarci | Quanto rende la materia prima |
-| --- | --- | --- |
-| **0 — a mano** | niente | ×1 — un tronco è un tronco |
-| **1 — attrezzo** | legno e pietra | ×2 |
-| **2 — macchina** | metallo | ×3 |
-| **3 — impianto** | più metalli, più spazio | ×4, ma vuole due catene che si incontrano |
+1. **Mai più di tre ingredienti diversi.** Su un telefono una ricetta a cinque voci non si legge, e nella pratica diventa una lista della spesa invece che un incrocio.
+2. **Dal livello 2 in su, almeno due ingredienti.** È quello che fa **incontrare due catene**: è il motivo per cui in Factorio i circuiti sono interessanti e le piastre di ferro no.
+3. **Una ricetta non produce mai un materiale che consuma.**
 
-Salire di livello **non è un potenziamento: è una ricostruzione.** La macchina di livello 2 non entra dove stava quella di livello 1, e va rialimentata. Nei modpack tecnici è documentato come la cosa che tiene vivo il gioco per centinaia di ore, ed è anche la risposta al difetto del genere — *quando è tutto automatico non hai più niente da fare*.
+### Le regole di bilanciamento
 
-### I tre gradini dell'automazione
+Sono invarianti, non gusti. Dove si può, il gioco le controlla da solo.
 
-Sono ricalcati sull'arco di **Satisfactory**, che è la cosa che questo gioco copia meglio: prima raccogli a mano, poi hai un attrezzo che accumula ma **non si può collegare a un nastro**, e solo dopo arriva la macchina fissa che al nastro ci si attacca. Ogni gradino toglie un gesto che stavi facendo tu.
+1. **Il prezzo di un prodotto è maggiore della somma dei suoi ingredienti** — altrimenti lavorare è una perdita e nessuno lavorerà mai — **e minore di due volte e mezzo** — altrimenti c'è una sola cosa sensata da fare e il gioco è risolto.
+2. **Ogni macchina dichiara in quanti minuti si ripaga** lavorando in continuo. Se non si ripaga mai è arredamento, e va tolta invece che ritoccata.
+3. **Ogni sblocco restituisce tempo all'operaio in modo misurabile, oppure dà un verbo nuovo.** Un +5% che non si nota non merita di stare in bacheca.
+4. **La domanda deve crescere più in fretta del rubinetto.** Progetti e costruzioni devono chiedere più di quanto i giacimenti diano al minuto. Se un giorno hai abbastanza di tutto, il gioco è finito.
 
-1. **Ordini tu, ogni volta.** Tocchi ogni albero, e **porti tu la roba**: raccogli, ti riempi, gli dici dove posarla. È dove siamo adesso.
-2. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale. Resta da portare.
-3. **I nastri**: la roba si sposta da sola fra le casse. **Adesso la catena gira senza di te.**
+Il dettaglio operativo sta in **`docs/MATERIALI.md`**, che è il documento che l'agente `bilanciatore` usa come legge.
 
-Il gradino 3 vale qualcosa **solo se il gradino 1 ha fatto male**. È per questo che non c'è lo scarico automatico: sarebbe un pezzo di gradino 3 regalato all'inizio, e regalarlo svuoterebbe i nastri di senso prima ancora di scriverli.
+## 11. Le isole — e perché sono la cosa più intelligente della struttura
 
-### "The factory must grow"
+Ogni isola porta **una materia prima nuova** e apre un ramo di lavorazioni. Si aprono **costruendo il pontile**: un progetto da comprare e dei materiali da fabbricare. Non si trova una chiave, si costruisce il passaggio — è il modo di Graveyard Keeper.
 
-Il motore che non si spegne mai, e viene dritto da Factorio: **la domanda di roba basilare deve crescere sempre più in fretta di quanto tu riesca a produrre.** Commesse e costruzioni devono chiedere più di quanto l'isola dia. Se un giorno hai abbastanza di tutto, il gioco è finito.
+Ma la cosa che conta è un'altra:
 
-## 6b. Perché la base regge — e cosa è stato messo in conto
+> ### L'operaio si sposta con te. Mentre è sull'isola B, sull'isola A **non succede niente a mano**.
 
-L'autore ha chiesto di non arrivare a un punto in cui *"per fare questo dobbiamo modificare la base del progetto"*. Ecco cosa è già pronto e cosa no, verificato guardando il codice e non a intuito.
+Vanno avanti solo le macchine. Il che vuol dire che **la seconda isola non è "più spazio": è il momento in cui la prima deve saper vivere senza di te.**
 
-**Regge già, senza toccare niente:**
+Automatizzare smette di essere una comodità e diventa **il prezzo del biglietto**. È l'unica struttura trovata in sei versioni di progetto in cui l'automazione è *obbligatoria per progredire* senza che il gioco te lo imponga con un cartello.
 
-| Quello che verrà | Perché ci sta | Dove |
-| --- | --- | --- |
-| Piantare alberi, macchine che crescono o si consumano | **le tessere hanno uno stato**, non solo un nome | `mondo.js` |
-| Macchine con un magazzino dentro | una macchina è una cassa con una ricetta | `casse.js` |
-| Mestieri nuovi (contadino, fabbro, portatore) | il mestiere è un dato, e la coda dei lavori è generica | `braccianti.js`, `lavori.js` |
-| Materiali e ricette nuovi | tutto in `config/`, e il codice non conosce nessun materiale per nome | `config/` |
+E subito dopo nasce il problema successivo, che è quello giusto: **come faccio ad avere qui il ferro che sta là?** Prima con la barca a mano, poi con la barca che va da sola.
 
-**Da cambiare, ed è poco — ma va fatto prima dei nastri, non dopo:**
+## 12. Il ritmo — **non c'è nessun orologio**
 
-- **Un lavoro deve poter avere un'origine e una destinazione.** Adesso un lavoro è *"fai qualcosa su questa tessera"*. Trasportare è *"prendi X da A e portalo a B"*. Sono due campi in più in `lavori.js` e un ramo in più nel ciclo del bracciante. Farlo adesso costa mezz'ora; farlo dopo aver costruito i nastri significa rifare i nastri.
-- **Il percorso vero.** I braccianti vanno in linea retta. Con edifici e nastri diventa visibilmente sbagliato. È il punto 6 della roadmap, e sta lì apposta.
+**Non esiste il ciclo del giorno.** C'era, ed è stato tolto: serviva a far scadere i salari, e i salari sono caduti con l'operaio unico. Un timer che gira senza avere denti è solo un'ansia gratuita, e **"non c'è fretta"** è una delle cinque costanti del progetto.
 
-**Quello che non so ancora, e che scoprirò col punto 7 (la simulazione):** cosa succede con venti braccianti e nastri che muovono centinaia di oggetti. Il disegno regge di sicuro; la ricerca del prossimo lavoro è una scansione lineare, e prima o poi vorrà un indice. Non è un cambio di base: è un'ottimizzazione dentro un file solo.
+Il ritmo lo danno gli **sblocchi**, non l'orologio: *mi mancano 40 monete al progetto della trivella* è un motivo per fare un altro viaggio. *Sta per finire il giorno* non lo è.
 
+Niente scade, niente marcisce, niente si rompe se non torni. **Non si perde mai.**
 
-
-> grano → *Mulino* → farina → *Forno* → **pane**, che vale molto di più
->
-> ma il Mulino si costruisce col **rame**, e il rame va scavato
-
-Il valore si moltiplica a ogni passaggio, e ogni lavorazione chiede materiali di *un'altra* catena. È così che le zone diventano un gioco solo invece di rami appiccicati.
-
-## 7. Il giorno
-
-Il **giorno** dura pochi minuti. A sera arriva un riepilogo di cosa hai raccolto e incassato.
-
-È il meccanismo del *"vabbè, ancora un giorno"*, il motore vero dell'engagement di Stardew — e serve anche da orologio per la ricrescita e, più avanti, per le commesse che si rinnovano.
-
-**Non ci sono spese fisse.** Con un operaio solo un salario sarebbe una tassa, non una decisione. I soldi servono a **comprare tecnologia**, che è l'unica via di crescita.
-
-**Non si perde mai**, e adesso nemmeno un po'.
-
-## 8. Le tessere
+## 13. Le tessere
 
 L'isola è fatta di tessere, **ma non si devono vedere.** Servono solo a far agganciare le cose, esattamente come in Factorio — che è una griglia, e non sembra una scacchiera.
 
-Regole di disegno che ne discendono, e sono vincolanti:
 - **Le tessere non hanno bordi. Mai.**
-- La variazione del terreno è una **macchia tonda** sfalsata, non un quadrato più chiaro. Un quadrato dentro una griglia di quadrati si legge come una scacchiera.
+- La variazione del terreno è una **macchia tonda** sfalsata, non un quadrato più chiaro. Un quadrato dentro una griglia di quadrati si legge come una scacchiera, ed è la cosa che l'autore ha rifiutato.
 - La riva è una linea chiara dove la terra tocca l'acqua: è quella che fa leggere l'isola come un'isola.
 
-## 9. Cosa questo gioco **non** è
+Unica eccezione: **quando hai qualcosa in mano**, la tessera sotto il dito si illumina. Lì la griglia deve vedersi, perché stai piazzando e devi sapere dove va a finire. Appena riponi, sparisce.
 
-Guardrail, da difendere in ogni decisione futura:
+## 14. Cosa questo gioco **non** è
+
+Guardrail, da difendere in ogni decisione futura.
 
 - **Non c'è un personaggio da muovere.** Rifiutato tre volte: non riproporlo.
-- **Niente si sposta da solo.** Nessuno scarico automatico, nessuna cassa assegnata, nessun totale dell'isola. Ogni comodità di trasporto va **guadagnata** con l'automazione, mai regalata.
-- **Niente ricresce da solo.** Se il bosco torna senza che tu faccia niente, ripiantare non è una decisione.
 - **Non è un puzzle game.** Niente moltiplicatori di adiacenza, niente incastri da ottimizzare.
+- **Non c'è un magazzino centrale.** Le cose stanno in un posto e qualcuno le deve portare.
+- **Niente si sposta da solo e niente ricresce da solo.** Ogni comodità va guadagnata.
 - **Non si perde e non si sbaglia in modo irreversibile.**
 - **Non c'è fretta.** Niente timer che scadono, niente che marcisce.
-- **Non è un idle da guardare.** Se in una giornata non c'è almeno una decisione, il gioco è rotto lì.
+- **Non è un idle da guardare.** Se in una sessione non c'è almeno una decisione, il gioco è rotto lì.
 - **Niente valuta premium, niente pubblicità, niente attese che si pagano.**
 
-## 10. La domanda che regge tutto
+## 15. Le domande che reggono tutto
 
-> ### Guardare l'isola e comandarla col dito è piacevole?
+Sono in ordine. Se una risponde no, quelle sotto non contano.
 
-Se sì, tutto il resto è contenuto. Se no, nessuna quantità di catene, zone e braccianti lo salva. **È la verifica obbligatoria del punto 1 della roadmap.**
+1. **Guardare l'isola e comandarla col dito è piacevole?**
+2. **Guardando la bacheca dei progetti, ce n'è uno che vuoi?**
+3. **Portare la roba a mano dà fastidio quel tanto che basta?** Deve essere una scocciatura che fa desiderare un nastro, non una noia che fa chiudere l'app.
+4. **Quando arriva la prima macchina, si sente che ti ha ridato del tempo?**
 
-## 11. Una nota sulla dimensione
+## 16. Una nota onesta sulla dimensione
 
-Questa versione è **molto più grande di tutte le precedenti messe insieme**: un mondo a tessere, una telecamera, braccianti che si muovono, zone, catene di produzione. Non è una settimana di lavoro.
+Questa è di gran lunga la versione più grande del progetto: un mondo a tessere, una telecamera, crafting, macchine, nastri, più isole. **Non è una settimana di lavoro.**
 
-Il rischio non è che l'idea sia sbagliata — **Graveyard Keeper è esattamente questo gioco, esiste e funziona.** Il rischio è la dimensione. Per questo la roadmap costruisce il *posto* prima di qualunque catena, e si ferma a farlo provare.
+Il rischio non è che l'idea sia sbagliata — Satisfactory e Graveyard Keeper esistono e funzionano. Il rischio è **costruire tutto prima di sapere se il pezzo centrale è divertente**, che è esattamente come sono morte le sei versioni precedenti.
+
+Per questo la roadmap è ordinata così: prima si sistema **il comando**, poi si mettono **le due economie**, e ci si ferma a chiedere *"c'è un progetto che vuoi?"* prima di scrivere una sola riga di nastri.
