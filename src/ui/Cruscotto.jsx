@@ -9,6 +9,10 @@ export default function Cruscotto({
   lavoriInAttesa,
   braccantiFermi,
   braccantiTotali,
+  monete,
+  giorno,
+  oraDelGiorno,
+  salariStasera,
   esito
 }) {
   // arriva come "legno:12,pietra:0": una stringa sola invece di un oggetto,
@@ -35,6 +39,59 @@ export default function Cruscotto({
         pointerEvents: 'none'
       }}
     >
+      {/* monete, giorno e quanto costa stasera: le tre cose che decidono se
+          puoi assumere. La barra dice quanto manca a sera, cosi' la spesa non
+          arriva di sorpresa */}
+      <div
+        style={{
+          padding: '7px 12px',
+          borderRadius: interfaccia.raggio_angoli,
+          background: interfaccia.colore_pannello,
+          border: '1px solid ' + interfaccia.colore_bordo_pannello
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+          <span
+            style={{
+              fontSize: interfaccia.testo_titolo,
+              fontWeight: 700,
+              color: interfaccia.colore_accento
+            }}
+          >
+            {monete}
+          </span>
+          <span
+            style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
+          >
+            monete
+          </span>
+          <span style={{ flex: 1 }} />
+          <span style={{ fontSize: interfaccia.testo_normale, color: interfaccia.colore_testo }}>
+            giorno {giorno}
+          </span>
+          <span style={{ fontSize: interfaccia.testo_piccolo, color: '#d9805f' }}>
+            −{salariStasera} stasera
+          </span>
+        </div>
+        <div
+          style={{
+            marginTop: 6,
+            height: 4,
+            borderRadius: 2,
+            background: '#00000055',
+            overflow: 'hidden'
+          }}
+        >
+          <div
+            style={{
+              width: Math.min(100, Math.max(0, oraDelGiorno * 100)) + '%',
+              height: '100%',
+              background: interfaccia.colore_accento
+            }}
+          />
+        </div>
+      </div>
+
       <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
         {elencoMateriali.map((materiale) => (
           <div

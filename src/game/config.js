@@ -4,6 +4,8 @@
 import isolaJson from '../../config/isola.json'
 import braccantiJson from '../../config/braccianti.json'
 import costruzioniJson from '../../config/costruzioni.json'
+import economiaJson from '../../config/economia.json'
+import tempoJson from '../../config/tempo.json'
 import motore from '../../config/motore.json'
 
 // L'area logica dello **schermo**, non del mondo: l'isola e' piu' grande, e la
@@ -28,6 +30,10 @@ export const mestieri = braccantiJson.mestieri
 
 export const costruzioni = costruzioniJson
 export const elencoCostruzioni = costruzioniJson.costruzioni
+
+export const partenzaEconomia = economiaJson.partenza
+export const vendita = economiaJson.vendita
+export const tempo = tempoJson
 
 export function trovaCostruzione(id) {
   const costruzione = elencoCostruzioni.find((voce) => voce.id === id)
@@ -94,6 +100,22 @@ for (let i = 0; i < elencoCostruzioni.length; i++) {
     }
   }
 }
+// Un materiale senza prezzo non si potrebbe vendere, e un mestiere senza
+// salario sarebbe gratis: in un gioco che regge sulla domanda "assumo o me lo
+// faccio bastare", un bracciante gratis toglie la domanda.
+for (let i = 0; i < elencoMateriali.length; i++) {
+  if (!(elencoMateriali[i].prezzo > 0)) {
+    throw new Error(`Il materiale "${elencoMateriali[i].id}" non ha un prezzo in isola.json`)
+  }
+}
+for (let i = 0; i < mestieri.length; i++) {
+  if (!(mestieri[i].salario > 0) || !(mestieri[i].costo_assunzione > 0)) {
+    throw new Error(
+      `Il mestiere "${mestieri[i].id}" ha bisogno di salario e costo_assunzione in braccianti.json: un bracciante gratis toglie la domanda che regge il gioco`
+    )
+  }
+}
+
 if (!isolaJson.mappa.some((riga) => riga.indexOf('C') >= 0)) {
   throw new Error(
     'Sulla mappa non c\'e il casotto (C): senza, il primo bracciante non saprebbe dove scaricare'

@@ -21,16 +21,17 @@ import {
 import {
   calpestabile,
   centroTessera,
+  maturoIn,
+  raccogliRisorsa,
   risorsaIn,
-  tesseraAccanto,
-  togliRisorsa
+  tesseraAccanto
 } from './mondo.js'
 
 // scratch preallocati: dentro il ciclo di gioco non si crea niente
 const puntoDiLavoro = { tx: 0, ty: 0 }
 const meta = { x: 0, y: 0 }
 
-export function creaBraccianti({ casse, alloScarico, alCambioDelMondo }) {
+export function creaBraccianti({ casse, alloScarico, alCambioDelMondo, alRaccolto }) {
   const squadra = []
 
   function zainoVuoto() {
@@ -62,8 +63,10 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo }) {
       // lo zaino, e dove lo svuota
       zaino: zainoVuoto(),
       carico: 0,
-      scaricaA: null
+      scaricaA: null,
+      salario: mestiere.salario
     })
+    return squadra[squadra.length - 1]
   }
 
   function lascia(bracciante) {
@@ -201,17 +204,50 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo }) {
       const lavoro = bracciante.lavoro
       // qualcun altro potrebbe averla gia' tolta: si controlla prima di dare
       // la resa, altrimenti un albero varrebbe due volte
-      if (risorsaIn(lavoro.tx, lavoro.ty) === lavoro.tipo) {
+      if (risorsaIn(lavoro.tx, lavoro.ty) === lavoro.tipo && maturoIn(lavoro.tx, lavoro.ty)) {
         const resa = risorse[lavoro.tipo].resa
-        togliRisorsa(lavoro.tx, lavoro.ty)
+        raccogliRisorsa(lavoro.tx, lavoro.ty)
         // la roba va nello zaino, non in un magazzino: qualcuno la deve portare
         bracciante.zaino[resa.materiale] += resa.quantita
         bracciante.carico += resa.quantita
+        alRaccolto(resa.quantita)
         alCambioDelMondo()
       }
       lavoro.attivo = false
       lascia(bracciante)
     }
+  }
+
+  // Quanto costa la squadra ogni sera. Un bracciante fermo costa uguale a uno
+  // che lavora: e' quello che rende difficile la domanda "assumo o no".
+  function salariTotali() {
+    let totale = 0
+    for (let i = 0; i < squadra.length; i++) {
+      totale += squadra[i].salario
+    }
+    return totale
+  }
+
+  // Quando non si riesce a pagare se ne va il piu' caro: e' il piu' facile da
+  // capire, ed e' anche quello che fa piu' male, quindi si vede.
+  function mandaViaIlPiuCaro() {
+    if (squadra.length === 0) {
+      return ''
+    }
+    let quale = 0
+    for (let i = 1; i < squadra.length; i++) {
+      if (squadra[i].salario > squadra[quale].salario) {
+        quale = i
+      }
+    }
+    const nome = squadra[quale].nome
+    const chiSeNeVa = squadra[quale]
+    if (chiSeNeVa.lavoro) {
+      chiSeNeVa.lavoro.preso = false
+      chiSeNeVa.lavoro.attivo = false
+    }
+    squadra.splice(quale, 1)
+    return nome
   }
 
   function quantiFermi() {
@@ -249,5 +285,13 @@ export function creaBraccianti({ casse, alloScarico, alCambioDelMondo }) {
 
   reimposta()
 
-  return { squadra, assumi, aggiorna, quantiFermi, reimposta }
+  return {
+    squadra,
+    assumi,
+    aggiorna,
+    quantiFermi,
+    salariTotali,
+    mandaViaIlPiuCaro,
+    reimposta
+  }
 }

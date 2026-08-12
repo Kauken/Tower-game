@@ -64,7 +64,10 @@
       "scarto_ombra": 0.08,
       "spessore_bordo": 2,
       "raggio_tronco": 0.12,
-      "altezza_tronco": 0.22
+      "altezza_tronco": 0.22,
+      "germoglio_minimo": 0.3,
+      "opacita_germoglio": 0.55,
+      "_nota_germoglio": "Quello che sta ricrescendo si disegna piccolo e smorto, e cresce mentre il tempo passa: si deve capire a colpo d'occhio che c'e' ma non si tocca ancora."
     },
     "ordine": {
       "_nota": "Il segno su quello a cui hai dato un ordine. Si disegna SOPRA alla cosa e piu' largo di lei: sotto finiva coperto dalla chioma dell'albero e l'ordine sembrava non essere partito. Deve vedersi da lontano, perche' e' l'unico modo per sapere cosa hai gia' comandato.",

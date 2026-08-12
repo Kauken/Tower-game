@@ -37,7 +37,9 @@ versione è la più grande di tutte, quindi contano il doppio.
 
 **Adesso non c'è nessuna ragione per fare niente.** Tagli alberi perché puoi. Questi due punti, e solo questi due, trasformano un giocattolo in un gioco: uno mette la **pressione**, l'altro il **desiderio**. Tutto il resto della roadmap è contenuto.
 
-3. **Il giorno e i salari.** Il giorno passa, a sera si paga chi hai assunto, e arriva il riepilogo. Assumere diventa una scommessa invece che un regalo.
+3. **Il giorno, i salari, vendere e assumere.** — **FATTO** (2026-08-11). Il giorno dura 90 secondi e il cruscotto mostra sempre quanto manca a sera e quanto pagherai. Si vende **dalla cassa** (anche vendere succede in un posto), si assume **al casotto**, e ogni bracciante costa una volta all'assunzione e poi ogni sera — che lavori o no. Se a sera non bastano le monete, se ne va il più caro: **non si perde mai**. Vendere e assumere erano nel punto 4, ma senza un modo di guadagnare i salari sono solo un conto alla rovescia, e senza assumere non c'è nessuna decisione.
+
+3b. **Gli alberi ricrescono.** — **FATTO** (2026-08-11). Trovato provando: con 24 alberi finiti e i salari da pagare, l'isola arrivava a un **vicolo cieco** — niente più da raccogliere e nessun modo di uscirne. Adesso un albero tagliato lascia un germoglio che ricresce, disegnato piccolo e smorto. È anche il primo pezzo di **stato per tessera**, cioè la fondazione su cui poggeranno le piantagioni e le macchine.
 4. **Le commesse.** Qualcuno ti chiede roba precisa e paga molto più del mercato. È il "non vedo l'ora", ed è la prima volta che il legno serve a qualcosa.
 
 > ### 🛑 Verifica dopo il punto 4 — non si va avanti senza
@@ -54,7 +56,8 @@ Tre cose che non aggiungono niente da giocare, ma che **triplicano di costo** se
 
 ## Fase D — le catene, cioè il pezzo Factorio
 
-8. **La prima lavorazione**: il Mulino (grano → farina), costruito col rame. Le zone diventano un gioco solo.
+8. **La prima lavorazione**: la Segheria (1 tronco → 3 tavole), costruita con la pietra.
+   > **Vincolo non negoziabile, e va messo come controllo all'avvio:** una lavorazione **non può produrre un materiale che consuma**. "1 legno → 3 legno" darebbe legno infinito rimettendo l'uscita in entrata, e nessun bilanciamento lo aggiusta. Vedi GDD §6.
 9. **La catena a due passaggi**: il Forno (farina → pane). Il valore si moltiplica a ogni passaggio.
 10. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
 11. **I nastri**: la roba si sposta da sola fra le casse. **È il momento in cui la catena gira senza di te**, e ha senso solo perché il punto 2 ha reso il trasporto un costo vero.
@@ -91,8 +94,9 @@ E una cosa che **non** è stata spostata, di proposito: le catene e i nastri res
 ## Semplificazioni note del punto 1, da sistemare quando serviranno
 
 - **I braccianti vanno in linea retta.** Attraversano gli alberi. Sull'isola aperta non si nota; col punto 11 arriva un percorso vero.
-- **Nessuno paga nessuno.** I salari sono in configurazione ma non li legge nessuno. È il punto 3.
 - **Chiudere la pagina cancella tutto.** È il punto 5.
+- **Un lavoro non ha origine e destinazione**, solo una tessera. Trasportare vuole due campi in più in `lavori.js`: **va fatto prima dei nastri**, se no i nastri si rifanno. Vedi GDD §6b.
+- **I massi non ricrescono**, e sono otto. Quando finiscono, la pietra arriva solo aprendo la cava (punto 12).
 - **Una cassa piena** fa ripiegare il bracciante sulla più vicina con spazio, invece di bloccarlo. Va bene così finché non ci sono i nastri.
 
 ## Cosa è stato tolto, e perché

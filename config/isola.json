@@ -75,7 +75,8 @@
       "colore_chioma": "#4a7031",
       "colore_tronco": "#4a3a24",
       "raggio": 0.42,
-      "blocca": true
+      "blocca": true,
+      "ricresce_ms": 55000
     },
     "masso": {
       "nome": "Masso",
@@ -89,7 +90,8 @@
       "colore_chioma": "#7c8288",
       "colore_tronco": "#3e4247",
       "raggio": 0.38,
-      "blocca": true
+      "blocca": true,
+      "ricresce_ms": 0
     },
     "frana": {
       "nome": "Frana",
@@ -103,7 +105,8 @@
       "colore_chioma": "#6b5c4a",
       "colore_tronco": "#332c26",
       "raggio": 0.46,
-      "blocca": true
+      "blocca": true,
+      "ricresce_ms": 0
     },
     "casotto": {
       "nome": "Casotto",
@@ -116,19 +119,22 @@
       "raggio": 0.45,
       "blocca": true,
       "squadrata": true,
-      "_nota": "L'unica cosa costruita da qualcuno: si disegna quadrata fra le sagome tonde della natura."
+      "_nota": "L'unica cosa costruita da qualcuno: si disegna quadrata fra le sagome tonde della natura.",
+      "ricresce_ms": 0
     }
   },
   "materiali": [
     {
       "id": "legno",
       "nome": "Legno",
-      "colore": "#8a6242"
+      "colore": "#8a6242",
+      "prezzo": 3
     },
     {
       "id": "pietra",
       "nome": "Pietra",
-      "colore": "#7c8288"
+      "colore": "#7c8288",
+      "prezzo": 4
     }
   ],
   "telecamera": {
@@ -140,5 +146,7 @@
     "margine_tessere": 1,
     "soglia_trascinamento": 10,
     "durata_tocco_ms": 400
-  }
+  },
+  "_nota_materiali": "prezzo e' quanto paga il mercante per un pezzo. La materia prima vale poco apposta: e' la LAVORAZIONE a farle valere di piu' (punti 8-11), non la raccolta.",
+  "_nota_ricrescita": "ricresce_ms: quanto ci mette a tornare raccoglibile. Senza, l'isola finisce e la fattoria arriva a un vicolo cieco: niente piu' da raccogliere, salari da pagare, e nessun modo di uscirne. Gli alberi ricrescono da soli; i massi no, perche' un masso non ricresce e perche' la pietra deve restare la cosa che costringe ad aprire zone nuove."
 }

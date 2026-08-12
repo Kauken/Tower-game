@@ -24,7 +24,7 @@ Il motore che non si spegne viene da Factorio: **la domanda deve crescere più i
 
 ## Stato del codice
 
-**Punti 1 e 2 della roadmap FATTI.** La verifica dopo il punto 1 è **passata**: *"va bene, sembra un posto"* e *"funziona, si capisce tutto"*.
+**Punti 1, 2 e 3 della roadmap FATTI.** La verifica dopo il punto 1 è **passata**: *"va bene, sembra un posto"* e *"funziona, si capisce tutto"*.
 
 Provato nel browser a 390×780. Il pezzo che conta, verificato in modo netto:
 
@@ -64,15 +64,17 @@ Nessun errore in console.
 
 ## La prossima cosa da fare
 
-**Fermarsi e provare.** C'è un blocco di verifica dopo il punto 1, e conta doppio: questa versione è la più grande di tutte, e il progetto è già stato buttato sette volte per aver costruito troppo prima di verificare.
+**Fermarsi e provare.** La domanda del punto 3-4: **apri l'isola e sai già cosa vuoi fare?**
 
-La verifica del punto 2 è **passata**: *"perfetto funziona"*.
+Adesso c'è la pressione (i salari) ma manca il desiderio: si vende al mercante e basta. Il **punto 4, le commesse**, è quello che fa venire voglia di una cosa precisa.
 
-**Adesso il gioco non ha ancora una ragione per esistere:** tagli alberi perché puoi. I prossimi due punti, e solo quelli, lo trasformano in un gioco.
+Poi la **Fase C**: salvataggio, percorso vero, simulazione headless. Il perché di ogni spostamento è in fondo a `ROADMAP.md`.
 
-- **Punto 3 — il giorno e i salari.** La pressione. A sera si paga chi hai assunto, e assumere diventa una scommessa.
-- **Punto 4 — le commesse.** Il desiderio. Qualcuno ti chiede roba precisa e paga molto più del mercato: è la prima volta che il legno serve a qualcosa.
+## Il muro architetturale, nominato prima di sbatterci
 
-Poi la **Fase C**, tre fondamenta che costano il triplo se si rimandano: il **salvataggio** (spostato dal 15° posto: senza, nessuno gioca abbastanza a lungo da poter giudicare), il **percorso vero** (spostato dall'11°: rifare i nastri dopo costa di più), e la **simulazione headless** (questo gioco è una questione di portata, e senza misura si tira a indovinare).
+L'autore ha chiesto di non arrivare a un punto in cui *"per fare questo dobbiamo modificare la base"*. La risposta sta in `GDD.md` §6 e §6b, e si riassume così:
 
-Il perché di ogni spostamento è in fondo a `ROADMAP.md`.
+> **"1 legno diventa 3 legno" rompe il gioco.** Rimetti l'uscita in entrata e hai legno infinito. La regola è: **una lavorazione non produce mai il materiale che consuma** — 1 tronco → 3 *tavole*, e le tavole non rientrano nella segheria. Va messa come controllo all'avvio, al punto 8.
+
+Per il resto la base regge: le tessere hanno uno stato, le casse sono contenitori generici, i mestieri e i materiali sono dati. **L'unica cosa da cambiare è piccola e va fatta prima dei nastri:** un lavoro deve poter avere un'origine e una destinazione, non solo una tessera.
+

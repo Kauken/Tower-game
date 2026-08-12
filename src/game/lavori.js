@@ -9,6 +9,7 @@
 // Tutto da pool preallocato: dentro il ciclo di gioco non si crea niente.
 
 import { limiti, risorse } from './config.js'
+import { maturoIn } from './mondo.js'
 import { creaPool, primoLibero } from './pool.js'
 
 export function creaLavori() {
@@ -44,6 +45,10 @@ export function creaLavori() {
 
     const dati = risorse[nomeRisorsa]
     if (!dati || !dati.mestiere) {
+      return false
+    }
+    // un germoglio non si taglia: sta ancora ricrescendo
+    if (!maturoIn(tx, ty)) {
       return false
     }
 

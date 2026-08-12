@@ -7,8 +7,10 @@ import {
   Avviso,
   PannelloBracciante,
   PannelloCassa,
-  PannelloCostruisci
+  PannelloCostruisci,
+  Riepilogo
 } from './Pannelli.jsx'
+import { mestieri } from '../game/config.js'
 
 const VISTA_INIZIALE = {
   magazzino: '',
@@ -26,7 +28,34 @@ const VISTA_INIZIALE = {
   scaricaAScelto: '',
   cassaScelta: false,
   contenutoCassa: '',
-  pienoCassa: ''
+  pienoCassa: '',
+  cassaEIlCasotto: false,
+  valoreCassa: 0,
+  monete: 0,
+  giorno: 1,
+  oraDelGiorno: 0,
+  salariStasera: 0,
+  mostraRiepilogo: false,
+  riepilogo: '',
+  assunzioni: ''
+}
+
+// "taglialegna:220:40,cavatore:280:50" -> quanto costa assumere ognuno
+function leggiAssunzioni(riga) {
+  if (!riga) {
+    return []
+  }
+  return riga.split(',').map((pezzo) => {
+    const [id, costo, salario] = pezzo.split(':')
+    const mestiere = mestieri.find((m) => m.id === id)
+    return {
+      id,
+      nome: mestiere ? mestiere.nome : id,
+      colore: mestiere ? mestiere.colore : '#888888',
+      costo: Number(costo),
+      salario: Number(salario)
+    }
+  })
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -162,6 +191,9 @@ export default function CampoDiGioco() {
     motoreRef.current.costruisci(id)
     apriCostruzione(false)
   }, [])
+  const vendi = useCallback(() => motoreRef.current.vendi(), [])
+  const assumi = useCallback((id) => motoreRef.current.assumi(id), [])
+  const chiudiRiepilogo = useCallback(() => motoreRef.current.chiudiRiepilogo(), [])
 
   return (
     <div
@@ -194,8 +226,16 @@ export default function CampoDiGioco() {
         lavoriInAttesa={vista.lavoriInAttesa}
         braccantiFermi={vista.braccantiFermi}
         braccantiTotali={vista.braccantiTotali}
+        monete={vista.monete}
+        giorno={vista.giorno}
+        oraDelGiorno={vista.oraDelGiorno}
+        salariStasera={vista.salariStasera}
         esito={vista.esito}
       />
+
+      {vista.mostraRiepilogo ? (
+        <Riepilogo dati={vista.riepilogo} onChiudi={chiudiRiepilogo} />
+      ) : null}
 
       {/* i fogli e gli avvisi stanno sopra alla riga dei pulsanti, mai sotto:
           il pollice arriva prima in basso */}
@@ -222,6 +262,12 @@ export default function CampoDiGioco() {
         <PannelloCassa
           contenuto={vista.contenutoCassa}
           pieno={vista.pienoCassa}
+          valore={vista.valoreCassa}
+          eIlCasotto={vista.cassaEIlCasotto}
+          monete={vista.monete}
+          assunzioni={leggiAssunzioni(vista.assunzioni)}
+          onVendi={vendi}
+          onAssumi={assumi}
           onChiudi={annulla}
         />
       ) : null}

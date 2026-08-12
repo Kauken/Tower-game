@@ -10,7 +10,8 @@
       "descrizione": "Abbatte gli alberi.",
       "colore": "#7ea653",
       "colore_bordo": "#d5eab4",
-      "salario": 8
+      "salario": 30,
+      "costo_assunzione": 220
     },
     {
       "id": "cavatore",
@@ -18,7 +19,8 @@
       "descrizione": "Spacca i massi e sgombera le frane.",
       "colore": "#8892a6",
       "colore_bordo": "#dfe6f2",
-      "salario": 10
+      "salario": 40,
+      "costo_assunzione": 280
     }
   ],
   "iniziali": [
@@ -39,5 +41,6 @@
   ],
   "_nota_zaino": "Quanto porta addosso un bracciante. E' piccolo apposta: quando e' pieno smette di lavorare e va a scaricare, e quella camminata e' il costo che rende utile mettere una cassa vicino al lavoro. Senza quel costo i nastri non servirebbero a niente.",
   "zaino": 12,
-  "_nota_scarico": "Dove scarica lo decide il giocatore, cassa per cassa. NON c'e' un magazzino centrale in cui la roba compare da sola: e' la differenza fra questo gioco e un gestionale alla Age of Empires, ed e' la ragione per cui piu' avanti i nastri avranno senso."
+  "_nota_scarico": "Dove scarica lo decide il giocatore, cassa per cassa. NON c'e' un magazzino centrale in cui la roba compare da sola: e' la differenza fra questo gioco e un gestionale alla Age of Empires, ed e' la ragione per cui piu' avanti i nastri avranno senso.",
+  "_nota_soldi": "Ogni mestiere costa due volte: una all'assunzione (costo_assunzione, una tantum) e una ogni sera (salario). E' il salario a rendere difficile la domanda 'assumo o me lo faccio bastare': un bracciante fermo costa uguale a uno che lavora, quindi non conviene averne piu' di quanti se ne riescono a tenere occupati."
 }

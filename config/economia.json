@@ -1,0 +1,12 @@
+{
+  "_nota": "Le monete. Entrano vendendo quello che c'e' nelle casse, escono ogni sera coi salari. La domanda che questi numeri devono rendere difficile e' una sola: assumo un altro, o me lo faccio bastare?",
+  "_nota_provvisorio": "Numeri di primo passaggio, ragionati ma non misurati. Vanno tarati con l'agente bilanciatore appena esiste la simulazione headless (punto 7 della roadmap): questo gioco e' una questione di portata, e a occhio non si vede.",
+  "partenza": {
+    "monete": 300
+  },
+  "_nota_bancarotta": "Se a sera non bastano i soldi si paga quello che c'e' e il bracciante che costa di piu' se ne va. NON si perde mai: la fattoria si rimpicciolisce e si riparte.",
+  "vendita": {
+    "_nota": "Si vende dalle casse, una cassa per volta. Non c'e' un magazzino centrale da cui vendere tutto insieme: anche vendere e' una cosa che succede in un posto.",
+    "moltiplicatore": 1
+  }
+}

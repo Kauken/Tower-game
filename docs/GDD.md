@@ -77,25 +77,75 @@ L'isola non è tutta accessibile. Ogni pezzo è chiuso da un ostacolo che si tog
 
 Da qui nasce l'unica cosa che conta: **la distanza costa.** Una cassa vicino al lavoro fa risparmiare tutta la strada, e quella camminata è il motivo per cui più avanti i **nastri** saranno un sollievo invece che un gadget. Se la roba comparisse da sola, non ci sarebbe niente da trasportare e i nastri non servirebbero a niente.
 
-## 6. Le catene — la parte Factorio
+## 6. Le catene e l'albero tecnologico — la parte Factorio
+
+> *"Ora un legno vale un legno, poi passandoli in macchinari 1 legno si duplica e triplica. Stessa cosa per le pietre e altre materie prime."*
+
+### ⚠️ Il muro: **una lavorazione non produce mai il materiale che consuma**
+
+Preso alla lettera, *"1 legno diventa 3 legno"* **rompe il gioco in modo irreparabile**: rimetti i 3 legno nella macchina, ne escono 9, poi 27. Hai legno infinito, e con esso monete infinite. Non è un problema di numeri — nessun bilanciamento lo aggiusta.
+
+È lo stesso problema che i modpack tecnici di Minecraft hanno risolto una volta per tutte, e la soluzione è una riga:
+
+> **La moltiplicazione produce un materiale DIVERSO, che non può rientrare nella stessa macchina.**
+>
+> 1 tronco → *Segheria* → **3 tavole**. Le tavole non rientrano nella segheria.
+> 1 masso → *Frantoio* → **2 ghiaia** → *Fornace* → **1 lingotto**.
+
+Il valore si moltiplica lo stesso — le tavole valgono più di un tronco e servono per costruire — ma **il ciclo è chiuso**: la materia prima entra solo dall'isola, dove è limitata dagli alberi che ricrescono e dai massi che no.
+
+**Questa regola va controllata dal codice**, non ricordata: al punto 8, il gioco deve rifiutarsi di partire se una ricetta ha in uscita un materiale che ha in entrata. È il tipo di guardrail che la skill `post-mortem` chiede di mettere.
+
+### I livelli di lavorazione
+
+Ogni macchina non ha un moltiplicatore suo inventato: appartiene a un **livello**, e il livello dice quanto moltiplica. Così l'albero tecnologico ha una forma leggibile e si può bilanciare.
+
+| Livello | Cosa serve per arrivarci | Quanto rende la materia prima |
+| --- | --- | --- |
+| **0 — a mano** | niente | ×1 — un tronco è un tronco |
+| **1 — attrezzo** | legno e pietra | ×2 |
+| **2 — macchina** | metallo | ×3 |
+| **3 — impianto** | più metalli, più spazio | ×4, ma vuole due catene che si incontrano |
+
+Salire di livello **non è un potenziamento: è una ricostruzione.** La macchina di livello 2 non entra dove stava quella di livello 1, e va rialimentata. Nei modpack tecnici è documentato come la cosa che tiene vivo il gioco per centinaia di ore, ed è anche la risposta al difetto del genere — *quando è tutto automatico non hai più niente da fare*.
+
+### I tre gradini dell'automazione
+
+1. **Ordini tu, ogni volta.** Tocchi ogni albero.
+2. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
+3. **I nastri**: la roba si sposta da sola fra le casse. **Adesso la catena gira senza di te.**
+
+### "The factory must grow"
+
+Il motore che non si spegne mai, e viene dritto da Factorio: **la domanda di roba basilare deve crescere sempre più in fretta di quanto tu riesca a produrre.** Commesse e costruzioni devono chiedere più di quanto l'isola dia. Se un giorno hai abbastanza di tutto, il gioco è finito.
+
+## 6b. Perché la base regge — e cosa è stato messo in conto
+
+L'autore ha chiesto di non arrivare a un punto in cui *"per fare questo dobbiamo modificare la base del progetto"*. Ecco cosa è già pronto e cosa no, verificato guardando il codice e non a intuito.
+
+**Regge già, senza toccare niente:**
+
+| Quello che verrà | Perché ci sta | Dove |
+| --- | --- | --- |
+| Piantare alberi, macchine che crescono o si consumano | **le tessere hanno uno stato**, non solo un nome | `mondo.js` |
+| Macchine con un magazzino dentro | una macchina è una cassa con una ricetta | `casse.js` |
+| Mestieri nuovi (contadino, fabbro, portatore) | il mestiere è un dato, e la coda dei lavori è generica | `braccianti.js`, `lavori.js` |
+| Materiali e ricette nuovi | tutto in `config/`, e il codice non conosce nessun materiale per nome | `config/` |
+
+**Da cambiare, ed è poco — ma va fatto prima dei nastri, non dopo:**
+
+- **Un lavoro deve poter avere un'origine e una destinazione.** Adesso un lavoro è *"fai qualcosa su questa tessera"*. Trasportare è *"prendi X da A e portalo a B"*. Sono due campi in più in `lavori.js` e un ramo in più nel ciclo del bracciante. Farlo adesso costa mezz'ora; farlo dopo aver costruito i nastri significa rifare i nastri.
+- **Il percorso vero.** I braccianti vanno in linea retta. Con edifici e nastri diventa visibilmente sbagliato. È il punto 6 della roadmap, e sta lì apposta.
+
+**Quello che non so ancora, e che scoprirò col punto 7 (la simulazione):** cosa succede con venti braccianti e nastri che muovono centinaia di oggetti. Il disegno regge di sicuro; la ricerca del prossimo lavoro è una scansione lineare, e prima o poi vorrà un indice. Non è un cambio di base: è un'ottimizzazione dentro un file solo.
+
+
 
 > grano → *Mulino* → farina → *Forno* → **pane**, che vale molto di più
 >
 > ma il Mulino si costruisce col **rame**, e il rame va scavato
 
 Il valore si moltiplica a ogni passaggio, e ogni lavorazione chiede materiali di *un'altra* catena. È così che le zone diventano un gioco solo invece di rami appiccicati.
-
-### I tre gradini dell'automazione
-
-1. **Porti tu, con le gambe degli altri.** Ordini, e il bracciante va, lavora e riporta indietro. La strada la fa lui, ma la fa tutta.
-2. **L'ordine permanente**: la lavorazione continua da sola finché ha materiale.
-3. **I nastri**: la roba si sposta da sola da una cassa all'altra. **Adesso la catena gira senza di te.**
-
-Il terzo gradino è il momento del gioco. Tutta la ricerca su Factorio e Satisfactory dice che la gioia vera è una sola: **vedere il sistema funzionare da solo mentre guardi da un'altra parte**, e tornare trovando le casse piene.
-
-### "The factory must grow"
-
-Il motore che non si spegne mai, e viene dritto da Factorio: **la domanda di roba basilare deve crescere sempre più in fretta di quanto tu riesca a produrre.** Commesse e costruzioni devono chiedere più di quanto la fattoria dia. Se un giorno hai abbastanza di tutto, il gioco è finito.
 
 ## 7. Il giorno e le spese
 

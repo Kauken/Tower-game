@@ -14,9 +14,12 @@ import {
   area,
   elencoMateriali,
   limiti,
+  mestieri,
   simulazione,
+  tempo,
   tessera,
-  trovaCostruzione
+  trovaCostruzione,
+  trovaMestiere
 } from './config.js'
 import { disegnaIsola } from './disegno.js'
 import { adattaCanvas } from './schermo.js'
@@ -25,13 +28,23 @@ import { creaCamera } from './camera.js'
 import { creaLavori } from './lavori.js'
 import { creaCasse } from './casse.js'
 import { creaBraccianti } from './braccianti.js'
+import { creaEconomia } from './economia.js'
+import { creaGiorno } from './giorno.js'
 import { creaGestoreEffetti } from './effetti.js'
-import { calpestabile, centroTessera, risorsaIn, tessereDaMondo } from './mondo.js'
+import {
+  aggiornaMondo,
+  calpestabile,
+  centroTessera,
+  maturoIn,
+  risorsaIn,
+  tessereDaMondo
+} from './mondo.js'
 
 export function creaMotore(canvasGioco) {
   const camera = creaCamera()
   const lavori = creaLavori()
   const casse = creaCasse()
+  const economia = creaEconomia()
   const effetti = creaGestoreEffetti()
 
   const centro = { x: 0, y: 0 }
@@ -43,8 +56,11 @@ export function creaMotore(canvasGioco) {
       camera.versoSchermo(centro.x, centro.y, centro)
       effetti.raccolta(centro.x, centro.y)
     },
-    alCambioDelMondo: () => {}
+    alCambioDelMondo: () => {},
+    alRaccolto: (quanti) => giorno.segnaRaccolto(quanti)
   })
+
+  const giorno = creaGiorno(economia, squadra, { allAlba: () => {} })
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
@@ -54,6 +70,8 @@ export function creaMotore(canvasGioco) {
     id: ''
   }))
 
+  const casotto = () => casse.elenco.find((c) => c.eIlCasotto) || null
+
   let modo = 'normale'
   let daCostruire = ''
   let braccianteScelto = -1
@@ -61,6 +79,16 @@ export function creaMotore(canvasGioco) {
   let esito = ''
 
   const vetrina = {
+    monete: 0,
+    giorno: 1,
+    oraDelGiorno: 0,
+    salariStasera: 0,
+    mostraRiepilogo: false,
+    riepilogo: '',
+    // il casotto e' anche l'ufficio: e' li' che si assume
+    cassaEIlCasotto: false,
+    valoreCassa: 0,
+    assunzioni: '',
     // stringhe, non oggetti: l'interfaccia le confronta per capire se sono
     // cambiate, e confrontare un oggetto a ogni lettura costerebbe di piu'
     magazzino: '',
@@ -200,9 +228,33 @@ export function creaMotore(canvasGioco) {
       return
     }
 
+    if (!maturoIn(tessereTocco.tx, tessereTocco.ty)) {
+      esito = 'sta ancora ricrescendo'
+      return
+    }
     esito = lavori.ordina(tessereTocco.tx, tessereTocco.ty, cosa)
       ? ''
       : 'nessuno lo sa fare'
+  }
+
+  // Si assume al casotto: e' l'unico posto costruito da qualcuno, ed e' li'
+  // che si va a firmare. Costa una volta all'assunzione e poi ogni sera.
+  function assumi(idMestiere) {
+    const dati = trovaMestiere(idMestiere)
+    const dove = casotto()
+    if (!dove) {
+      esito = 'serve il casotto'
+      return
+    }
+    if (!economia.paga(dati.costo_assunzione)) {
+      esito = 'monete non abbastanza'
+      return
+    }
+    const nuovo = squadra.assumi(idMestiere, dove.tx, dove.ty)
+    if (nuovo) {
+      nuovo.scaricaA = dove
+    }
+    esito = ''
   }
 
   function eseguiComandi() {
@@ -231,6 +283,14 @@ export function creaMotore(canvasGioco) {
         annulla()
         braccianteScelto = -1
         cassaScelta = null
+      } else if (comando.tipo === 'vendi') {
+        if (cassaScelta) {
+          giorno.segnaIncasso(economia.vendiCassa(casse, cassaScelta))
+        }
+      } else if (comando.tipo === 'assumi') {
+        assumi(comando.id)
+      } else if (comando.tipo === 'chiudi_riepilogo') {
+        giorno.chiudiRiepilogo()
       }
     }
   }
@@ -241,7 +301,9 @@ export function creaMotore(canvasGioco) {
 
   function aggiorna() {
     eseguiComandi()
+    aggiornaMondo(simulazione.passo_ms)
     squadra.aggiorna(lavori, simulazione.passo_ms, simulazione.passo_ms / 1000)
+    giorno.aggiorna(simulazione.passo_ms)
     effetti.aggiorna(simulazione.passo_ms)
   }
 
@@ -334,6 +396,32 @@ export function creaMotore(canvasGioco) {
     vetrina.cassaScelta = !!cassaScelta
     vetrina.contenutoCassa = cassaScelta ? scriviConti(cassaScelta.contenuto) : ''
     vetrina.pienoCassa = cassaScelta ? cassaScelta.dentro + '/' + cassaScelta.capienza : ''
+    vetrina.cassaEIlCasotto = !!(cassaScelta && cassaScelta.eIlCasotto)
+    vetrina.valoreCassa = cassaScelta ? economia.valoreDi(cassaScelta) : 0
+
+    vetrina.monete = Math.floor(economia.stato.monete)
+    vetrina.giorno = giorno.stato.giorno
+    vetrina.oraDelGiorno = giorno.stato.trascorsoMs / tempo.giorno_ms
+    vetrina.salariStasera = squadra.salariTotali()
+    vetrina.mostraRiepilogo = giorno.stato.mostraRiepilogo
+    vetrina.riepilogo = giorno.stato.mostraRiepilogo
+      ? [
+          giorno.riepilogo.giorno,
+          giorno.riepilogo.incassato,
+          giorno.riepilogo.salari,
+          giorno.riepilogo.raccolto,
+          giorno.riepilogo.andatoVia
+        ].join(',')
+      : ''
+
+    // quanto costa assumere, mestiere per mestiere: "taglialegna:220:40,..."
+    let assunzioni = ''
+    for (let i = 0; i < mestieri.length; i++) {
+      const m = mestieri[i]
+      assunzioni +=
+        (assunzioni ? ',' : '') + m.id + ':' + m.costo_assunzione + ':' + m.salario
+    }
+    vetrina.assunzioni = assunzioni
 
     return vetrina
   }
@@ -348,6 +436,9 @@ export function creaMotore(canvasGioco) {
     zoom: () => accodaComando('zoom'),
     costruisci: (id) => accodaComando('costruisci', 0, 0, id),
     assegna: () => accodaComando('assegna'),
-    annulla: () => accodaComando('annulla')
+    annulla: () => accodaComando('annulla'),
+    vendi: () => accodaComando('vendi'),
+    assumi: (id) => accodaComando('assumi', 0, 0, id),
+    chiudiRiepilogo: () => accodaComando('chiudi_riepilogo')
   }
 }

@@ -26,6 +26,7 @@ import {
   macchiaR,
   macchiaX,
   macchiaY,
+  ricrescitaMs,
   risorsaIn,
   sopra
 } from './mondo.js'
@@ -132,7 +133,16 @@ function disegnaRisorse(ctx, camera) {
       }
       const dati = risorse[nome]
       camera.versoSchermo(tx * tessera + tessera / 2, ty * tessera + tessera / 2, punto)
-      const raggio = dati.raggio * lato
+
+      // un germoglio si vede piccolo e smorto: si deve capire a colpo d'occhio
+      // che c'e' ma non si tocca ancora
+      const quantoManca = ricrescitaMs[indiceDi(tx, ty)]
+      let raggio = dati.raggio * lato
+      if (quantoManca > 0 && dati.ricresce_ms > 0) {
+        const cresciuto = 1 - quantoManca / dati.ricresce_ms
+        raggio *= stile.germoglio_minimo + (1 - stile.germoglio_minimo) * cresciuto
+        ctx.globalAlpha = stile.opacita_germoglio
+      }
 
       // l'ombra sotto: senza, le cose sembrano appiccicate al terreno
       ctx.fillStyle = stile.ombra
@@ -173,6 +183,7 @@ function disegnaRisorse(ctx, camera) {
       ctx.lineWidth = stile.spessore_bordo
       ctx.strokeStyle = dati.colore
       ctx.stroke()
+      ctx.globalAlpha = 1
     }
   }
 }

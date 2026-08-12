@@ -57,6 +57,11 @@ for (let y = 0; y < filari; y++) {
   }
 }
 
+// Quanto manca perche' quello che sta su una tessera torni maturo. Zero vuol
+// dire maturo. E' il primo pezzo di **stato per tessera**: senza, un albero
+// tagliato sparirebbe per sempre e l'isola finirebbe.
+export const ricrescitaMs = new Float32Array(colonne * filari)
+
 export function dentro(tx, ty) {
   return tx >= 0 && ty >= 0 && tx < colonne && ty < filari
 }
@@ -84,12 +89,43 @@ export function calpestabile(tx, ty) {
     return false
   }
   const cosa = sopra[indice]
-  return !cosa || !risorse[cosa].blocca
+  if (!cosa || !risorse[cosa].blocca) {
+    return true
+  }
+  // un germoglio non blocca: e' piccolo
+  return ricrescitaMs[indice] > 0
 }
 
-export function togliRisorsa(tx, ty) {
-  if (dentro(tx, ty)) {
-    sopra[indiceDi(tx, ty)] = ''
+// Maturo vuol dire "si puo' raccogliere". Un albero appena ricresciuto c'e'
+// ma non si tocca ancora.
+export function maturoIn(tx, ty) {
+  return dentro(tx, ty) && ricrescitaMs[indiceDi(tx, ty)] <= 0
+}
+
+// Raccogliere non fa sparire quello che ricresce: lo rimette a zero e riparte
+// il tempo. E' quello che impedisce all'isola di finire e alla fattoria di
+// arrivare a un vicolo cieco senza piu' niente da fare.
+export function raccogliRisorsa(tx, ty) {
+  if (!dentro(tx, ty)) {
+    return
+  }
+  const indice = indiceDi(tx, ty)
+  const dati = risorse[sopra[indice]]
+  if (dati && dati.ricresce_ms > 0) {
+    ricrescitaMs[indice] = dati.ricresce_ms
+    return
+  }
+  sopra[indice] = ''
+}
+
+export function aggiornaMondo(passoMs) {
+  for (let i = 0; i < ricrescitaMs.length; i++) {
+    if (ricrescitaMs[i] > 0) {
+      ricrescitaMs[i] -= passoMs
+      if (ricrescitaMs[i] < 0) {
+        ricrescitaMs[i] = 0
+      }
+    }
   }
 }
 

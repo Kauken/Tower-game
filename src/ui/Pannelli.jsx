@@ -138,12 +138,165 @@ export function PannelloBracciante({ nome, stato, carico, scaricaA, onAssegna, o
   )
 }
 
-export function PannelloCassa({ contenuto, pieno, onChiudi }) {
+// Si vende dalla cassa, non da un magazzino: anche vendere e' una cosa che
+// succede in un posto. Al casotto si assume anche.
+export function PannelloCassa({
+  contenuto,
+  pieno,
+  valore,
+  eIlCasotto,
+  monete,
+  assunzioni,
+  onVendi,
+  onAssumi,
+  onChiudi
+}) {
+  const conti = leggiConti(contenuto)
+  const qualcosaDentro = elencoMateriali.some((m) => (conti[m.id] || 0) > 0)
+
   return (
-    <Foglio titolo="Cassa" sottotitolo={'Dentro ci sta ' + pieno}>
-      <Contenuto conti={leggiConti(contenuto)} vuotoDice="È vuota." />
+    <Foglio
+      titolo={eIlCasotto ? 'Casotto' : 'Cassa'}
+      sottotitolo={
+        eIlCasotto
+          ? 'Dentro ci sta ' + pieno + '. Qui si vende e si assume.'
+          : 'Dentro ci sta ' + pieno
+      }
+    >
+      <Contenuto conti={conti} vuotoDice="È vuota." />
+
+      <Bottone
+        titolo="Vendi tutto"
+        dettaglio={qualcosaDentro ? 'svuota questa cassa' : 'non c’è niente da vendere'}
+        costo={qualcosaDentro ? valore : null}
+        colore={stile.colore_azione}
+        acceso={qualcosaDentro}
+        largo
+        onTocco={onVendi}
+      />
+
+      {eIlCasotto ? (
+        <>
+          <span
+            style={{
+              marginTop: 4,
+              fontSize: interfaccia.testo_piccolo,
+              color: interfaccia.colore_testo_debole
+            }}
+          >
+            Assumi — poi lo paghi <b>ogni sera</b>, che stia lavorando o no.
+          </span>
+          <div
+            style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}
+          >
+            {assunzioni.map((voce) => (
+              <Bottone
+                key={voce.id}
+                titolo={voce.nome}
+                dettaglio={'poi −' + voce.salario + ' ogni sera'}
+                costo={voce.costo}
+                colore={voce.colore + '44'}
+                coloreBordo={voce.colore}
+                acceso={monete >= voce.costo}
+                onTocco={() => onAssumi(voce.id)}
+              />
+            ))}
+          </div>
+        </>
+      ) : null}
+
       <Bottone titolo="Chiudi" colore={stile.colore_chiudi} largo onTocco={onChiudi} />
     </Foglio>
+  )
+}
+
+// Il riepilogo della sera. Non ferma l'isola: e' un foglio che si chiude da
+// solo. Fermare tutto ogni due minuti sarebbe una tassa, non un momento.
+export function Riepilogo({ dati, onChiudi }) {
+  const pezzi = dati.split(',')
+  const giorno = Number(pezzi[0])
+  const incassato = Number(pezzi[1])
+  const salari = Number(pezzi[2])
+  const raccolto = Number(pezzi[3])
+  const andatoVia = pezzi[4] || ''
+  const saldo = incassato - salari
+
+  return (
+    <div
+      onPointerDown={onChiudi}
+      style={{
+        position: 'absolute',
+        left: interfaccia.spaziatura,
+        right: interfaccia.spaziatura,
+        top: '32%',
+        padding: interfaccia.spaziatura + 4,
+        borderRadius: interfaccia.raggio_angoli + 6,
+        background: interfaccia.colore_pannello,
+        border: '2px solid ' + interfaccia.colore_accento,
+        backdropFilter: 'blur(8px)'
+      }}
+    >
+      <div
+        style={{
+          fontSize: interfaccia.testo_titolo,
+          fontWeight: stile.peso_titolo,
+          color: interfaccia.colore_testo,
+          marginBottom: 10
+        }}
+      >
+        Fine del giorno {giorno}
+      </div>
+
+      {[
+        ['Raccolto', raccolto, interfaccia.colore_testo],
+        ['Incassato', '+' + incassato, interfaccia.colore_accento],
+        ['Salari', '−' + salari, '#d9805f'],
+        [
+          'In tasca oggi',
+          (saldo >= 0 ? '+' : '') + saldo,
+          saldo >= 0 ? interfaccia.colore_accento : '#d9805f'
+        ]
+      ].map(([voce, valore, colore]) => (
+        <div
+          key={voce}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            padding: '3px 0',
+            fontSize: interfaccia.testo_normale,
+            color: interfaccia.colore_testo_debole
+          }}
+        >
+          <span>{voce}</span>
+          <span style={{ fontWeight: stile.peso_titolo, color: colore }}>{valore}</span>
+        </div>
+      ))}
+
+      {andatoVia ? (
+        <div
+          style={{
+            marginTop: 8,
+            fontSize: interfaccia.testo_piccolo,
+            color: '#d9805f',
+            lineHeight: 1.35
+          }}
+        >
+          Non bastavano le monete: <b>{andatoVia}</b> se n’è andato. Non hai perso
+          niente di quello che avevi raccolto — l’isola si è solo rimpicciolita.
+        </div>
+      ) : null}
+
+      <div
+        style={{
+          marginTop: 10,
+          fontSize: interfaccia.testo_piccolo,
+          color: interfaccia.colore_testo_debole,
+          textAlign: 'center'
+        }}
+      >
+        tocca per chiudere
+      </div>
+    </div>
   )
 }
 
