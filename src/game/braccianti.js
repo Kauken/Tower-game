@@ -21,13 +21,14 @@
 // Il percorso e' una linea dritta. L'isola e' aperta, quindi basta; quando
 // arriveranno recinti e capanne servira' un percorso vero (punto 6).
 
+import { trovaRicetta } from './config.js'
 import {
   braccianti as datiBraccianti,
   operaio as aspettoOperaio,
   risorse,
   tessera
 } from './config.js'
-import { creaInventario, travasa } from './inventario.js'
+import { creaInventario, pilaDi, travasa } from './inventario.js'
 import {
   calpestabile,
   centroTessera,
@@ -43,17 +44,17 @@ import {
 const puntoDiLavoro = { tx: 0, ty: 0 }
 const meta = { x: 0, y: 0 }
 
-export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMondo }) {
+export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo, alFabbricato }) {
   const squadra = []
 
   // Quante tasche puo' arrivare ad avere: le caselle si creano tutte all'avvio
   // e restano spente finche' una tecnologia non le apre.
   function slotAdesso() {
-    return datiBraccianti.slot + tecnologie.aggiunta('slot')
+    return datiBraccianti.slot + progetti.aggiunta('slot')
   }
 
   function velocita() {
-    return datiBraccianti.velocita * tecnologie.moltiplicatore('velocita', '')
+    return datiBraccianti.velocita * progetti.moltiplicatore('velocita', '')
   }
 
   function assumi(tx, ty) {
@@ -72,7 +73,7 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
       metaY: 0,
       lavoroMs: 0,
       lavoroTotaleMs: 0,
-      inventario: creaInventario(datiBraccianti.slot + tecnologie.aggiuntaMassima('slot'), slotAdesso())
+      inventario: creaInventario(datiBraccianti.slot + progetti.aggiuntaMassima('slot'), slotAdesso())
     })
     return squadra[squadra.length - 1]
   }
@@ -95,14 +96,17 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
 
   // Quanto ci mette. Si legge quando il lavoro comincia, mai a ogni frame.
   function durataDi(lavoro) {
-    if (lavoro.azione === 'raccogli') {
+    if (lavoro.azione === 'raccogli' || lavoro.azione === 'scava') {
       return (
         risorse[lavoro.tipo].tempo_lavoro_ms *
-        tecnologie.moltiplicatore('tempo_lavoro', lavoro.tipo)
+        progetti.moltiplicatore('tempo_lavoro', lavoro.tipo)
       )
     }
     if (lavoro.azione === 'pianta') {
       return datiBraccianti.tempo_piantata_ms
+    }
+    if (lavoro.azione === 'fabbrica') {
+      return trovaRicetta(lavoro.materiale).tempo_ms
     }
     return datiBraccianti.tempo_scambio_ms
   }
@@ -111,6 +115,10 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
   // una raccolta che non ci sta non si comincia nemmeno, mentre posare la roba
   // in una cassa resta sempre possibile e passa avanti.
   function puoFare(bracciante, lavoro) {
+    if (lavoro.azione === 'scava') {
+      const dati = risorse[lavoro.tipo]
+      return bracciante.inventario.spazioPer(dati.materiale) >= resaDi(dati)
+    }
     if (lavoro.azione === 'raccogli') {
       const rese = risorse[lavoro.tipo].rese
       for (let i = 0; i < rese.length; i++) {
@@ -123,12 +131,63 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
     if (lavoro.azione === 'pianta') {
       return bracciante.inventario.quanti(lavoro.materiale) > 0
     }
+    if (lavoro.azione === 'fabbrica') {
+      return haGliIngredienti(bracciante, trovaRicetta(lavoro.materiale))
+    }
     return true
+  }
+
+  // Gli ingredienti li deve avere **addosso**: il banco e' li' davanti, e se
+  // il legno sta in una cassa lontana lo vai a prendere prima. E' la stessa
+  // regola con cui si costruisce, ed e' quella che tiene in piedi il
+  // "niente magazzino centrale".
+  function haGliIngredienti(bracciante, ricetta) {
+    for (let i = 0; i < ricetta.ingredienti.length; i++) {
+      const voce = ricetta.ingredienti[i]
+      if (bracciante.inventario.quanti(voce.materiale) < voce.quantita) {
+        return false
+      }
+    }
+    // E ci deve stare quello che ne esce — **contando le caselle che si
+    // liberano togliendo gli ingredienti**: si consuma prima e si produce
+    // dopo, quindi guardare lo spazio di adesso direbbe di no anche quando la
+    // ricetta funzionerebbe benissimo.
+    if (ricetta.produce) {
+      let posto = bracciante.inventario.spazioPer(ricetta.produce)
+      const pila = pilaDi(ricetta.produce)
+      for (let i = 0; i < ricetta.ingredienti.length; i++) {
+        const voce = ricetta.ingredienti[i]
+        if (voce.materiale === ricetta.produce) {
+          continue
+        }
+        posto += bracciante.inventario.caselleLiberateDa(voce.materiale, voce.quantita) * pila
+      }
+      if (posto < ricetta.quantita) {
+        return false
+      }
+    }
+    return true
+  }
+
+  // Quanto rende una scavata. La **ricchezza** del giacimento moltiplica la
+  // resa: e' quello che rende i posti diversi fra loro, e che fa esistere la
+  // decisione "un giacimento ricco lontano o due poveri vicini?".
+  function resaDi(dati) {
+    return Math.max(1, Math.round(dati.resa * dati.ricchezza))
   }
 
   // Il lavoro e' finito: succede la cosa. Si ricontrolla tutto, perche' fra
   // l'ordine e adesso il mondo puo' essere cambiato.
   function concludi(bracciante, lavoro) {
+    if (lavoro.azione === 'scava') {
+      if (risorsaIn(lavoro.tx, lavoro.ty) !== lavoro.tipo) {
+        return
+      }
+      const dati = risorse[lavoro.tipo]
+      bracciante.inventario.metti(dati.materiale, resaDi(dati))
+      alCambioDelMondo()
+      return
+    }
     if (lavoro.azione === 'raccogli') {
       if (risorsaIn(lavoro.tx, lavoro.ty) !== lavoro.tipo || !maturoIn(lavoro.tx, lavoro.ty)) {
         return
@@ -149,7 +208,28 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
       if (bracciante.inventario.togli(lavoro.materiale, 1) <= 0) {
         return
       }
-      pianta(lavoro.tx, lavoro.ty, lavoro.tipo, tecnologie.moltiplicatore('crescita', lavoro.tipo))
+      pianta(lavoro.tx, lavoro.ty, lavoro.tipo, progetti.moltiplicatore('crescita', lavoro.tipo))
+      alCambioDelMondo()
+      return
+    }
+
+    if (lavoro.azione === 'fabbrica') {
+      const ricetta = trovaRicetta(lavoro.materiale)
+      // si ricontrolla: fra l'ordine e adesso puo' aver posato tutto in una
+      // cassa, e fabbricare dal nulla sarebbe un buco
+      if (!haGliIngredienti(bracciante, ricetta)) {
+        return
+      }
+      for (let i = 0; i < ricetta.ingredienti.length; i++) {
+        bracciante.inventario.togli(ricetta.ingredienti[i].materiale, ricetta.ingredienti[i].quantita)
+      }
+      if (ricetta.produce) {
+        bracciante.inventario.metti(ricetta.produce, ricetta.quantita)
+      }
+      // un attrezzo non finisce nello zaino: si accende e resta acceso
+      if (ricetta.attrezzo) {
+        alFabbricato(ricetta.attrezzo)
+      }
       alCambioDelMondo()
       return
     }
@@ -169,7 +249,7 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
   function aggiorna(lavori, passoMs, passoSecondi) {
     for (let i = 0; i < squadra.length; i++) {
       const bracciante = squadra[i]
-      // le tecnologie possono aver aperto altre tasche mentre era per strada
+      // un attrezzo nuovo puo' aver aperto altre tasche mentre era per strada
       bracciante.inventario.apri(slotAdesso())
 
       if (bracciante.stato === 'fermo' || bracciante.stato === 'pieno' || bracciante.stato === 'bloccato') {
@@ -225,6 +305,13 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
         continue
       }
 
+      // l'ordine puo' essere disdetto anche mentre ci sta lavorando sopra: con
+      // uno scavo che si ripete e' l'unico modo per fermarlo
+      if (bracciante.lavoro && !bracciante.lavoro.attivo) {
+        lascia(bracciante)
+        continue
+      }
+
       // sta lavorando
       bracciante.lavoroMs += passoMs
       if (bracciante.lavoroMs < bracciante.lavoroTotaleMs) {
@@ -233,6 +320,16 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
 
       const lavoro = bracciante.lavoro
       concludi(bracciante, lavoro)
+
+      // Un lavoro ripetuto non finisce: e' gia' li', ricomincia senza
+      // rifare la strada. Si ferma solo quando non ci sta piu' niente nello
+      // zaino — oppure quando tocchi di nuovo per disdire.
+      if (lavoro.ripetuto && lavoro.attivo && puoFare(bracciante, lavoro)) {
+        bracciante.lavoroMs = 0
+        bracciante.lavoroTotaleMs = durataDi(lavoro)
+        continue
+      }
+
       lavoro.attivo = false
       lascia(bracciante)
     }

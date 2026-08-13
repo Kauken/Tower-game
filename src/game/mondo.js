@@ -120,16 +120,32 @@ export function maturoIn(tx, ty) {
   return dentro(tx, ty) && crescitaMs[indiceDi(tx, ty)] <= 0
 }
 
-// Raccogliere fa sparire quello che c'era. Punto. Quello che torna indietro e'
-// nello zaino dell'operaio, ed e' li' che si decide se il bosco continua.
+// Un ostacolo raccolto **sparisce**. Quello che torna indietro e' nello zaino
+// dell'operaio, ed e' li' che si decide se il bosco continua.
+//
+// **Un giacimento no: non si esaurisce mai.** E' il rubinetto dell'isola — il
+// limite non e' quanto ce n'e', e' quanto ne esce al minuto. E' quel tetto che
+// rende la crescita un problema invece che una formalita'.
 export function raccogliRisorsa(tx, ty) {
   if (!dentro(tx, ty)) {
     return
   }
   const indice = indiceDi(tx, ty)
+  const dati = risorse[sopra[indice]]
+  if (dati && dati.giacimento) {
+    return
+  }
   sopra[indice] = ''
   crescitaMs[indice] = 0
   crescitaTotaleMs[indice] = 0
+}
+
+export function eUnGiacimento(tx, ty) {
+  if (!dentro(tx, ty)) {
+    return false
+  }
+  const dati = risorse[sopra[indiceDi(tx, ty)]]
+  return !!(dati && dati.giacimento)
 }
 
 // Mettere a dimora. Il moltiplicatore arriva dalle tecnologie (il Vivaio

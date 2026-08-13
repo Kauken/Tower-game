@@ -1,0 +1,115 @@
+{
+  "_nota": "Le ricette del banco da lavoro, al casotto. Si fabbrica A MANO, un pezzo per volta, con i materiali che l'operaio ha ADDOSSO: e' li' davanti. Le macchine (punto 8) faranno le stesse cose da sole e meglio - la segheria dara' 3 tavole invece di 2, ed e' quello il suo valore.",
+  "_nota_regole": "TRE REGOLE, controllate all'avvio. 1) Una ricetta non produce MAI un materiale che consuma: rimetteresti l'uscita in entrata e avresti materia infinita, e nessun bilanciamento lo aggiusta. 2) Mai piu' di tre ingredienti: su un telefono una ricetta a cinque voci non si legge. 3) Ogni livello ha almeno una ricetta che fa INCONTRARE due catene - e' quello che rende interessanti i circuiti in Factorio e noiose le piastre di ferro.",
+  "_nota_attrezzo": "Una ricetta con 'attrezzo' non produce un materiale: accende per sempre l'effetto di quel progetto. E' il secondo passo delle due economie - le monete comprano il PROGETTO (il diritto), i materiali fabbricano la COSA.",
+  "ricette": [
+    {
+      "id": "tavola",
+      "nome": "Tavole",
+      "descrizione": "Seghi un tronco. Con la segheria ne verranno tre.",
+      "produce": "tavola",
+      "quantita": 2,
+      "tempo_ms": 2000,
+      "ingredienti": [{ "materiale": "legno", "quantita": 1 }]
+    },
+    {
+      "id": "ghiaia",
+      "nome": "Ghiaia",
+      "descrizione": "Spacchi la pietra in pezzi da lavorare.",
+      "produce": "ghiaia",
+      "quantita": 2,
+      "tempo_ms": 2400,
+      "ingredienti": [{ "materiale": "pietra", "quantita": 1 }]
+    },
+    {
+      "id": "chiodo",
+      "nome": "Chiodi",
+      "descrizione": "Il rame si batte a freddo. Ne escono quattro.",
+      "produce": "chiodo",
+      "quantita": 4,
+      "tempo_ms": 2600,
+      "ingredienti": [{ "materiale": "rame", "quantita": 1 }]
+    },
+    {
+      "id": "telaio",
+      "nome": "Telaio",
+      "descrizione": "Legno e rame che si incontrano. Serve per tutto quello che viene dopo.",
+      "produce": "telaio",
+      "quantita": 1,
+      "tempo_ms": 5000,
+      "ingredienti": [
+        { "materiale": "tavola", "quantita": 4 },
+        { "materiale": "chiodo", "quantita": 6 }
+      ]
+    },
+    {
+      "id": "ascia_affilata",
+      "nome": "Ascia affilata",
+      "descrizione": "",
+      "attrezzo": "ascia_affilata",
+      "tempo_ms": 4000,
+      "richiede_progetto": "ascia_affilata",
+      "ingredienti": [
+        { "materiale": "tavola", "quantita": 3 },
+        { "materiale": "chiodo", "quantita": 4 }
+      ]
+    },
+    {
+      "id": "zaino_grande",
+      "nome": "Zaino grande",
+      "descrizione": "",
+      "attrezzo": "zaino_grande",
+      "tempo_ms": 4000,
+      "richiede_progetto": "zaino_grande",
+      "ingredienti": [
+        { "materiale": "tavola", "quantita": 4 },
+        { "materiale": "chiodo", "quantita": 6 }
+      ]
+    },
+    {
+      "id": "stivali",
+      "nome": "Stivali buoni",
+      "descrizione": "",
+      "attrezzo": "stivali",
+      "tempo_ms": 5000,
+      "richiede_progetto": "stivali",
+      "ingredienti": [{ "materiale": "telaio", "quantita": 1 }]
+    },
+    {
+      "id": "piccone_pesante",
+      "nome": "Piccone pesante",
+      "descrizione": "",
+      "attrezzo": "piccone_pesante",
+      "tempo_ms": 6000,
+      "richiede_progetto": "piccone_pesante",
+      "ingredienti": [
+        { "materiale": "telaio", "quantita": 1 },
+        { "materiale": "ghiaia", "quantita": 6 }
+      ]
+    },
+    {
+      "id": "vivaio",
+      "nome": "Vivaio",
+      "descrizione": "",
+      "attrezzo": "vivaio",
+      "tempo_ms": 6000,
+      "richiede_progetto": "vivaio",
+      "ingredienti": [
+        { "materiale": "telaio", "quantita": 1 },
+        { "materiale": "tavola", "quantita": 8 }
+      ]
+    },
+    {
+      "id": "carriola",
+      "nome": "Carriola",
+      "descrizione": "",
+      "attrezzo": "carriola",
+      "tempo_ms": 7000,
+      "richiede_progetto": "carriola",
+      "ingredienti": [
+        { "materiale": "telaio", "quantita": 2 },
+        { "materiale": "chiodo", "quantita": 8 }
+      ]
+    }
+  ]
+}

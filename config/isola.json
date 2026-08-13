@@ -1,6 +1,6 @@
 {
   "_nota": "L'isola. E' una mappa a tessere, ma NON deve sembrare una scacchiera: le tessere servono solo a far agganciare le cose, come in Factorio. Sopra ci va un posto — erba, sabbia, acqua, alberi, sassi.",
-  "_nota_legenda": "Ogni carattere della mappa e' una tessera. ~ acqua (non calpestabile), , sabbia, . erba, T albero, R masso, F frana (blocca la cava, va sgomberata), C casotto/deposito.",
+  "_nota_legenda": "Ogni carattere della mappa e' una tessera. ~ acqua, , sabbia, . erba, C casotto. MAIUSCOLE = ostacoli da sgomberare, finiscono: T albero, R masso, F frana. minuscole = GIACIMENTI, non finiscono mai: s pietra, c rame, r rame ricco. ATTENZIONE: un carattere vale UNA cosa sola. Dare la C a due cose diverse ha gia' fatto sparire il casotto una volta.",
   "tessera": 64,
   "mappa": [
     "~~~~~~~~~~~~~~~~~~~~~~~~",
@@ -8,18 +8,18 @@
     "~~~~~,,,.......,,,~~~~~~",
     "~~~~,,..TT.......,,~~~~~",
     "~~~,,...TTT.......,,~~~~",
-    "~~,,....TT.........,,~~~",
-    "~~,,......T........,,~~~",
+    "~~,,....TT.....rr..,,~~~",
+    "~~,,......T....rrr.,,~~~",
     "~,,................,,,~~",
     "~,,......RR.........,,~~",
     "~,,.....RRR..........,~~",
-    "~,,......RR..........,~~",
-    "~,,..................,~~",
-    "~,,..................,~~",
+    "~,,......RR.....s....,~~",
+    "~,,............sss...,~~",
+    "~,,.............ss...,~~",
     "~,,......C...........,~~",
-    "~,,..................,~~",
-    "~,,..................,~~",
-    "~,,..................,~~",
+    "~,,....c.............,~~",
+    "~,,...ccc............,~~",
+    "~,,...cc.............,~~",
     "~,,....FFF...........,~~",
     "~,,....FFF..........,,~~",
     "~,,..................,~~",
@@ -41,7 +41,10 @@
     "T": "albero",
     "R": "masso",
     "F": "frana",
-    "C": "casotto"
+    "s": "giacimento_pietra",
+    "c": "giacimento_rame",
+    "C": "casotto",
+    "r": "giacimento_rame_ricco"
   },
   "terreni": {
     "_nota": "I fondi calpestabili o no. Il colore di base piu' una variazione, cosi' il terreno non e' una tinta piatta e non si legge come una griglia.",
@@ -62,7 +65,7 @@
     }
   },
   "risorse": {
-    "_nota": "Quello che sta sopra al terreno e si puo' ordinare di togliere. lavorabile dice se si puo' ordinare; tempo_lavoro_ms quanto ci mette l'operaio; resa cosa finisce nel suo zaino; ricresce_ms quanto ci mette a tornare. Non c'e' piu' un mestiere: l'operaio e' uno solo e fa tutto.",
+    "_nota": "Quello che sta sopra al terreno. Due famiglie, e la differenza e' voluta: gli OSTACOLI (albero, masso, frana) si tolgono UNA VOLTA, danno una resa e liberano lo spazio - sgomberare e' un lavoro che finisce. I GIACIMENTI non si esauriscono MAI: hanno un materiale, una ricchezza che moltiplica la resa, e l'operaio ci resta a scavare finche' ha posto nello zaino. Sono il rubinetto dell'isola: il limite non e' quanto ce n'e', e' quanto ne esce al minuto.",
     "albero": {
       "nome": "Albero",
       "tempo_lavoro_ms": 3200,
@@ -127,6 +130,48 @@
       "squadrata": true,
       "_nota": "L'unica cosa costruita da qualcuno: si disegna quadrata fra le sagome tonde della natura.",
       "lavorabile": false
+    },
+    "giacimento_pietra": {
+      "nome": "Vena di pietra",
+      "giacimento": true,
+      "materiale": "pietra",
+      "ricchezza": 1,
+      "resa": 3,
+      "tempo_lavoro_ms": 4200,
+      "lavorabile": true,
+      "blocca": true,
+      "raggio": 0.44,
+      "colore": "#57606b",
+      "colore_chioma": "#7d8894",
+      "colore_tronco": "#3c434c"
+    },
+    "giacimento_rame": {
+      "nome": "Vena di rame",
+      "giacimento": true,
+      "materiale": "rame",
+      "ricchezza": 1,
+      "resa": 2,
+      "tempo_lavoro_ms": 5000,
+      "lavorabile": true,
+      "blocca": true,
+      "raggio": 0.44,
+      "colore": "#6b5240",
+      "colore_chioma": "#c07a4e",
+      "colore_tronco": "#43332a"
+    },
+    "giacimento_rame_ricco": {
+      "nome": "Vena di rame ricca",
+      "giacimento": true,
+      "materiale": "rame",
+      "ricchezza": 2,
+      "resa": 2,
+      "tempo_lavoro_ms": 5000,
+      "lavorabile": true,
+      "blocca": true,
+      "raggio": 0.44,
+      "colore": "#7a5a44",
+      "colore_chioma": "#e08a52",
+      "colore_tronco": "#4b3830"
     }
   },
   "materiali": [
@@ -145,12 +190,47 @@
       "pila": 10
     },
     {
+      "id": "rame",
+      "nome": "Rame",
+      "colore": "#c07a4e",
+      "prezzo": 5,
+      "pila": 10
+    },
+    {
       "id": "alberello",
       "nome": "Alberello",
       "colore": "#5f9440",
       "prezzo": 1,
       "pila": 8,
       "pianta": "albero"
+    },
+    {
+      "id": "tavola",
+      "nome": "Tavola",
+      "colore": "#c19a6b",
+      "prezzo": 2,
+      "pila": 16
+    },
+    {
+      "id": "ghiaia",
+      "nome": "Ghiaia",
+      "colore": "#9a9186",
+      "prezzo": 3,
+      "pila": 12
+    },
+    {
+      "id": "chiodo",
+      "nome": "Chiodo",
+      "colore": "#d99a5e",
+      "prezzo": 2,
+      "pila": 24
+    },
+    {
+      "id": "telaio",
+      "nome": "Telaio",
+      "colore": "#a8762f",
+      "prezzo": 32,
+      "pila": 4
     }
   ],
   "telecamera": {
@@ -165,5 +245,6 @@
   },
   "_nota_materiali": "prezzo e' quanto paga il mercante per un pezzo. pila e' quanti ne stanno in UNA CASELLA dell'inventario, come in Minecraft. pianta dice che AVERLO nell'inventario permette di piantare quella risorsa: non si equipaggia niente e non si sceglie nessuno strumento, basta averlo addosso.",
   "_nota_ricrescita": "GLI ALBERI NON RICRESCONO DA SOLI. Tagliandone uno esce anche un alberello, e sei tu a ripiantarlo dove vuoi: il bosco e' una cosa che gestisci, non una che aspetti. tempo_crescita_ms e' quanto ci mette un alberello piantato a diventare un albero adulto.",
-  "_nota_pile": "Le pile sono strette apposta. Con pile larghe l'operaio non si riempirebbe mai, il trasporto non si sentirebbe, e i nastri sarebbero un gadget invece che una liberazione. Quattro caselle e queste pile fanno circa sette alberi per viaggio: e' un numero ragionato, NON misurato — va tarato col bilanciatore quando esistera' la simulazione headless (punto 7)."
+  "_nota_pile": "Le pile sono strette apposta. Con pile larghe l'operaio non si riempirebbe mai, il trasporto non si sentirebbe, e i nastri sarebbero un gadget invece che una liberazione. Numeri ragionati, NON misurati: vanno tarati col bilanciatore quando esistera' la simulazione headless (punto 7).",
+  "_nota_vene": "Le vene sono fatte apposta IRREGOLARI: un rettangolo di tessere si legge come una scacchiera anche quando il disegno le fonde. E stanno a distanze diverse dal casotto: la pietra vicina, il rame un po' piu' in la', il rame ricco lontano in cima. E' quello che fa esistere la decisione 'una vena ricca lontana o due povere vicine?'."
 }

@@ -18,8 +18,8 @@
       ]
     }
   ],
-  "_nota_zaino": "L'inventario e' a CASELLE con pile, come in Minecraft: ogni casella tiene una pila di un materiale solo. Quando sono tutte piene l'operaio SI FERMA e non scarica da nessuna parte da solo. Dove mettere la roba lo decidi tu, ed e' quella fatica che piu' avanti rendera' i nastri una liberazione invece che un gadget. Quattro caselle sono circa sette alberi per viaggio.",
-  "slot": 4,
+  "_nota_zaino": "L'inventario e' a CASELLE con pile, come in Minecraft: ogni casella tiene una pila di un materiale solo. Quando sono tutte piene l'operaio SI FERMA e non scarica da nessuna parte da solo. Passate da 4 a 6 col punto 4: i materiali sono diventati otto, e con quattro caselle si restava bloccati di continuo. Numero ragionato, non misurato.",
+  "slot": 6,
   "tempo_piantata_ms": 1400,
   "tempo_scambio_ms": 600,
   "_nota_tempi": "tempo_piantata_ms e' quanto ci mette a mettere a dimora un alberello. tempo_scambio_ms e' quanto ci mette a posare o prendere roba da una cassa: basta che si veda che l'ha fatto, non deve essere una fila alla posta."

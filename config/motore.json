@@ -69,6 +69,15 @@
       "opacita_germoglio": 0.55,
       "_nota_germoglio": "Quello che sta ricrescendo si disegna piccolo e smorto, e cresce mentre il tempo passa: si deve capire a colpo d'occhio che c'e' ma non si tocca ancora."
     },
+    "giacimento": {
+      "_nota": "Le vene si disegnano PIATTE: sono dentro al terreno, non appoggiate sopra come un albero. E soprattutto si FONDONO: nessun bordo fra due tessere della stessa vena, altrimenti una vena di sei tessere si legge come una scacchiera - ed e' la cosa che l'autore ha rifiutato. Il bordo si disegna SOLO dove la vena finisce.",
+      "opacita_macchia": 0.5,
+      "raggio_macchia": 0.52,
+      "scarto_macchia": 0.18,
+      "spessore_bordo": 3,
+      "raggio_puntino": 0.07,
+      "distanza_puntini": 0.22
+    },
     "ordine": {
       "_nota": "Il segno su quello a cui hai dato un ordine. Si disegna SOPRA alla cosa e piu' largo di lei: sotto finiva coperto dalla chioma dell'albero e l'ordine sembrava non essere partito. Deve vedersi da lontano, perche' e' l'unico modo per sapere cosa hai gia' comandato.",
       "colore": "#f0c95c",

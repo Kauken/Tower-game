@@ -12,9 +12,11 @@
 // Le azioni sono quattro, e **sono tutte lo stesso lavoro**: vai da qualche
 // parte, aspetta, succede una cosa.
 //   raccogli  togli quello che c'e' su una tessera e mettilo nello zaino
+//   scava     come raccogli, ma su un giacimento: **si ripete** finche' c'e' posto
 //   pianta    metti a dimora quello che hai addosso
 //   deposita  posa nella cassa quello che hai addosso
 //   preleva   prendi dalla cassa e mettitelo addosso
+//   fabbrica  vai al banco e fai una ricetta con quello che hai addosso
 //
 // **Depositare e' un ordine come gli altri, non un automatismo.** L'operaio non
 // va a svuotarsi da solo da nessuna parte: sei tu a dirgli dove posare la
@@ -34,6 +36,10 @@ export function creaLavori() {
   const coda = creaPool(limiti.lavori_massimi, () => ({
     attivo: false,
     azione: '',
+    // un lavoro ripetuto non sparisce quando e' finito: l'operaio resta li' e
+    // ricomincia. Serve ai giacimenti, che non si esauriscono: un tocco per
+    // ogni sassolino sarebbe una punizione, non un comando
+    ripetuto: false,
     tipo: '',
     tx: 0,
     ty: 0,
@@ -61,6 +67,7 @@ export function creaLavori() {
     }
     lavoro.attivo = true
     lavoro.azione = azione
+    lavoro.ripetuto = false
     lavoro.tipo = ''
     lavoro.tx = tx
     lavoro.ty = ty
@@ -77,7 +84,11 @@ export function creaLavori() {
   function ordinaRaccolta(tx, ty, nomeRisorsa) {
     const gia = trovaSuTessera(tx, ty)
     if (gia) {
-      if (!gia.preso) {
+      // Un lavoro gia' preso in carico non si disdice: e' per strada.
+      // **Uno scavo si', sempre**: non finisce da solo, quindi se non lo si
+      // potesse fermare l'operaio resterebbe li' finche' non e' pieno, e il
+      // giocatore non avrebbe nessun modo di riprenderselo.
+      if (!gia.preso || gia.ripetuto) {
         gia.attivo = false
       }
       return false
@@ -92,11 +103,14 @@ export function creaLavori() {
       return false
     }
 
-    const lavoro = apri('raccogli', tx, ty)
+    const lavoro = apri(dati.giacimento ? 'scava' : 'raccogli', tx, ty)
     if (!lavoro) {
       return false
     }
     lavoro.tipo = nomeRisorsa
+    // scavare non finisce: l'operaio resta li' finche' ha posto nello zaino,
+    // o finche' non tocchi di nuovo per fermarlo
+    lavoro.ripetuto = !!dati.giacimento
     return true
   }
 
@@ -147,6 +161,18 @@ export function creaLavori() {
   // si puo' fare, ma **posare la roba in una cassa si', e deve poter passare
   // avanti** — altrimenti l'ordine che sblocca la situazione resterebbe in
   // fondo alla fila dietro a quello che l'ha causata.
+  // Fabbricare: si va al banco (il casotto) e si fa una ricetta. Piu' ordini
+  // della stessa ricetta si accodano invece di sovrascriversi — chiedere tre
+  // volte "tavole" vuol dire volerne tre.
+  function ordinaFabbrica(tx, ty, idRicetta) {
+    const lavoro = apri('fabbrica', tx, ty)
+    if (!lavoro) {
+      return false
+    }
+    lavoro.materiale = idRicetta
+    return true
+  }
+
   function prossimo(puoFare) {
     for (let i = 0; i < coda.length; i++) {
       const lavoro = coda[i]
@@ -222,6 +248,7 @@ export function creaLavori() {
     ordinaRaccolta,
     ordinaPiantata,
     ordinaScambio,
+    ordinaFabbrica,
     prossimo,
     trovaSuTessera,
     quantiInAttesa,

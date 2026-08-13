@@ -1,4 +1,4 @@
-# Lista di costruzione — v15
+# Lista di costruzione — v16
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice **"fai il punto N"**, si intende il numero di questa lista.
@@ -41,17 +41,24 @@ Si salvano solo gli `id` e solo quello che il giocatore ha cambiato: la mappa di
 
 Qui il gioco smette di essere un giocattolo. **Adesso non c'è nessuna ragione per fare niente**: tagli alberi perché puoi.
 
-**4. I giacimenti.** — La fonte che non finisce.
+**4. I giacimenti.** — **FATTO** (2026-08-13). La fonte che non finisce.
 Macchie fisse di tessere con un materiale e una **ricchezza** (povero ×0,5 / normale ×1 / ricco ×2). Si scavano a mano, e non si esauriscono mai. I massi e le frane diventano quello che sono davvero: **ostacoli da sgomberare**, con una resa una volta sola, che liberano lo spazio dove metterai le macchine.
 → `GDD.md` §7, `MATERIALI.md` §4.
 
-**5. Il banco da lavoro e le prime ricette.** — Si fabbrica.
+   > **Scavare è un ordine che si ripete:** l'operaio resta lì finché ha posto nello zaino, e il secondo tocco lo ferma — anche mentre ci sta lavorando sopra. Un tocco per ogni sassolino sarebbe una punizione, non un comando.
+   > Le vene sono **irregolari** e si **fondono nel disegno**: nessun bordo fra due tessere della stessa vena, altrimenti sei tessere squadrate si leggono come una scacchiera.
+
+**5. Il banco da lavoro e le prime ricette.** — **FATTO** (2026-08-13). Si fabbrica.
 Al casotto c'è un banco: ricette a mano, coi materiali che l'operaio ha **addosso**. Nasce `config/ricette.json` e nascono i controlli all'avvio: niente ricetta che produce quello che consuma, mai più di tre ingredienti.
 → `GDD.md` §9, `MATERIALI.md` §2.
 
-**6. I progetti.** — Le monete comprano il diritto, i materiali costruiscono la cosa.
+   > Quattro ricette a mano: tavole, ghiaia, chiodi, e il **telaio** che fa incontrare la catena del legno con quella del rame. La segheria del punto 8 darà **3 tavole invece di 2**: un gradino che migliora il rapporto *e* il tempo dell'operaio si sente due volte.
+
+**6. I progetti.** — **FATTO** (2026-08-13). Le monete comprano il diritto, i materiali costruiscono la cosa.
 La bacheca al casotto smette di vendere potenziamenti e comincia a vendere **progetti**. Compri il progetto della Segheria; poi la Segheria te la fabbrichi. Le tecnologie di adesso diventano progetti come tutto il resto.
 → `GDD.md` §3.
+
+   > **Due passi, e si vedono tutti e due.** Il progetto comprato dice *"da fabbricare"* finché non l'hai fatto davvero al banco; solo allora l'effetto si accende. E **si vende solo al casotto**: il mercante sta lì e non ti segue in giro per l'isola.
 
 > ### 🛑 Verifica dopo il punto 6 — non si va avanti senza
 > 1. **Guardando la bacheca dei progetti, ce n'è uno che vuoi?** Se no, il desiderio non morde, e nessuna quantità di nastri lo salva.

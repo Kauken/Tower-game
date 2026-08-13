@@ -9,7 +9,7 @@ import {
   PannelloCassa,
   PannelloCostruisci
 } from './Pannelli.jsx'
-import { elencoTecnologie } from '../game/config.js'
+import { elencoProgetti } from '../game/config.js'
 
 const VISTA_INIZIALE = {
   lavoriInAttesa: 0,
@@ -34,19 +34,28 @@ const VISTA_INIZIALE = {
   inventario: '',
   zainoPieno: false,
   statoOperaio: '',
-  tecnologie: ''
+  progetti: '',
+  ricette: ''
 }
 
-// "ascia_affilata:presa,vivaio:bloccata" -> l'albero pronto da mostrare
-function leggiTecnologie(riga) {
+// "ascia_affilata:fatto,vivaio:bloccato" -> due oggetti pronti da mostrare
+function leggiStati(riga) {
   const stati = {}
   if (riga) {
     riga.split(',').forEach((pezzo) => {
+      if (!pezzo) {
+        return
+      }
       const punto = pezzo.indexOf(':')
       stati[pezzo.slice(0, punto)] = pezzo.slice(punto + 1)
     })
   }
-  return elencoTecnologie.map((t) => ({ ...t, stato: stati[t.id] || 'bloccata' }))
+  return stati
+}
+
+function leggiProgetti(riga) {
+  const stati = leggiStati(riga)
+  return elencoProgetti.map((t) => ({ ...t, stato: stati[t.id] || 'bloccato' }))
 }
 
 const CAMPI = Object.keys(VISTA_INIZIALE)
@@ -212,7 +221,8 @@ export default function CampoDiGioco() {
     apriCostruzione(false)
   }, [])
   const vendi = useCallback(() => motoreRef.current.vendi(), [])
-  const studia = useCallback((id) => motoreRef.current.studia(id), [])
+  const compra = useCallback((id) => motoreRef.current.compra(id), [])
+  const fabbrica = useCallback((id) => motoreRef.current.fabbrica(id), [])
 
   return (
     <div
@@ -285,11 +295,13 @@ export default function CampoDiGioco() {
           valore={vista.valoreCassa}
           eIlCasotto={vista.cassaEIlCasotto}
           monete={vista.monete}
-          tecnologie={leggiTecnologie(vista.tecnologie)}
+          progetti={leggiProgetti(vista.progetti)}
+          ricette={leggiStati(vista.ricette)}
           onDeposita={deposita}
           onPreleva={preleva}
           onVendi={vendi}
-          onStudia={studia}
+          onCompra={compra}
+          onFabbrica={fabbrica}
           onChiudi={annulla}
         />
       ) : null}

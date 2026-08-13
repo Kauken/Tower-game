@@ -1,9 +1,9 @@
 {
-  "_nota": "L'albero tecnologico. Con un operaio solo, QUESTA E' L'UNICA VIA DI CRESCITA: non si assume, si migliora. Ogni voce si compra una volta sola e resta.",
-  "_nota_desiderio": "Le tecnologie che non ci si puo' ancora permettere restano VISIBILI ma spente, col loro costo. Vedere quanto manca al Vivaio e' meta' del motivo per tornare: e' l'attesa a creare il desiderio, non la sorpresa.",
+  "_nota": "La bacheca del casotto. Un progetto si COMPRA in monete, e quello che compri e' il DIRITTO di fabbricare una cosa - non la cosa. Poi la cosa te la fabbrichi al banco, coi materiali. Sono le due economie: se i progetti si pagassero coi materiali il mercante sarebbe arredamento, se le cose si comprassero con le monete lo sarebbe l'isola. Cosi' restano vive tutte e due.",
+  "_nota_desiderio": "I progetti che non ci si puo' ancora permettere restano VISIBILI ma spenti, col loro costo. Vedere quanto manca e' meta' del motivo per tornare: e' l'attesa a creare il desiderio, non la sorpresa. E dopo averlo comprato ne resta ancora meta': adesso ti servono i materiali.",
   "_nota_effetti": "Ogni effetto ha un tipo e un moltiplicatore. tempo_lavoro = quanto ci mette a lavorare una risorsa (piu' basso e' meglio, e si puo' limitare a una risorsa sola). velocita = quanto cammina in fretta. zaino = quanto porta. ricrescita = quanto ci mettono gli alberi a tornare. Nessun effetto e' scritto nel codice: il codice sa leggere questi quattro tipi e basta.",
-  "_nota_regola": "REGOLA: una tecnologia deve dare un VERBO NUOVO o togliere un collo di bottiglia che si sente. Un +5% che non si nota non merita di stare in bacheca.",
-  "tecnologie": [
+  "_nota_regola": "REGOLA: un progetto deve dare un VERBO NUOVO o togliere una domanda dalla testa del giocatore - \"devo riempirlo in continuazione\", \"in quale cassa l'avevo messo?\". Un +5% che non si nota non merita di stare in bacheca.",
+  "progetti": [
     {
       "id": "ascia_affilata",
       "nome": "Ascia affilata",
@@ -14,7 +14,8 @@
         "tipo": "tempo_lavoro",
         "risorsa": "albero",
         "moltiplicatore": 0.6
-      }
+      },
+      "sblocca": "ascia_affilata"
     },
     {
       "id": "zaino_grande",
@@ -25,7 +26,8 @@
       "effetto": {
         "tipo": "slot",
         "aggiunta": 3
-      }
+      },
+      "sblocca": "zaino_grande"
     },
     {
       "id": "stivali",
@@ -36,7 +38,8 @@
       "effetto": {
         "tipo": "velocita",
         "moltiplicatore": 1.45
-      }
+      },
+      "sblocca": "stivali"
     },
     {
       "id": "piccone_pesante",
@@ -49,7 +52,8 @@
         "tipo": "tempo_lavoro",
         "risorsa": "masso",
         "moltiplicatore": 0.55
-      }
+      },
+      "sblocca": "piccone_pesante"
     },
     {
       "id": "vivaio",
@@ -61,7 +65,8 @@
       "effetto": {
         "tipo": "crescita",
         "moltiplicatore": 0.5
-      }
+      },
+      "sblocca": "vivaio"
     },
     {
       "id": "carriola",
@@ -77,7 +82,8 @@
       "effetto_secondario": {
         "tipo": "velocita",
         "moltiplicatore": 0.85
-      }
+      },
+      "sblocca": "carriola"
     }
   ]
 }

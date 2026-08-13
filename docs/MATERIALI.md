@@ -49,56 +49,51 @@ Il gioco funziona quando questo numero **sale a scatti**, e ogni scatto ha un no
 
 Il valore di riferimento è **×1,5–1,6**. Con quel rapporto una catena a tre livelli moltiplica il valore per circa quattro volte — abbastanza da sentirsi, non tanto da rompere.
 
-### La scala proposta
+### Quello che c'è adesso (punti 4-6, **costruito e provato**)
 
 **Livello 0 — materie prime**
 
-| Materiale | Prezzo | Da dove | Isola |
+| Materiale | Prezzo | Da dove | Pila |
 | --- | --- | --- | --- |
-| Legno | 3 | alberi (**non ricrescono**, si ripiantano) | 1 |
-| Pietra | 4 | giacimento | 1 |
-| Rame | 5 | giacimento | 1 |
-| Carbone | 5 | giacimento | 2 |
-| Ferro | 7 | giacimento | 2 |
+| Legno | 3 | alberi — **non ricrescono**, si ripiantano | 12 |
+| Pietra | 4 | vena, non finisce mai | 10 |
+| Rame | 5 | vena, non finisce mai | 10 |
+| Alberello | 1 | esce tagliando un albero | 8 |
 
-**Livello 1 — semilavorati**
+**Livello 1-2 — al banco da lavoro, a mano**
 
-| Ricetta | Macchina | Prezzo unitario | Rapporto |
+| Ricetta | Prezzo unitario | Rapporto | Note |
 | --- | --- | --- | --- |
-| 1 legno → **3 tavole** | Segheria | 2 | 2,00 |
-| 1 pietra → **2 ghiaia** | Frantoio | 3 | 1,50 |
-| 2 rame → **1 lingotto di rame** | Fornace | 16 | 1,60 |
-| 2 ferro → **1 lingotto di ferro** | Fornace | 22 | 1,57 |
+| 1 legno → **2 tavole** | 2 | 1,33 | *la segheria ne darà 3: è quello il suo valore* |
+| 1 pietra → **2 ghiaia** | 3 | 1,50 | |
+| 1 rame → **4 chiodi** | 2 | 1,60 | |
+| 4 tavole + 6 chiodi → **1 telaio** | 32 | 1,60 | **legno × rame: le due catene si incontrano** |
 
-> Il legno **moltiplica in quantità** (1 → 3), i minerali **migliorano in qualità** (2 → 1 che vale di più). Sono due sensazioni diverse di proposito: la prima è quella che l'autore ha chiesto (*"1 legno si duplica e triplica"*), la seconda è quella che tiene in piedi il rubinetto.
+> **Il salto di livello si vede due volte.** La segheria non fa solo *più in fretta*: fa **3 tavole invece di 2**. Un gradino che migliora sia il rapporto sia il tempo dell'operaio si sente due volte, ed è il modo giusto di far desiderare una macchina.
 
-**Livello 2 — componenti**
+**Livello 3 — attrezzi: progetto in monete, poi ricetta in materiali**
 
-| Ricetta | Prezzo unitario | Rapporto | Catene che incontra |
-| --- | --- | --- | --- |
-| 1 lingotto di rame → **8 chiodi** | 3 | 1,50 | — |
-| 1 lingotto di rame → **3 cavi** | 7 | 1,31 | — |
-| 2 lingotti di ferro → **1 ingranaggio** | 70 | 1,59 | — |
-| 1 lingotto di ferro + 2 ghiaia → **1 lastra** | 45 | 1,61 | **metallo × pietra** |
-| 4 tavole + 6 chiodi → **1 telaio** | 42 | 1,62 | **legno × rame** |
-
-**Livello 3 — macchinari e attrezzi**
-
-Non hanno un prezzo di vendita: **non si vendono.** Hanno un costo in materiali e un **progetto** da comprare in monete.
-
-| Cosa | Progetto (monete) | Ricetta |
+| Attrezzo | Progetto | Ricetta |
 | --- | --- | --- |
-| Cassa | — (c'è dall'inizio) | 6 tavole + 4 chiodi |
-| Ascia affilata | 120 | 2 tavole + 2 lingotti di rame |
+| Ascia affilata | 120 | 3 tavole + 4 chiodi |
 | Zaino grande | 160 | 4 tavole + 6 chiodi |
-| Segheria | 240 | 1 telaio + 2 ingranaggi + 4 tavole |
-| Frantoio | 260 | 1 telaio + 2 lastre |
-| Fornace | 300 | 8 ghiaia + 1 telaio |
-| Trivella | 450 | 2 ingranaggi + 2 lastre + 1 telaio |
-| Nastro (×3 pezzi) | 520 | 1 lastra + 1 ingranaggio |
-| Pontile | 700 | 20 tavole + 8 chiodi + 2 telai |
+| Stivali buoni | 210 | 1 telaio |
+| Piccone pesante | 260 | 1 telaio + 6 ghiaia |
+| Vivaio | 450 | 1 telaio + 8 tavole |
+| Carriola | 520 | 2 telai + 8 chiodi |
 
-> **Perché un macchinario non si vende.** Se si potesse rivendere, la cosa più redditizia sarebbe fabbricare macchine e venderle invece di usarle — e il gioco diventerebbe una catena di montaggio verso il mercante, non una fabbrica.
+### Quello che arriverà (le macchine, punto 8 in poi)
+
+Lingotti e fornace **non esistono ancora**, e non è una dimenticanza: fondere è una macchina, e le macchine arrivano al punto 8. Quando ci saranno:
+
+| Ricetta | Macchina | Rapporto |
+| --- | --- | --- |
+| 1 legno → **3 tavole** | Segheria | 2,00 |
+| 2 rame → **1 lingotto di rame** | Fornace | 1,60 |
+| 2 ferro → **1 lingotto di ferro** | Fornace | 1,57 |
+| 1 lingotto di ferro + 2 ghiaia → **1 lastra** | Officina | 1,61 |
+
+> **Un macchinario non si vende.** Se si potesse rivendere, la cosa più redditizia sarebbe fabbricare macchine per il mercante invece di usarle — e il gioco diventerebbe una catena di montaggio verso il negozio, non una fabbrica.
 
 ## 4. Il rubinetto — quanto entra sull'isola al minuto
 
@@ -154,7 +149,7 @@ Il controllo pratico, da fare con la simulazione: **il costo del prossimo proget
 
 ## 7. Cosa vende e cosa compra il mercante
 
-Il mercante sta al casotto, e serve a due cose sole:
+Il mercante sta **al casotto**, e non ti segue: dalle altre casse non si vende, e portarci la roba fa parte del prezzo. Serve a due cose sole:
 
 - **Compra** quello che ti avanza, al prezzo di listino. È così che entrano le monete.
 - **Vende i progetti** — il *diritto* di costruire una cosa — e i pochi materiali che l'isola dove ti trovi non dà.

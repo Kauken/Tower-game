@@ -118,6 +118,88 @@ function disegnaTerreno(ctx, camera) {
   ctx.stroke()
 }
 
+// Le vene si **fondono**: la tessera si riempie tutta e non c'e' nessun bordo
+// fra due tessere della stessa vena. Sei tessere squadrate una accanto
+// all'altra si leggono come una scacchiera, ed e' esattamente la cosa che
+// l'autore ha rifiutato. Il bordo si disegna **solo dove la vena finisce**, e
+// una macchia tonda sfalsata rompe la squadratura di quello che resta.
+//
+// I puntini dicono la ricchezza: due o tre. Senza numeri, senza testo — e' il
+// modo per far vedere che due vene identiche non rendono uguale.
+function stessaVena(tx, ty, nome) {
+  if (tx < 0 || ty < 0 || tx >= colonne || ty >= filari) {
+    return false
+  }
+  return sopra[indiceDi(tx, ty)] === nome
+}
+
+function disegnaGiacimento(ctx, camera, tx, ty, nome, dati, lato) {
+  const stile = grafica.giacimento
+  camera.versoSchermo(tx * tessera, ty * tessera, punto)
+  const x = punto.x
+  const y = punto.y
+
+  // il fondo riempie tutta la tessera, e sborda di un pixel: senza, fra due
+  // tessere vicine resterebbe una cucitura chiara che disegna la griglia
+  ctx.fillStyle = dati.colore
+  ctx.fillRect(x, y, lato + 1, lato + 1)
+
+  // una macchia tonda sfalsata, come per il terreno: rompe la squadratura.
+  // Gli scarti sono gia' calcolati all'avvio, uguali per tutta l'isola: dentro
+  // il disegno non si fa rumore a ogni fotogramma.
+  const indice = indiceDi(tx, ty)
+  ctx.globalAlpha = stile.opacita_macchia
+  ctx.fillStyle = dati.colore_tronco
+  ctx.beginPath()
+  ctx.arc(
+    x + lato * (0.5 + macchiaX[indice] * stile.scarto_macchia),
+    y + lato * (0.5 + macchiaY[indice] * stile.scarto_macchia),
+    lato * stile.raggio_macchia * (0.75 + macchiaR[indice] * 0.35),
+    0,
+    Math.PI * 2
+  )
+  ctx.fill()
+  ctx.globalAlpha = 1
+
+  // il bordo SOLO dove la vena finisce
+  ctx.strokeStyle = dati.colore_chioma
+  ctx.lineWidth = stile.spessore_bordo
+  ctx.beginPath()
+  if (!stessaVena(tx, ty - 1, nome)) {
+    ctx.moveTo(x, y)
+    ctx.lineTo(x + lato, y)
+  }
+  if (!stessaVena(tx, ty + 1, nome)) {
+    ctx.moveTo(x, y + lato)
+    ctx.lineTo(x + lato, y + lato)
+  }
+  if (!stessaVena(tx - 1, ty, nome)) {
+    ctx.moveTo(x, y)
+    ctx.lineTo(x, y + lato)
+  }
+  if (!stessaVena(tx + 1, ty, nome)) {
+    ctx.moveTo(x + lato, y)
+    ctx.lineTo(x + lato, y + lato)
+  }
+  ctx.stroke()
+
+  // i puntini del materiale: quanti sono, tanto rende
+  const quanti = Math.max(2, Math.round(dati.ricchezza) + 1)
+  const passo = stile.distanza_puntini * lato
+  ctx.fillStyle = dati.colore_chioma
+  for (let i = 0; i < quanti; i++) {
+    ctx.beginPath()
+    ctx.arc(
+      x + lato / 2 + (i - (quanti - 1) / 2) * passo,
+      y + lato / 2 + (i % 2 === 0 ? -passo * 0.4 : passo * 0.4),
+      stile.raggio_puntino * lato,
+      0,
+      Math.PI * 2
+    )
+    ctx.fill()
+  }
+}
+
 function disegnaRisorse(ctx, camera) {
   const stile = grafica.risorsa
   const zoom = camera.stato.zoom
@@ -134,6 +216,15 @@ function disegnaRisorse(ctx, camera) {
       }
       const dati = risorse[nome]
       camera.versoSchermo(tx * tessera + tessera / 2, ty * tessera + tessera / 2, punto)
+
+      // Una vena sta **dentro** al terreno, non appoggiata sopra: piatta,
+      // squadrata, senza ombra. La differenza si deve vedere da lontano,
+      // perche' e' la differenza fra una cosa che finisce e una che non
+      // finisce mai.
+      if (dati.giacimento) {
+        disegnaGiacimento(ctx, camera, tx, ty, nome, dati, lato)
+        continue
+      }
 
       // un alberello si vede piccolo e smorto, e cresce mentre il tempo passa:
       // si deve capire a colpo d'occhio che c'e' ma non si tocca ancora

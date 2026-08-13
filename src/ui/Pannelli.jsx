@@ -1,5 +1,10 @@
 import React from 'react'
-import { elencoCostruzioni, elencoMateriali, interfaccia } from '../game/config.js'
+import {
+  elencoCostruzioni,
+  elencoMateriali,
+  elencoRicette,
+  interfaccia
+} from '../game/config.js'
 import Bottone from './Bottone.jsx'
 import { Casella, leggiCaselle, sommaCaselle } from './Zaino.jsx'
 
@@ -167,6 +172,58 @@ export function PannelloBracciante({ nome, stato, inventario, slot, puoPiantare,
 
 // Si vende dalla cassa, non da un magazzino: anche vendere e' una cosa che
 // succede in un posto. Al casotto si assume anche.
+// "legno 4, chiodo 6" — il costo di una ricetta scritto come lo leggerebbe una
+// persona, non come lo scriverebbe un programma.
+function costoRicetta(ricetta) {
+  return ricetta.ingredienti
+    .map((voce) => {
+      const m = elencoMateriali.find((x) => x.id === voce.materiale)
+      return voce.quantita + ' ' + (m ? m.nome.toLowerCase() : voce.materiale)
+    })
+    .join(', ')
+}
+
+// Il banco da lavoro. **Si fabbrica con quello che l'operaio ha addosso**: se
+// il legno sta in una cassa lontana, prima lo va a prendere. E' la stessa
+// regola con cui si costruisce, ed e' quella che tiene in piedi il
+// "niente magazzino centrale".
+function Banco({ stati, onFabbrica }) {
+  const aperte = elencoRicette.filter((r) => stati[r.id] !== undefined)
+  if (aperte.length === 0) {
+    return null
+  }
+  return (
+    <>
+      <span
+        style={{
+          marginTop: 4,
+          fontSize: interfaccia.testo_piccolo,
+          color: interfaccia.colore_testo_debole
+        }}
+      >
+        <b>Banco da lavoro</b> — si fabbrica con quello che l’operaio ha addosso.
+      </span>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}>
+        {aperte.map((r) => {
+          const puoi = stati[r.id] === 'si'
+          const m = r.produce ? elencoMateriali.find((x) => x.id === r.produce) : null
+          return (
+            <Bottone
+              key={r.id}
+              titolo={r.nome + (r.quantita > 1 ? ' ×' + r.quantita : '')}
+              dettaglio={costoRicetta(r)}
+              colore={(m ? m.colore : interfaccia.colore_accento) + '44'}
+              coloreBordo={m ? m.colore : interfaccia.colore_accento}
+              acceso={puoi}
+              onTocco={() => onFabbrica(r.id)}
+            />
+          )
+        })}
+      </div>
+    </>
+  )
+}
+
 export function PannelloCassa({
   contenuto,
   inventarioOperaio,
@@ -174,11 +231,13 @@ export function PannelloCassa({
   valore,
   eIlCasotto,
   monete,
-  tecnologie,
+  progetti,
+  ricette,
   onDeposita,
   onPreleva,
   onVendi,
-  onStudia,
+  onCompra,
+  onFabbrica,
   onChiudi
 }) {
   const dentro = sommaCaselle(contenuto)
@@ -190,7 +249,7 @@ export function PannelloCassa({
       titolo={eIlCasotto ? 'Casotto' : 'Cassa'}
       sottotitolo={
         eIlCasotto
-          ? 'Occupate ' + pieno + '. Qui si vende e si studia.'
+          ? 'Occupate ' + pieno + '. Qui si vende, si fabbrica e si comprano i progetti.'
           : 'Occupate ' + pieno
       }
     >
@@ -216,18 +275,30 @@ export function PannelloCassa({
         />
       </div>
 
-      <Bottone
-        titolo="Vendi tutto"
-        dettaglio={qualcosaDentro ? 'svuota questa cassa' : 'non c’è niente da vendere'}
-        costo={qualcosaDentro ? valore : null}
-        colore={stile.colore_azione}
-        acceso={qualcosaDentro}
-        largo
-        onTocco={onVendi}
-      />
+      {/* si vende **solo al casotto**: il mercante sta li', non ti segue in giro
+          per l'isola. Portarci la roba fa parte del prezzo */}
+      {eIlCasotto ? (
+        <Bottone
+          titolo="Vendi tutto"
+          dettaglio={qualcosaDentro ? 'svuota questa cassa' : 'non c’è niente da vendere'}
+          costo={qualcosaDentro ? valore : null}
+          colore={stile.colore_azione}
+          acceso={qualcosaDentro}
+          largo
+          onTocco={onVendi}
+        />
+      ) : (
+        <span
+          style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
+        >
+          Per vendere serve il casotto: il mercante sta lì.
+        </span>
+      )}
 
       {eIlCasotto ? (
         <>
+          <Banco stati={ricette} onFabbrica={onFabbrica} />
+
           <span
             style={{
               marginTop: 4,
@@ -235,8 +306,8 @@ export function PannelloCassa({
               color: interfaccia.colore_testo_debole
             }}
           >
-            <b>Tecnologie</b> — hai un operaio solo: l’unico modo di fare di più
-            è migliorare i suoi attrezzi.
+            <b>Progetti</b> — le monete comprano il <i>diritto</i> di fabbricare
+            una cosa. Poi la cosa te la fabbrichi al banco, coi materiali.
           </span>
 
           {/* le tecnologie che non ti puoi ancora permettere restano visibili
@@ -249,19 +320,21 @@ export function PannelloCassa({
               gap: interfaccia.spaziatura_stretta
             }}
           >
-            {tecnologie.map((t) => {
-              const presa = t.stato === 'presa'
-              const bloccata = t.stato === 'bloccata'
-              const puoi = t.stato === 'libera' && monete >= t.costo
+            {progetti.map((t) => {
+              const fatto = t.stato === 'fatto'
+              const comprato = t.stato === 'comprato'
+              const presa = fatto || comprato
+              const bloccata = t.stato === 'bloccato'
+              const puoi = t.stato === 'libero' && monete >= t.costo
               const richiesta = bloccata
-                ? tecnologie.find((altra) => altra.id === t.richiede)
+                ? progetti.find((altra) => altra.id === t.richiede)
                 : null
               return (
                 <button
                   key={t.id}
                   type="button"
                   disabled={!puoi}
-                  onPointerDown={() => puoi && onStudia(t.id)}
+                  onPointerDown={() => puoi && onCompra(t.id)}
                   style={{
                     textAlign: 'left',
                     padding: '10px 12px',
@@ -296,7 +369,7 @@ export function PannelloCassa({
                             : stile.colore_testo_spento
                       }}
                     >
-                      {presa ? 'presa' : t.costo + ' monete'}
+                      {fatto ? 'fatto' : comprato ? 'da fabbricare' : t.costo + ' monete'}
                     </span>
                   </div>
                   <div
@@ -309,7 +382,9 @@ export function PannelloCassa({
                   >
                     {bloccata && richiesta
                       ? 'prima serve: ' + richiesta.nome
-                      : t.descrizione}
+                      : comprato
+                        ? 'comprato — adesso fabbricalo qui sotto al banco'
+                        : t.descrizione}
                   </div>
                 </button>
               )

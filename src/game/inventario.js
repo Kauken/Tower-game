@@ -146,6 +146,22 @@ export function creaInventario(slotMassimi, slotAttivi) {
     return quante
   }
 
+  // Quante caselle si libererebbero togliendo tanti pezzi di un materiale.
+  // Serve a una cosa sola, ed e' importante: **una ricetta che consuma prima e
+  // produce dopo si puo' fare anche con lo zaino quasi pieno.** Guardare lo
+  // spazio senza contare quello che sta per uscire faceva restare il pulsante
+  // spento senza nessuna ragione visibile — e un no senza spiegazione, in
+  // questo gioco, e' un difetto.
+  function caselleLiberateDa(materiale, quantita) {
+    const pila = pilaDi(materiale)
+    if (pila <= 0) {
+      return 0
+    }
+    const adesso = quanti(materiale)
+    const resta = Math.max(0, adesso - quantita)
+    return Math.ceil(adesso / pila) - Math.ceil(resta / pila)
+  }
+
   function occupati() {
     let quante = 0
     for (let i = 0; i < stato.attivi; i++) {
@@ -214,6 +230,7 @@ export function creaInventario(slotMassimi, slotAttivi) {
     togli,
     pieno,
     caselleLibere,
+    caselleLiberateDa,
     occupati,
     primoMateriale,
     perSalvare,

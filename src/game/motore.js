@@ -30,11 +30,12 @@ import {
   elencoMateriali,
   limiti,
   salvataggio as regoleSalvataggio,
-  elencoTecnologie,
+  elencoProgetti,
+  elencoRicette,
   simulazione,
   tessera,
   trovaCostruzione,
-  trovaTecnologia
+  trovaProgetto
 } from './config.js'
 import { disegnaIsola } from './disegno.js'
 import { adattaCanvas } from './schermo.js'
@@ -44,7 +45,7 @@ import { creaLavori } from './lavori.js'
 import { creaCasse } from './casse.js'
 import { creaBraccianti } from './braccianti.js'
 import { creaEconomia } from './economia.js'
-import { creaTecnologie } from './tecnologie.js'
+import { creaProgetti } from './progetti.js'
 import { creaGestoreEffetti } from './effetti.js'
 import { cancella, leggi, scrivi, tempoPassato } from './salvataggio.js'
 import {
@@ -63,20 +64,21 @@ export function creaMotore(canvasGioco) {
   const lavori = creaLavori()
   const casse = creaCasse()
   const economia = creaEconomia()
-  const tecnologie = creaTecnologie()
+  const progetti = creaProgetti()
   const effetti = creaGestoreEffetti()
 
   const centro = { x: 0, y: 0 }
 
   const squadra = creaBraccianti({
     casse,
-    tecnologie,
+    progetti,
     alloScarico: (cassa) => {
       centroTessera(cassa.tx, cassa.ty, centro)
       camera.versoSchermo(centro.x, centro.y, centro)
       effetti.raccolta(centro.x, centro.y)
     },
-    alCambioDelMondo: () => segna()
+    alCambioDelMondo: () => segna(),
+    alFabbricato: (id) => progetti.segnaFatto(id)
   })
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
@@ -173,7 +175,10 @@ export function creaMotore(canvasGioco) {
     // il casotto e' anche il mercato: e' li' che si vende e si studia
     cassaEIlCasotto: false,
     valoreCassa: 0,
-    tecnologie: '',
+    // "id:comprato|libero|bloccato|fatto" per ogni progetto
+    progetti: '',
+    // "id:si|no" — se la ricetta e' aperta e se ha gli ingredienti addosso
+    ricette: '',
     // stringhe, non oggetti: l'interfaccia le confronta per capire se sono
     // cambiate, e confrontare un oggetto a ogni lettura costerebbe di piu'
     lavoriInAttesa: 0,
@@ -216,7 +221,7 @@ export function creaMotore(canvasGioco) {
   function raccogliDati() {
     return {
       monete: economia.stato.monete,
-      tecnologie: tecnologie.prese.slice(),
+      progetti: progetti.perSalvare(),
       mondo: mondoPerSalvare(),
       casse: casse.perSalvare(),
       operai: squadra.perSalvare(),
@@ -258,8 +263,9 @@ export function creaMotore(canvasGioco) {
       cancella()
       return false
     }
-    // le tecnologie prima dell'operaio: sono loro a dire quante caselle ha
-    tecnologie.daSalvato(dati.tecnologie)
+    // i progetti prima dell'operaio: sono gli attrezzi fabbricati a dire
+    // quante caselle ha lo zaino
+    progetti.daSalvato(dati.progetti)
     economia.stato.monete = dati.monete || 0
     casse.daSalvato(dati.casse)
     squadra.daSalvato(dati.operai)
@@ -380,11 +386,13 @@ export function creaMotore(canvasGioco) {
 
     const gia = lavori.trovaSuTessera(tessereTocco.tx, tessereTocco.ty)
     if (gia) {
-      if (gia.preso) {
+      // uno scavo non finisce da solo: il secondo tocco lo ferma sempre,
+      // anche mentre ci sta lavorando sopra
+      if (gia.preso && !gia.ripetuto) {
         esito = 'ci sta già andando'
       } else {
         gia.attivo = false
-        esito = 'ordine annullato'
+        esito = gia.ripetuto ? 'basta scavare' : 'ordine annullato'
       }
       return
     }
@@ -408,11 +416,12 @@ export function creaMotore(canvasGioco) {
       : 'non si può raccogliere'
   }
 
-  // Le tecnologie si comprano al casotto. Con un operaio solo **questa e'
-  // l'unica via di crescita**: non si assume, si migliora.
-  function studia(idTecnologia) {
-    const dati = trovaTecnologia(idTecnologia)
-    if (!tecnologie.disponibile(idTecnologia)) {
+  // I progetti si comprano al casotto. **Quello che compri e' il diritto**, non
+  // la cosa: la cosa te la fabbrichi al banco, coi materiali. Con un operaio
+  // solo questa e' l'unica via di crescita — non si assume, si migliora.
+  function compra(idProgetto) {
+    const dati = trovaProgetto(idProgetto)
+    if (!progetti.disponibile(idProgetto)) {
       esito = 'non ancora'
       return
     }
@@ -420,8 +429,23 @@ export function creaMotore(canvasGioco) {
       esito = 'monete non abbastanza'
       return
     }
-    tecnologie.prendi(idTecnologia)
+    progetti.compra(idProgetto)
     esito = ''
+  }
+
+  // Fabbricare: l'ordine si da' dal casotto, e l'operaio ci va. Gli
+  // ingredienti li deve avere **addosso**, come per costruire.
+  function fabbrica(idRicetta) {
+    if (!cassaScelta || !cassaScelta.eIlCasotto) {
+      return
+    }
+    if (!progetti.ricettaAperta(idRicetta)) {
+      esito = 'non ancora'
+      return
+    }
+    esito = lavori.ordinaFabbrica(cassaScelta.tx, cassaScelta.ty, idRicetta)
+      ? ''
+      : 'troppi ordini in coda'
   }
 
   // Dove sta puntando il dito **mentre e' ancora premuto**. Su un telefono non
@@ -494,11 +518,15 @@ export function creaMotore(canvasGioco) {
       } else if (comando.tipo === 'annulla') {
         annulla()
       } else if (comando.tipo === 'vendi') {
-        if (cassaScelta) {
+        // il mercante sta al casotto e non ti segue: portarci la roba fa
+        // parte del prezzo
+        if (cassaScelta && cassaScelta.eIlCasotto) {
           economia.vendiCassa(casse, cassaScelta)
         }
-      } else if (comando.tipo === 'studia') {
-        studia(comando.id)
+      } else if (comando.tipo === 'compra') {
+        compra(comando.id)
+      } else if (comando.tipo === 'fabbrica') {
+        fabbrica(comando.id)
       }
     }
   }
@@ -622,18 +650,37 @@ export function creaMotore(canvasGioco) {
     // le caselle occupate. Le pile a meta' non consolano nessuno.
     vetrina.zainoPieno = b ? b.inventario.caselleLibere() === 0 : false
     vetrina.statoOperaio = b ? b.stato : ''
-    // lo stato dell'albero: "id:presa|disponibile|bloccata"
-    let albero = ''
-    for (let i = 0; i < elencoTecnologie.length; i++) {
-      const t = elencoTecnologie[i]
-      const stato = tecnologie.hoGiaPreso(t.id)
-        ? 'presa'
-        : tecnologie.disponibile(t.id)
-          ? 'libera'
-          : 'bloccata'
-      albero += (albero ? ',' : '') + t.id + ':' + stato
+    // la bacheca: comprato, libero (te lo puoi permettere o no lo dice
+    // l'interfaccia), bloccato da un altro progetto, oppure gia' fabbricato
+    let bacheca = ''
+    for (let i = 0; i < elencoProgetti.length; i++) {
+      const t = elencoProgetti[i]
+      const stato = progetti.hoFatto(t.id)
+        ? 'fatto'
+        : progetti.hoComprato(t.id)
+          ? 'comprato'
+          : progetti.disponibile(t.id)
+            ? 'libero'
+            : 'bloccato'
+      bacheca += (bacheca ? ',' : '') + t.id + ':' + stato
     }
-    vetrina.tecnologie = albero
+    vetrina.progetti = bacheca
+
+    // le ricette che si possono fare adesso, e se ha gli ingredienti addosso
+    let banco = ''
+    for (let i = 0; i < elencoRicette.length; i++) {
+      const r = elencoRicette[i]
+      if (!progetti.ricettaAperta(r.id)) {
+        continue
+      }
+      let ha = !!b
+      for (let c = 0; ha && c < r.ingredienti.length; c++) {
+        ha = b.inventario.quanti(r.ingredienti[c].materiale) >= r.ingredienti[c].quantita
+      }
+      banco += (banco ? ',' : '') + r.id + ':' + (ha ? 'si' : 'no')
+
+    }
+    vetrina.ricette = banco
 
     return vetrina
   }
@@ -653,7 +700,8 @@ export function creaMotore(canvasGioco) {
     preleva: (id) => accodaComando('preleva', 0, 0, id),
     annulla: () => accodaComando('annulla'),
     vendi: () => accodaComando('vendi'),
-    studia: (id) => accodaComando('studia', 0, 0, id),
+    compra: (id) => accodaComando('compra', 0, 0, id),
+    fabbrica: (id) => accodaComando('fabbrica', 0, 0, id),
     salvaSubito
   }
 }

@@ -5,7 +5,8 @@ import isolaJson from '../../config/isola.json'
 import braccantiJson from '../../config/braccianti.json'
 import costruzioniJson from '../../config/costruzioni.json'
 import economiaJson from '../../config/economia.json'
-import tecnologieJson from '../../config/tecnologie.json'
+import progettiJson from '../../config/progetti.json'
+import ricetteJson from '../../config/ricette.json'
 import salvataggioJson from '../../config/salvataggio.json'
 import motore from '../../config/motore.json'
 
@@ -29,7 +30,8 @@ export const telecamera = isolaJson.telecamera
 export const braccianti = braccantiJson
 export const operaio = braccantiJson.operaio
 
-export const elencoTecnologie = tecnologieJson.tecnologie
+export const elencoProgetti = progettiJson.progetti
+export const elencoRicette = ricetteJson.ricette
 
 export const costruzioni = costruzioniJson
 export const elencoCostruzioni = costruzioniJson.costruzioni
@@ -46,12 +48,20 @@ export function trovaCostruzione(id) {
   return costruzione
 }
 
-export function trovaTecnologia(id) {
-  const tecnologia = elencoTecnologie.find((voce) => voce.id === id)
-  if (!tecnologia) {
-    throw new Error(`Tecnologia "${id}" non trovata in tecnologie.json`)
+export function trovaProgetto(id) {
+  const progetto = elencoProgetti.find((voce) => voce.id === id)
+  if (!progetto) {
+    throw new Error(`Progetto "${id}" non trovato in progetti.json`)
   }
-  return tecnologia
+  return progetto
+}
+
+export function trovaRicetta(id) {
+  const ricetta = elencoRicette.find((voce) => voce.id === id)
+  if (!ricetta) {
+    throw new Error(`Ricetta "${id}" non trovata in ricette.json`)
+  }
+  return ricetta
 }
 
 // Controlli all'avvio: una configurazione sbagliata deve fermare il gioco
@@ -82,6 +92,19 @@ for (let y = 0; y < righe.length; y++) {
 for (const nome in risorse) {
   const risorsa = risorse[nome]
   if (!risorsa.lavorabile) {
+    continue
+  }
+  // Un giacimento non ha un elenco di rese: ha un materiale, una ricchezza che
+  // lo moltiplica, e non finisce mai.
+  if (risorsa.giacimento) {
+    if (!elencoMateriali.some((m) => m.id === risorsa.materiale)) {
+      throw new Error(
+        `Il giacimento "${nome}" produce "${risorsa.materiale}", che non e un materiale di isola.json`
+      )
+    }
+    if (!(risorsa.resa > 0) || !(risorsa.ricchezza > 0)) {
+      throw new Error(`Il giacimento "${nome}" ha bisogno di resa e ricchezza maggiori di zero`)
+    }
     continue
   }
   if (!Array.isArray(risorsa.rese)) {
@@ -120,19 +143,26 @@ for (let i = 0; i < elencoMateriali.length; i++) {
   }
 }
 
-// Una tecnologia che ne richiede una inesistente sarebbe irraggiungibile, e
+// Un progetto che ne richiede uno inesistente sarebbe irraggiungibile, e
 // nessuno se ne accorgerebbe: meglio fermarsi qui.
-for (let i = 0; i < elencoTecnologie.length; i++) {
-  const t = elencoTecnologie[i]
+for (let i = 0; i < elencoProgetti.length; i++) {
+  const t = elencoProgetti[i]
   if (t.richiede) {
-    trovaTecnologia(t.richiede)
+    trovaProgetto(t.richiede)
   }
   if (!(t.costo > 0)) {
-    throw new Error(`La tecnologia "${t.id}" non ha un costo in tecnologie.json`)
+    throw new Error(`Il progetto "${t.id}" non ha un costo in progetti.json`)
+  }
+  // Un progetto che non apre nessuna ricetta si comprerebbe senza ottenere
+  // niente: le monete sono il diritto, i materiali sono la cosa.
+  if (!elencoRicette.some((r) => r.id === t.sblocca)) {
+    throw new Error(
+      `Il progetto "${t.id}" apre la ricetta "${t.sblocca}", che non esiste in ricette.json`
+    )
   }
   if (t.effetto.risorsa && !risorse[t.effetto.risorsa]) {
     throw new Error(
-      `La tecnologia "${t.id}" agisce su "${t.effetto.risorsa}", che non e una risorsa dell'isola`
+      `Il progetto "${t.id}" agisce su "${t.effetto.risorsa}", che non e una risorsa dell'isola`
     )
   }
   // Le tasche si sommano, tutto il resto si moltiplica. Sbagliare la parola
@@ -144,11 +174,58 @@ for (let i = 0; i < elencoTecnologie.length; i++) {
     }
     if (effetto.tipo === 'slot') {
       if (!(effetto.aggiunta > 0)) {
-        throw new Error(`La tecnologia "${t.id}" apre delle tasche ma non dice quante (aggiunta)`)
+        throw new Error(`Il progetto "${t.id}" apre delle tasche ma non dice quante (aggiunta)`)
       }
     } else if (!(effetto.moltiplicatore > 0)) {
-      throw new Error(`L'effetto "${effetto.tipo}" della tecnologia "${t.id}" non ha un moltiplicatore`)
+      throw new Error(`L'effetto "${effetto.tipo}" del progetto "${t.id}" non ha un moltiplicatore`)
     }
+  }
+}
+
+// I TRE CONTROLLI SULLE RICETTE.
+//
+// Il primo e' il muro architetturale del progetto, ed e' la ragione per cui
+// esiste questo blocco: **una ricetta che produce un materiale che consuma da'
+// materia infinita.** Rimetti l'uscita in entrata e ne esce il doppio, poi il
+// quadruplo. Non e' un problema di numeri: nessun bilanciamento lo aggiusta.
+for (let i = 0; i < elencoRicette.length; i++) {
+  const r = elencoRicette[i]
+  if (!Array.isArray(r.ingredienti) || r.ingredienti.length === 0) {
+    throw new Error(`La ricetta "${r.id}" non ha ingredienti in ricette.json`)
+  }
+  if (r.ingredienti.length > 3) {
+    throw new Error(
+      `La ricetta "${r.id}" ha ${r.ingredienti.length} ingredienti: il massimo e tre, altrimenti su un telefono non si legge`
+    )
+  }
+  for (let c = 0; c < r.ingredienti.length; c++) {
+    if (!elencoMateriali.some((m) => m.id === r.ingredienti[c].materiale)) {
+      throw new Error(
+        `La ricetta "${r.id}" usa "${r.ingredienti[c].materiale}", che non e un materiale di isola.json`
+      )
+    }
+    if (r.produce && r.ingredienti[c].materiale === r.produce) {
+      throw new Error(
+        `La ricetta "${r.id}" produce "${r.produce}" e lo consuma anche: rimettendo l'uscita in entrata si avrebbe materia infinita. Una lavorazione non produce mai il materiale che consuma.`
+      )
+    }
+  }
+  if (r.produce && !elencoMateriali.some((m) => m.id === r.produce)) {
+    throw new Error(`La ricetta "${r.id}" produce "${r.produce}", che non e un materiale di isola.json`)
+  }
+  if (!r.produce && !r.attrezzo) {
+    throw new Error(`La ricetta "${r.id}" non produce ne un materiale ne un attrezzo`)
+  }
+  if (r.produce && !(r.quantita > 0)) {
+    throw new Error(`La ricetta "${r.id}" produce zero pezzi`)
+  }
+  if (!(r.tempo_ms > 0)) {
+    throw new Error(`La ricetta "${r.id}" non dice quanto ci mette (tempo_ms)`)
+  }
+  if (r.richiede_progetto && !elencoProgetti.some((t) => t.id === r.richiede_progetto)) {
+    throw new Error(
+      `La ricetta "${r.id}" chiede il progetto "${r.richiede_progetto}", che non esiste in progetti.json`
+    )
   }
 }
 
@@ -188,10 +265,27 @@ for (let i = 0; i < elencoCostruzioni.length; i++) {
 if (!(costruzioniJson.slot_casotto > 0)) {
   throw new Error('Il casotto non ha caselle in costruzioni.json: non ci si potrebbe posare niente')
 }
-if (!isolaJson.mappa.some((riga) => riga.indexOf('C') >= 0)) {
+// Il casotto si cerca **per quello che e'**, non per la lettera che ha: dare
+// la stessa lettera a due cose diverse ha gia' fatto sparire il casotto una
+// volta, e il gioco era partito lo stesso mostrando un'isola senza mercato.
+const lettereCasotto = Object.keys(legenda).filter((c) => legenda[c] === 'casotto')
+if (lettereCasotto.length === 0) {
+  throw new Error('Nella legenda di isola.json nessun carattere vale "casotto"')
+}
+if (!isolaJson.mappa.some((riga) => lettereCasotto.some((c) => riga.indexOf(c) >= 0))) {
   throw new Error(
-    'Sulla mappa non c\'e il casotto (C): senza, il primo bracciante non saprebbe dove scaricare'
+    'Sulla mappa non c\'e nessun casotto: senza, non ci sarebbe nessun posto dove posare la roba, vendere e fabbricare'
   )
+}
+// Ogni voce della legenda deve essere un terreno o una risorsa vera,
+// altrimenti quella tessera si disegna vuota e non lo dice nessuno.
+for (const carattere in legenda) {
+  const nome = legenda[carattere]
+  if (!terreni[nome] && !risorse[nome]) {
+    throw new Error(
+      `Nella legenda di isola.json il carattere "${carattere}" vale "${nome}", che non e ne un terreno ne una risorsa`
+    )
+  }
 }
 
 if (braccantiJson.iniziali.length < 1) {

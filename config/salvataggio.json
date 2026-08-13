@@ -1,6 +1,6 @@
 {
   "_nota": "Il salvataggio. Non ci sono partite: c'e' una sola isola che cresce per settimane, e perderla vuol dire perdere tutto.",
-  "versione_formato": 1,
+  "versione_formato": 2,
   "_nota_versione": "Quando il formato cambia, si alza questo numero. Un salvataggio vecchio non viene MAI cancellato: si mette da parte sotto un'altra chiave e si riparte puliti. Finche' il gioco cambia ogni settimana si butta invece di convertirlo — scrivere una migrazione per un formato che cambiera' ancora fra tre giorni e' tempo sprecato.",
   "intervallo_minimo_ms": 3000,
   "_nota_intervallo": "Quanto si aspetta almeno fra due scritture. Salvare a ogni gesto rubberebbe fotogrammi: si segna che c'e' qualcosa da salvare e si scrive fuori dal ciclo di gioco.",
