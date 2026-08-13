@@ -55,7 +55,8 @@ config/*.json  ──►  src/game/config.js  ──►  tutto il resto
 | `economia.js` | Monete, prezzi, vendere | Cambi come entrano o escono le monete |
 | `disegno.js` | Disegna tutto attraverso la telecamera | Aggiungi qualcosa che si deve vedere |
 | `effetti.js` | I lampi e gli anelli, da pool | Aggiungi un feedback visivo |
-| `motore.js` | Il ciclo, la coda dei comandi, **la mano**, il ponte con React | Aggiungi un comando o un dato per l'interfaccia |
+| `motore.js` | Il ciclo, la coda dei comandi, **la mano**, il salvataggio, il ponte con React | Aggiungi un comando o un dato per l'interfaccia |
+| `salvataggio.js` | Legge e scrive sul dispositivo, e dice **quanto tempo è passato** fuori dall'app | Cambi dove si salva (Capacitor) |
 | `pool.js`, `schermo.js` | Preallocazione e adattamento del canvas | Quasi mai |
 
 ### `src/ui/`
@@ -77,6 +78,7 @@ config/*.json  ──►  src/game/config.js  ──►  tutto il resto
 | `costruzioni.json` | Cosa si può piazzare, e quanto tiene dentro |
 | `tecnologie.json` | Gli sblocchi *(diventeranno `progetti.json` al punto 6)* |
 | `economia.json` | Monete di partenza, moltiplicatore di vendita |
+| `salvataggio.json` | Versione del formato, ogni quanto si scrive, **il tetto del rientro** |
 | ~~`tempo.json`~~ | **cancellato** col ciclo del giorno |
 | `motore.json` | Valori tecnici e di aspetto. **Il bilanciatore non lo tocca** |
 
@@ -124,6 +126,22 @@ Il gesto è già pronto, e non va rifatto: **tutto si piazza con la mano.**
 
 > Le cose che si contano (le caselle dello zaino) **si sommano**; le cose che sono un ritmo (velocità, tempo di lavoro) **si moltiplicano**. Sbagliare la parola dà un effetto che non si vede e che nessuno collegherebbe alla configurazione — c'è un controllo all'avvio apposta.
 
+### Aggiungere una cosa che deve **sopravvivere alla chiusura**
+
+1. Nel modulo che la possiede, due funzioni: `perSalvare()` e `daSalvato(dati)`.
+2. `motore.js` → `raccogliDati()` e `ripristina()`, **nell'ordine giusto**: il mondo per primo (casse e operaio ci stanno sopra), poi le tecnologie (sono loro a dire quante caselle ha lo zaino), poi tutto il resto.
+3. Se cambia la forma di quello che salvi, alza `versione_formato` in `config/salvataggio.json`.
+
+**Due regole, e sono quelle che evitano di riscrivere il salvataggio fra un mese:**
+- **Salva gli `id`, mai le statistiche.** `"trivella"`, non quanto scava: così un ritocco di bilanciamento arriva anche a un'isola già cominciata.
+- **Salva solo quello che il giocatore ha cambiato.** La mappa di partenza sta in `isola.json`.
+
+### Far andare avanti una cosa **fuori dall'app**
+
+Il gancio c'è già: `recupera(passatoMs)` in `motore.js` fa avanzare il mondo a passi grossi fino a un tetto di quattro ore. Oggi ci passa solo la crescita degli alberelli.
+
+**Una macchina ci si aggancia senza toccare il salvataggio:** basta che il suo avanzamento stia dentro una funzione che accetta un passo in millisecondi. **L'operaio no**, e non è una dimenticanza: è lui la risorsa scarsa, e il suo tempo non può passare mentre non guardi.
+
 ### Aggiungere un dato che l'**interfaccia** deve vedere
 
 1. `motore.js` → un campo nella `vetrina`, riempito dentro `leggiStato()`.
@@ -144,7 +162,6 @@ Perché tu non le rifaccia da zero credendo che manchino:
 ## 5. Le semplificazioni che ci sono, e non sono difetti
 
 - **L'operaio va in linea retta** e attraversa gli ostacoli. Sull'isola aperta non si nota. → punto 10.
-- **Chiudere la pagina cancella tutto.** → punto 3.
 - **Il crafting non esiste ancora**, quindi le tecnologie si pagano solo in monete. → punti 5 e 6.
 - **I giacimenti non esistono ancora**: la pietra viene da massi finiti. → punto 4.
 - **Non c'è la corrente**: arriva insieme alle macchine. → punto 8.

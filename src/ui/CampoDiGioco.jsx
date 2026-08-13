@@ -94,6 +94,17 @@ export default function CampoDiGioco() {
     const osservatore = new ResizeObserver(adatta)
     osservatore.observe(elemento)
 
+    // Su telefono la sessione finisce quasi sempre cosi': l'app va in
+    // background. E' il momento in cui salvare davvero, e non si puo'
+    // aspettare il prossimo giro del ciclo perche' potrebbe non arrivare.
+    function quandoSparisce() {
+      if (document.visibilityState === 'hidden') {
+        motore.salvaSubito()
+      }
+    }
+    document.addEventListener('visibilitychange', quandoSparisce)
+    window.addEventListener('pagehide', quandoSparisce)
+
     const campionamento = setInterval(() => {
       const stato = motore.leggiStato()
       impostaVista((precedente) => (uguali(precedente, stato) ? precedente : copia(stato)))
@@ -102,6 +113,8 @@ export default function CampoDiGioco() {
     return () => {
       clearInterval(campionamento)
       osservatore.disconnect()
+      document.removeEventListener('visibilitychange', quandoSparisce)
+      window.removeEventListener('pagehide', quandoSparisce)
       motore.ferma()
       motoreRef.current = null
     }

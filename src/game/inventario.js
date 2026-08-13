@@ -167,6 +167,35 @@ export function creaInventario(slotMassimi, slotAttivi) {
     return ''
   }
 
+  // Per il salvataggio: una casella per volta, ["legno", 12] oppure 0 se vuota.
+  // Si salvano gli id, mai le pile: se un giorno il legno passa da 12 a 16 per
+  // casella, un'isola gia' cominciata deve prendere il valore nuovo.
+  function perSalvare() {
+    const fuori = []
+    for (let i = 0; i < slot.length; i++) {
+      fuori.push(slot[i].materiale ? [slot[i].materiale, slot[i].quantita] : 0)
+    }
+    return fuori
+  }
+
+  // Un materiale che non esiste piu' in configurazione **si salta**, non fa
+  // buttare tutta l'isola.
+  function daSalvato(dati) {
+    svuota()
+    if (!Array.isArray(dati)) {
+      return
+    }
+    for (let i = 0; i < dati.length && i < slot.length; i++) {
+      const casella = dati[i]
+      if (!casella || pilaDi(casella[0]) <= 0 || !(casella[1] > 0)) {
+        continue
+      }
+      slot[i].materiale = casella[0]
+      slot[i].quantita = Math.min(casella[1], pilaDi(casella[0]))
+      stato.pezzi += slot[i].quantita
+    }
+  }
+
   function svuota() {
     for (let i = 0; i < slot.length; i++) {
       slot[i].materiale = ''
@@ -187,6 +216,8 @@ export function creaInventario(slotMassimi, slotAttivi) {
     caselleLibere,
     occupati,
     primoMateriale,
+    perSalvare,
+    daSalvato,
     svuota
   }
 }

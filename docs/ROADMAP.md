@@ -1,10 +1,10 @@
-# Lista di costruzione — v13
+# Lista di costruzione — v15
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice **"fai il punto N"**, si intende il numero di questa lista.
 A lavoro finito il punto si segna **FATTO**.
 
-Il gioco è quello del `GDD.md` v6.0: **un'isola da mandare avanti**, con un operaio solo, e il gioco è **comprare indietro il suo tempo**.
+Il gioco è quello del `GDD.md` v7.0: **un'isola da mandare avanti**, con un operaio solo, e il gioco è **comprare indietro il suo tempo**.
 
 ---
 
@@ -32,9 +32,10 @@ Toccare il terreno vuoto a mani vuote **non fa più niente**. Per piazzare qualc
 Spariscono il giorno, la sera e il riepilogo. Restano vendita e monete. Il ritmo lo danno gli sblocchi.
 → `GDD.md` §12.
 
-**3. Il salvataggio.** — Adesso chiudere la pagina cancella tutto.
-Con macchine e isole le sessioni diventano lunghe: un gioco da telefono che perde il progresso **non verrà mai giocato abbastanza da poter essere giudicato**, e senza sessioni lunghe le verifiche di questa lista non valgono niente.
-Costo dichiarato: finché il modello cambia spesso, un salvataggio vecchio si butta invece di convertirlo. Si fa con la versione dentro il file, come dice la skill `isola-salvataggio`.
+**3. Il salvataggio.** — **FATTO** (2026-08-13).
+Si salvano solo gli `id` e solo quello che il giocatore ha cambiato: la mappa di partenza sta in `isola.json`, i moltiplicatori si ricavano dai progetti. Un salvataggio che non si sa leggere **non si cancella mai**: si mette da parte e si riparte puliti.
+
+   > **C'è già dentro il rientro fuori dall'app:** riaprendo, il mondo avanza del tempo passato fino a un tetto di quattro ore. Adesso si vede solo con gli alberelli che crescono; **le macchine ci si agganciano al punto 8 senza toccare il salvataggio.** L'operaio invece si ferma, perché è lui la risorsa scarsa. → `GDD.md` §11d.
 
 ## Fase B — le due economie
 
@@ -95,12 +96,34 @@ Stessa struttura a gradini di tutto il resto.
 **14. Il carbone come combustibile.** — Arriva con la seconda isola, e rende molto di più del legno.
 **Non sblocca niente di nuovo: toglie una scocciatura che hai sentito per ore** — dover bruciare il bosco che ripianti. È l'unico modo onesto di rendere desiderabile un materiale.
 
-## Fase E — il contenuto, quando la base è viva
+## Fase E — **le scale**, cioè il gioco vero e proprio
 
-15. La terza isola e i materiali rari.
-16. Altri attrezzi e altre macchine di livello superiore.
-17. Le rifiniture di sensazione: effetti, suoni, la macchina che si vede lavorare.
-18. L'impacchettamento con Capacitor.
+Da qui in poi non si aggiunge *contenuto*: si salgono i **gradini** di `GDD.md` §11b. La regola vale per ognuno:
+
+> **Un gradino non è un numero più grande. È una domanda che sparisce dalla testa.**
+> Se non sai nominare la domanda che toglie, quel gradino non esiste — non costruirlo.
+
+**15. Il cassetto.** — toglie *"in quale cassa l'avevo messo?"*
+Tiene tantissimo di **un materiale solo**, e da fuori si vede cos'è e quanto. Costa poco ed è il gradino con la resa più alta della lista.
+
+**16. Il generatore a carbone.** — toglie *"devo riempirlo in continuazione"*
+
+**17. Il mulino ad acqua o a vento.** — toglie *"devo alimentarlo"*
+Non consuma niente, ma rende meno e **va dove c'è acqua o vento**. Non è un aggiornamento dritto: è una **scelta** contro il generatore.
+
+**18. Il terminale.** — toglie *"dov'è quella roba?"*
+Una rete che collega le casse: da un punto solo cerchi, vedi e prendi qualunque cosa. È il gradino più amato del Minecraft tecnico, e **funziona solo perché prima hai passato ore a girare fra le casse.**
+
+**19. La caldaia a vapore.** — toglie *"la corrente"*, e non ci pensi più.
+
+**20. Il terminale che fabbrica.** — toglie *"quali passaggi servono?"*
+Chiedi dieci telai e la rete li fa, prendendo i pezzi dove sono.
+
+**21. La terza isola e i materiali rari.**
+**22. Le rifiniture di sensazione**: effetti, la macchina che si vede lavorare.
+**23. L'impacchettamento con Capacitor.**
+
+> **Non c'è una costruzione finale**, e non è una dimenticanza: *"una sorta di infinito da rifinire sempre."* Il motore è il **ciclo dei colli di bottiglia** — risolvi il legno e ti manca la pietra, metti la trivella e ti manca la corrente. Da cui la regola per chiunque aggiunga roba: **uno sblocco nuovo deve creare un collo di bottiglia altrove.** Se non manca niente da nessuna parte, hai aggiunto una decorazione.
 
 > **Le commesse non ci sono, e non è una dimenticanza.** *"L'obiettivo è la progressione."* Il desiderio ce l'ha già la bacheca dei progetti; un tizio che ti chiede quaranta tavole sposterebbe il problema invece di risolverlo. Vedi `DECISIONI.md`.
 

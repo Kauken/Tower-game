@@ -13,20 +13,21 @@ Un'isola vista dall'alto. **Tocchi le cose e dai ordini**; un operaio solo li es
 > ### La risorsa scarsa è il **tempo dell'operaio**.
 > Il gioco è comprare indietro il tempo di una persona sola. Ogni decisione si giudica così.
 
-## Le sei regole che non si toccano
+## Le sette regole che non si toccano
 
 1. **NIENTE PERSONAGGIO DA GUIDARE.** Rifiutato **tre volte**. C'è un operaio, ma non lo si muove.
 2. **UN OPERAIO SOLO, E NON SI ASSUME.** L'unica crescita è la tecnologia.
 3. **LE TESSERE NON SI DEVONO VEDERE.** Niente bordi, mai. Si illumina solo quella sotto il dito, e solo mentre hai qualcosa in mano.
-4. **NIENTE MAGAZZINO CENTRALE.** Le cose stanno in un posto. La distanza deve costare.
+4. **NIENTE MAGAZZINO CENTRALE — all'inizio.** Le cose stanno in un posto e la distanza deve costare. *Il **terminale** del punto 18 è un magazzino centrale, ed è voluto: è il premio di fine gioco, e funziona solo perché prima hai passato ore a girare fra le casse.*
 5. **NIENTE SI SPOSTA DA SOLO, NIENTE RICRESCE DA SOLO.** Un'automazione vale quanto la fatica che toglie.
 6. **NIENTE PARTE SE NON L'HAI PRESO IN MANO.** Un tocco sul vuoto, a mani vuote, non fa niente.
+7. **UN GRADINO NON È UN NUMERO PIÙ GRANDE: È UNA DOMANDA CHE SPARISCE.** Se non sai nominare la domanda che toglie, quel gradino non esiste.
 
 ## Dove siamo davvero
 
 Il **codice** è a un punto onesto: si può giocare, e il giro completo funziona provato nel browser a 390×780.
 
-Il **progetto** è appena stato riscritto: `GDD.md` v6.0 e `ROADMAP.md` v12 descrivono un gioco più grande di quello che c'è. Non è un errore, è l'ordine giusto — ma vuol dire che **una parte dei documenti descrive cose non ancora costruite**, e sono elencate qui sotto.
+Il **progetto** è appena stato riscritto: `GDD.md` v7.0 e `ROADMAP.md` v15 descrivono un gioco più grande di quello che c'è. Non è un errore, è l'ordine giusto — ma vuol dire che **una parte dei documenti descrive cose non ancora costruite**, e sono elencate qui sotto.
 
 ### Cosa funziona adesso, provato
 

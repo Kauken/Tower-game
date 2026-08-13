@@ -46,16 +46,19 @@ L'autore **non sa programmare** e lavora **dal telefono**. Quindi:
 9. **NIENTE PERSONAGGIO DA MUOVERE.** Rifiutato **tre volte** in tre versioni. Il giocatore non è dentro lo schermo: è sopra, e comanda col dito.
 10. **C'È UN OPERAIO SOLO, e non si assume.** L'unica via di crescita è la tecnologia. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato.
 11. **Le tessere non si devono vedere.** Niente bordi, mai; la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro. Unica eccezione: la tessera sotto il dito si illumina **solo mentre hai qualcosa in mano**.
-12. **NIENTE MAGAZZINO CENTRALE.** Le risorse stanno dentro contenitori che hanno un posto, e qualcuno le deve portare. Niente totale dell'isola, nemmeno scritto in alto: **la distanza deve costare**.
+12. **NIENTE MAGAZZINO CENTRALE — all'inizio.** Le risorse stanno dentro contenitori che hanno un posto, e qualcuno le deve portare. Niente totale dell'isola, nemmeno scritto in alto: **la distanza deve costare**. *Unica eccezione, ed è a fine gioco: il **terminale** (punto 18), una rete da cui vedi e prendi tutto. È un magazzino centrale ed è voluto — funziona solo perché prima hai passato ore a girare fra le casse. Regalato all'inizio non varrebbe niente.*
 
 ### Come si aggiunge roba senza rovinare il gioco
 
 13. **Niente si sposta da solo e niente ricresce da solo.** Ogni comodità va **guadagnata** con l'automazione, mai regalata. La regola dietro: **un'automazione vale quanto la fatica che toglie** — se il problema non è mai esistito, la macchina che lo risolve è un gadget. Prima di aggiungere una comodità, chiediti **quale sblocco futuro stai svuotando**.
 14. **Niente parte se non l'hai preso in mano.** Un tocco sul terreno vuoto, a mani vuote, non fa niente. Un'azione che parte senza che il giocatore l'abbia scelta è sempre sbagliata.
 15. **Uno sblocco dà un verbo nuovo, o restituisce tempo in modo che si senta.** Un +5% non merita di stare in bacheca.
+15b. **UN GRADINO NON È UN NUMERO PIÙ GRANDE: È UNA DOMANDA CHE SPARISCE DALLA TESTA.** Il gioco è fatto di **scale** (`GDD.md` §11b): corrente, magazzino, lavorazione, estrazione. Ogni gradino deve togliere una domanda che il giocatore si stava facendo — *"in quale cassa l'avevo messo?"*, *"devo riempirlo di continuo"*, *"dov'è quella roba?"*. **Se non sai nominare la domanda che toglie, quel gradino non esiste: non costruirlo.** E uno sblocco nuovo deve **creare un collo di bottiglia altrove**, altrimenti è una decorazione.
+15c. **Non c'è una fine.** *"Una sorta di infinito da rifinire sempre."* Niente costruzione finale: il motore è il ciclo dei colli di bottiglia, e salire di gradino è una **ricostruzione**, non un potenziamento.
 16. **Una ricetta non produce mai un materiale che consuma**, e non ha più di tre ingredienti. Sono controlli all'avvio, non cose da ricordare.
 17. **Se il gioco rifiuta di fare una cosa, deve dire perché**, con parole normali. Un operaio che si pianta in silenzio sembra un guasto, non una regola.
 18. **Non c'è fretta e non si perde mai.** Niente timer che scadono, niente che marcisce, niente di irreversibile.
+19. **Fuori dall'app vanno avanti le macchine, non l'operaio.** Fino a un tetto di quattro ore. È la ricompensa più forte che il gioco dia all'automazione, e il tetto serve perché aspettare non sia mai la strategia migliore.
 
 ## Le cinque costanti
 

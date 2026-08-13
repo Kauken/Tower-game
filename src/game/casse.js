@@ -88,9 +88,44 @@ export function creaCasse() {
 
   reimposta()
 
+  // --- salvataggio ---
+  // Una cassa e' dove sta e cosa ha dentro. Le caselle vanno con lei: sono un
+  // inventario come quello dell'operaio, e si salvano allo stesso modo.
+  function perSalvare() {
+    return elenco.map((cassa) => ({
+      tx: cassa.tx,
+      ty: cassa.ty,
+      slot: cassa.slot,
+      casotto: cassa.eIlCasotto,
+      dentro: cassa.inventario.perSalvare()
+    }))
+  }
+
+  function daSalvato(dati) {
+    elenco.length = 0
+    if (!Array.isArray(dati)) {
+      reimposta()
+      return
+    }
+    for (let i = 0; i < dati.length; i++) {
+      const voce = dati[i]
+      if (!voce || !(voce.slot > 0)) {
+        continue
+      }
+      const cassa = aggiungi(voce.tx, voce.ty, voce.slot, voce.casotto)
+      cassa.inventario.daSalvato(voce.dentro)
+    }
+    // senza il casotto non ci sarebbe piu' nessun posto dove vendere
+    if (!elenco.some((cassa) => cassa.eIlCasotto)) {
+      reimposta()
+    }
+  }
+
   return {
     elenco,
     aggiungi,
+    perSalvare,
+    daSalvato,
     in: in_,
     pienaDel,
     totale,

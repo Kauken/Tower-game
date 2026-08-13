@@ -7,6 +7,8 @@ description: Formato dei dati salvati, versioning e migrazione. Consultala prima
 
 Su telefono l'interruzione è la norma. Un salvataggio che si perde è il motivo numero uno per cui un giocatore disinstalla — e in questo gioco è peggio che altrove: **non ci sono partite, c'è una sola isola che cresce per settimane.** Perderla vuol dire perdere tutto.
 
+> **Fatto il 2026-08-13** (punto 3). Il modulo è `src/game/salvataggio.js`, i valori stanno in `config/salvataggio.json`, e ogni sistema espone `perSalvare()` / `daSalvato()`. Quello che segue è la legge di come si estende.
+
 ## Cosa si salva
 
 Un archivio solo, perché c'è un mondo solo. Dentro, per isola:
@@ -25,6 +27,14 @@ Un archivio solo, perché c'è un mondo solo. Dentro, per isola:
 **Non salvare niente che si può ricalcolare.** I moltiplicatori delle tecnologie si ricavano dai progetti sbloccati. La mappa di base si ricava da `isola.json`: si salva solo **quello che il giocatore ha cambiato**.
 
 **Salva dati, mai funzioni o riferimenti a oggetti vivi.** Al ripristino si ricostruiscono gli oggetti dai dati e dalla configurazione — che è esattamente quello che fanno già le funzioni `reimposta()` dei moduli.
+
+## L'ordine del ripristino conta
+
+1. **Il mondo** per primo: casse e operaio ci stanno sopra.
+2. **Le tecnologie** prima dell'operaio: sono loro a dire quante caselle ha lo zaino, e un ripristino in caselle che non esistono ancora perderebbe roba.
+3. Poi casse, operaio, coda dei lavori.
+
+**Non si salva il lavoro in corso dell'operaio.** Al rientro riparte fermo e ripesca dalla coda, che è salvata a parte: uno stato a metà di una camminata è l'unica cosa che può tornare incoerente.
 
 ## Ogni archivio ha una versione
 
@@ -46,6 +56,18 @@ Finché si è solo sul web, `localStorage` va bene, ma l'accesso passa da **un m
 - **Quando l'app va in background**: `visibilitychange` e l'evento di pausa di Capacitor. Su telefono è il modo più comune in cui una sessione finisce.
 - **Mai dentro il ciclo di gioco.** La scrittura è asincrona e ruberebbe fotogrammi: si accoda e si esegue fuori.
 - **Mai a ogni fotogramma**, nemmeno "tanto è veloce": si mette un intervallo minimo fra due scritture.
+
+## Il rientro fuori dall'app
+
+**Le macchine vanno avanti, l'operaio no.** È lui la risorsa scarsa, e il suo tempo non può passare mentre non guardi.
+
+Al ripristino si calcola quanto tempo è passato dal `salvatoIl`, **tagliato a `tetto_recupero_ms`** (quattro ore), e si fa avanzare il mondo a passi grossi — `passo_recupero_ms`, un secondo. A passi da 16 ms sarebbero un milione di giri e il gioco si aprirebbe dopo dieci secondi di schermo nero.
+
+Il tetto non è avarizia: serve perché **aspettare non deve mai essere la strategia migliore.** Riaprire è sempre premiato, stare via apposta non conviene mai.
+
+**Subito dopo il recupero si riscrive il salvataggio.** Senza, un blocco dell'app farebbe contare due volte lo stesso tempo.
+
+Perché una cosa nuova vada avanti fuori dall'app basta che il suo avanzamento stia dentro una funzione che accetta un passo in millisecondi, e che venga chiamata da `recupera()`.
 
 ## Il ripristino
 

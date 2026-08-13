@@ -197,3 +197,44 @@ export function tesseraAccanto(tx, ty, esito) {
   }
   return false
 }
+
+// --- salvataggio ---
+//
+// Si salva **solo quello che il giocatore ha cambiato**: la mappa di partenza
+// sta in isola.json e non ha nessun bisogno di finire nel salvataggio. Quello
+// che cambia e' cosa sta sopra a ogni tessera, e cosa sta crescendo.
+
+export function mondoPerSalvare() {
+  const crescite = []
+  for (let i = 0; i < crescitaMs.length; i++) {
+    if (crescitaMs[i] > 0) {
+      crescite.push([i, Math.round(crescitaMs[i]), Math.round(crescitaTotaleMs[i])])
+    }
+  }
+  return { sopra: sopra.join(','), crescite }
+}
+
+export function mondoDaSalvato(dati) {
+  if (!dati || typeof dati.sopra !== 'string') {
+    return false
+  }
+  const pezzi = dati.sopra.split(',')
+  // se la mappa e' cambiata di forma, il salvataggio non c'entra piu' niente
+  if (pezzi.length !== sopra.length) {
+    return false
+  }
+  for (let i = 0; i < sopra.length; i++) {
+    sopra[i] = risorse[pezzi[i]] ? pezzi[i] : ''
+  }
+  crescitaMs.fill(0)
+  crescitaTotaleMs.fill(0)
+  const crescite = dati.crescite || []
+  for (let i = 0; i < crescite.length; i++) {
+    const voce = crescite[i]
+    if (voce && voce[0] >= 0 && voce[0] < crescitaMs.length) {
+      crescitaMs[voce[0]] = voce[1]
+      crescitaTotaleMs[voce[0]] = voce[2]
+    }
+  }
+  return true
+}

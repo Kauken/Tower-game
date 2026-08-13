@@ -1,4 +1,4 @@
-# Documento di design — v6.0
+# Documento di design — v7.0
 
 **Un'isola da mandare avanti.** Vista dall'alto, si comanda col dito, e ci lavora **un operaio solo**.
 
@@ -8,7 +8,7 @@ Riferimenti dichiarati, e cosa si prende da ognuno:
 | --- | --- |
 | **Satisfactory** | L'arco dell'automazione in tre gradini, e i giacimenti che non finiscono mai |
 | **Factorio** | Le catene che convergono, e *"the factory must grow"* |
-| **Minecraft tecnico** | L'inventario a caselle, e la moltiplicazione dei materiali fatta bene |
+| **Minecraft tecnico** *(Create, Applied Energistics, Refined Storage)* | L'inventario a caselle, la moltiplicazione dei materiali fatta bene, e **la scala del magazzino** |
 | **Stardew Valley** | Il ciclo economico gentile: raccogli, vendi, compri quello che ti mancava |
 | **Graveyard Keeper** | Le zone che si aprono **costruendo**, e qualcun altro che lavora al posto tuo |
 
@@ -224,6 +224,96 @@ Automatizzare smette di essere una comodità e diventa **il prezzo del biglietto
 
 E subito dopo nasce il problema successivo, che è quello giusto: **come faccio ad avere qui il ferro che sta là?** Prima con la barca a mano, poi con la barca che va da sola.
 
+## 11b. **Le scale** — ogni sistema ha sempre un gradino dopo
+
+> *"Ci deve essere sempre una cosa migliore per tutto. Il generatore prima base poi altri sistemi di energia. Crafting, gestione inventario e altro la stessa cosa."*
+>
+> *"Una sorta di infinito da rifinire sempre, proprio come Minecraft tecnico o Satisfactory."*
+
+Questa è la struttura del gioco, e senza una regola diventerebbe **contenuto gonfiato**: dieci generatori che fanno la stessa cosa con numeri diversi. La regola è una sola:
+
+> ### Un gradino non è un numero più grande. **È una domanda che sparisce dalla testa.**
+>
+> Se non sai **nominare la domanda che toglie**, quel gradino non esiste. Non costruirlo.
+
+È quello che fa funzionare i modelli di riferimento. In Create, il motore a vapore non è "più potenza" del mulino ad acqua: è *smetti di pensare alla corrente*. In Applied Energistics la rete non è "più spazio" delle casse: è *smetti di ricordarti dove hai messo le cose*.
+
+E la seconda regola, che viene dritta dai modpack tecnici:
+
+> ### Salire di gradino **non è un potenziamento, è una ricostruzione.**
+> La macchina di livello 2 non entra dove stava quella di livello 1, e va rialimentata. È documentato come la cosa che tiene vivi quei giochi per centinaia di ore — ed è la forma concreta del *"rifinire sempre"*.
+
+### La scala della corrente
+
+| | Cosa è | Che domanda toglie |
+| --- | --- | --- |
+| **1** | **Bracere a legna** — raggio piccolo, mangia legno di continuo | *(è il problema)* |
+| **2** | **Generatore a carbone** — stesso raggio, ma il carbone dura molto di più | *"devo riempirlo in continuazione"* |
+| **3** | **Mulino ad acqua / a vento** — non consuma niente, ma rende meno e **va dove c'è acqua o vento** | *"devo alimentarlo"* — e rimette in gioco *"dove lo metto"* |
+| **4** | **Caldaia a vapore** — copre mezza isola | *"la corrente"*, e non ci pensi più |
+
+Nota il gradino 3: **non è un aggiornamento dritto.** È gratis ma vincolato dalla geografia, contro uno libero ma affamato. Sono una **scelta**, non una scala che sale e basta — ed è così che si evita che ogni gradino renda inutile il precedente.
+
+### La scala del magazzino — la più lunga, e la più desiderata
+
+| | Cosa è | Che domanda toglie |
+| --- | --- | --- |
+| **1** | **Zaino a caselle + casse sparse** | *(è il problema)* |
+| **2** | **Il cassetto** — tiene tantissimo di **un materiale solo**, e da fuori si vede cos'è e quanto | *"in quale cassa l'avevo messo?"* |
+| **3** | **I nastri** | *"devo portarcelo io"* |
+| **4** | **Il terminale** — una rete che collega le casse: da un punto solo cerchi, vedi e prendi qualunque cosa | *"dov'è?"* |
+| **5** | **Il terminale che fabbrica** — chiedi dieci telai e la rete li fa, prendendo i pezzi dove sono | *"quali passaggi servono?"* |
+
+> **Il gradino 4 è un magazzino centrale, e la regola dice di no.** La contraddizione è solo apparente: **la regola vale per l'inizio.** Passi ore a girare fra le casse, e *poi* costruisci la cosa che cancella quella fatica. È il gradino più amato di tutto il Minecraft tecnico, e funziona **esattamente perché prima hai sofferto.** Regalato all'inizio non varrebbe niente.
+
+### La scala della lavorazione
+
+| | Cosa è | Che domanda toglie |
+| --- | --- | --- |
+| **1** | **Banco da lavoro** — l'operaio deve stare lì | *(è il problema)* |
+| **2** | **La macchina** — lavora da sola finché ha materiale | *"devo stare lì io"* |
+| **3** | **La macchina alimentata dal nastro** | *"devo riempirla"* |
+| **4** | **L'officina su richiesta** — chiedi il prodotto finito | *"quali passaggi servono"* |
+
+### La scala dell'estrazione
+
+| | Cosa è | Che domanda toglie |
+| --- | --- | --- |
+| **1** | **A mano** | *(è il problema)* |
+| **2** | **La trivella** — produce da sola, ma il cassetto lo svuoti tu | *"devo scavare io"* |
+| **3** | **Trivella + nastro** | *"devo andare a svuotarla"* |
+| **4** | **Trivella pesante** — molto più veloce, mangia molta più corrente | *"non ne esce abbastanza"* |
+
+### La scala dell'operaio
+
+Attrezzi migliori: ascia, zaino, stivali, carriola. Ma il vero arco è un altro, e va detto:
+
+> **Smette di essere un portatore e diventa quello che costruisce.** All'inizio il suo tempo se ne va tutto in viaggi; alla fine i viaggi li fanno i nastri, e lui serve solo per mettere giù le cose nuove. **È la vittoria, non la disoccupazione.**
+
+## 11c. Non finisce, si rifinisce
+
+> *"Una sorta di infinito da rifinire sempre."*
+
+**Non c'è una costruzione finale.** Niente razzo, niente ascensore spaziale, niente schermata dei titoli.
+
+Quello che c'è al posto suo sono **le scale qui sopra, che non finiscono**, e il **ciclo dei colli di bottiglia** — che è il vero motore documentato di tutti i giochi di questo genere:
+
+> Risolvi il legno e ti manca la pietra. Metti la trivella e ti manca la corrente. Metti la caldaia e ti manca il carbone. Vai a prendere il carbone e ti accorgi che i nastri non ce la fanno.
+>
+> **Ogni soluzione fa nascere due problemi nuovi.** Non è un difetto: è il gioco.
+
+Ne discende una regola per chiunque aggiunga contenuto:
+
+> **Uno sblocco nuovo deve creare un collo di bottiglia altrove.** Se lo aggiungi e non manca niente da nessuna parte, hai aggiunto una decorazione.
+
+## 11d. Fuori dall'app — **le macchine sì, l'operaio no**
+
+Chiudi l'app: **l'operaio si ferma.** È lui la risorsa scarsa, e il suo tempo non può passare mentre non guardi.
+
+**Le macchine invece vanno avanti**, fino a un tetto di qualche ora. Riaprire è sempre premiato; aspettare non è mai la strategia migliore.
+
+Non è una comodità: è **la ricompensa più forte che il gioco può dare all'automazione.** Finché fai tutto a mano, chiudere l'app vuol dire fermare il mondo. Quando la fabbrica gira da sola, chiudere l'app vuol dire **tornare e trovare le casse piene.** È la stessa lezione delle isole: automatizzare non è una comodità, è quello che ti compra il diritto di andartene.
+
 ## 12. Il ritmo — **non c'è nessun orologio**
 
 **Non esiste il ciclo del giorno.** C'era, ed è stato tolto: serviva a far scadere i salari, e i salari sono caduti con l'operaio unico. Un timer che gira senza avere denti è solo un'ansia gratuita, e **"non c'è fretta"** è una delle cinque costanti del progetto.
@@ -271,6 +361,7 @@ Sono in ordine. Se una risponde no, quelle sotto non contano.
 2. **Guardando la bacheca dei progetti, ce n'è uno che vuoi?**
 3. **Portare la roba a mano dà fastidio quel tanto che basta?** Deve essere una scocciatura che fa desiderare un nastro, non una noia che fa chiudere l'app.
 4. **Quando arriva la prima macchina, si sente che ti ha ridato del tempo?**
+5. **Ogni volta che sblocchi qualcosa, ti manca subito qualcos'altro?** Se un giorno hai abbastanza di tutto, il gioco è finito lì.
 
 ## 16. Una nota onesta sulla dimensione
 

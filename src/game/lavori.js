@@ -178,8 +178,47 @@ export function creaLavori() {
     }
   }
 
+  // --- salvataggio ---
+  // Gli ordini in coda si salvano: riaprire e trovare la fila cancellata
+  // sembrerebbe un guasto. `preso` no: al rientro nessuno li ha ancora presi.
+  function perSalvare() {
+    const fuori = []
+    for (let i = 0; i < coda.length; i++) {
+      const lavoro = coda[i]
+      if (!lavoro.attivo) {
+        continue
+      }
+      fuori.push({
+        azione: lavoro.azione,
+        tipo: lavoro.tipo,
+        tx: lavoro.tx,
+        ty: lavoro.ty,
+        materiale: lavoro.materiale
+      })
+    }
+    return fuori
+  }
+
+  function daSalvato(dati) {
+    svuota()
+    if (!Array.isArray(dati)) {
+      return
+    }
+    for (let i = 0; i < dati.length; i++) {
+      const voce = dati[i]
+      const lavoro = apri(voce.azione, voce.tx, voce.ty)
+      if (!lavoro) {
+        return
+      }
+      lavoro.tipo = voce.tipo || ''
+      lavoro.materiale = voce.materiale || ''
+    }
+  }
+
   return {
     coda,
+    perSalvare,
+    daSalvato,
     ordinaRaccolta,
     ordinaPiantata,
     ordinaScambio,

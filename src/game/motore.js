@@ -29,6 +29,7 @@ import {
   area,
   elencoMateriali,
   limiti,
+  salvataggio as regoleSalvataggio,
   elencoTecnologie,
   simulazione,
   tessera,
@@ -45,8 +46,11 @@ import { creaBraccianti } from './braccianti.js'
 import { creaEconomia } from './economia.js'
 import { creaTecnologie } from './tecnologie.js'
 import { creaGestoreEffetti } from './effetti.js'
+import { cancella, leggi, scrivi, tempoPassato } from './salvataggio.js'
 import {
   aggiornaMondo,
+  mondoDaSalvato,
+  mondoPerSalvare,
   centroTessera,
   maturoIn,
   piantabile,
@@ -72,7 +76,7 @@ export function creaMotore(canvasGioco) {
       camera.versoSchermo(centro.x, centro.y, centro)
       effetti.raccolta(centro.x, centro.y)
     },
-    alCambioDelMondo: () => {}
+    alCambioDelMondo: () => segna()
   })
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
@@ -196,6 +200,76 @@ export function creaMotore(canvasGioco) {
   let ultimoTempo = 0
   let accumulato = 0
   let richiesta = 0
+
+  // --- salvataggio ---
+  //
+  // **Mai dentro il ciclo di gioco.** Si segna che c'e' qualcosa da salvare, e
+  // si scrive fuori, non piu' spesso di quanto dice la configurazione:
+  // scrivere a ogni gesto ruberebbe fotogrammi.
+  let daSalvare = false
+  let ultimoSalvataggio = 0
+
+  function segna() {
+    daSalvare = true
+  }
+
+  function raccogliDati() {
+    return {
+      monete: economia.stato.monete,
+      tecnologie: tecnologie.prese.slice(),
+      mondo: mondoPerSalvare(),
+      casse: casse.perSalvare(),
+      operai: squadra.perSalvare(),
+      lavori: lavori.perSalvare()
+    }
+  }
+
+  function salva() {
+    daSalvare = false
+    ultimoSalvataggio = performance.now()
+    scrivi(raccogliDati())
+  }
+
+  function salvaSubito() {
+    salva()
+  }
+
+  // Il rientro. **Le macchine vanno avanti, l'operaio no**: e' lui la risorsa
+  // scarsa, e il suo tempo non puo' passare mentre non guardi.
+  //
+  // Si avanza a passi grossi: quattro ore a passi da 16 ms sarebbero un milione
+  // di giri, e il gioco si aprirebbe dopo dieci secondi di schermo nero.
+  function recupera(passatoMs) {
+    let resta = passatoMs
+    const passo = regoleSalvataggio.passo_recupero_ms
+    while (resta > 0) {
+      aggiornaMondo(Math.min(passo, resta))
+      resta -= passo
+    }
+  }
+
+  function ripristina() {
+    const dati = leggi()
+    if (!dati) {
+      return false
+    }
+    // il mondo per primo: le casse e l'operaio ci stanno sopra
+    if (!mondoDaSalvato(dati.mondo)) {
+      cancella()
+      return false
+    }
+    // le tecnologie prima dell'operaio: sono loro a dire quante caselle ha
+    tecnologie.daSalvato(dati.tecnologie)
+    economia.stato.monete = dati.monete || 0
+    casse.daSalvato(dati.casse)
+    squadra.daSalvato(dati.operai)
+    lavori.daSalvato(dati.lavori)
+    recupera(tempoPassato(dati.salvatoIl))
+    // si riscrive subito: se il tempo recuperato non venisse fissato, alla
+    // riapertura dopo un blocco verrebbe contato una seconda volta
+    segna()
+    return true
+  }
 
   function accodaComando(tipo, x, y, id) {
     const comando = primoLibero(comandi)
@@ -399,6 +473,10 @@ export function creaMotore(canvasGioco) {
         continue
       }
       comando.attivo = false
+      // puntare e trascinare non cambiano il mondo: tutto il resto si'
+      if (comando.tipo !== 'punta' && comando.tipo !== 'spunta' && comando.tipo !== 'trascina') {
+        segna()
+      }
       if (comando.tipo === 'tocca') {
         tocca(comando.x, comando.y)
       } else if (comando.tipo === 'trascina') {
@@ -473,9 +551,16 @@ export function creaMotore(canvasGioco) {
     }
 
     disegna()
+
+    // fuori dal ciclo di simulazione, e non piu' spesso del dovuto
+    if (daSalvare && istante - ultimoSalvataggio >= regoleSalvataggio.intervallo_minimo_ms) {
+      salva()
+    }
   }
 
   function avvia() {
+    ripristina()
+    ultimoSalvataggio = performance.now()
     ultimoTempo = performance.now()
     accumulato = 0
     richiesta = requestAnimationFrame(frame)
@@ -484,6 +569,7 @@ export function creaMotore(canvasGioco) {
   function ferma() {
     cancelAnimationFrame(richiesta)
     richiesta = 0
+    salva()
   }
 
   // --- comunicazione con l'interfaccia ---
@@ -567,6 +653,7 @@ export function creaMotore(canvasGioco) {
     preleva: (id) => accodaComando('preleva', 0, 0, id),
     annulla: () => accodaComando('annulla'),
     vendi: () => accodaComando('vendi'),
-    studia: (id) => accodaComando('studia', 0, 0, id)
+    studia: (id) => accodaComando('studia', 0, 0, id),
+    salvaSubito
   }
 }

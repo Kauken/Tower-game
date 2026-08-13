@@ -266,7 +266,35 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
     }
   }
 
+  // --- salvataggio ---
+  // Dove si trova e cosa ha addosso. **Non si salva il lavoro in corso**: al
+  // rientro riparte fermo e ripesca dalla coda, che e' salvata a parte. Uno
+  // stato a meta' di una camminata e' l'unica cosa che puo' tornare incoerente.
+  function perSalvare() {
+    return squadra.map((b) => ({
+      x: Math.round(b.x),
+      y: Math.round(b.y),
+      zaino: b.inventario.perSalvare()
+    }))
+  }
+
+  function daSalvato(dati) {
+    if (!Array.isArray(dati)) {
+      return
+    }
+    for (let i = 0; i < squadra.length && i < dati.length; i++) {
+      const b = squadra[i]
+      b.x = dati[i].x
+      b.y = dati[i].y
+      b.stato = 'fermo'
+      b.lavoro = null
+      b.lavoroMs = 0
+      b.inventario.apri(slotAdesso())
+      b.inventario.daSalvato(dati[i].zaino)
+    }
+  }
+
   reimposta()
 
-  return { squadra, assumi, aggiorna, quantiFermi, slotAdesso, reimposta }
+  return { squadra, assumi, aggiorna, quantiFermi, slotAdesso, perSalvare, daSalvato, reimposta }
 }

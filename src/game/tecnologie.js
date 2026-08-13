@@ -97,6 +97,20 @@ export function creaTecnologie() {
     prese.length = 0
   }
 
+  // Si salvano gli id e basta: gli effetti si ricavano da tecnologie.json, e
+  // cosi' un ritocco di bilanciamento arriva anche a un'isola gia' cominciata.
+  function daSalvato(dati) {
+    prese.length = 0
+    if (!Array.isArray(dati)) {
+      return
+    }
+    for (let i = 0; i < dati.length; i++) {
+      if (elencoTecnologie.some((voce) => voce.id === dati[i]) && !hoGiaPreso(dati[i])) {
+        prese.push(dati[i])
+      }
+    }
+  }
+
   return {
     prese,
     hoGiaPreso,
@@ -105,6 +119,7 @@ export function creaTecnologie() {
     moltiplicatore,
     aggiunta,
     aggiuntaMassima,
+    daSalvato,
     svuota
   }
 }

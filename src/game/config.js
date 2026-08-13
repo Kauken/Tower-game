@@ -6,6 +6,7 @@ import braccantiJson from '../../config/braccianti.json'
 import costruzioniJson from '../../config/costruzioni.json'
 import economiaJson from '../../config/economia.json'
 import tecnologieJson from '../../config/tecnologie.json'
+import salvataggioJson from '../../config/salvataggio.json'
 import motore from '../../config/motore.json'
 
 // L'area logica dello **schermo**, non del mondo: l'isola e' piu' grande, e la
@@ -35,6 +36,7 @@ export const elencoCostruzioni = costruzioniJson.costruzioni
 
 export const partenzaEconomia = economiaJson.partenza
 export const vendita = economiaJson.vendita
+export const salvataggio = salvataggioJson
 
 export function trovaCostruzione(id) {
   const costruzione = elencoCostruzioni.find((voce) => voce.id === id)
@@ -195,6 +197,15 @@ if (!isolaJson.mappa.some((riga) => riga.indexOf('C') >= 0)) {
 if (braccantiJson.iniziali.length < 1) {
   throw new Error('Serve almeno un operaio in braccianti.json, altrimenti non lavora nessuno')
 }
+// Un salvataggio senza versione non si potrebbe mai migrare, e un tetto di
+// recupero a zero renderebbe inutile automatizzare.
+if (!(salvataggioJson.versione_formato > 0)) {
+  throw new Error('salvataggio.json non ha una versione_formato: senza, un salvataggio vecchio non si potrebbe riconoscere')
+}
+if (!(salvataggioJson.tetto_recupero_ms > 0) || !(salvataggioJson.passo_recupero_ms > 0)) {
+  throw new Error('salvataggio.json ha bisogno di tetto_recupero_ms e passo_recupero_ms maggiori di zero')
+}
+
 if (!(braccantiJson.slot > 0)) {
   throw new Error('L\'operaio non ha caselle nello zaino in braccianti.json: non potrebbe raccogliere niente')
 }
