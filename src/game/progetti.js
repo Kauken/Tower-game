@@ -70,7 +70,12 @@ export function creaProgetti() {
     if (!effetto || effetto.tipo !== tipo) {
       return false
     }
-    // se l'effetto non nomina una risorsa, vale per tutte
+    // Un effetto puo' nominare **piu' risorse**: il piccone vale sui massi e
+    // sulle vene di pietra, che sono cose diverse per il codice ma la stessa
+    // cosa per chi gioca. Se non ne nomina nessuna, vale per tutte.
+    if (Array.isArray(effetto.risorse)) {
+      return effetto.risorse.indexOf(risorsa) >= 0
+    }
     return !effetto.risorsa || effetto.risorsa === risorsa
   }
 

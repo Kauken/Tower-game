@@ -78,6 +78,13 @@ export function creaMotore(canvasGioco) {
       effetti.raccolta(centro.x, centro.y)
     },
     alCambioDelMondo: () => segna(),
+    // il numero che sale: e' la conferma che il viaggio e' servito a qualcosa
+    alGuadagno: (x, y, testo, colore) => {
+      centro.x = x
+      centro.y = y
+      camera.versoSchermo(x, y, centro)
+      effetti.numero(centro.x, centro.y, testo, colore)
+    },
     alFabbricato: (id) => progetti.segnaFatto(id)
   })
 

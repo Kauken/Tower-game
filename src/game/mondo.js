@@ -10,7 +10,8 @@
 // il fondo (acqua, sabbia, erba) e quello che ci sta sopra (alberi, massi,
 // frane, il casotto). Dentro il ciclo di gioco non si rilegge niente.
 
-import { isola, legenda, risorse, terreni, tessera } from './config.js'
+import {
+  grafica, isola, legenda, risorse, terreni, tessera } from './config.js'
 
 const righe = isola.mappa
 
@@ -41,6 +42,27 @@ function caso(x, y, seme) {
   return v - Math.floor(v)
 }
 
+// Rimette l'isola com'era all'avvio. Serve alla simulazione headless, che
+// prova piu' scenari uno dopo l'altro sullo stesso mondo, e servira' a
+// "ricomincia da capo".
+export function reimpostaMondo() {
+  for (let y = 0; y < filari; y++) {
+    for (let x = 0; x < colonne; x++) {
+      const indice = y * colonne + x
+      const nome = legenda[righe[y][x]]
+      if (terreni[nome]) {
+        fondo[indice] = nome
+        sopra[indice] = ''
+      } else {
+        fondo[indice] = 'erba'
+        sopra[indice] = nome
+      }
+      crescitaMs[indice] = 0
+      crescitaTotaleMs[indice] = 0
+    }
+  }
+}
+
 for (let y = 0; y < filari; y++) {
   for (let x = 0; x < colonne; x++) {
     const indice = y * colonne + x
@@ -57,6 +79,18 @@ for (let y = 0; y < filari; y++) {
     macchiaX[indice] = (caso(x, y, 2) - 0.5) * 2
     macchiaY[indice] = (caso(x, y, 3) - 0.5) * 2
     macchiaR[indice] = caso(x, y, 4)
+  }
+}
+
+// I ciuffi d'erba: posizioni sparse dentro ogni tessera, calcolate **una volta
+// sola** all'avvio. Dentro il disegno non si fa rumore a ogni fotogramma.
+const quantiCiuffi = grafica.mondo.ciuffi.quanti_per_tessera
+export const ciuffoX = new Float32Array(colonne * filari * quantiCiuffi)
+export const ciuffoY = new Float32Array(colonne * filari * quantiCiuffi)
+for (let i = 0; i < colonne * filari; i++) {
+  for (let c = 0; c < quantiCiuffi; c++) {
+    ciuffoX[i * quantiCiuffi + c] = 0.15 + caso(i, c, 11) * 0.7
+    ciuffoY[i * quantiCiuffi + c] = 0.25 + caso(i, c, 12) * 0.65
   }
 }
 

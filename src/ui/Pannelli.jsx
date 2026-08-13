@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   elencoCostruzioni,
   elencoMateriali,
@@ -196,12 +196,12 @@ function Banco({ stati, onFabbrica }) {
     <>
       <span
         style={{
-          marginTop: 4,
           fontSize: interfaccia.testo_piccolo,
           color: interfaccia.colore_testo_debole
         }}
       >
-        <b>Banco da lavoro</b> — si fabbrica con quello che l’operaio ha addosso.
+        Si fabbrica con quello che l’operaio ha <b>addosso</b>: se il materiale è
+        in una cassa, prima va a prenderlo.
       </span>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}>
         {aperte.map((r) => {
@@ -224,6 +224,55 @@ function Banco({ stati, onFabbrica }) {
   )
 }
 
+// Le schede del casotto. Il pannello faceva tre cose in un rotolone solo, e
+// su un telefono un rotolone e' il modo piu' facile per non trovare quello che
+// cerchi. Tre schede, e ognuna e' un motivo diverso per essere venuto qui.
+function Schede({ quale, cambia, voci }) {
+  return (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 2 }}>
+      {voci.map((voce) => {
+        const attiva = voce.id === quale
+        return (
+          <button
+            key={voce.id}
+            type="button"
+            onPointerDown={() => cambia(voce.id)}
+            style={{
+              flex: 1,
+              minHeight: 42,
+              borderRadius: interfaccia.raggio_angoli,
+              border:
+                stile.spessore_bordo +
+                'px solid ' +
+                (attiva ? interfaccia.colore_accento : 'transparent'),
+              background: attiva ? stile.colore_azione : stile.colore_spento,
+              color: attiva ? interfaccia.colore_testo : stile.colore_testo_spento,
+              fontFamily: 'inherit',
+              fontSize: interfaccia.testo_piccolo,
+              fontWeight: attiva ? stile.peso_titolo : 400,
+              touchAction: 'manipulation'
+            }}
+          >
+            {voce.nome}
+            {voce.pallino ? (
+              <span
+                style={{
+                  display: 'inline-block',
+                  marginLeft: 5,
+                  width: 7,
+                  height: 7,
+                  borderRadius: 4,
+                  background: interfaccia.colore_accento
+                }}
+              />
+            ) : null}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 export function PannelloCassa({
   contenuto,
   inventarioOperaio,
@@ -243,6 +292,13 @@ export function PannelloCassa({
   const dentro = sommaCaselle(contenuto)
   const addosso = sommaCaselle(inventarioOperaio)
   const qualcosaDentro = elencoMateriali.some((m) => (dentro[m.id] || 0) > 0)
+  const [scheda, cambiaScheda] = useState('cassa')
+
+  // un pallino sulla scheda quando c'e' qualcosa da fare li' dentro: senza,
+  // una scheda chiusa e' una cosa che non esiste
+  const qualcosaDaFare = elencoRicette.some((r) => ricette && ricette[r.id] === 'si')
+  const qualcosaDaComprare = progetti.some((t) => t.stato === 'libero' && monete >= t.costo)
+  const mostra = eIlCasotto ? scheda : 'cassa'
 
   return (
     <Foglio
@@ -253,6 +309,20 @@ export function PannelloCassa({
           : 'Occupate ' + pieno
       }
     >
+      {eIlCasotto ? (
+        <Schede
+          quale={scheda}
+          cambia={cambiaScheda}
+          voci={[
+            { id: 'cassa', nome: 'Cassa' },
+            { id: 'banco', nome: 'Banco', pallino: qualcosaDaFare },
+            { id: 'progetti', nome: 'Progetti', pallino: qualcosaDaComprare }
+          ]}
+        />
+      ) : null}
+
+      {mostra !== 'cassa' ? null : (
+        <>
       <Griglia inventario={contenuto} vuotoDice="È vuota." />
 
       {/* la roba non ci arriva da sola: gliela fai posare tu, e lui ci deve
@@ -294,20 +364,23 @@ export function PannelloCassa({
           Per vendere serve il casotto: il mercante sta lì.
         </span>
       )}
+        </>
+      )}
 
-      {eIlCasotto ? (
+      {mostra !== 'banco' ? null : (
+        <Banco stati={ricette} onFabbrica={onFabbrica} />
+      )}
+
+      {mostra !== 'progetti' ? null : (
         <>
-          <Banco stati={ricette} onFabbrica={onFabbrica} />
-
           <span
             style={{
-              marginTop: 4,
               fontSize: interfaccia.testo_piccolo,
               color: interfaccia.colore_testo_debole
             }}
           >
-            <b>Progetti</b> — le monete comprano il <i>diritto</i> di fabbricare
-            una cosa. Poi la cosa te la fabbrichi al banco, coi materiali.
+            Le monete comprano il <i>diritto</i> di fabbricare una cosa. Poi la
+            cosa te la fabbrichi al <b>banco</b>, coi materiali.
           </span>
 
           {/* le tecnologie che non ti puoi ancora permettere restano visibili
@@ -383,7 +456,7 @@ export function PannelloCassa({
                     {bloccata && richiesta
                       ? 'prima serve: ' + richiesta.nome
                       : comprato
-                        ? 'comprato — adesso fabbricalo qui sotto al banco'
+                        ? 'comprato — adesso fabbricalo nella scheda Banco'
                         : t.descrizione}
                   </div>
                 </button>
@@ -391,7 +464,7 @@ export function PannelloCassa({
             })}
           </div>
         </>
-      ) : null}
+      )}
 
       <Bottone titolo="Chiudi" colore={stile.colore_chiudi} largo onTocco={onChiudi} />
     </Foglio>

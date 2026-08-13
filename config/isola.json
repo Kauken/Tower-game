@@ -47,20 +47,20 @@
     "r": "giacimento_rame_ricco"
   },
   "terreni": {
-    "_nota": "I fondi calpestabili o no. Il colore di base piu' una variazione, cosi' il terreno non e' una tinta piatta e non si legge come una griglia.",
+    "_nota": "I fondi. Colori piu' caldi e saturi della prima versione: e' un gioco cozy, non un gestionale militare. Il colore di base piu' una variazione tonda, cosi' il terreno non e' una tinta piatta e non si legge come una griglia.",
     "acqua": {
-      "colore": "#1d3a4d",
-      "variazione": "#24485e",
+      "colore": "#2b6b7d",
+      "variazione": "#357f92",
       "calpestabile": false
     },
     "sabbia": {
-      "colore": "#8a7a4f",
-      "variazione": "#96865a",
+      "colore": "#d8c48a",
+      "variazione": "#dfcd96",
       "calpestabile": true
     },
     "erba": {
-      "colore": "#3d5c2a",
-      "variazione": "#456533",
+      "colore": "#5b8a3c",
+      "variazione": "#63913f",
       "calpestabile": true
     }
   },
@@ -69,10 +69,10 @@
     "albero": {
       "nome": "Albero",
       "tempo_lavoro_ms": 3200,
-      "colore": "#2f4a1e",
-      "colore_chioma": "#4a7031",
-      "colore_tronco": "#4a3a24",
-      "raggio": 0.42,
+      "colore": "#2f5a22",
+      "colore_chioma": "#5aa03c",
+      "colore_tronco": "#6b4a2a",
+      "raggio": 0.4,
       "blocca": true,
       "lavorabile": true,
       "rese": [
@@ -90,10 +90,10 @@
     "masso": {
       "nome": "Masso",
       "tempo_lavoro_ms": 5200,
-      "colore": "#5b5f63",
-      "colore_chioma": "#7c8288",
-      "colore_tronco": "#3e4247",
-      "raggio": 0.38,
+      "colore": "#6a7078",
+      "colore_chioma": "#98a1aa",
+      "colore_tronco": "#4a5058",
+      "raggio": 0.36,
       "blocca": true,
       "lavorabile": true,
       "rese": [
@@ -106,10 +106,10 @@
     "frana": {
       "nome": "Frana",
       "tempo_lavoro_ms": 8000,
-      "colore": "#4a4038",
-      "colore_chioma": "#6b5c4a",
-      "colore_tronco": "#332c26",
-      "raggio": 0.46,
+      "colore": "#7a6a52",
+      "colore_chioma": "#a08a68",
+      "colore_tronco": "#584c3c",
+      "raggio": 0.44,
       "blocca": true,
       "lavorabile": true,
       "rese": [
@@ -122,10 +122,10 @@
     "casotto": {
       "nome": "Casotto",
       "tempo_lavoro_ms": 0,
-      "colore": "#6b4a32",
-      "colore_chioma": "#8a6242",
-      "colore_tronco": "#3f2b1c",
-      "raggio": 0.45,
+      "colore": "#8a5a34",
+      "colore_chioma": "#c98a52",
+      "colore_tronco": "#5c3a1e",
+      "raggio": 0.42,
       "blocca": true,
       "squadrata": true,
       "_nota": "L'unica cosa costruita da qualcuno: si disegna quadrata fra le sagome tonde della natura.",
@@ -141,9 +141,9 @@
       "lavorabile": true,
       "blocca": true,
       "raggio": 0.44,
-      "colore": "#57606b",
-      "colore_chioma": "#7d8894",
-      "colore_tronco": "#3c434c"
+      "colore": "#77808c",
+      "colore_chioma": "#c3ccd6",
+      "colore_tronco": "#5a636e"
     },
     "giacimento_rame": {
       "nome": "Vena di rame",
@@ -155,9 +155,9 @@
       "lavorabile": true,
       "blocca": true,
       "raggio": 0.44,
-      "colore": "#6b5240",
-      "colore_chioma": "#c07a4e",
-      "colore_tronco": "#43332a"
+      "colore": "#8a6448",
+      "colore_chioma": "#e08a4a",
+      "colore_tronco": "#63452f"
     },
     "giacimento_rame_ricco": {
       "nome": "Vena di rame ricca",
@@ -169,9 +169,9 @@
       "lavorabile": true,
       "blocca": true,
       "raggio": 0.44,
-      "colore": "#7a5a44",
-      "colore_chioma": "#e08a52",
-      "colore_tronco": "#4b3830"
+      "colore": "#966b48",
+      "colore_chioma": "#ffab5e",
+      "colore_tronco": "#6b4a30"
     }
   },
   "materiali": [

@@ -22,6 +22,7 @@
 // arriveranno recinti e capanne servira' un percorso vero (punto 6).
 
 import { trovaRicetta } from './config.js'
+import { elencoMateriali } from './config.js'
 import {
   braccianti as datiBraccianti,
   operaio as aspettoOperaio,
@@ -44,7 +45,7 @@ import {
 const puntoDiLavoro = { tx: 0, ty: 0 }
 const meta = { x: 0, y: 0 }
 
-export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo, alFabbricato }) {
+export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo, alFabbricato, alGuadagno }) {
   const squadra = []
 
   // Quante tasche puo' arrivare ad avere: le caselle si creano tutte all'avvio
@@ -169,6 +170,16 @@ export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo,
     return true
   }
 
+  // Il numero che sale sopra la testa. Si prepara la stringa qui, che e' fuori
+  // dal disegno: comporla a ogni fotogramma sarebbe un'allocazione nel ciclo.
+  function segnaGuadagno(bracciante, materiale, quanti) {
+    if (quanti <= 0) {
+      return
+    }
+    const m = elencoMateriali.find((voce) => voce.id === materiale)
+    alGuadagno(bracciante.x, bracciante.y, '+' + quanti, m ? m.colore : '')
+  }
+
   // Quanto rende una scavata. La **ricchezza** del giacimento moltiplica la
   // resa: e' quello che rende i posti diversi fra loro, e che fa esistere la
   // decisione "un giacimento ricco lontano o due poveri vicini?".
@@ -184,7 +195,8 @@ export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo,
         return
       }
       const dati = risorse[lavoro.tipo]
-      bracciante.inventario.metti(dati.materiale, resaDi(dati))
+      const presi = bracciante.inventario.metti(dati.materiale, resaDi(dati))
+      segnaGuadagno(bracciante, dati.materiale, presi)
       alCambioDelMondo()
       return
     }
@@ -195,7 +207,10 @@ export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo,
       const rese = risorse[lavoro.tipo].rese
       raccogliRisorsa(lavoro.tx, lavoro.ty)
       for (let i = 0; i < rese.length; i++) {
-        bracciante.inventario.metti(rese[i].materiale, rese[i].quantita)
+        const presi = bracciante.inventario.metti(rese[i].materiale, rese[i].quantita)
+        if (i === 0) {
+          segnaGuadagno(bracciante, rese[i].materiale, presi)
+        }
       }
       alCambioDelMondo()
       return
@@ -224,7 +239,8 @@ export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo,
         bracciante.inventario.togli(ricetta.ingredienti[i].materiale, ricetta.ingredienti[i].quantita)
       }
       if (ricetta.produce) {
-        bracciante.inventario.metti(ricetta.produce, ricetta.quantita)
+        const fatti = bracciante.inventario.metti(ricetta.produce, ricetta.quantita)
+        segnaGuadagno(bracciante, ricetta.produce, fatti)
       }
       // un attrezzo non finisce nello zaino: si accende e resta acceso
       if (ricetta.attrezzo) {

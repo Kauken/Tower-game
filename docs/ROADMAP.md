@@ -1,4 +1,4 @@
-# Lista di costruzione — v16
+# Lista di costruzione — v17
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice **"fai il punto N"**, si intende il numero di questa lista.
@@ -66,8 +66,11 @@ La bacheca al casotto smette di vendere potenziamenti e comincia a vendere **pro
 
 ## Fase C — le macchine, e il tempo che tornano a darti
 
-**7. La simulazione headless.** — Far girare l'isola senza disegnarla.
-Serve a rispondere con dei numeri a *"quanto vale un minuto dell'operaio"*, che è la lente di tutto `MATERIALI.md`. Senza, il bilanciamento resta a occhio, e questo gioco è una questione di portata: a occhio non si vede.
+**7. La simulazione headless.** — **FATTO** (2026-08-13). Si lancia con `npm run simula`.
+Carica i **moduli veri** del gioco attraverso Vite e fa girare l'isola senza disegnarla: è anche la prova che la logica sta in piedi senza il canvas.
+Misura **il tempo per fare un tot**, non il tot fatto in un tempo — differenza che sembra pedante e non lo è: il bosco ha otto alberi, quindi a tempo fisso tutti gli scenari davano lo stesso numero e un'ascia migliore non si vedeva.
+
+   > **Ha ripagato subito.** Ha trovato che il **Piccone pesante non funzionava sulle vene di pietra** (nominava solo i massi, che sono una risorsa diversa: si comprava un attrezzo che non faceva niente su quello che scavi davvero), e che lo **Zaino grande non serve a niente** — ×0,95, cioè zero, perché nessuna fonte è abbastanza lontana da rendere i viaggi un costo. Il primo era un difetto ed è corretto; il secondo è bilanciamento, ed è del bilanciatore.
 
 **8. Le macchine e la corrente.** — **Il punto più grosso della lista**, e non si può spezzare.
 Segheria, frantoio, fornace: cassetto d'entrata, cassetto d'uscita, lavorano da sole finché hanno materiale. **Riempirle e svuotarle è il lavoro.** Qui il legno comincia davvero a moltiplicarsi.
@@ -102,6 +105,9 @@ Stessa struttura a gradini di tutto il resto.
 
 **14. Il carbone come combustibile.** — Arriva con la seconda isola, e rende molto di più del legno.
 **Non sblocca niente di nuovo: toglie una scocciatura che hai sentito per ore** — dover bruciare il bosco che ripianti. È l'unico modo onesto di rendere desiderabile un materiale.
+
+> ### ✅ Verifica passata
+> Punto 7: `npm run simula` dà una tabella leggibile. Bosco a mani nude 166 monete/min; l'Ascia ×1,37; gli Stivali ×1,58; la vena ricca lontana ×1,21 contro la pietra vicina ×0,95 — **la ricchezza batte la distanza, come doveva**.
 
 ## Fase E — **le scale**, cioè il gioco vero e proprio
 

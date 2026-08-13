@@ -165,6 +165,15 @@ for (let i = 0; i < elencoProgetti.length; i++) {
       `Il progetto "${t.id}" agisce su "${t.effetto.risorsa}", che non e una risorsa dell'isola`
     )
   }
+  if (Array.isArray(t.effetto.risorse)) {
+    for (let r = 0; r < t.effetto.risorse.length; r++) {
+      if (!risorse[t.effetto.risorse[r]]) {
+        throw new Error(
+          `Il progetto "${t.id}" agisce su "${t.effetto.risorse[r]}", che non e una risorsa dell'isola`
+        )
+      }
+    }
+  }
   // Le tasche si sommano, tutto il resto si moltiplica. Sbagliare la parola
   // qui darebbe un effetto che non si vede e che nessuno collegherebbe alla
   // configurazione: meglio fermarsi.

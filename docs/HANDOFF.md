@@ -27,7 +27,7 @@ Un'isola vista dall'alto. **Tocchi le cose e dai ordini**; un operaio solo li es
 
 Il **codice** è a un punto onesto: si può giocare, e il giro completo funziona provato nel browser a 390×780.
 
-Il **progetto** è appena stato riscritto: `GDD.md` v7.0 e `ROADMAP.md` v16 descrivono un gioco più grande di quello che c'è. Non è un errore, è l'ordine giusto — ma vuol dire che **una parte dei documenti descrive cose non ancora costruite**, e sono elencate qui sotto.
+Il **progetto** è appena stato riscritto: `GDD.md` v7.0 e `ROADMAP.md` v17 descrivono un gioco più grande di quello che c'è. Non è un errore, è l'ordine giusto — ma vuol dire che **una parte dei documenti descrive cose non ancora costruite**, e sono elencate qui sotto.
 
 ### Cosa funziona adesso, provato
 

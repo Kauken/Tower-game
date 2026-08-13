@@ -7,7 +7,7 @@
   "limiti": {
     "_nota": "Dimensione delle strutture preallocate: oltre questi numeri il gioco non crea niente di nuovo.",
     "comandi_massimi": 8,
-    "effetti_massimi": 24,
+    "effetti_massimi": 32,
     "lavori_massimi": 64
   },
   "interfaccia": {
@@ -41,33 +41,48 @@
     "colore_accento": "#f0c95c"
   },
   "grafica": {
-    "colore_fuori_area": "#0b1410",
+    "colore_fuori_area": "#123642",
     "mondo": {
       "_nota": "Il terreno. La variazione NON e' un quadrato: e' una macchia tonda dentro la tessera, sfalsata in modo stabile. Un quadrato piu' chiaro dentro una griglia di quadrati si legge come una scacchiera, ed e' esattamente la cosa che l'autore ha rifiutato. Le tessere non hanno bordi, mai.",
-      "colore_mare_fuori": "#16303f",
-      "opacita_variazione": 0.35,
+      "colore_mare_fuori": "#123642",
+      "opacita_variazione": 0.22,
       "riva": {
-        "_nota": "Un bordo chiaro dove la sabbia tocca l'acqua: e' quello che fa leggere l'isola come un'isola.",
-        "colore": "#b0a070",
-        "spessore": 3
+        "_nota": "Dove la terra tocca l'acqua. Due segni, non uno: una fascia di bassofondo piu' chiara DENTRO l'acqua, e una linea di schiuma sul bordo. E' questa coppia che fa leggere l'isola come un'isola invece che come una macchia verde.",
+        "colore": "#f4ecd0",
+        "spessore": 3,
+        "colore_bassofondo": "#4d94a4",
+        "larghezza_bassofondo": 0.55,
+        "opacita_schiuma": 0.75
       },
       "macchia": {
         "_nota": "Raggio e scarto della macchia, in frazioni di tessera. Lo scarto la sposta fuori centro cosi' non si allinea con le vicine.",
         "raggio_minimo": 0.26,
         "raggio_massimo": 0.44,
         "scarto_massimo": 0.3
+      },
+      "ciuffi": {
+        "_nota": "Ciuffi d'erba sparsi sul terreno. Non si vedono uno per uno: servono a togliere la sensazione di tinta piatta, che e' la cosa che fa sembrare un gioco non finito.",
+        "quanti_per_tessera": 3,
+        "altezza": 0.14,
+        "spessore": 2,
+        "colore": "#4a7530",
+        "opacita": 0.32
       }
     },
     "risorsa": {
-      "_nota": "Alberi, massi, frane e casotto, disegnati come sagome tonde con un'ombra sotto. Le misure sono frazioni della tessera, cosi' cambiare la dimensione della tessera non rompe niente.",
-      "ombra": "#0000003d",
+      "_nota": "Alberi, massi e frane. Ognuno e' fatto di PIU' macchie tonde sovrapposte, non di un cerchio solo: un cerchio solo si legge come un bollino, tre macchie si leggono come una chioma. La dimensione varia da tessera a tessera, cosi' un bosco non e' lo stesso timbro ripetuto.",
+      "ombra": "#00000038",
       "scarto_ombra": 0.08,
-      "spessore_bordo": 2,
-      "raggio_tronco": 0.12,
-      "altezza_tronco": 0.22,
-      "germoglio_minimo": 0.3,
-      "opacita_germoglio": 0.55,
-      "_nota_germoglio": "Quello che sta ricrescendo si disegna piccolo e smorto, e cresce mentre il tempo passa: si deve capire a colpo d'occhio che c'e' ma non si tocca ancora."
+      "spessore_bordo": 3,
+      "raggio_tronco": 0.1,
+      "altezza_tronco": 0.2,
+      "germoglio_minimo": 0.28,
+      "opacita_germoglio": 0.6,
+      "_nota_germoglio": "Quello che sta ricrescendo si disegna piccolo e smorto, e cresce mentre il tempo passa: si deve capire a colpo d'occhio che c'e' ma non si tocca ancora.",
+      "variazione_dimensione": 0.22,
+      "ciuffi": 3,
+      "scarto_ciuffi": 0.3,
+      "schiarimento": "#ffffff30"
     },
     "giacimento": {
       "_nota": "Le vene si disegnano PIATTE: sono dentro al terreno, non appoggiate sopra come un albero. E soprattutto si FONDONO: nessun bordo fra due tessere della stessa vena, altrimenti una vena di sei tessere si legge come una scacchiera - ed e' la cosa che l'autore ha rifiutato. Il bordo si disegna SOLO dove la vena finisce.",
@@ -99,7 +114,7 @@
       "_nota": "Chi lavora. Un cerchio col colore del mestiere. La barra sopra la testa dice a che punto e' il lavoro: e' l'unico modo per capire che sta facendo qualcosa invece di essere impallato.",
       "raggio": 13,
       "spessore_bordo": 3,
-      "ombra": "#0000004d",
+      "ombra": "#00000045",
       "barra": {
         "larghezza": 32,
         "altezza": 6,
@@ -108,6 +123,13 @@
         "colore_pieno": "#f0c95c",
         "colore_bordo": "#0b0f0b",
         "spessore_bordo": 2
+      },
+      "dondolio": {
+        "_nota": "L'operaio si muove anche quando sta fermo a lavorare. Guardarlo lavorare deve essere piacevole: e' meta' del gioco, e un cerchio immobile con una barra sopra non lo e'.",
+        "passo_ampiezza": 2.5,
+        "passo_velocita": 9,
+        "colpo_ampiezza": 5,
+        "colpo_velocita": 7
       }
     },
     "effetti": {
@@ -117,6 +139,15 @@
         "raggio_massimo": 52,
         "colore": "#fff3c4",
         "spessore": 4
+      },
+      "numero": {
+        "_nota": "Il numero che sale quando entra roba nello zaino. E' la conferma che il viaggio e' servito a qualcosa, ed e' quello che rende soddisfacente una raccolta.",
+        "durata_ms": 900,
+        "salita": 34,
+        "dimensione": 17,
+        "colore": "#ffffff",
+        "colore_bordo": "#00000099",
+        "spessore_bordo": 3
       }
     },
     "cassa": {
@@ -145,6 +176,13 @@
       "distanza_sopra": 15,
       "colore_bordo": "#0b0f0b",
       "spessore_bordo": 2
+    },
+    "ombra": {
+      "_nota": "Tutte le cose fanno ombra nella STESSA direzione. E' la cosa piu' economica che esista per dare profondita' a un disegno piatto: senza, tutto sembra appiccicato al terreno.",
+      "colore": "#00000038",
+      "scarto_x": 0.06,
+      "scarto_y": 0.1,
+      "schiacciamento": 0.42
     }
   },
   "area": {

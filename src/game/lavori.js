@@ -138,13 +138,25 @@ export function creaLavori() {
 
   // Posare o prendere da una cassa. Qui il secondo tocco non annulla: si arriva
   // da un pulsante del pannello, e chi lo preme vuole dare l'ordine, non
-  // disdire quello di prima. Un ordine dello stesso tipo sulla stessa cassa
-  // viene riscritto invece di accodarsi.
+  // disdire quello di prima.
+  //
+  // **Ordini di materiali diversi si accodano**, uno per materiale. Prima si
+  // riscrivevano a vicenda: premevi "Posa legno" e poi "Posa rame" e il legno
+  // spariva dalla coda senza dire niente. Premere due pulsanti e vederne
+  // funzionare uno solo e' il modo piu' rapido per non fidarsi piu' di un
+  // gioco. Lo stesso materiale invece non si accoda due volte: premerlo di
+  // nuovo vuol dire "si, quello".
   function ordinaScambio(azione, tx, ty, materiale) {
     for (let i = 0; i < coda.length; i++) {
       const lavoro = coda[i]
-      if (lavoro.attivo && !lavoro.preso && lavoro.azione === azione && lavoro.tx === tx && lavoro.ty === ty) {
-        lavoro.materiale = materiale
+      if (
+        lavoro.attivo &&
+        !lavoro.preso &&
+        lavoro.azione === azione &&
+        lavoro.tx === tx &&
+        lavoro.ty === ty &&
+        lavoro.materiale === materiale
+      ) {
         return true
       }
     }

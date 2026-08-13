@@ -26,6 +26,8 @@ import {
   macchiaR,
   macchiaX,
   macchiaY,
+  ciuffoX,
+  ciuffoY,
   crescitaMs,
   crescitaTotaleMs,
   risorsaIn,
@@ -34,6 +36,11 @@ import {
 
 const vista = { da_x: 0, a_x: 0, da_y: 0, a_y: 0 }
 const punto = { x: 0, y: 0 }
+
+// Il tempo che scorre, in secondi, solo per le animazioni. Non e' il tempo
+// della simulazione: quello ha il suo passo fisso e non deve dipendere da
+// quanti fotogrammi fa lo schermo.
+let orologio = 0
 
 // Il mare oltre i bordi dell'isola: senza, si vedrebbe il vuoto.
 function disegnaFuori(ctx) {
@@ -82,11 +89,61 @@ function disegnaTerreno(ctx, camera) {
     }
   }
 
-  // la riva: una linea chiara dove la sabbia tocca l'acqua. E' questa che fa
-  // leggere l'isola come un'isola invece che come una macchia
+  // I ciuffi d'erba. Non si vedono uno per uno: servono a togliere la
+  // sensazione di tinta piatta, che e' la cosa che fa sembrare un gioco non
+  // finito. Le posizioni sono gia' calcolate all'avvio.
+  const ciuffi = stile.ciuffi
+  ctx.strokeStyle = ciuffi.colore
+  ctx.lineWidth = ciuffi.spessore
+  ctx.lineCap = 'round'
+  ctx.globalAlpha = ciuffi.opacita
+  ctx.beginPath()
+  for (let ty = vista.da_y; ty <= vista.a_y; ty++) {
+    for (let tx = vista.da_x; tx <= vista.a_x; tx++) {
+      if (tx < 0 || ty < 0 || tx >= colonne || ty >= filari) {
+        continue
+      }
+      const indice = indiceDi(tx, ty)
+      if (fondo[indice] !== 'erba' || sopra[indice]) {
+        continue
+      }
+      camera.versoSchermo(tx * tessera, ty * tessera, punto)
+      for (let c = 0; c < ciuffi.quanti_per_tessera; c++) {
+        const x = punto.x + ciuffoX[indice * ciuffi.quanti_per_tessera + c] * lato
+        const y = punto.y + ciuffoY[indice * ciuffi.quanti_per_tessera + c] * lato
+        ctx.moveTo(x, y)
+        ctx.lineTo(x, y - ciuffi.altezza * lato)
+      }
+    }
+  }
+  ctx.stroke()
+  ctx.globalAlpha = 1
+
+  // Il bassofondo: una fascia piu' chiara **dentro** l'acqua, dove tocca la
+  // terra. Insieme alla schiuma e' quello che fa leggere l'isola come
+  // un'isola invece che come una macchia verde su fondo blu.
+  ctx.strokeStyle = stile.riva.colore_bassofondo
+  ctx.lineWidth = stile.riva.larghezza_bassofondo * tessera * camera.stato.zoom
+  ctx.lineCap = 'butt'
+  ctx.beginPath()
+  bordiRiva(ctx, camera, 0.5)
+  ctx.stroke()
+
+  // la schiuma: la linea chiara sul bordo esatto
   ctx.strokeStyle = stile.riva.colore
   ctx.lineWidth = stile.riva.spessore
+  ctx.globalAlpha = stile.riva.opacita_schiuma
   ctx.beginPath()
+  bordiRiva(ctx, camera, 0)
+  ctx.stroke()
+  ctx.globalAlpha = 1
+}
+
+// I bordi fra terra e acqua, una volta sola: li usano sia il bassofondo sia la
+// schiuma, con spessori diversi.
+function bordiRiva(ctx, camera, scarto) {
+  const lato = tessera * camera.stato.zoom
+  const d = lato * scarto
   for (let ty = vista.da_y; ty <= vista.a_y; ty++) {
     for (let tx = vista.da_x; tx <= vista.a_x; tx++) {
       if (tx < 0 || ty < 0 || tx >= colonne || ty >= filari) {
@@ -96,26 +153,76 @@ function disegnaTerreno(ctx, camera) {
         continue
       }
       camera.versoSchermo(tx * tessera, ty * tessera, punto)
-      const lato2 = tessera * camera.stato.zoom
       if (ty > 0 && fondo[indiceDi(tx, ty - 1)] === 'acqua') {
-        ctx.moveTo(punto.x, punto.y)
-        ctx.lineTo(punto.x + lato2, punto.y)
+        ctx.moveTo(punto.x, punto.y - d)
+        ctx.lineTo(punto.x + lato, punto.y - d)
       }
       if (ty < filari - 1 && fondo[indiceDi(tx, ty + 1)] === 'acqua') {
-        ctx.moveTo(punto.x, punto.y + lato2)
-        ctx.lineTo(punto.x + lato2, punto.y + lato2)
+        ctx.moveTo(punto.x, punto.y + lato + d)
+        ctx.lineTo(punto.x + lato, punto.y + lato + d)
       }
       if (tx > 0 && fondo[indiceDi(tx - 1, ty)] === 'acqua') {
-        ctx.moveTo(punto.x, punto.y)
-        ctx.lineTo(punto.x, punto.y + lato2)
+        ctx.moveTo(punto.x - d, punto.y)
+        ctx.lineTo(punto.x - d, punto.y + lato)
       }
       if (tx < colonne - 1 && fondo[indiceDi(tx + 1, ty)] === 'acqua') {
-        ctx.moveTo(punto.x + lato2, punto.y)
-        ctx.lineTo(punto.x + lato2, punto.y + lato2)
+        ctx.moveTo(punto.x + lato + d, punto.y)
+        ctx.lineTo(punto.x + lato + d, punto.y + lato)
       }
     }
   }
-  ctx.stroke()
+}
+
+// Le macchie che fanno una chioma. Si usa due volte per ogni cosa: una
+// piu' grande nel colore scuro (che diventa il bordo) e una normale nel
+// colore chiaro.
+function macchieChioma(ctx, x, y, raggio, stile, giro, quota) {
+  ctx.beginPath()
+  for (let c = 0; c < stile.ciuffi; c++) {
+    const angolo = (c / stile.ciuffi) * Math.PI * 2 + giro
+    const cx = x + Math.cos(angolo) * raggio * stile.scarto_ciuffi
+    const cy = y + Math.sin(angolo) * raggio * stile.scarto_ciuffi
+    ctx.moveTo(cx + raggio * quota, cy)
+    ctx.arc(cx, cy, raggio * quota, 0, Math.PI * 2)
+  }
+}
+
+// Il casotto: corpo, tetto e porta. E' l'unica cosa costruita da qualcuno, e
+// deve riconoscersi a colpo d'occhio fra le sagome tonde della natura.
+function disegnaCasotto(ctx, dati, raggio) {
+  const x = punto.x
+  const y = punto.y
+  ctx.fillStyle = dati.colore
+  ctx.fillRect(x - raggio, y - raggio * 0.55, raggio * 2, raggio * 1.5)
+
+  ctx.fillStyle = dati.colore_chioma
+  ctx.beginPath()
+  ctx.moveTo(x - raggio * 1.2, y - raggio * 0.5)
+  ctx.lineTo(x, y - raggio * 1.5)
+  ctx.lineTo(x + raggio * 1.2, y - raggio * 0.5)
+  ctx.closePath()
+  ctx.fill()
+
+  ctx.fillStyle = dati.colore_tronco
+  ctx.fillRect(x - raggio * 0.3, y + raggio * 0.15, raggio * 0.6, raggio * 0.8)
+}
+
+// L'ombra: **tutte le cose la fanno nella stessa direzione**. E' la cosa piu'
+// economica che esista per dare profondita' a un disegno piatto.
+function disegnaOmbra(ctx, x, y, raggio) {
+  const stile = grafica.ombra
+  ctx.fillStyle = stile.colore
+  ctx.beginPath()
+  ctx.ellipse(
+    x + raggio * stile.scarto_x,
+    y + raggio * stile.scarto_y,
+    raggio,
+    raggio * stile.schiacciamento,
+    0,
+    0,
+    Math.PI * 2
+  )
+  ctx.fill()
 }
 
 // Le vene si **fondono**: la tessera si riempie tutta e non c'e' nessun bordo
@@ -237,19 +344,11 @@ function disegnaRisorse(ctx, camera) {
         ctx.globalAlpha = stile.opacita_germoglio
       }
 
-      // l'ombra sotto: senza, le cose sembrano appiccicate al terreno
-      ctx.fillStyle = stile.ombra
-      ctx.beginPath()
-      ctx.ellipse(
-        punto.x,
-        punto.y + raggio * stile.scarto_ombra * 4,
-        raggio,
-        raggio * 0.45,
-        0,
-        0,
-        Math.PI * 2
-      )
-      ctx.fill()
+      // La dimensione varia da tessera a tessera: senza, un bosco e' lo
+      // stesso timbro ripetuto otto volte e si vede.
+      raggio *= 1 + (macchiaR[indiceDi(tx, ty)] - 0.5) * stile.variazione_dimensione
+
+      disegnaOmbra(ctx, punto.x, punto.y + raggio * stile.scarto_ombra * 3, raggio)
 
       // il tronco, per gli alberi e per tutto il resto: e' quello che li fa
       // stare in piedi invece che galleggiare
@@ -263,19 +362,40 @@ function disegnaRisorse(ctx, camera) {
         altezzaTronco
       )
 
-      ctx.beginPath()
       if (dati.squadrata) {
-        // il casotto e' l'unica cosa costruita da qualcuno: quadrata fra le
-        // sagome tonde della natura, si riconosce senza leggere niente
-        ctx.rect(punto.x - raggio, punto.y - raggio * 1.1, raggio * 2, raggio * 2)
+        // Il casotto e' l'unica cosa costruita da qualcuno: un corpo, un tetto
+        // e una porta. Fra le sagome tonde della natura si riconosce senza
+        // leggere niente.
+        disegnaCasotto(ctx, dati, raggio)
       } else {
-        ctx.arc(punto.x, punto.y - raggio * 0.18, raggio, 0, Math.PI * 2)
+        // **Tre macchie sovrapposte, non un cerchio solo.** Un cerchio solo si
+        // legge come un bollino; tre macchie si leggono come una chioma.
+        //
+        // Il corpo va nel colore CHIARO e il colore scuro fa solo il bordo:
+        // riempire di scuro e schiarire il centro faceva venire una ciambella,
+        // non un albero.
+        const centroY = punto.y - raggio * 0.2
+        const giro = macchiaX[indiceDi(tx, ty)]
+
+        // Il bordo si fa disegnando la stessa sagoma **piu' grande** nel
+        // colore scuro e riempiendola: cosi' il contorno segue la silhouette
+        // di tutta la chioma. Con lo stroke si vedeva il bordo di ogni
+        // macchia, e veniva un fiore invece di un albero.
+        ctx.fillStyle = dati.colore
+        macchieChioma(ctx, punto.x, centroY, raggio, stile, giro, 0.8 + stile.spessore_bordo / raggio)
+        ctx.fill()
+
+        ctx.fillStyle = dati.colore_chioma
+        macchieChioma(ctx, punto.x, centroY, raggio, stile, giro, 0.8)
+        ctx.fill()
+
+        // il tocco di luce in alto a sinistra: da' il volume, e la luce viene
+        // dalla stessa parte da cui viene l'ombra di tutto il resto
+        ctx.fillStyle = stile.schiarimento
+        ctx.beginPath()
+        ctx.arc(punto.x - raggio * 0.3, centroY - raggio * 0.34, raggio * 0.4, 0, Math.PI * 2)
+        ctx.fill()
       }
-      ctx.fillStyle = dati.colore_chioma
-      ctx.fill()
-      ctx.lineWidth = stile.spessore_bordo
-      ctx.strokeStyle = dati.colore
-      ctx.stroke()
       ctx.globalAlpha = 1
     }
   }
@@ -397,13 +517,30 @@ function disegnaBraccianti(ctx, camera, squadra) {
     const bracciante = squadra[i]
     camera.versoSchermo(bracciante.x, bracciante.y, punto)
 
+    // **Si muove anche quando sta fermo a lavorare.** Guardarlo lavorare e'
+    // meta' del gioco, e un cerchio immobile con una barra sopra non lo e':
+    // camminando dondola, lavorando da' i colpi.
+    const dondolio = stile.dondolio
+    let salto = 0
+    let scarto = 0
+    if (bracciante.stato === 'va') {
+      salto = -Math.abs(Math.sin(orologio * dondolio.passo_velocita)) * dondolio.passo_ampiezza * zoom
+    } else if (bracciante.stato === 'lavora') {
+      const colpo = Math.sin(orologio * dondolio.colpo_velocita)
+      scarto = colpo * dondolio.colpo_ampiezza * zoom
+      salto = -Math.abs(colpo) * dondolio.colpo_ampiezza * 0.4 * zoom
+    }
+    const cx = punto.x + scarto
+    const cy = punto.y + salto
+
+    // l'ombra resta a terra: e' quella che fa vedere che sta saltellando
     ctx.fillStyle = stile.ombra
     ctx.beginPath()
     ctx.ellipse(punto.x, punto.y + raggio * 0.8, raggio, raggio * 0.4, 0, 0, Math.PI * 2)
     ctx.fill()
 
     ctx.beginPath()
-    ctx.arc(punto.x, punto.y, raggio, 0, Math.PI * 2)
+    ctx.arc(cx, cy, raggio, 0, Math.PI * 2)
     ctx.fillStyle = bracciante.colore
     ctx.fill()
     ctx.lineWidth = stile.spessore_bordo
@@ -423,8 +560,8 @@ function disegnaBraccianti(ctx, camera, squadra) {
       }
       ctx.beginPath()
       ctx.arc(
-        punto.x,
-        punto.y - raggio - segno.distanza_sopra * zoom,
+        cx,
+        cy - raggio - segno.distanza_sopra * zoom,
         segno.raggio * zoom,
         0,
         Math.PI * 2
@@ -501,6 +638,7 @@ export function disegnaIsola(
   cassaScelta,
   mira
 ) {
+  orologio = performance.now() / 1000
   camera.tessereVisibili(vista)
   disegnaFuori(ctx)
   disegnaTerreno(ctx, camera)
