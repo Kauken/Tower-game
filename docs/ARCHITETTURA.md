@@ -54,6 +54,7 @@ config/*.json  ──►  src/game/config.js  ──►  tutto il resto
 | `tecnologie.js` | Cosa hai sbloccato, e i moltiplicatori/aggiunte che ne derivano | Aggiungi un **tipo** di effetto |
 | `economia.js` | Monete, prezzi, vendere | Cambi come entrano o escono le monete |
 | `disegno.js` | Disegna tutto attraverso la telecamera | Aggiungi qualcosa che si deve vedere |
+| `sagome.js` | **Disegna le cose una volta sola** in una tela nascosta, e poi si copiano | Cambi l'aspetto di un albero, di un sasso, dell'operaio |
 | `effetti.js` | I lampi e gli anelli, da pool | Aggiungi un feedback visivo |
 | `motore.js` | Il ciclo, la coda dei comandi, **la mano**, il salvataggio, il ponte con React | Aggiungi un comando o un dato per l'interfaccia |
 | `salvataggio.js` | Legge e scrive sul dispositivo, e dice **quanto tempo è passato** fuori dall'app | Cambi dove si salva (Capacitor) |
@@ -141,6 +142,18 @@ Il gesto è già pronto, e non va rifatto: **tutto si piazza con la mano.**
 Il gancio c'è già: `recupera(passatoMs)` in `motore.js` fa avanzare il mondo a passi grossi fino a un tetto di quattro ore. Oggi ci passa solo la crescita degli alberelli.
 
 **Una macchina ci si aggancia senza toccare il salvataggio:** basta che il suo avanzamento stia dentro una funzione che accetta un passo in millisecondi. **L'operaio no**, e non è una dimenticanza: è lui la risorsa scarsa, e il suo tempo non può passare mentre non guardi.
+
+### Cambiare **l'aspetto** di qualcosa
+
+Le sagome — alberi, massi, casotto, casse, operaio — **non si disegnano a ogni fotogramma.** Si disegnano una volta sola all'avvio dentro una tela nascosta (`sagome.js`) e poi si **copiano**.
+
+Perché conta: disegnare a ogni fotogramma mette un tetto bassissimo al dettaglio, perché ogni foglia in più costa sessanta volte al secondo. Baked, ogni albero può permettersi cinque gruppi di foglie, un tronco in ombra e la luce da un lato — **e costa meno di prima**, perché copiare pixel è l'operazione più veloce che una tela sappia fare.
+
+1. `sagome.js` → la funzione che disegna quella cosa. Le **proporzioni** stanno lì: sono disegno, non bilanciamento, e in un JSON non ci starebbero.
+2. `config/isola.json` → i **colori** (`colore`, `colore_chioma`, `colore_tronco`). Le sfumature si ricavano da quei tre: non se ne chiedono otto.
+3. `config/motore.json` → `grafica.sagome`: quanto è grande la sagoma disegnata, quante **varianti** e l'ingrandimento.
+
+> **Le varianti non sono un vezzo.** Un bosco in cui gli otto alberi sono identici si legge come un timbro ripetuto. La variante si sceglie dal rumore della tessera, quindi è sempre la stessa: l'isola non cambia a ogni avvio.
 
 ### Aggiungere un dato che l'**interfaccia** deve vedere
 

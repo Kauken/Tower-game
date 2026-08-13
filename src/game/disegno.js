@@ -8,6 +8,7 @@ import {
   area,
   elencoMateriali,
   grafica,
+  operaio as aspettoOperaio,
   risorse,
   terreni,
   tessera,
@@ -17,6 +18,7 @@ import {
 // i colori della cassa si leggono una volta sola: dentro il ciclo di gioco
 // non si cerca niente in configurazione
 const aspettoCassa = trovaCostruzione('cassa')
+import { disegnaSagoma, preparaSagome } from './sagome.js'
 import {
   colonne,
   filari,
@@ -173,40 +175,6 @@ function bordiRiva(ctx, camera, scarto) {
   }
 }
 
-// Le macchie che fanno una chioma. Si usa due volte per ogni cosa: una
-// piu' grande nel colore scuro (che diventa il bordo) e una normale nel
-// colore chiaro.
-function macchieChioma(ctx, x, y, raggio, stile, giro, quota) {
-  ctx.beginPath()
-  for (let c = 0; c < stile.ciuffi; c++) {
-    const angolo = (c / stile.ciuffi) * Math.PI * 2 + giro
-    const cx = x + Math.cos(angolo) * raggio * stile.scarto_ciuffi
-    const cy = y + Math.sin(angolo) * raggio * stile.scarto_ciuffi
-    ctx.moveTo(cx + raggio * quota, cy)
-    ctx.arc(cx, cy, raggio * quota, 0, Math.PI * 2)
-  }
-}
-
-// Il casotto: corpo, tetto e porta. E' l'unica cosa costruita da qualcuno, e
-// deve riconoscersi a colpo d'occhio fra le sagome tonde della natura.
-function disegnaCasotto(ctx, dati, raggio) {
-  const x = punto.x
-  const y = punto.y
-  ctx.fillStyle = dati.colore
-  ctx.fillRect(x - raggio, y - raggio * 0.55, raggio * 2, raggio * 1.5)
-
-  ctx.fillStyle = dati.colore_chioma
-  ctx.beginPath()
-  ctx.moveTo(x - raggio * 1.2, y - raggio * 0.5)
-  ctx.lineTo(x, y - raggio * 1.5)
-  ctx.lineTo(x + raggio * 1.2, y - raggio * 0.5)
-  ctx.closePath()
-  ctx.fill()
-
-  ctx.fillStyle = dati.colore_tronco
-  ctx.fillRect(x - raggio * 0.3, y + raggio * 0.15, raggio * 0.6, raggio * 0.8)
-}
-
 // L'ombra: **tutte le cose la fanno nella stessa direzione**. E' la cosa piu'
 // economica che esista per dare profondita' a un disegno piatto.
 function disegnaOmbra(ctx, x, y, raggio) {
@@ -346,56 +314,23 @@ function disegnaRisorse(ctx, camera) {
 
       // La dimensione varia da tessera a tessera: senza, un bosco e' lo
       // stesso timbro ripetuto otto volte e si vede.
-      raggio *= 1 + (macchiaR[indiceDi(tx, ty)] - 0.5) * stile.variazione_dimensione
+      const indice = indiceDi(tx, ty)
+      raggio *= 1 + (macchiaR[indice] - 0.5) * stile.variazione_dimensione
 
       disegnaOmbra(ctx, punto.x, punto.y + raggio * stile.scarto_ombra * 3, raggio)
 
-      // il tronco, per gli alberi e per tutto il resto: e' quello che li fa
-      // stare in piedi invece che galleggiare
-      const larghezzaTronco = stile.raggio_tronco * lato
-      const altezzaTronco = stile.altezza_tronco * lato
-      ctx.fillStyle = dati.colore_tronco
-      ctx.fillRect(
-        punto.x - larghezzaTronco / 2,
+      // **La sagoma e' gia' disegnata**: qui si copia e basta. E' l'operazione
+      // piu' veloce che una tela sappia fare, ed e' il motivo per cui ogni
+      // albero puo' permettersi cinque gruppi di foglie e un tronco in ombra.
+      // La variante viene dal rumore della tessera, quindi e' sempre la stessa.
+      disegnaSagoma(
+        ctx,
+        nome,
+        macchia[indice] + (indice % grafica.sagome.varianti),
+        punto.x,
         punto.y,
-        larghezzaTronco,
-        altezzaTronco
+        raggio * 2 * grafica.sagome.ingrandimento
       )
-
-      if (dati.squadrata) {
-        // Il casotto e' l'unica cosa costruita da qualcuno: un corpo, un tetto
-        // e una porta. Fra le sagome tonde della natura si riconosce senza
-        // leggere niente.
-        disegnaCasotto(ctx, dati, raggio)
-      } else {
-        // **Tre macchie sovrapposte, non un cerchio solo.** Un cerchio solo si
-        // legge come un bollino; tre macchie si leggono come una chioma.
-        //
-        // Il corpo va nel colore CHIARO e il colore scuro fa solo il bordo:
-        // riempire di scuro e schiarire il centro faceva venire una ciambella,
-        // non un albero.
-        const centroY = punto.y - raggio * 0.2
-        const giro = macchiaX[indiceDi(tx, ty)]
-
-        // Il bordo si fa disegnando la stessa sagoma **piu' grande** nel
-        // colore scuro e riempiendola: cosi' il contorno segue la silhouette
-        // di tutta la chioma. Con lo stroke si vedeva il bordo di ogni
-        // macchia, e veniva un fiore invece di un albero.
-        ctx.fillStyle = dati.colore
-        macchieChioma(ctx, punto.x, centroY, raggio, stile, giro, 0.8 + stile.spessore_bordo / raggio)
-        ctx.fill()
-
-        ctx.fillStyle = dati.colore_chioma
-        macchieChioma(ctx, punto.x, centroY, raggio, stile, giro, 0.8)
-        ctx.fill()
-
-        // il tocco di luce in alto a sinistra: da' il volume, e la luce viene
-        // dalla stessa parte da cui viene l'ombra di tutto il resto
-        ctx.fillStyle = stile.schiarimento
-        ctx.beginPath()
-        ctx.arc(punto.x - raggio * 0.3, centroY - raggio * 0.34, raggio * 0.4, 0, Math.PI * 2)
-        ctx.fill()
-      }
       ctx.globalAlpha = 1
     }
   }
@@ -407,8 +342,8 @@ function disegnaRisorse(ctx, camera) {
 // allo stesso modo — raccogliere, piantare, posare in una cassa.
 function disegnaOrdini(ctx, camera, lavori) {
   const stile = grafica.ordine
-  const zoom = camera.stato.zoom
-  const raggio = stile.raggio * tessera * zoom
+  const lato = tessera * camera.stato.zoom
+  const raggio = stile.raggio * lato
 
   ctx.lineWidth = stile.spessore
   ctx.setLineDash([stile.tratteggio, stile.tratteggio])
@@ -417,25 +352,70 @@ function disegnaOrdini(ctx, camera, lavori) {
     if (!lavoro.attivo) {
       continue
     }
-    camera.versoSchermo(
-      lavoro.tx * tessera + tessera / 2,
-      lavoro.ty * tessera + tessera / 2,
-      punto
-    )
+    // un ordine gia' disegnato su questa tessera basta: al casotto ce ne sono
+    // sempre tanti sopra allo stesso posto, e ridisegnare l'anello dieci volte
+    // lo fa solo sembrare piu' spesso
+    let primo = true
+    for (let c = 0; c < i && primo; c++) {
+      if (lavori.coda[c].attivo && lavori.coda[c].tx === lavoro.tx && lavori.coda[c].ty === lavoro.ty) {
+        primo = false
+      }
+    }
+    if (!primo) {
+      continue
+    }
+    camera.versoSchermo(lavoro.tx * tessera + tessera / 2, lavoro.ty * tessera + tessera / 2, punto)
     ctx.strokeStyle = lavoro.preso ? stile.colore_preso : stile.colore
     ctx.beginPath()
     ctx.arc(punto.x, punto.y, raggio, 0, Math.PI * 2)
     ctx.stroke()
   }
   ctx.setLineDash([])
+
+  // **Quanti ordini ci sono su quella tessera.** Al casotto se ne accumulano
+  // sempre — li' si fabbrica — e senza il numero tre ordini di tavole e uno
+  // solo sono lo stesso identico anello.
+  const conta = stile.conteggio
+  ctx.font = 'bold ' + conta.dimensione * camera.stato.zoom + 'px system-ui, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  for (let i = 0; i < lavori.coda.length; i++) {
+    const lavoro = lavori.coda[i]
+    if (!lavoro.attivo) {
+      continue
+    }
+    let quanti = 0
+    let primo = true
+    for (let c = 0; c < lavori.coda.length; c++) {
+      const altro = lavori.coda[c]
+      if (!altro.attivo || altro.tx !== lavoro.tx || altro.ty !== lavoro.ty) {
+        continue
+      }
+      quanti++
+      if (c < i) {
+        primo = false
+      }
+    }
+    if (!primo || quanti < 2) {
+      continue
+    }
+    camera.versoSchermo(lavoro.tx * tessera + tessera / 2, lavoro.ty * tessera + tessera / 2, punto)
+    const x = punto.x + raggio * conta.scarto_x * 2
+    const y = punto.y + raggio * conta.scarto_y * 2
+    ctx.fillStyle = conta.colore_sfondo
+    ctx.beginPath()
+    ctx.arc(x, y, conta.raggio_pastiglia * camera.stato.zoom, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = conta.colore
+    ctx.fillText(String(quanti), x, y)
+  }
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'alphabetic'
 }
 
-// Le casse. Quadrate, con la barra del pieno: una cassa piena e' il motivo
-// per cui un bracciante si ferma, quindi si deve vedere da lontano.
 function disegnaCasse(ctx, camera, casse) {
   const stile = grafica.cassa
-  const zoom = camera.stato.zoom
-  const lato = tessera * zoom
+  const lato = tessera * camera.stato.zoom
 
   for (let i = 0; i < casse.length; i++) {
     const cassa = casse[i]
@@ -443,31 +423,23 @@ function disegnaCasse(ctx, camera, casse) {
     if (cassa.eIlCasotto) {
       continue
     }
-    camera.versoSchermo(
-      cassa.tx * tessera + tessera / 2,
-      cassa.ty * tessera + tessera / 2,
-      punto
-    )
+    camera.versoSchermo(cassa.tx * tessera + tessera / 2, cassa.ty * tessera + tessera / 2, punto)
     const raggio = stile.raggio * lato
 
-    ctx.fillStyle = stile.ombra
-    ctx.beginPath()
-    ctx.ellipse(punto.x, punto.y + raggio, raggio, raggio * 0.4, 0, 0, Math.PI * 2)
-    ctx.fill()
+    disegnaOmbra(ctx, punto.x, punto.y + raggio * 0.5, raggio)
+    disegnaSagoma(ctx, 'cassa', 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento)
 
-    ctx.fillStyle = aspettoCassa.colore
-    ctx.fillRect(punto.x - raggio, punto.y - raggio, raggio * 2, raggio * 2)
-    ctx.lineWidth = stile.spessore_bordo
-    ctx.strokeStyle = aspettoCassa.colore_bordo
-    ctx.strokeRect(punto.x - raggio, punto.y - raggio, raggio * 2, raggio * 2)
-
-    // quanto e' piena
+    // la barra del pieno: una cassa piena e' il motivo per cui l'operaio si
+    // ferma, e si deve vedere da lontano senza aprirla
     const barra = stile.barra
     const quota = cassa.slot > 0 ? cassa.inventario.occupati() / cassa.slot : 0
-    const larghezza = raggio * 2 - barra.margine * lato
+    if (quota <= 0) {
+      continue
+    }
+    const larghezza = raggio * 1.6
     const altezza = barra.altezza * lato
     const sinistra = punto.x - larghezza / 2
-    const alto = punto.y + raggio - altezza - barra.margine * lato * 0.4
+    const alto = punto.y + raggio * 0.95
     ctx.fillStyle = barra.colore_fondo
     ctx.fillRect(sinistra, alto, larghezza, altezza)
     ctx.fillStyle = aspettoCassa.colore_pieno
@@ -475,9 +447,6 @@ function disegnaCasse(ctx, camera, casse) {
   }
 }
 
-// L'anello attorno a quello che hai scelto, e il filo verso la cassa dove quel
-// bracciante scarica: senza il filo non si potrebbe sapere dove va senza
-// stargli dietro.
 function disegnaScelta(ctx, camera, squadra, casse, braccianteScelto, cassaScelta) {
   const stile = grafica.scelta
   const zoom = camera.stato.zoom
@@ -539,13 +508,7 @@ function disegnaBraccianti(ctx, camera, squadra) {
     ctx.ellipse(punto.x, punto.y + raggio * 0.8, raggio, raggio * 0.4, 0, 0, Math.PI * 2)
     ctx.fill()
 
-    ctx.beginPath()
-    ctx.arc(cx, cy, raggio, 0, Math.PI * 2)
-    ctx.fillStyle = bracciante.colore
-    ctx.fill()
-    ctx.lineWidth = stile.spessore_bordo
-    ctx.strokeStyle = bracciante.coloreBordo
-    ctx.stroke()
+    disegnaSagoma(ctx, 'operaio', 0, cx, cy, raggio * 2 * grafica.sagome.ingrandimento)
 
     // il pallino di chi porta qualcosa: si vede a colpo d'occhio chi sta
     // tornando carico invece di andare a lavorare
@@ -639,6 +602,7 @@ export function disegnaIsola(
   mira
 ) {
   orologio = performance.now() / 1000
+  preparaSagome(risorse, aspettoCassa, aspettoOperaio)
   camera.tessereVisibili(vista)
   disegnaFuori(ctx)
   disegnaTerreno(ctx, camera)

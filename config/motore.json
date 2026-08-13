@@ -70,19 +70,12 @@
       }
     },
     "risorsa": {
-      "_nota": "Alberi, massi e frane. Ognuno e' fatto di PIU' macchie tonde sovrapposte, non di un cerchio solo: un cerchio solo si legge come un bollino, tre macchie si leggono come una chioma. La dimensione varia da tessera a tessera, cosi' un bosco non e' lo stesso timbro ripetuto.",
-      "ombra": "#00000038",
-      "scarto_ombra": 0.08,
-      "spessore_bordo": 3,
-      "raggio_tronco": 0.1,
-      "altezza_tronco": 0.2,
+      "_nota": "Alberi, massi e frane. Le forme non stanno piu' qui: si disegnano una volta sola in sagome.js, con dieci volte il dettaglio che il disegno a ogni fotogramma consentirebbe. Qui restano solo le misure che il gioco usa per COPIARLE. I colori stanno in isola.json, risorsa per risorsa.",
       "germoglio_minimo": 0.28,
       "opacita_germoglio": 0.6,
       "_nota_germoglio": "Quello che sta ricrescendo si disegna piccolo e smorto, e cresce mentre il tempo passa: si deve capire a colpo d'occhio che c'e' ma non si tocca ancora.",
       "variazione_dimensione": 0.22,
-      "ciuffi": 3,
-      "scarto_ciuffi": 0.3,
-      "schiarimento": "#ffffff30"
+      "scarto_ombra": 0.08
     },
     "giacimento": {
       "_nota": "Le vene si disegnano PIATTE: sono dentro al terreno, non appoggiate sopra come un albero. E soprattutto si FONDONO: nessun bordo fra due tessere della stessa vena, altrimenti una vena di sei tessere si legge come una scacchiera - ed e' la cosa che l'autore ha rifiutato. Il bordo si disegna SOLO dove la vena finisce.",
@@ -94,12 +87,20 @@
       "distanza_puntini": 0.22
     },
     "ordine": {
-      "_nota": "Il segno su quello a cui hai dato un ordine. Si disegna SOPRA alla cosa e piu' largo di lei: sotto finiva coperto dalla chioma dell'albero e l'ordine sembrava non essere partito. Deve vedersi da lontano, perche' e' l'unico modo per sapere cosa hai gia' comandato.",
+      "_nota": "Il segno su quello a cui hai dato un ordine. Sopra alla cosa e piu' largo di lei: sotto finiva coperto dalla chioma e l'ordine sembrava non essere partito. Giallo se aspetta, verde se l'operaio l'ha preso in carico. Se sulla stessa tessera ci sono piu' ordini - e al casotto succede sempre, perche' li' si fabbrica - si scrive QUANTI: senza, tre ordini di tavole e uno solo sono lo stesso identico anello.",
       "colore": "#f0c95c",
       "colore_preso": "#8fe3a0",
       "spessore": 4,
       "raggio": 0.52,
-      "tratteggio": 7
+      "tratteggio": 7,
+      "conteggio": {
+        "dimensione": 16,
+        "colore": "#14180f",
+        "colore_sfondo": "#f0c95c",
+        "raggio_pastiglia": 11,
+        "scarto_x": 0.42,
+        "scarto_y": -0.42
+      }
     },
     "mano": {
       "_nota": "Il segno di dove finira' quello che hai in mano, mentre il dito e' ancora premuto. E' l'UNICO momento in cui una tessera si vede: su un telefono non esiste il passaggio del mouse, e senza questo si piazzerebbe alla cieca. Appena alzi il dito sparisce.",
@@ -183,6 +184,12 @@
       "scarto_x": 0.06,
       "scarto_y": 0.1,
       "schiacciamento": 0.42
+    },
+    "sagome": {
+      "_nota": "Le sagome si disegnano UNA VOLTA SOLA all'avvio dentro una tela nascosta, e poi si copiano. Cosi' ci si puo' permettere dieci volte il dettaglio che il disegno a ogni fotogramma consentirebbe, e costa anche meno. lato e' quanto e' grande la sagoma disegnata (piu' grande della tessera: si rimpicciolisce copiandola, e resta nitida). varianti e' quante versioni diverse si disegnano della stessa cosa: un bosco con otto alberi identici si legge come un timbro ripetuto.",
+      "lato": 192,
+      "varianti": 3,
+      "ingrandimento": 1.7
     }
   },
   "area": {

@@ -72,6 +72,16 @@ Non è estetica, è una regola rifiutata esplicitamente dall'autore:
 
 **Unica eccezione:** mentre il giocatore ha qualcosa in mano, la tessera sotto il dito si illumina — lì la griglia *deve* vedersi, perché sta piazzando. Appena ripone, sparisce.
 
+## Le sagome si disegnano una volta sola
+
+Alberi, massi, casotto, casse e operaio **non si disegnano a ogni fotogramma**: si disegnano all'avvio dentro una tela nascosta (`sagome.js`) e poi si copiano con `drawImage`.
+
+- **Costa meno** di ricostruire i tracciati sessanta volte al secondo.
+- **E permette di spendere in dettaglio**: baked, un albero può avere cinque gruppi di foglie e un tronco in ombra. Disegnato a ogni fotogramma, ogni foglia costa per sempre.
+- **Ogni cosa ha più varianti**, scelte dal rumore della tessera: otto alberi identici si leggono come un timbro ripetuto.
+
+Se aggiungi una cosa che si vede, disegnala **lì**, non nel ciclo.
+
 ## L'ordine di disegno conta
 
 Va dal basso verso l'alto: fondo → macchie → riva → contenitori e macchine → risorse → **segni degli ordini** → operaio → effetti.
