@@ -323,80 +323,13 @@ export function PannelloCassa({
   )
 }
 
-// Il riepilogo della sera. Non ferma l'isola: e' un foglio che si chiude da
-// solo. Fermare tutto ogni due minuti sarebbe una tassa, non un momento.
-export function Riepilogo({ dati, onChiudi }) {
-  const pezzi = dati.split(',')
-  const giorno = Number(pezzi[0])
-  const incassato = Number(pezzi[1])
-  const raccolto = Number(pezzi[2])
-
-  return (
-    <div
-      onPointerDown={onChiudi}
-      style={{
-        position: 'absolute',
-        left: interfaccia.spaziatura,
-        right: interfaccia.spaziatura,
-        top: '32%',
-        padding: interfaccia.spaziatura + 4,
-        borderRadius: interfaccia.raggio_angoli + 6,
-        background: interfaccia.colore_pannello,
-        border: '2px solid ' + interfaccia.colore_accento,
-        backdropFilter: 'blur(8px)'
-      }}
-    >
-      <div
-        style={{
-          fontSize: interfaccia.testo_titolo,
-          fontWeight: stile.peso_titolo,
-          color: interfaccia.colore_testo,
-          marginBottom: 10
-        }}
-      >
-        Fine del giorno {giorno}
-      </div>
-
-      {[
-        ['Raccolto', raccolto, interfaccia.colore_testo],
-        ['Incassato', '+' + incassato, interfaccia.colore_accento]
-      ].map(([voce, valore, colore]) => (
-        <div
-          key={voce}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '3px 0',
-            fontSize: interfaccia.testo_normale,
-            color: interfaccia.colore_testo_debole
-          }}
-        >
-          <span>{voce}</span>
-          <span style={{ fontWeight: stile.peso_titolo, color: colore }}>{valore}</span>
-        </div>
-      ))}
-
-      <div
-        style={{
-          marginTop: 10,
-          fontSize: interfaccia.testo_piccolo,
-          color: interfaccia.colore_testo_debole,
-          textAlign: 'center'
-        }}
-      >
-        tocca per chiudere
-      </div>
-    </div>
-  )
-}
-
-export function PannelloCostruisci({ inventarioOperaio, onCostruisci, onChiudi }) {
+export function PannelloCostruisci({ inventarioOperaio, inManoId, onPrendi, onChiudi }) {
   const conti = sommaCaselle(inventarioOperaio)
 
   return (
     <Foglio
       titolo="Cosa costruisci?"
-      sottotitolo="Si paga con quello che l’operaio ha addosso. Se il legno è in una cassa lontana, prima va a prenderlo."
+      sottotitolo="Lo prendi in mano, poi tocchi la mappa dove metterlo. Si paga con quello che l’operaio ha addosso: se il legno è in una cassa lontana, prima va a prenderlo."
     >
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}>
         {elencoCostruzioni.map((voce) => {
@@ -408,11 +341,13 @@ export function PannelloCostruisci({ inventarioOperaio, onCostruisci, onChiudi }
             <Bottone
               key={voce.id}
               titolo={voce.nome}
-              dettaglio={costo}
-              colore={voce.colore + '55'}
-              coloreBordo={voce.colore_bordo}
-              acceso={puoi}
-              onTocco={() => onCostruisci(voce.id)}
+              dettaglio={inManoId === voce.id ? 'ce l’hai in mano' : costo}
+              colore={voce.colore + (inManoId === voce.id ? 'aa' : '55')}
+              coloreBordo={
+                inManoId === voce.id ? interfaccia.colore_accento : voce.colore_bordo
+              }
+              acceso={puoi || inManoId === voce.id}
+              onTocco={() => onPrendi(voce.id)}
             />
           )
         })}
@@ -422,10 +357,25 @@ export function PannelloCostruisci({ inventarioOperaio, onCostruisci, onChiudi }
   )
 }
 
-// La striscia che dice cosa sta aspettando il prossimo tocco. Senza, entrare
-// in una modalita' e non ricordarsene e' il modo piu' facile per sentirsi
-// traditi da un gioco.
-export function Avviso({ testo, onAnnulla }) {
+// La striscia che dice **cosa hai in mano e quanti te ne restano**. Senza,
+// avere qualcosa in mano e non ricordarsene e' il modo piu' facile per
+// piazzare una cosa dove non la volevi.
+export function InMano({ nome, quanti, onRiponi }) {
+  return (
+    <Avviso
+      testo={
+        <>
+          In mano: <b style={{ color: interfaccia.colore_accento }}>{nome}</b>
+          {quanti > 0 ? ' ×' + quanti : ''} — tocca dove metterlo
+        </>
+      }
+      testoAnnulla="Riponi"
+      onAnnulla={onRiponi}
+    />
+  )
+}
+
+export function Avviso({ testo, testoAnnulla, onAnnulla }) {
   return (
     <div
       style={{
@@ -433,7 +383,7 @@ export function Avviso({ testo, onAnnulla }) {
         left: interfaccia.spaziatura,
         right: interfaccia.spaziatura,
         bottom: `calc(${interfaccia.altezza_minima_tocco + interfaccia.spaziatura * 2}px + env(safe-area-inset-bottom))`,
-        padding: '10px 14px',
+        padding: '6px 8px 6px 14px',
         borderRadius: interfaccia.raggio_angoli,
         background: interfaccia.colore_pannello,
         border: '2px solid ' + interfaccia.colore_accento,
@@ -456,8 +406,8 @@ export function Avviso({ testo, onAnnulla }) {
         type="button"
         onPointerDown={onAnnulla}
         style={{
-          minHeight: 40,
-          padding: '0 16px',
+          minHeight: 44,
+          padding: '0 14px',
           borderRadius: interfaccia.raggio_angoli,
           border: 'none',
           background: stile.colore_annulla,
@@ -467,7 +417,7 @@ export function Avviso({ testo, onAnnulla }) {
           touchAction: 'manipulation'
         }}
       >
-        Annulla
+        {testoAnnulla || 'Annulla'}
       </button>
     </div>
   )

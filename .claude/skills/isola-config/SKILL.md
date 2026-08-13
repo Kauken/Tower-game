@@ -56,7 +56,12 @@ Valori tecnici e di aspetto, **non di bilanciamento**: `area` (la risoluzione lo
 
 **L'agente `bilanciatore` non tocca questo file.**
 
-Regole di disegno vincolanti (`grafica.mondo`): le tessere **non hanno bordi, mai**; la variazione del terreno è una **macchia tonda sfalsata**, non un quadrato più chiaro — un quadrato dentro una griglia di quadrati si legge come una scacchiera, ed è la cosa che l'autore ha rifiutato. Unica eccezione: la tessera sotto il dito si illumina **solo mentre hai qualcosa in mano**.
+Regole di disegno vincolanti (`grafica.mondo`): le tessere **non hanno bordi, mai**; la variazione del terreno è una **macchia tonda sfalsata**, non un quadrato più chiaro — un quadrato dentro una griglia di quadrati si legge come una scacchiera, ed è la cosa che l'autore ha rifiutato.
+
+Unica eccezione, ed è in `grafica.mano`: il segno di dove finirà quello che hai in mano, disegnato **solo mentre il dito è premuto**. Verde se ci sta, rosso se no. Su un telefono non esiste il passaggio del mouse: senza, si piazzerebbe alla cieca.
+
+## ~~tempo.json~~
+**Cancellato** col ciclo del giorno (2026-08-12). Non va ricreato.
 
 ## I controlli all'avvio — il modo di questo progetto per non far sopravvivere gli errori
 

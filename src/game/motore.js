@@ -5,14 +5,22 @@
 // dito, e **da' ordini**. Le azioni dell'interfaccia entrano da una coda di
 // comandi e vengono eseguite dentro un passo di simulazione.
 //
-// Il dito ha due modi, e si vede a schermo quando non e' quello normale:
-//   normale    tocchi una cosa -> ordine; tocchi l'operaio o una cassa -> la scegli
-//   costruisci il prossimo tocco piazza quello che stai costruendo
+// **Quello che fa un tocco dipende da cosa hai in mano.** E' il modello che
+// vale per tutto il gioco, adesso e quando le cose piazzabili saranno dieci.
 //
-// Nel modo normale un tocco fa una cosa sola, e dipende da cosa c'e' sotto:
+// A MANI VUOTE il tocco e' un ordine:
 //   su un albero o un masso  -> ordine di raccolta (il secondo tocco lo disdice)
-//   su terra libera          -> ordine di piantare, se ha un alberello addosso
 //   su una cassa             -> la apre, e da li' si posa e si prende roba
+//   sull'operaio             -> guardi cosa sta facendo
+//   sul terreno vuoto        -> NON SUCCEDE NIENTE. Mai.
+//
+// CON QUALCOSA IN MANO il tocco piazza, e **resti in mano**: cosi' ne pianti
+// dieci di fila senza rientrare nel menu'. Si riprende toccando di nuovo la
+// casella, o con Annulla.
+//
+// Un'azione che parte senza che il giocatore l'abbia scelta e' sempre
+// sbagliata, e lo diventa dieci volte tanto quando le cose piazzabili sono
+// dieci invece di una. Vedi GDD 4.
 //
 // **Niente scarico automatico.** L'operaio non porta niente da nessuna parte
 // se non gliel'hai detto: e' quella fatica che dara' senso ai nastri.
@@ -23,7 +31,6 @@ import {
   limiti,
   elencoTecnologie,
   simulazione,
-  tempo,
   tessera,
   trovaCostruzione,
   trovaTecnologia
@@ -37,7 +44,6 @@ import { creaCasse } from './casse.js'
 import { creaBraccianti } from './braccianti.js'
 import { creaEconomia } from './economia.js'
 import { creaTecnologie } from './tecnologie.js'
-import { creaGiorno } from './giorno.js'
 import { creaGestoreEffetti } from './effetti.js'
 import {
   aggiornaMondo,
@@ -66,11 +72,8 @@ export function creaMotore(canvasGioco) {
       camera.versoSchermo(centro.x, centro.y, centro)
       effetti.raccolta(centro.x, centro.y)
     },
-    alCambioDelMondo: () => {},
-    alRaccolto: (quanti) => giorno.segnaRaccolto(quanti)
+    alCambioDelMondo: () => {}
   })
-
-  const giorno = creaGiorno(economia, { allAlba: () => {} })
 
   const comandi = creaPool(limiti.comandi_massimi, () => ({
     attivo: false,
@@ -80,8 +83,13 @@ export function creaMotore(canvasGioco) {
     id: ''
   }))
 
-  let modo = 'normale'
-  let daCostruire = ''
+  // Cosa hai in mano: null, oppure { tipo: 'materiale'|'costruzione', id }.
+  // Finche' c'e' qualcosa qui dentro, ogni tocco sulla mappa piazza.
+  let inMano = null
+  // Dove sta puntando il dito adesso, mentre e' premuto. Serve a far vedere
+  // **prima** dove andra' a finire: su un telefono non esiste il passaggio del
+  // mouse, e senza questo si piazzerebbe alla cieca.
+  const mira = { attiva: false, tx: 0, ty: 0, valida: false }
   let braccianteScelto = -1
   let cassaScelta = null
   let esito = ''
@@ -90,33 +98,74 @@ export function creaMotore(canvasGioco) {
   // ma tutto quello che si comanda passa da lui.
   const operaio = () => squadra.squadra[0] || null
 
-  // Il primo materiale che ha addosso e che si puo' piantare. Non si equipaggia
-  // niente e non si sceglie nessuno strumento: **basta averlo nello zaino**.
-  function daPiantare() {
+  function materiale(id) {
+    return elencoMateriali.find((m) => m.id === id) || null
+  }
+
+  // Quanti ne restano di quello che hai in mano: e' il numero che si legge
+  // nella striscia in alto, ed e' quello che dice quando riporre da soli.
+  function quantiInMano() {
+    if (!inMano) {
+      return 0
+    }
     const b = operaio()
-    if (!b) {
-      return null
+    if (inMano.tipo === 'materiale') {
+      return b ? b.inventario.quanti(inMano.id) : 0
     }
-    for (let i = 0; i < elencoMateriali.length; i++) {
-      const m = elencoMateriali[i]
-      if (m.pianta && b.inventario.quanti(m.id) > 0) {
-        return m
-      }
+    // di una costruzione ne hai quante ne puoi pagare con quello che ha addosso
+    const dati = trovaCostruzione(inMano.id)
+    let quante = Infinity
+    for (let i = 0; i < dati.costo.length; i++) {
+      const disponibili = b ? b.inventario.quanti(dati.costo[i].materiale) : 0
+      quante = Math.min(quante, Math.floor(disponibili / dati.costo[i].quantita))
     }
-    return null
+    return quante === Infinity ? 0 : quante
+  }
+
+  function nomeInMano() {
+    if (!inMano) {
+      return ''
+    }
+    if (inMano.tipo === 'materiale') {
+      const m = materiale(inMano.id)
+      return m ? m.nome : ''
+    }
+    return trovaCostruzione(inMano.id).nome
+  }
+
+  // Si puo' piazzare li'? Vale identico per un alberello e per una cassa: e'
+  // la stessa domanda, ed e' per questo che il gesto e' uno solo.
+  function puoPiazzareIn(tx, ty) {
+    if (!inMano) {
+      return false
+    }
+    return piantabile(tx, ty) && !casse.in(tx, ty)
+  }
+
+  function prendiInMano(tipo, id) {
+    if (inMano && inMano.tipo === tipo && inMano.id === id) {
+      inMano = null
+      esito = ''
+      return
+    }
+    inMano = { tipo, id }
+    braccianteScelto = -1
+    cassaScelta = null
+    esito = ''
+  }
+
+  function riponi() {
+    inMano = null
+    mira.attiva = false
+    esito = ''
   }
 
   const vetrina = {
     monete: 0,
-    giorno: 1,
-    oraDelGiorno: 0,
     slotOperaio: 0,
     inventario: '',
     zainoPieno: false,
     statoOperaio: '',
-    puoPiantare: '',
-    mostraRiepilogo: false,
-    riepilogo: '',
     // il casotto e' anche il mercato: e' li' che si vende e si studia
     cassaEIlCasotto: false,
     valoreCassa: 0,
@@ -127,8 +176,11 @@ export function creaMotore(canvasGioco) {
     braccantiFermi: 0,
     braccantiTotali: 0,
     zoomLontano: false,
-    modo: 'normale',
-    daCostruire: '',
+    // cosa hai in mano, e quanti te ne restano
+    inManoTipo: '',
+    inManoId: '',
+    inManoNome: '',
+    inManoQuanti: 0,
     esito: '',
     // il bracciante scelto
     braccianteScelto: -1,
@@ -172,9 +224,9 @@ export function creaMotore(canvasGioco) {
   }
 
   function annulla() {
-    modo = 'normale'
-    daCostruire = ''
-    esito = ''
+    riponi()
+    braccianteScelto = -1
+    cassaScelta = null
   }
 
   // Si costruisce con quello che l'operaio ha **addosso**, non con la somma di
@@ -182,19 +234,14 @@ export function creaMotore(canvasGioco) {
   // travestito da contatore. Se il legno e' in una cassa lontana, prima lo
   // vai a prendere.
   function costruisci(tx, ty) {
-    const dati = trovaCostruzione(daCostruire)
+    const dati = trovaCostruzione(inMano.id)
     const b = operaio()
-    if (!piantabile(tx, ty) || casse.in(tx, ty)) {
-      esito = 'qui non ci sta'
-      return
-    }
     if (!b) {
       return
     }
     for (let i = 0; i < dati.costo.length; i++) {
       if (b.inventario.quanti(dati.costo[i].materiale) < dati.costo[i].quantita) {
         esito = 'non ha i materiali addosso'
-        annulla()
         return
       }
     }
@@ -203,15 +250,36 @@ export function creaMotore(canvasGioco) {
     }
     casse.aggiungi(tx, ty, dati.slot, false)
     esito = ''
-    annulla()
+  }
+
+  // Piazza quello che hai in mano. **Non lo riponi**: ne piazzi un altro col
+  // tocco dopo, e si riprende da soli solo quando finiscono.
+  function piazza(tx, ty) {
+    if (!puoPiazzareIn(tx, ty)) {
+      esito = 'qui non ci sta'
+      return
+    }
+    if (inMano.tipo === 'costruzione') {
+      costruisci(tx, ty)
+    } else {
+      const m = materiale(inMano.id)
+      const b = operaio()
+      if (!m || !m.pianta || !b || b.inventario.quanti(m.id) <= 0) {
+        esito = 'non ne ha piu\u2019'
+        riponi()
+        return
+      }
+      esito = lavori.ordinaPiantata(tx, ty, m.id, m.pianta) ? '' : 'troppi ordini in coda'
+    }
   }
 
   function tocca(xSchermo, ySchermo) {
     camera.versoMondo(xSchermo, ySchermo, mondoTocco)
     tessereDaMondo(mondoTocco.x, mondoTocco.y, tessereTocco)
 
-    if (modo === 'costruisci') {
-      costruisci(tessereTocco.tx, tessereTocco.ty)
+    // con qualcosa in mano il tocco piazza, e non fa nient'altro
+    if (inMano) {
+      piazza(tessereTocco.tx, tessereTocco.ty)
       return
     }
 
@@ -249,25 +317,11 @@ export function creaMotore(canvasGioco) {
 
     const cosa = risorsaIn(tessereTocco.tx, tessereTocco.ty)
 
-    // terra libera: si pianta, se ha qualcosa da piantare addosso
+    // **terra libera: non succede niente.** Per piantare qualcosa lo devi
+    // prima prendere in mano, e questo e' esattamente il punto: un'azione che
+    // parte da sola si fa per sbaglio.
     if (!cosa) {
-      if (!piantabile(tessereTocco.tx, tessereTocco.ty)) {
-        esito = ''
-        return
-      }
-      const seme = daPiantare()
-      if (!seme) {
-        esito = 'non ha alberelli addosso'
-        return
-      }
-      esito = lavori.ordinaPiantata(
-        tessereTocco.tx,
-        tessereTocco.ty,
-        seme.id,
-        seme.pianta
-      )
-        ? ''
-        : 'qui non si può piantare'
+      esito = ''
       return
     }
 
@@ -294,6 +348,22 @@ export function creaMotore(canvasGioco) {
     }
     tecnologie.prendi(idTecnologia)
     esito = ''
+  }
+
+  // Dove sta puntando il dito **mentre e' ancora premuto**. Su un telefono non
+  // esiste il passaggio del mouse: senza questo si piazzerebbe alla cieca, e
+  // con un pollice su uno schermo piccolo si sbaglia tessera di continuo.
+  function punta(xSchermo, ySchermo) {
+    if (!inMano) {
+      mira.attiva = false
+      return
+    }
+    camera.versoMondo(xSchermo, ySchermo, mondoTocco)
+    tessereDaMondo(mondoTocco.x, mondoTocco.y, tessereTocco)
+    mira.attiva = true
+    mira.tx = tessereTocco.tx
+    mira.ty = tessereTocco.ty
+    mira.valida = puoPiazzareIn(tessereTocco.tx, tessereTocco.ty)
   }
 
   // Posare o prendere roba da una cassa. **E' un ordine, non un automatismo**:
@@ -335,26 +405,22 @@ export function creaMotore(canvasGioco) {
         camera.trascina(comando.x, comando.y)
       } else if (comando.tipo === 'zoom') {
         camera.cambiaZoom()
-      } else if (comando.tipo === 'costruisci') {
-        modo = 'costruisci'
-        daCostruire = comando.id
-        cassaScelta = null
-        braccianteScelto = -1
-        esito = ''
+      } else if (comando.tipo === 'prendi') {
+        prendiInMano(comando.id.slice(0, comando.id.indexOf(':')), comando.id.slice(comando.id.indexOf(':') + 1))
+      } else if (comando.tipo === 'punta') {
+        punta(comando.x, comando.y)
+      } else if (comando.tipo === 'spunta') {
+        mira.attiva = false
       } else if (comando.tipo === 'deposita' || comando.tipo === 'preleva') {
         scambia(comando.tipo, comando.id)
       } else if (comando.tipo === 'annulla') {
         annulla()
-        braccianteScelto = -1
-        cassaScelta = null
       } else if (comando.tipo === 'vendi') {
         if (cassaScelta) {
-          giorno.segnaIncasso(economia.vendiCassa(casse, cassaScelta))
+          economia.vendiCassa(casse, cassaScelta)
         }
       } else if (comando.tipo === 'studia') {
         studia(comando.id)
-      } else if (comando.tipo === 'chiudi_riepilogo') {
-        giorno.chiudiRiepilogo()
       }
     }
   }
@@ -365,9 +431,15 @@ export function creaMotore(canvasGioco) {
 
   function aggiorna() {
     eseguiComandi()
+    // Si ripone da soli quando finiscono. Va controllato **qui e non quando si
+    // piazza**: piazzare un alberello mette in coda un ordine, e il pezzo esce
+    // dallo zaino solo quando l'operaio ci arriva. Restare con una mano vuota
+    // che dice di avere qualcosa e' il modo piu' facile per piazzare il nulla.
+    if (inMano && quantiInMano() <= 0) {
+      riponi()
+    }
     aggiornaMondo(simulazione.passo_ms)
     squadra.aggiorna(lavori, simulazione.passo_ms, simulazione.passo_ms / 1000)
-    giorno.aggiorna(simulazione.passo_ms)
     effetti.aggiorna(simulazione.passo_ms)
   }
 
@@ -380,7 +452,8 @@ export function creaMotore(canvasGioco) {
       squadra.squadra,
       casse.elenco,
       braccianteScelto,
-      cassaScelta
+      cassaScelta,
+      mira
     )
     effetti.disegna(ctxGioco)
   }
@@ -433,8 +506,10 @@ export function creaMotore(canvasGioco) {
     vetrina.braccantiFermi = squadra.quantiFermi()
     vetrina.braccantiTotali = squadra.squadra.length
     vetrina.zoomLontano = camera.stato.livello > 0
-    vetrina.modo = modo
-    vetrina.daCostruire = daCostruire
+    vetrina.inManoTipo = inMano ? inMano.tipo : ''
+    vetrina.inManoId = inMano ? inMano.id : ''
+    vetrina.inManoNome = inMano ? nomeInMano() : ''
+    vetrina.inManoQuanti = inMano ? quantiInMano() : 0
     vetrina.esito = esito
 
     vetrina.braccianteScelto = braccianteScelto
@@ -454,8 +529,6 @@ export function creaMotore(canvasGioco) {
     vetrina.valoreCassa = cassaScelta ? economia.valoreDi(cassaScelta) : 0
 
     vetrina.monete = Math.floor(economia.stato.monete)
-    vetrina.giorno = giorno.stato.giorno
-    vetrina.oraDelGiorno = giorno.stato.trascorsoMs / tempo.giorno_ms
     const b = operaio()
     vetrina.slotOperaio = squadra.slotAdesso()
     vetrina.inventario = b ? scriviInventario(b.inventario) : ''
@@ -463,17 +536,6 @@ export function creaMotore(canvasGioco) {
     // le caselle occupate. Le pile a meta' non consolano nessuno.
     vetrina.zainoPieno = b ? b.inventario.caselleLibere() === 0 : false
     vetrina.statoOperaio = b ? b.stato : ''
-    const seme = daPiantare()
-    vetrina.puoPiantare = seme ? seme.nome : ''
-    vetrina.mostraRiepilogo = giorno.stato.mostraRiepilogo
-    vetrina.riepilogo = giorno.stato.mostraRiepilogo
-      ? [
-          giorno.riepilogo.giorno,
-          giorno.riepilogo.incassato,
-          giorno.riepilogo.raccolto
-        ].join(',')
-      : ''
-
     // lo stato dell'albero: "id:presa|disponibile|bloccata"
     let albero = ''
     for (let i = 0; i < elencoTecnologie.length; i++) {
@@ -498,12 +560,13 @@ export function creaMotore(canvasGioco) {
     tocca: (x, y) => accodaComando('tocca', x, y),
     trascina: (dx, dy) => accodaComando('trascina', dx, dy),
     zoom: () => accodaComando('zoom'),
-    costruisci: (id) => accodaComando('costruisci', 0, 0, id),
+    prendi: (tipo, id) => accodaComando('prendi', 0, 0, tipo + ':' + id),
+    punta: (x, y) => accodaComando('punta', x, y),
+    spunta: () => accodaComando('spunta'),
     deposita: (id) => accodaComando('deposita', 0, 0, id),
     preleva: (id) => accodaComando('preleva', 0, 0, id),
     annulla: () => accodaComando('annulla'),
     vendi: () => accodaComando('vendi'),
-    studia: (id) => accodaComando('studia', 0, 0, id),
-    chiudiRiepilogo: () => accodaComando('chiudi_riepilogo')
+    studia: (id) => accodaComando('studia', 0, 0, id)
   }
 }

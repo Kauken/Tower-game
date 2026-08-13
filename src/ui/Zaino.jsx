@@ -1,7 +1,9 @@
 import React from 'react'
 import { elencoMateriali, interfaccia } from '../game/config.js'
 
-// Lo zaino dell'operaio, sempre sotto gli occhi.
+// Lo zaino dell'operaio, sempre sotto gli occhi. **Ed e' anche la mano:**
+// toccare una casella che contiene qualcosa di piazzabile te lo mette in mano,
+// e il tocco dopo sulla mappa lo piazza. Toccarla di nuovo lo ripone.
 //
 // E' una fila di caselle come in Minecraft, non un contatore: si deve vedere
 // **quante ne restano libere** senza aprire niente, perche' quando finiscono
@@ -12,9 +14,13 @@ import { elencoMateriali, interfaccia } from '../game/config.js'
 
 const colori = {}
 const nomi = {}
+// quali materiali si possono piazzare sull'isola: solo quelli si prendono in
+// mano toccando la casella
+const piazzabili = {}
 for (let i = 0; i < elencoMateriali.length; i++) {
   colori[elencoMateriali[i].id] = elencoMateriali[i].colore
   nomi[elencoMateriali[i].id] = elencoMateriali[i].nome
+  piazzabili[elencoMateriali[i].id] = !!elencoMateriali[i].pianta
 }
 
 // "legno:40,legno:12,,," -> [{materiale:'legno',quantita:40}, ..., null, null]
@@ -46,16 +52,31 @@ export function sommaCaselle(riga) {
 
 // Riempie il posto che le da' chi la mette: la misura la decide la fila, cosi'
 // la stessa casella sta nello zaino in alto e nel pannello di una cassa.
-export function Casella({ casella }) {
+export function Casella({ casella, inMano, onTocco }) {
+  const Elemento = onTocco ? 'button' : 'div'
   return (
-    <div
+    <Elemento
+      type={onTocco ? 'button' : undefined}
+      onPointerDown={onTocco}
       style={{
         width: '100%',
         height: '100%',
+        padding: 0,
+        fontFamily: 'inherit',
+        touchAction: 'manipulation',
+        pointerEvents: onTocco ? 'auto' : 'none',
         borderRadius: 9,
-        background: casella ? colori[casella.materiale] + '3a' : '#ffffff0d',
+        background: casella
+          ? colori[casella.materiale] + (inMano ? '7a' : '3a')
+          : '#ffffff0d',
         border:
-          '1px solid ' + (casella ? colori[casella.materiale] : '#ffffff1c'),
+          (inMano ? 2 : 1) +
+          'px solid ' +
+          (inMano
+            ? interfaccia.colore_accento
+            : casella
+              ? colori[casella.materiale]
+              : '#ffffff1c'),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -85,11 +106,11 @@ export function Casella({ casella }) {
           </span>
         </>
       ) : null}
-    </div>
+    </Elemento>
   )
 }
 
-export default function Zaino({ inventario, pieno }) {
+export default function Zaino({ inventario, pieno, inManoTipo, inManoId, onPrendi }) {
   const caselle = leggiCaselle(inventario)
   if (caselle.length === 0) {
     return null
@@ -104,18 +125,28 @@ export default function Zaino({ inventario, pieno }) {
         padding: '6px 8px',
         borderRadius: interfaccia.raggio_angoli,
         background: interfaccia.colore_pannello,
-        border: '1px solid ' + (pieno ? interfaccia.colore_accento : interfaccia.colore_bordo_pannello)
+        border: '1px solid ' + (pieno ? interfaccia.colore_accento : interfaccia.colore_bordo_pannello),
+        pointerEvents: 'auto'
       }}
     >
       {/* le caselle si allargano fino a un massimo e poi restano ferme: con
           quattro non devono diventare quattro finestroni, con undici devono
           starci lo stesso senza scendere sotto il leggibile */}
       <div style={{ display: 'flex', gap: 5, flex: 1, minWidth: 0, justifyContent: 'center' }}>
-        {caselle.map((casella, indice) => (
-          <div key={indice} style={{ flex: 1, minWidth: 0, aspectRatio: '1 / 1', maxWidth: 40 }}>
-            <Casella casella={casella} />
-          </div>
-        ))}
+        {caselle.map((casella, indice) => {
+          const prendibile = !!(casella && piazzabili[casella.materiale] && onPrendi)
+          const questaInMano =
+            !!casella && inManoTipo === 'materiale' && inManoId === casella.materiale
+          return (
+            <div key={indice} style={{ flex: 1, minWidth: 0, aspectRatio: '1 / 1', maxWidth: 40 }}>
+              <Casella
+                casella={casella}
+                inMano={questaInMano}
+                onTocco={prendibile ? () => onPrendi(casella.materiale) : null}
+              />
+            </div>
+          )
+        })}
       </div>
       {/* quando lo zaino e' pieno l'operaio si ferma: dirlo qui evita che
           sembri un guasto */}

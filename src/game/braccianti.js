@@ -43,7 +43,7 @@ import {
 const puntoDiLavoro = { tx: 0, ty: 0 }
 const meta = { x: 0, y: 0 }
 
-export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMondo, alRaccolto }) {
+export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMondo }) {
   const squadra = []
 
   // Quante tasche puo' arrivare ad avere: le caselle si creano tutte all'avvio
@@ -135,11 +135,9 @@ export function creaBraccianti({ casse, tecnologie, alloScarico, alCambioDelMond
       }
       const rese = risorse[lavoro.tipo].rese
       raccogliRisorsa(lavoro.tx, lavoro.ty)
-      let presi = 0
       for (let i = 0; i < rese.length; i++) {
-        presi += bracciante.inventario.metti(rese[i].materiale, rese[i].quantita)
+        bracciante.inventario.metti(rese[i].materiale, rese[i].quantita)
       }
-      alRaccolto(presi)
       alCambioDelMondo()
       return
     }

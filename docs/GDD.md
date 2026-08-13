@@ -173,6 +173,43 @@ Sono invarianti, non gusti. Dove si può, il gioco le controlla da solo.
 
 Il dettaglio operativo sta in **`docs/MATERIALI.md`**, che è il documento che l'agente `bilanciatore` usa come legge.
 
+## 10b. La corrente — **pali che coprono un'area, niente cavi**
+
+Le macchine non lavorano senza corrente. Ma la corrente qui **non è una rete di fili da tirare**: è una **copertura**.
+
+> *"Non con cavi singoli a macchine ma con pali che coprono un'area."*
+
+### Come funziona
+
+- Un **generatore** brucia combustibile e alimenta tutto quello che sta nel suo **raggio**.
+- I **pali** allungano la copertura. Si agganciano **da soli** a un generatore o a un palo già alimentato che sia nel raggio: non si collega niente a mano, non si traccia nessun filo.
+- Una macchina **dentro la copertura** lavora. **Fuori**, sta ferma e lo scrive.
+
+Su un telefono tirare fili con un dito sarebbe un supplizio, e la parte interessante della corrente non sono i fili: è **la domanda "come faccio ad arrivare fin laggiù?"** — che con i pali resta intatta.
+
+### Acceso o spento, mai a metà
+
+In Factorio, quando la corrente non basta tutto rallenta in proporzione. È elegante e su uno schermo da telefono è **illeggibile**: vedi le macchine andare piano e non sai perché.
+
+Qui è **binario**. Se il generatore ha combustibile, tutto quello che copre lavora a piena velocità. Se il combustibile finisce, quello che copre si ferma — **e c'è scritto perché**. Niente si rompe, niente si perde: si rimette il combustibile e riparte.
+
+### Il combustibile è **legno**, e più avanti carbone
+
+Ed è qui che la corrente smette di essere una tassa e diventa una decisione.
+
+**Il legno che bruci è legno che non costruisci.** Da un giorno all'altro il bosco che ripianti non è più solo materiale: è **il carburante della fabbrica**. La scelta *"vendo l'alberello o lo ripianto"*, che era la prima decisione del gioco, adesso pesa il doppio.
+
+Il **carbone** arriva con la seconda isola e rende molto di più a pezzo. Non sblocca niente di nuovo: **toglie una scocciatura che hai sentito per ore**, che è l'unico modo onesto di rendere desiderabile un materiale.
+
+### Perché non è una tassa
+
+Una corrente che sa dire solo di no è una tassa, non un gioco. Perciò:
+
+- **Non si perde mai niente.** Restare senza combustibile ferma le macchine, non le rompe.
+- **Non arriva prima delle macchine**: prima devi *volere* che vadano più in fretta.
+- **Aggiunge un problema di spazio che non è un puzzle di incastro** (che l'autore ha rifiutato): è una domanda di portata — *arrivo fino al giacimento lontano, o mi conviene spostare la fabbrica?*
+- **Riempire il generatore costa il tempo dell'operaio**, come tutto il resto — ed è un'altra cosa che un nastro, un giorno, gli toglierà di mano.
+
 ## 11. Le isole — e perché sono la cosa più intelligente della struttura
 
 Ogni isola porta **una materia prima nuova** e apre un ramo di lavorazioni. Si aprono **costruendo il pontile**: un progetto da comprare e dei materiali da fabbricare. Non si trova una chiave, si costruisce il passaggio — è il modo di Graveyard Keeper.
@@ -194,6 +231,14 @@ E subito dopo nasce il problema successivo, che è quello giusto: **come faccio 
 Il ritmo lo danno gli **sblocchi**, non l'orologio: *mi mancano 40 monete al progetto della trivella* è un motivo per fare un altro viaggio. *Sta per finire il giorno* non lo è.
 
 Niente scade, niente marcisce, niente si rompe se non torni. **Non si perde mai.**
+
+### E nemmeno le commesse
+
+> *"Le commesse non le voglio, l'obiettivo è la progressione."*
+
+Erano previste, e sono state tolte prima di costruirle. Il motivo è lo stesso dell'orologio: **il desiderio ce l'ha già la bacheca dei progetti.** Se guardando la Trivella non la vuoi, un tizio che ti chiede quaranta tavole non risolve niente — sposta solo il problema. E se la vuoi, la commessa è un compito in mezzo fra te e quello che stavi già facendo.
+
+**L'unico motore è la progressione:** vedi la cosa dopo, sai cosa ti manca, vai a prenderla.
 
 ## 13. Le tessere
 

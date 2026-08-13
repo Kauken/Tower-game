@@ -77,6 +77,15 @@
       "raggio": 0.52,
       "tratteggio": 7
     },
+    "mano": {
+      "_nota": "Il segno di dove finira' quello che hai in mano, mentre il dito e' ancora premuto. E' l'UNICO momento in cui una tessera si vede: su un telefono non esiste il passaggio del mouse, e senza questo si piazzerebbe alla cieca. Appena alzi il dito sparisce.",
+      "colore_buono": "#8fe3a0",
+      "colore_cattivo": "#e38f8f",
+      "spessore": 3,
+      "raggio_angoli": 6,
+      "margine": 0.08,
+      "opacita_riempimento": 0.22
+    },
     "bracciante": {
       "_nota": "Chi lavora. Un cerchio col colore del mestiere. La barra sopra la testa dice a che punto e' il lavoro: e' l'unico modo per capire che sta facendo qualcosa invece di essere impallato.",
       "raggio": 13,

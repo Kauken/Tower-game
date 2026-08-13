@@ -4,11 +4,10 @@ import { area, grafica, interfaccia, telecamera } from '../game/config.js'
 import Cruscotto from './Cruscotto.jsx'
 import Bottone from './Bottone.jsx'
 import {
-  Avviso,
+  InMano,
   PannelloBracciante,
   PannelloCassa,
-  PannelloCostruisci,
-  Riepilogo
+  PannelloCostruisci
 } from './Pannelli.jsx'
 import { elencoTecnologie } from '../game/config.js'
 
@@ -17,8 +16,10 @@ const VISTA_INIZIALE = {
   braccantiFermi: 0,
   braccantiTotali: 0,
   zoomLontano: false,
-  modo: 'normale',
-  daCostruire: '',
+  inManoTipo: '',
+  inManoId: '',
+  inManoNome: '',
+  inManoQuanti: 0,
   esito: '',
   braccianteScelto: -1,
   nomeScelto: '',
@@ -29,15 +30,10 @@ const VISTA_INIZIALE = {
   cassaEIlCasotto: false,
   valoreCassa: 0,
   monete: 0,
-  giorno: 1,
-  oraDelGiorno: 0,
   slotOperaio: 0,
   inventario: '',
   zainoPieno: false,
   statoOperaio: '',
-  puoPiantare: '',
-  mostraRiepilogo: false,
-  riepilogo: '',
   tecnologie: ''
 }
 
@@ -135,8 +131,13 @@ export default function CampoDiGioco() {
         inizio: performance.now(),
         spostato: 0
       }
+      // se hai qualcosa in mano, il segno di dove finira' compare **subito**,
+      // mentre il dito e' ancora giu': su un telefono non esiste il passaggio
+      // del mouse, e senza questo si piazzerebbe alla cieca
+      const punto = logico(evento)
+      motoreRef.current.punta(punto.x, punto.y)
     },
-    []
+    [logico]
   )
 
   const muovi = useCallback(
@@ -151,8 +152,15 @@ export default function CampoDiGioco() {
       g.x = evento.clientX
       g.y = evento.clientY
 
-      const scala = logico(evento).scala
-      motoreRef.current.trascina(dx * scala, dy * scala)
+      const punto = logico(evento)
+      motoreRef.current.trascina(dx * punto.scala, dy * punto.scala)
+      // appena diventa un trascinamento il segno sparisce: stai spostando la
+      // mappa, non stai mirando
+      if (g.spostato > telecamera.soglia_trascinamento) {
+        motoreRef.current.spunta()
+      } else {
+        motoreRef.current.punta(punto.x, punto.y)
+      }
     },
     [logico]
   )
@@ -172,6 +180,7 @@ export default function CampoDiGioco() {
         const punto = logico(evento)
         motoreRef.current.tocca(punto.x, punto.y)
       }
+      motoreRef.current.spunta()
     },
     [logico]
   )
@@ -183,13 +192,14 @@ export default function CampoDiGioco() {
     motoreRef.current.annulla()
     apriCostruzione(false)
   }, [])
-  const costruisci = useCallback((id) => {
-    motoreRef.current.costruisci(id)
+  const riponi = useCallback(() => motoreRef.current.annulla(), [])
+  const prendiMateriale = useCallback((id) => motoreRef.current.prendi('materiale', id), [])
+  const prendiCostruzione = useCallback((id) => {
+    motoreRef.current.prendi('costruzione', id)
     apriCostruzione(false)
   }, [])
   const vendi = useCallback(() => motoreRef.current.vendi(), [])
   const studia = useCallback((id) => motoreRef.current.studia(id), [])
-  const chiudiRiepilogo = useCallback(() => motoreRef.current.chiudiRiepilogo(), [])
 
   return (
     <div
@@ -222,26 +232,28 @@ export default function CampoDiGioco() {
         braccantiFermi={vista.braccantiFermi}
         braccantiTotali={vista.braccantiTotali}
         monete={vista.monete}
-        giorno={vista.giorno}
-        oraDelGiorno={vista.oraDelGiorno}
         inventario={vista.inventario}
         zainoPieno={vista.zainoPieno}
         statoOperaio={vista.statoOperaio}
+        inManoTipo={vista.inManoTipo}
+        inManoId={vista.inManoId}
+        onPrendi={prendiMateriale}
         esito={vista.esito}
       />
 
-      {vista.mostraRiepilogo ? (
-        <Riepilogo dati={vista.riepilogo} onChiudi={chiudiRiepilogo} />
-      ) : null}
-
       {/* i fogli e gli avvisi stanno sopra alla riga dei pulsanti, mai sotto:
           il pollice arriva prima in basso */}
-      {vista.modo === 'costruisci' ? (
-        <Avviso testo="Tocca dove metterla" onAnnulla={annulla} />
+      {vista.inManoTipo ? (
+        <InMano
+          nome={vista.inManoNome}
+          quanti={vista.inManoQuanti}
+          onRiponi={riponi}
+        />
       ) : costruzioneAperta ? (
         <PannelloCostruisci
           inventarioOperaio={vista.inventario}
-          onCostruisci={costruisci}
+          inManoId={vista.inManoId}
+          onPrendi={prendiCostruzione}
           onChiudi={() => apriCostruzione(false)}
         />
       ) : vista.braccianteScelto >= 0 ? (
@@ -250,7 +262,6 @@ export default function CampoDiGioco() {
           stato={vista.statoScelto}
           inventario={vista.inventario}
           slot={vista.slotOperaio}
-          puoPiantare={vista.puoPiantare}
           onChiudi={annulla}
         />
       ) : vista.cassaScelta ? (

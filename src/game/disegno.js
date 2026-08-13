@@ -370,6 +370,36 @@ function disegnaBraccianti(ctx, camera, squadra) {
   }
 }
 
+// Dove finira' quello che hai in mano. Si disegna **solo mentre il dito e'
+// premuto**, ed e' l'unica volta in cui una tessera si vede: la' la griglia
+// DEVE vedersi, perche' stai piazzando e devi sapere dove va a finire.
+function disegnaMira(ctx, camera, mira) {
+  if (!mira || !mira.attiva) {
+    return
+  }
+  const stile = grafica.mano
+  const lato = tessera * camera.stato.zoom
+  const margine = lato * stile.margine
+  camera.versoSchermo(mira.tx * tessera, mira.ty * tessera, punto)
+
+  const colore = mira.valida ? stile.colore_buono : stile.colore_cattivo
+  ctx.beginPath()
+  ctx.roundRect(
+    punto.x + margine,
+    punto.y + margine,
+    lato - margine * 2,
+    lato - margine * 2,
+    stile.raggio_angoli
+  )
+  ctx.globalAlpha = stile.opacita_riempimento
+  ctx.fillStyle = colore
+  ctx.fill()
+  ctx.globalAlpha = 1
+  ctx.strokeStyle = colore
+  ctx.lineWidth = stile.spessore
+  ctx.stroke()
+}
+
 export function disegnaIsola(
   ctx,
   camera,
@@ -377,11 +407,14 @@ export function disegnaIsola(
   squadra,
   casse,
   braccianteScelto,
-  cassaScelta
+  cassaScelta,
+  mira
 ) {
   camera.tessereVisibili(vista)
   disegnaFuori(ctx)
   disegnaTerreno(ctx, camera)
+  // la mira sta sotto alle cose: e' un segno sul terreno, non un'etichetta
+  disegnaMira(ctx, camera, mira)
   disegnaRisorse(ctx, camera)
   disegnaCasse(ctx, camera, casse)
   // gli anelli vanno SOPRA alle cose, e piu' larghi di loro: sotto finivano

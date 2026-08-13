@@ -10,27 +10,33 @@ Si legge dal basso verso l'alto per capire come ci siamo arrivati, dall'alto ver
 
 Se un punto della roadmap sta per toccare una di queste, **fermati e falla decidere** (agente `consulente-design`), poi costruisci.
 
-### A1. Le macchine consumano energia?
-
-In Factorio e Satisfactory la corrente è metà del gioco: è quello che rende una fabbrica un sistema invece che una fila di scatole. Ma è **un secondo sistema di reti da imparare su un telefono**, e questo progetto ha già l'inventario, le ricette e il trasporto.
-
-**Raccomandazione: no alla rete elettrica, sì al combustibile su una macchina sola.** La fornace consuma **carbone** in un cassetto suo. Dà al carbone un mestiere, aggiunge una catena che converge (scavi carbone *per poter* fondere il ferro), e non chiede al giocatore di imparare fili e generatori. Se un giorno servirà di più, un cassetto del combustibile si estende; una rete elettrica tolta a metà no.
-
-È il **punto 15** della roadmap, segnato *da confermare*.
-
-### A2. Chi dà le commesse, e con che ritmo?
-
-Le commesse sono il punto 14. Senza il ciclo del giorno **non hanno una scadenza** — ed è giusto così, *non c'è fretta* è una costante. Ma allora resta da decidere cosa le fa arrivare: il tempo che passa? Il fatto che hai sbloccato qualcosa? Una bacheca dove ce ne sono sempre tre e ne scegli una?
-
-**Raccomandazione: tre sulla bacheca, ne accetti una per volta, e quando la consegni ne arriva un'altra.** Nessun orologio, e la scelta fra tre è una decisione vera.
-
-### A3. Quante isole, e cosa porta ognuna?
+### A1. Quante isole, e cosa porta ognuna?
 
 La seconda è decisa (ferro e carbone). Dalla terza in poi è contenuto, e si decide quando la base è viva. Da non progettare adesso: sarebbe progettare al buio.
+
+### A2. Il generatore si può alimentare col nastro, o solo a mano?
+
+Si decide al punto 11, insieme ai nastri. **Raccomandazione: sì.** Il cassetto del combustibile è un contenitore come gli altri, e un nastro che alimenta il generatore è esattamente il tipo di cosa che deve dare soddisfazione. Non c'è ragione di renderlo un'eccezione.
 
 ---
 
 ## Decise
+
+- 2026-08-12 (notte): **NIENTE COMMESSE. L'UNICO MOTORE È LA PROGRESSIONE.** Parole dell'autore: *"le commesse non le voglio a questo punto, l'obiettivo è la progressione."* Erano il punto 14 della roadmap, e sono state tolte **prima di costruirle**.
+
+  Il ragionamento che le rendeva superflue era già scritto e non l'avevamo visto: **il desiderio ce l'ha già la bacheca dei progetti.** Se guardando la Trivella non la vuoi, un tizio che ti chiede quaranta tavole non risolve niente — sposta il problema. E se la vuoi, la commessa è un compito in mezzo fra te e quello che stavi già facendo. Stesso motivo per cui è caduto il ciclo del giorno: **un secondo motore che gira in parallelo a quello vero è rumore.**
+
+  Chiude la decisione aperta A2, che chiedeva con che ritmo arrivassero. La risposta è che non arrivano.
+
+- 2026-08-12 (notte): **LA CORRENTE SI FA CON I PALI CHE COPRONO UN'AREA, NON CON I CAVI.** Parole dell'autore: *"sì vorrei un sistema energetico, magari non con cavi singoli a macchine ma con pali che coprono un'area."* Chiude la decisione aperta A1, e la chiude **meglio della raccomandazione che avevo dato io** (un solo cassetto del combustibile sulla fornace, senza rete).
+
+  Un generatore brucia combustibile e alimenta tutto quello che sta nel suo raggio; i pali allungano la copertura e **si agganciano da soli** per vicinanza. Non si traccia nessun filo. Su un telefono tirare fili con un dito sarebbe un supplizio, e la parte interessante della corrente non sono i fili: è **"come faccio ad arrivare fin laggiù?"** — che con i pali resta tutta.
+
+  **Acceso o spento, mai a metà.** In Factorio quando la corrente non basta tutto rallenta in proporzione: elegante, e su uno schermo da telefono illeggibile — vedi le macchine andare piano e non sai perché. Qui una macchina coperta lavora a piena velocità, una scoperta o senza combustibile sta ferma **e lo scrive**.
+
+  **Il combustibile è legno, e più avanti carbone.** È la scelta che trasforma la corrente da tassa a decisione: **il legno che bruci è legno che non costruisci**, e il bosco che ripianti diventa il carburante della fabbrica. La prima decisione del gioco (*vendo l'alberello o lo ripianto?*) pesa il doppio. Il carbone della seconda isola non sblocca niente di nuovo: **toglie una scocciatura sentita per ore**, che è l'unico modo onesto di rendere desiderabile un materiale.
+
+  **Costo dichiarato:** macchine e corrente diventano **un punto solo** della roadmap, ed è il più grosso della lista. Non si possono separare: una macchina che funziona senza corrente e poi da un giorno all'altro non funziona più è una promessa rotta.
 
 - 2026-08-12 (notte): **LA SPINA DORSALE È IL TEMPO DELL'OPERAIO.** Non è una richiesta dell'autore, è il modo trovato per tenere insieme tutto quello che ha chiesto: un operaio solo, l'albero tecnologico, il crafting, le trivelle, i nastri, le isole. C'è una persona sola, quindi ogni cosa si misura in **quanti secondi del suo tempo costa e quanti gliene restituisce**. Motivo: senza una lente unica, un gioco con cinque sistemi diventa cinque giochi che non si parlano, ed è come sono morte le versioni precedenti. Ogni proposta futura si giudica con questa frase; se non ci si può giudicare, è fuori posto.
 

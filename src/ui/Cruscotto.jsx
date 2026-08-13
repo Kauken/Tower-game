@@ -5,17 +5,23 @@ import Zaino from './Zaino.jsx'
 // Quello che hai addosso, e cosa sta facendo l'operaio. Le due cose che devono
 // stare sempre sotto gli occhi.
 //
+// **Non c'e' nessun orologio**, e non e' una dimenticanza: il giorno serviva a
+// far scadere i salari, e i salari sono caduti con l'operaio unico. Un timer
+// che gira senza avere denti e' solo un'ansia gratuita. Il ritmo lo danno gli
+// sblocchi.
+//
 // **Non c'e' nessun totale dell'isola**, e non e' una dimenticanza: un numero
 // unico che dice "hai 40 legno" farebbe credere di poterlo spendere, mentre
 // quel legno sta dentro una cassa da qualche parte e qualcuno lo deve andare a
 // prendere. Il solo numero che conta davvero e' quello nello zaino.
 export default function Cruscotto({
   monete,
-  giorno,
-  oraDelGiorno,
   inventario,
   zainoPieno,
   statoOperaio,
+  inManoTipo,
+  inManoId,
+  onPrendi,
   lavoriInAttesa,
   braccantiFermi,
   braccantiTotali,
@@ -84,31 +90,19 @@ export default function Cruscotto({
           >
             {dice}
           </span>
-          <span style={{ fontSize: interfaccia.testo_normale, color: interfaccia.colore_testo }}>
-            giorno {giorno}
-          </span>
-        </div>
-        <div
-          style={{
-            marginTop: 6,
-            height: 4,
-            borderRadius: 2,
-            background: '#00000055',
-            overflow: 'hidden'
-          }}
-        >
-          <div
-            style={{
-              width: Math.min(100, Math.max(0, oraDelGiorno * 100)) + '%',
-              height: '100%',
-              background: interfaccia.colore_accento
-            }}
-          />
         </div>
       </div>
 
-      {/* lo zaino a caselle: quando finiscono, l'operaio si ferma */}
-      <Zaino inventario={inventario} pieno={zainoPieno} />
+      {/* lo zaino a caselle: quando finiscono, l'operaio si ferma. Ed e' anche
+          la mano: toccare una casella con dentro qualcosa di piazzabile te lo
+          mette in mano */}
+      <Zaino
+        inventario={inventario}
+        pieno={zainoPieno}
+        inManoTipo={inManoTipo}
+        inManoId={inManoId}
+        onPrendi={onPrendi}
+      />
 
       {/* l'avviso compare solo quando un tocco non ha fatto quello che ti
           aspettavi: un ordine che non parte senza spiegazione sembra un guasto */}

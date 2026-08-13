@@ -6,7 +6,6 @@ import braccantiJson from '../../config/braccianti.json'
 import costruzioniJson from '../../config/costruzioni.json'
 import economiaJson from '../../config/economia.json'
 import tecnologieJson from '../../config/tecnologie.json'
-import tempoJson from '../../config/tempo.json'
 import motore from '../../config/motore.json'
 
 // L'area logica dello **schermo**, non del mondo: l'isola e' piu' grande, e la
@@ -36,7 +35,6 @@ export const elencoCostruzioni = costruzioniJson.costruzioni
 
 export const partenzaEconomia = economiaJson.partenza
 export const vendita = economiaJson.vendita
-export const tempo = tempoJson
 
 export function trovaCostruzione(id) {
   const costruzione = elencoCostruzioni.find((voce) => voce.id === id)

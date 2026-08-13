@@ -1,4 +1,4 @@
-# Lista di costruzione — v12
+# Lista di costruzione — v13
 
 Un punto alla volta, provando dopo ognuno.
 Quando l'autore dice **"fai il punto N"**, si intende il numero di questa lista.
@@ -61,9 +61,14 @@ La bacheca al casotto smette di vendere potenziamenti e comincia a vendere **pro
 **7. La simulazione headless.** — Far girare l'isola senza disegnarla.
 Serve a rispondere con dei numeri a *"quanto vale un minuto dell'operaio"*, che è la lente di tutto `MATERIALI.md`. Senza, il bilanciamento resta a occhio, e questo gioco è una questione di portata: a occhio non si vede.
 
-**8. Le macchine con cassetto d'entrata e d'uscita.** — Segheria, frantoio, fornace.
-Lavorano da sole finché hanno materiale. **Riempirle e svuotarle è il lavoro.** Qui il legno comincia davvero a moltiplicarsi.
-→ `GDD.md` §9, `MATERIALI.md` §3.
+**8. Le macchine e la corrente.** — **Il punto più grosso della lista**, e non si può spezzare.
+Segheria, frantoio, fornace: cassetto d'entrata, cassetto d'uscita, lavorano da sole finché hanno materiale. **Riempirle e svuotarle è il lavoro.** Qui il legno comincia davvero a moltiplicarsi.
+E lavorano **solo se hanno corrente**: un **generatore** che brucia legno alimenta tutto quello che sta nel suo raggio, i **pali** allungano la copertura e si agganciano da soli per vicinanza. Nessun filo da tracciare. Coperta = lavora a piena velocità; scoperta o senza combustibile = ferma, **e lo scrive**.
+→ `GDD.md` §9 e §10b, `MATERIALI.md` §3.
+
+> **Perché non sono due punti.** Una macchina che funziona e poi da un giorno all'altro non funziona più è una promessa rotta. Si fanno insieme, in due metà dentro lo stesso intervento: prima la macchina che lavora, poi il generatore che la fa lavorare.
+
+> **Il legno che bruci è legno che non costruisci.** È qui che la prima decisione del gioco — *vendo l'alberello o lo ripianto?* — comincia a pesare il doppio.
 
 **9. La trivella.** — Il gradino 2, quello che nessuno deve saltare.
 Si piazza su un giacimento e produce da sola nel suo cassetto, ma **il cassetto lo svuoti tu**: non si collega a niente. È il *Portable Miner* di Satisfactory, ed è lui che farà sentire il nastro come una liberazione.
@@ -87,18 +92,17 @@ Si costruisce il passaggio, non si trova una chiave. **L'operaio si sposta con t
 **13. Il trasporto fra isole.** — Prima la barca che carichi tu, poi quella che va da sola.
 Stessa struttura a gradini di tutto il resto.
 
-**14. Le commesse.** — Qualcuno chiede roba precisa e paga molto più del mercante.
-**Senza scadenza**: non c'è più il giorno, e "non c'è fretta" è una costante. Sono obiettivi, non timer. Arrivano qui e non prima perché fino al punto 6 il desiderio ce l'hanno già i progetti.
-
-**15. Il combustibile della fornace.** — *(da confermare, vedi `DECISIONI.md`)*
-La fornace consuma **carbone**, e basta lei. Non una rete elettrica: un solo cassetto del combustibile su una sola macchina dà al carbone un mestiere senza aggiungere un secondo sistema da imparare su un telefono.
+**14. Il carbone come combustibile.** — Arriva con la seconda isola, e rende molto di più del legno.
+**Non sblocca niente di nuovo: toglie una scocciatura che hai sentito per ore** — dover bruciare il bosco che ripianti. È l'unico modo onesto di rendere desiderabile un materiale.
 
 ## Fase E — il contenuto, quando la base è viva
 
-16. La terza isola e i materiali rari.
-17. Altri attrezzi e altre macchine di livello superiore.
-18. Le rifiniture di sensazione: effetti, suoni, la macchina che si vede lavorare.
-19. L'impacchettamento con Capacitor.
+15. La terza isola e i materiali rari.
+16. Altri attrezzi e altre macchine di livello superiore.
+17. Le rifiniture di sensazione: effetti, suoni, la macchina che si vede lavorare.
+18. L'impacchettamento con Capacitor.
+
+> **Le commesse non ci sono, e non è una dimenticanza.** *"L'obiettivo è la progressione."* Il desiderio ce l'ha già la bacheca dei progetti; un tizio che ti chiede quaranta tavole sposterebbe il problema invece di risolverlo. Vedi `DECISIONI.md`.
 
 ---
 
@@ -112,4 +116,5 @@ La fornace consuma **carbone**, e basta lei. Non una rete elettrica: un solo cas
 | L'inventario a caselle, gli alberelli, niente scarico automatico | **FATTO** 2026-08-12 |
 | Gli alberi che ricrescevano da soli | **TOLTO** 2026-08-12 — toglieva la decisione di ripiantare |
 | I salari e l'assunzione dei braccianti | **TOLTI** 2026-08-12 — con un operaio solo un salario è una tassa, non una scelta |
-| Il ciclo del giorno | **da togliere**, punto 2 — senza salari è un timer senza denti |
+| Il ciclo del giorno | **TOLTO** 2026-08-12 — senza salari è un timer senza denti |
+| Le commesse | **TOLTE** 2026-08-12, prima di costruirle — l'unico motore è la progressione |

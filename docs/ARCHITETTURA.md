@@ -55,7 +55,7 @@ config/*.json  ──►  src/game/config.js  ──►  tutto il resto
 | `economia.js` | Monete, prezzi, vendere | Cambi come entrano o escono le monete |
 | `disegno.js` | Disegna tutto attraverso la telecamera | Aggiungi qualcosa che si deve vedere |
 | `effetti.js` | I lampi e gli anelli, da pool | Aggiungi un feedback visivo |
-| `motore.js` | Il ciclo, la coda dei comandi, il **ponte con React** | Aggiungi un comando o un dato per l'interfaccia |
+| `motore.js` | Il ciclo, la coda dei comandi, **la mano**, il ponte con React | Aggiungi un comando o un dato per l'interfaccia |
 | `pool.js`, `schermo.js` | Preallocazione e adattamento del canvas | Quasi mai |
 
 ### `src/ui/`
@@ -77,6 +77,7 @@ config/*.json  ──►  src/game/config.js  ──►  tutto il resto
 | `costruzioni.json` | Cosa si può piazzare, e quanto tiene dentro |
 | `tecnologie.json` | Gli sblocchi *(diventeranno `progetti.json` al punto 6)* |
 | `economia.json` | Monete di partenza, moltiplicatore di vendita |
+| ~~`tempo.json`~~ | **cancellato** col ciclo del giorno |
 | `motore.json` | Valori tecnici e di aspetto. **Il bilanciatore non lo tocca** |
 
 ## 3. Le ricette — come si aggiunge una cosa, passo per passo
@@ -106,6 +107,14 @@ Questo è il caso che costa di più, ed è fatto per costare poco:
    - `concludi()` — cosa succede quando finisce
 3. `motore.js` → da dove arriva l'ordine: un tocco sulla mappa, o un comando dall'interfaccia.
 4. `config/braccianti.json` → il tempo che ci mette. **Mai nel codice.**
+
+### Aggiungere una cosa **piazzabile**
+
+Il gesto è già pronto, e non va rifatto: **tutto si piazza con la mano.**
+
+1. Se è un materiale: `config/isola.json` → il campo `pianta`. Se è una costruzione: `config/costruzioni.json`.
+2. `motore.js` → `puoPiazzareIn()` se le regole di dove ci sta sono diverse, e `piazza()` per cosa succede.
+3. **Basta.** La striscia in alto, il segno della mira, il riporsi da soli e il conteggio funzionano già.
 
 ### Aggiungere un **effetto di uno sblocco**
 
@@ -138,6 +147,7 @@ Perché tu non le rifaccia da zero credendo che manchino:
 - **Chiudere la pagina cancella tutto.** → punto 3.
 - **Il crafting non esiste ancora**, quindi le tecnologie si pagano solo in monete. → punti 5 e 6.
 - **I giacimenti non esistono ancora**: la pietra viene da massi finiti. → punto 4.
+- **Non c'è la corrente**: arriva insieme alle macchine. → punto 8.
 
 ## 6. Il muro architetturale, nominato prima di sbatterci
 
