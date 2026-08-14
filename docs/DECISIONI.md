@@ -14,6 +14,17 @@ Se un punto della roadmap sta per toccare una di queste, **fermati e falla decid
 
 La seconda è decisa (ferro e carbone). Dalla terza in poi è contenuto, e si decide quando la base è viva. Da non progettare adesso: sarebbe progettare al buio.
 
+### A4. Il gioco ha un finale, o no?
+
+L'autore ha chiesto *"la progressione fino al finale del gioco"*. Il `GDD.md` §11c dice **per scelta** che un finale non c'è: niente razzo, niente ascensore, solo scale che non finiscono. **Le due cose non vanno d'accordo**, e va scelto prima di costruire l'Era 4.
+
+La ricerca dice tutte e due le cose, ed è per questo che è una decisione e non una risposta: **dopo il finale la maggioranza smette**, ma **senza un traguardo dichiarato molti non arrivano nemmeno a meta'**.
+
+- **Nessun finale** — come sta scritto adesso. L'ultimo gradino nominabile e' *l'isola che vive senza di te*.
+- **Un finale che non chiude** — una costruzione grossa da completare, che da' un traguardo ma dopo la quale il gioco continua.
+
+Aperta il 2026-08-14, disegnando `PROGETTI.md`.
+
 ### A3. Quanto grande deve essere lo zaino di partenza?
 
 **Misurata, non ragionata** — i numeri stanno nella voce del 2026-08-14 e nella `ROADMAP.md`. Due strade, e nessuna è ovvia:

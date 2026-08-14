@@ -34,6 +34,7 @@ E se non sai cosa chiedere: **"a che punto siamo?"**
 | --- | --- |
 | `GDD.md` | *cos'è* il gioco — comanda su tutto |
 | `ROADMAP.md` | *cosa si fa dopo* |
+| `PROGETTI.md` | *tutti i progetti fino in fondo*, e la domanda che ognuno toglie |
 | `MATERIALI.md` | i numeri, le ricette, il bilanciamento |
 | `ARCHITETTURA.md` | *dove* si mettono le mani nel codice |
 | `DECISIONI.md` | *perché* — e cosa è ancora da decidere |
