@@ -2,7 +2,9 @@
 
 Questo è il documento che l'agente `bilanciatore` usa come legge. Il `GDD.md` dice *perché*; qui c'è il *quanto*.
 
-**Tutti i numeri di questo documento sono ragionati, non misurati.** Vanno tarati con la simulazione headless (punto 7 della roadmap). Fino ad allora sono un punto di partenza coerente, non una verità.
+**I numeri di questo documento sono in parte misurati e in parte ancora no**, ed è scritto ogni volta quale dei due. La misura si fa con `npm run simula` (punto 7 della roadmap, fatto). Un numero ragionato è un punto di partenza coerente, non una verità.
+
+> Le parti su **la curva ×1,5 dei progetti**, **la forbice che si allarga** e **la compressione mancante** vengono dalle ricerche in `docs/ricerche/` (sintesi in `SINTESI.md`). Sono legge di design, ma **i valori vanno ancora tarati**.
 
 ---
 
@@ -82,6 +84,52 @@ Il valore di riferimento è **×1,5–1,6**. Con quel rapporto una catena a tre 
 | Vivaio | 450 | 1 telaio + 8 tavole |
 | Carriola | 520 | 2 telai + 8 chiodi |
 
+### La curva dei costi dei progetti — **anche lei è un ×1,5**
+
+I costi qui sopra (120, 160, 210, 260, 450, 520) sono stati messi a occhio, uno dopo l'altro. La ricerca sui giochi di riferimento dice che la curva giusta è **geometrica, e il passo è di nuovo ×1,5**:
+
+| Progetto | Costo con la curva |
+| --- | --- |
+| 1° | **120** |
+| 2° | **180** |
+| 3° | **270** |
+| 4° | **405** |
+| 5° | **608** |
+
+Il motivo per cui deve essere geometrica e non a passi liberi è che **la produzione al minuto del giocatore cresce anch'essa in modo geometrico**: ogni macchina moltiplica, non aggiunge. Se i costi crescono a passi lineari mentre la produzione moltiplica, dopo tre sblocchi il quarto arriva da solo mentre stai facendo altro — e il desiderio si spegne.
+
+Il controllo resta quello del §6: **costo del prossimo progetto diviso la produzione attuale al minuto, fra 4 e 12 minuti.** La curva ×1,5 è il modo di restare dentro quella finestra senza doverla ricalcolare a ogni aggiunta.
+
+> **Da tarare, non ancora applicata.** Cambiare sei costi insieme è esattamente quello che il §8 vieta. Va fatta dal `bilanciatore`, misurando con `npm run simula`, e va provata: la curva è più ripida di quella attuale nella parte alta (608 contro 520) e più ripida anche in mezzo (270 contro 210).
+
+### La forbice che si allarga — perché un potenziamento non regala mai il 100%
+
+Presa da Mekanism, ed è il modello di progressione più raffinato che le ricerche hanno trovato. Quando una macchina si potenzia, **il guadagno per ogni gradino cala mentre il costo sale**:
+
+| Gradino | Quanto rende in più |
+| --- | --- |
+| 1° | **+100%** |
+| 2° | **+50%** |
+| 3° | **+33%** |
+| 4° | **+25%** |
+
+Sono i rendimenti decrescenti classici, ma la parte intelligente è **cosa fa il giocatore quando li vede**: siccome il quarto gradino rende poco e costa tanto, a un certo punto conviene **costruire una seconda macchina invece di potenziare la prima**. E quello è il momento in cui il giocatore scopre da solo che la fabbrica si allarga, invece che sentirselo dire.
+
+> **Regola pratica:** un potenziamento non deve mai rendere quanto costruire una macchina in più, oltre il secondo gradino. Se lo fa, la fabbrica non crescerà mai in larghezza, e *"the factory must grow"* diventa *"the machine must upgrade"*, che è un altro gioco.
+
+### Manca una **compressione**
+
+Le catene di adesso vanno tutte in una direzione sola: **1 cosa diventa più cose** (1 legno → 2 tavole, 1 pietra → 2 ghiaia, 1 rame → 4 chiodi). Le ricerche fanno notare che nei giochi di riferimento esiste sempre anche il movimento contrario: **molte cose diventano una cosa sola, più densa e più preziosa.**
+
+Serve a due cose, e la seconda conta più della prima:
+
+1. **Il valore per casella sale**, quindi un viaggio rende di più senza toccare lo zaino.
+2. **Dà una risposta al problema dello spazio che non sia "più casse"** — ed è il tipo di soluzione che un giocatore trova da solo e si sente furbo.
+
+Forma tipica: `9 ghiaia → 1 blocco di pietra`, che si può anche rifare al contrario. Attenzione: **una compressione reversibile deve perdere qualcosa** (o costare tempo, o rendere 8 invece di 9), altrimenti comprimere e decomprimere è materia gratis in un altro vestito — e ricade nel muro del §2.1.
+
+> 💡 **Da aggiungere quando arrivano le macchine dell'Era 1**, non prima: a mano una compressione è solo un tocco in più.
+
 ### Quello che arriverà (le macchine, punto 8 in poi)
 
 Lingotti e fornace **non esistono ancora**, e non è una dimenticanza: fondere è una macchina, e le macchine arrivano al punto 8. Quando ci saranno:
@@ -138,6 +186,14 @@ Valori di riferimento:
 | Nastro | non si misura così — **compra tempo, non monete** |
 
 **Sopra i 30 minuti una cosa è arredamento** e va tolta, non ritoccata. Sotto i 3 non è una decisione: è una cosa che compri e basta, e una cosa che compri e basta non è un gioco.
+
+> ### Il combustibile entra nel conto, e non come una tassa
+> Dall'Era 1 in poi le macchine **bruciano legno**, e quel legno va sottratto dal guadagno al minuto: una segheria che produce 20 monete al minuto ma ne brucia 6 di legno, ne rende 14. Il tempo di ammortamento si calcola **sul netto**.
+>
+> Ma la parte importante non è il conto: è che **il combustibile lo carica l'operaio**, quindi ogni macchina in più gli ricompra un pezzo di tempo *e* gliene ruba un altro. È voluto — è la contromisura che tiene scarsa la risorsa scarsa (`GDD.md` §2). Nel bilanciarlo:
+>
+> - il costo del combustibile **non deve mai superare un terzo** del guadagno lordo, o la macchina si sente come una tassa invece che come un aiuto;
+> - **non deve nemmeno scendere sotto un decimo**, o il rifornimento non si nota e la contromisura non funziona.
 
 ## 6. La domanda deve crescere più in fretta del rubinetto
 
