@@ -118,13 +118,19 @@ La ricerca dice tutte e due le cose: **dopo il finale la maggioranza smette**, m
 
 → **decisione aperta A4**.
 
-### 3. La curva ×1,5 non può valere per tutti e trentotto
+### 3. Il problema della curva non era quello che pensavo
 
-`MATERIALI.md` dice ×1,5 a ogni progetto. Su trentotto progetti l'ultimo costerebbe **oltre un miliardo** di monete. La regola va corretta:
+> ⚠️ **Qui avevo sbagliato, e la ricerca me l'ha corretto.** Avevo scritto che con la curva ×1,5 l'ultimo progetto costerebbe *"oltre un miliardo"* di monete, e che quindi la regola andava buttata. **Il conto giusto è 392 milioni** — e soprattutto **non è un problema**: in un gioco dove la produzione cresce moltiplicando, un numero grande alla fine è normale, non è un muro.
 
-> **×1,5 dentro un'era. A ogni era nuova si riparte da una base più alta**, perché è a ogni era che la produzione fa un salto.
+Il problema vero è un altro, ed è l'opposto di quello che pensavo:
 
-Le fasce in cima a ogni sezione sono quelle, e vanno tarate con `npm run simula`.
+> **Non esiste "la curva dei costi".** Esiste solo il rapporto fra **quanto costa** e **quanto produci**, ed è quello il tempo che aspetti. Il ×1,5 scritto in `MATERIALI.md` non è né giusto né sbagliato: è **incompleto**, perché accanto non c'è scritto di quanto deve crescere la produzione. Con la produzione a ×1,3 funziona; a ×1,2 il gioco è rotto.
+
+Il bersaglio, ricavato dai numeri pubblici di Cookie Clicker: **fra un progetto e il successivo si deve aspettare dal 15% al 20% in più**. Con la produzione a ×1,3, quello dà costi a ×1,5 — quindi il ×1,5 è confermato, ma per la prima volta **con un motivo dietro invece che a occhio**.
+
+**Due cose che non tornano fra i nostri documenti**, trovate dalla stessa ricerca:
+- le fasce d'era scritte qui sopra implicano ×1,16-1,28, **non** ×1,5;
+- il salto **fra** un'era e l'altra è oggi **più piatto** del passo dentro l'era (×1,15 contro ×1,28): il confine d'era è il punto più piatto di tutta la curva, cioè l'esatto contrario di quello che dovrebbe essere.
 
 ### 4. Trentotto voci in bacheca sono un muro
 

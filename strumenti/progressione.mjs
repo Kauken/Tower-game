@@ -234,11 +234,17 @@ function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = nul
     return serve
   }
 
-  function faiSpazio(ricette) {
+  // `intoccabile` e' la ricetta che sta per fare: i suoi ingredienti non si
+  // posano MAI, nemmeno se ne ha in avanzo. Senza questa riga si avvita:
+  // va a prendere il rame, torna, e posa proprio quel rame perche' e' la cosa
+  // di cui ha piu' avanzo.
+  function faiSpazio(ricette, intoccabile = null) {
     const serve = quantoServe(ricette)
+    const protetti = new Set((intoccabile ? intoccabile.ingredienti : []).map((i) => i.materiale))
     let scelto = ''
     let eccedenza = 0
     for (const m of config.elencoMateriali) {
+      if (protetti.has(m.id)) continue
       const ho = operaio.inventario.quanti(m.id)
       const piu = ho - (serve.get(m.id) || 0)
       if (piu > eccedenza) { scelto = m.id; eccedenza = piu }
@@ -289,7 +295,7 @@ function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = nul
         } else if (passo.fabbrica) {
           const r = config.trovaRicetta(passo.fabbrica)
           if (operaio.inventario.caselleLibere() === 0 && operaio.inventario.quanti(r.produce) === 0) {
-            if (!faiSpazio([ricetta, r])) break
+            if (!faiSpazio([ricetta, r], r)) break
           } else {
             lavori.ordinaFabbrica(casotto.tx, casotto.ty, passo.fabbrica)
           }
@@ -345,6 +351,7 @@ if (confronto) {
     ['curva dei costi ×1,5', { curva: 1.5 }],
     ['curva ×1,5, niente regalo', { monete: 0, curva: 1.5 }],
     ['curva ×2, niente regalo', { monete: 0, curva: 2 }],
+    ['zaino 4 caselle', { zaino: 4 }],
     ['zaino 3 caselle', { zaino: 3 }]
   ]
   console.log('\n  E SE… — quanto cambia la partita')
@@ -367,7 +374,9 @@ if (confronto) {
   }
   console.log('  ' + '─'.repeat(66))
   console.log('\n  Il numero che conta e’ la DURATA: oggi tutto il gioco sta in un quarto d’ora.')
-  console.log('  E il PRIMO BUCO: se e’ vicino a zero, il primo sblocco e’ un regalo.\n')
+  console.log('  E il PRIMO BUCO: se e’ vicino a zero, il primo sblocco e’ un regalo.')
+  console.log('\n  Se una riga non arriva a 6 sblocchi, quella proposta ROMPE il gioco:')
+  console.log('  la partita si pianta e non si finisce piu’.\n')
   await vite.close()
   process.exit(0)
 }
