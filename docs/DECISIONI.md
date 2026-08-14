@@ -29,7 +29,7 @@ Aperta il 2026-08-14, disegnando `PROGETTI.md`.
 
 **Misurata, non ragionata** — i numeri stanno nella voce del 2026-08-14 e nella `ROADMAP.md`. Due strade, e nessuna è ovvia:
 
-- **Zaino base da 6 a 3 caselle.** Effetto certo (lo Zaino grande passa da ×1,00 a ×1,24), costo certo (−19% nei primi minuti).
+- ~~**Zaino base da 6 a 3 caselle.**~~ ❌ **Esclusa il 2026-08-14, misurata con `npm run progressione`: rompe il gioco.** Con tre caselle la partita si pianta dopo un solo sblocco. La ragione e' strutturale, non di numeri: fabbricare il telaio mette in ballo **quattro materiali diversi** e in tre caselle non ci stanno. Con quattro si finisce (14,0 minuti contro 13,5), quindi **quattro e' il pavimento**. La misura precedente non lo aveva visto perche' guardava solo la raccolta, non la fabbricazione.
 - **Allontanare le fonti *dopo* la prima**, lasciando vicino il primo bosco. Non misurata, ma non tocca i primi quindici minuti.
 
 Va decisa **prima** di ritoccare i costi dei progetti, perché cambia la produzione al minuto su cui quei costi si tarano. L'Era 1 si costruisce lo stesso.

@@ -101,8 +101,8 @@ Con sei progetti non si potevano vedere. Nessuna la può decidere un agente.
 
 Sono **l'unico doppione dell'albero**: entrambi rispondono a *"torno a scaricare di continuo"*. E la misura dice che lo Zaino rende **×1,00** — con sei caselle il bosco intero ci sta dentro e l'operaio non torna mai. Tre strade:
 
-- **Zaino base a 3 caselle** — lo Zaino grande passa a ×1,24, ma i primi minuti rendono il 19% in meno.
-- **Allontanare le fonti dopo la prima** — non tocca i primi quindici minuti, ma va ridisegnata la mappa.
+- ~~**Zaino base a 3 caselle**~~ — ❌ **esclusa, misurata il 2026-08-14: rompe il gioco.** Con tre caselle la partita si pianta dopo **un solo** sblocco. Non è lentezza: la catena del telaio mette in ballo **quattro materiali diversi** (legno, tavola, rame, chiodo) e in tre caselle non ci stanno. Con quattro caselle invece si finisce (14,0 min contro 13,5). **Quattro è il pavimento**, sotto non si scende.
+- **Allontanare le fonti dopo la prima** — non tocca i primi quindici minuti, ma va ridisegnata la mappa. **È rimasta l'unica strada per far valere qualcosa allo Zaino.**
 - **Fonderli in una scala sola** — Zaino → Carriola → Carro, e uno dei due sparisce.
 
 → è la decisione aperta **A3** di `DECISIONI.md`.
