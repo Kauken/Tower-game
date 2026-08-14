@@ -14,13 +14,39 @@ Se un punto della roadmap sta per toccare una di queste, **fermati e falla decid
 
 La seconda è decisa (ferro e carbone). Dalla terza in poi è contenuto, e si decide quando la base è viva. Da non progettare adesso: sarebbe progettare al buio.
 
+### A3. Quanto grande deve essere lo zaino di partenza?
+
+**Misurata, non ragionata** — i numeri stanno nella voce del 2026-08-14 e nella `ROADMAP.md`. Due strade, e nessuna è ovvia:
+
+- **Zaino base da 6 a 3 caselle.** Effetto certo (lo Zaino grande passa da ×1,00 a ×1,24), costo certo (−19% nei primi minuti).
+- **Allontanare le fonti *dopo* la prima**, lasciando vicino il primo bosco. Non misurata, ma non tocca i primi quindici minuti.
+
+Va decisa **prima** di ritoccare i costi dei progetti, perché cambia la produzione al minuto su cui quei costi si tarano. L'Era 1 si costruisce lo stesso.
+
 ### A2. Il generatore si può alimentare col nastro, o solo a mano?
 
-Si decide al punto 11, insieme ai nastri. **Raccomandazione: sì.** Il cassetto del combustibile è un contenitore come gli altri, e un nastro che alimenta il generatore è esattamente il tipo di cosa che deve dare soddisfazione. Non c'è ragione di renderlo un'eccezione.
+Si decide al punto 15, insieme ai nastri. **Raccomandazione: sì.** Il cassetto del combustibile è un contenitore come gli altri, e un nastro che alimenta il generatore è esattamente il tipo di cosa che deve dare soddisfazione. Non c'è ragione di renderlo un'eccezione.
 
 ---
 
 ## Decise
+
+- 2026-08-14: **SEI RICERCHE HANNO CORRETTO QUATTRO DECISIONI GIÀ PRESE.** Non sono richieste dell'autore: sono ricerche sui forum dei giochi di riferimento, chieste da lui (*"crea tot agenti che servono per fare ricerche specifiche sui forum dei vari giochi"*). Stanno in `docs/ricerche/`, la sintesi in `SINTESI.md`. Le voci qui sotto **restano com'erano scritte** — si corregge aggiungendo, non riscrivendo la storia.
+
+  **1. «Acceso o spento, mai a metà» resta, ma non può spegnere tutto.** La voce del 2026-08-12 sulla corrente diceva solo che è binario. Manca il pezzo che conta: esiste una discussione, con quel titolo esatto, intitolata **«Il sistema della corrente mi ha fatto smettere di giocare»**, e il motivo non era la difficoltà — era il **fusibile che spegne tutto insieme**. Coffee Stain ha poi dovuto introdurre i gruppi di alimentazione per rimediare. Quindi: un generatore a secco ferma **solo quello che copre lui**, **avvisa prima**, e **riparte da solo** quando lo rifornisci. **La mancanza di corrente costa produzione, mai lavoro perso.** → `GDD.md` §10b.
+
+  **2. Macchine e corrente NON sono più un punto solo.** Il "costo dichiarato" della stessa voce diceva che non si possono separare. È sbagliato: **tre giochi di riferimento su quattro mettono un'era intera di macchine a combustibile prima dell'elettricità**, perché la corrente è il gradino che toglie la fatica di **riempire otto macchine una per una** — e quella fatica devi averla già sentita. Se arrivano insieme, il gradino non si sente. Da qui l'Era 1 (Il Fuoco) e l'Era 2 (La Corrente) della roadmap v18.
+
+  **3. Salire di gradino NON è una ricostruzione.** Era scritto nel `GDD.md` §11b e nella regola 15c di `CLAUDE.md`, dato per "quello che tiene vivi i modpack per centinaia di ore". Le ricerche dicono l'opposto: **il muro della ricostruzione è il punto documentato in cui la gente abbandona il genere.** Adesso vale il contrario — **non si smonta mai quello che funziona**, la macchina nuova si affianca alla vecchia. È la correzione più importante delle quattro, perché era scritta nel documento con più autorità del progetto.
+
+  **4. Il terminale va reso lento, non solo caro.** Sapevamo già che è il premio di fine gioco. Non sapevamo che **il prezzo non basta**: il Deposito Dimensionale di Satisfactory funziona perché fa **15 pezzi al minuto**, non perché costa. Se l'unico freno fosse il costo, si paga una volta e **casse, nastri e posizione delle macchine smettono tutti insieme di contare**.
+
+- 2026-08-14: **MISURATO — LO ZAINO NON RENDE PERCHÉ IL BOSCO INTERO CI STA DENTRO.** La simulazione diceva che lo Zaino grande vale ×0,95, cioè niente, e lo avevamo archiviato come bilanciamento. La causa vera è un'altra: con sei caselle, **otto alberi non riempiono lo zaino**, quindi l'operaio **non torna mai** a scaricare. Il viaggio non esiste, e uno zaino più grande non ha niente da moltiplicare.
+
+  Misura del 2026-08-14, a caselle diverse: **6 → ×1,00 · 5 → ×1,00 · 4 → ×1,00 · 3 → ×1,24**. L'effetto è **a scatto**, non graduale. Il prezzo di scendere a 3 è dichiarato: **−19% di produzione nei primi minuti**, che è esattamente dove un'altra ricerca dice che si perde la gente.
+
+  **Non è stato cambiato niente in configurazione**: è una decisione dell'autore, ed è aperta (vedi A3).
+
 
 - 2026-08-12 (notte): **NIENTE COMMESSE. L'UNICO MOTORE È LA PROGRESSIONE.** Parole dell'autore: *"le commesse non le voglio a questo punto, l'obiettivo è la progressione."* Erano il punto 14 della roadmap, e sono state tolte **prima di costruirle**.
 
