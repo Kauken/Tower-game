@@ -129,8 +129,20 @@ function pianifica(ingredienti, inventario) {
 
 // --- la partita -----------------------------------------------------------
 
-function partita({ minutiMassimi = 180, zaino = null } = {}) {
+function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = null } = {}) {
   if (zaino !== null) config.braccianti.slot = zaino
+  const moneteVere = config.partenzaEconomia.monete
+  if (monete !== null) config.partenzaEconomia.monete = monete
+  const zainoVero = config.braccianti.slot
+
+  // Rimettere i costi come stavano dopo ogni prova: la configurazione e' un
+  // oggetto solo, condiviso, e una prova che sporca la successiva darebbe
+  // numeri sbagliati senza dirlo.
+  const costiVeri = config.elencoProgetti.map((p) => p.costo)
+  if (curva !== null) {
+    const ordine = [...config.elencoProgetti].sort((a, b) => a.costo - b.costo)
+    ordine.forEach((p, i) => { p.costo = Math.round(costiVeri[0] * Math.pow(curva, i)) })
+  }
 
   mondo.reimpostaMondo()
   const lavori = creaLavori()
@@ -212,6 +224,17 @@ function partita({ minutiMassimi = 180, zaino = null } = {}) {
     for (const m of config.elencoMateriali) {
       const ho = operaio.inventario.quanti(m.id)
       if (ho > quanti && !serve.has(m.id)) { scelto = m.id; quanti = ho }
+    }
+    // Se serve tutto quello che ha addosso, si posa lo stesso il grezzo di
+    // cui ne ha di piu': si puo' sempre tornare a prenderlo. E' quello che
+    // farebbe una persona, ed e' l'unico modo di non incastrarsi con uno
+    // zaino stretto - **una catena che chiede quattro materiali diversi non
+    // sta in tre caselle**, e questo e' un fatto del gioco, non della prova.
+    if (!scelto) {
+      for (const m of config.elencoMateriali) {
+        const ho = operaio.inventario.quanti(m.id)
+        if (ho > quanti && !ricettaChe(m.id)) { scelto = m.id; quanti = ho }
+      }
     }
     if (!scelto) return false
     return lavori.ordinaScambio('deposita', casotto.tx, casotto.ty, scelto)
@@ -304,10 +327,54 @@ function partita({ minutiMassimi = 180, zaino = null } = {}) {
     passi++
   }
 
-  return { tappe, minutiTotali: (passi * PASSO) / 60000 }
+  const esito = { tappe, minutiTotali: (passi * PASSO) / 60000 }
+  config.elencoProgetti.forEach((p, i) => { p.costo = costiVeri[i] })
+  config.partenzaEconomia.monete = moneteVere
+  config.braccianti.slot = zainoVero
+  return esito
 }
 
 // --- il referto -----------------------------------------------------------
+
+const argomenti = process.argv.slice(2)
+const confronto = argomenti.includes('--confronto')
+
+if (confronto) {
+  // **Provare una proposta invece di crederci.** Ogni riga e' un "e se":
+  // e se non regalassimo monete? e se i costi crescessero di una volta e
+  // mezza? Il numero che conta e' l'ultima colonna: quanto dura la partita.
+  const prove = [
+    ['com’e’ adesso', {}],
+    ['senza monete regalate', { monete: 0 }],
+    ['curva dei costi ×1,5', { curva: 1.5 }],
+    ['curva ×1,5, niente regalo', { monete: 0, curva: 1.5 }],
+    ['curva ×2, niente regalo', { monete: 0, curva: 2 }],
+    ['zaino 3 caselle', { zaino: 3 }]
+  ]
+  console.log('\n  E SE… — quanto cambia la partita')
+  console.log('  ' + '─'.repeat(66))
+  console.log('  ' + 'Prova'.padEnd(26) + 'sblocchi'.padStart(10) + 'durata'.padStart(10) + 'primo buco'.padStart(12) + 'ultimo'.padStart(9))
+  console.log('  ' + '─'.repeat(66))
+  for (const [nome, opzioni] of prove) {
+    const e = partita(opzioni)
+    const t = e.tappe
+    const durata = t.length ? t[t.length - 1].minuti : 0
+    const primo = t.length ? t[0].minuti : 0
+    const ultimo = t.length > 1 ? t[t.length - 1].minuti - t[t.length - 2].minuti : 0
+    console.log(
+      '  ' + nome.padEnd(26) +
+      String(t.length).padStart(10) +
+      (durata.toFixed(1) + '′').padStart(10) +
+      (primo.toFixed(1) + '′').padStart(12) +
+      (ultimo.toFixed(1) + '′').padStart(9)
+    )
+  }
+  console.log('  ' + '─'.repeat(66))
+  console.log('\n  Il numero che conta e’ la DURATA: oggi tutto il gioco sta in un quarto d’ora.')
+  console.log('  E il PRIMO BUCO: se e’ vicino a zero, il primo sblocco e’ un regalo.\n')
+  await vite.close()
+  process.exit(0)
+}
 
 const esito = partita()
 
