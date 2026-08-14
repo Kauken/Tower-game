@@ -174,10 +174,13 @@ Perché tu non le rifaccia da zero credendo che manchino:
 
 ## 5. Le semplificazioni che ci sono, e non sono difetti
 
-- **L'operaio va in linea retta** e attraversa gli ostacoli. Sull'isola aperta non si nota. → punto 10.
-- **Il crafting non esiste ancora**, quindi le tecnologie si pagano solo in monete. → punti 5 e 6.
-- **I giacimenti non esistono ancora**: la pietra viene da massi finiti. → punto 4.
-- **Non c'è la corrente**: arriva insieme alle macchine. → punto 8.
+*(Aggiornato alla roadmap v18: i numeri dei punti dall'8 in poi sono cambiati.)*
+
+- **L'operaio va in linea retta** e attraversa gli ostacoli. Sull'isola aperta non si nota, ma va sistemato **prima** dei nastri. → punto 14.
+- **Non ci sono macchine**: si fabbrica solo al banco, a mano, un pezzo per volta. → punti 8 e 10.
+- **Non c'è la corrente**, e adesso **non arriva più insieme alle macchine**: c'è un'era intera di macchine a legna prima. → punto 12, e il perché sta in testa alla `ROADMAP.md`.
+- **Niente si sposta da solo**: nessun nastro, nessuna trivella. → punti 11 e 15.
+- **Nessun numero al minuto** da nessuna parte: il giocatore non ha modo di sapere se sta migliorando. → punto 9.
 
 ## 6. Il muro architetturale, nominato prima di sbatterci
 

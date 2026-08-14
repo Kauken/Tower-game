@@ -2,7 +2,7 @@
 
 **Un'isola da mandare avanti.** Vista dall'alto, si comanda col dito, e ci lavora **un operaio solo**. Fantasy industriale, per telefono, in verticale. Web (Vite + React + canvas 2D), poi impacchettato con Capacitor.
 
-Il documento di design è `docs/GDD.md` (v6.0): **leggilo prima di qualunque modifica al gioco.** I numeri e le ricette stanno in `docs/MATERIALI.md`. Dove mettere le mani nel codice sta in `docs/ARCHITETTURA.md`.
+Il documento di design è `docs/GDD.md` (v7.1): **leggilo prima di qualunque modifica al gioco.** I numeri e le ricette stanno in `docs/MATERIALI.md`. Dove mettere le mani nel codice sta in `docs/ARCHITETTURA.md`.
 
 ## La frase che decide tutto
 
@@ -14,7 +14,7 @@ C'è un operaio solo e non se ne assumono altri. Ogni cosa nel gioco si misura i
 
 ## Il progetto è stato riscritto sei volte
 
-Valgono **solo** `GDD.md` v6.0 e `ROADMAP.md` v12. Se trovi tracce di queste cose, sono macerie da rimuovere, **non funzionalità**:
+Valgono **solo** `GDD.md` v7.1 e `ROADMAP.md` v18. Se trovi tracce di queste cose, sono macerie da rimuovere, **non funzionalità**:
 
 > tower defense · reclute · ondate · castello · torri da piazzare · sentiero · roguelike a stanze · personaggio che si muove con la levetta · seguito di minion · corsie · fattoria a scacchiera · puzzle di vicinanze · salari · assunzioni · il ciclo del giorno
 
@@ -35,7 +35,7 @@ L'autore **non sa programmare** e lavora **dal telefono**. Quindi:
 1. **Nessun numero nel codice.** Costi, danni, tempi, rese, raggi, curve: tutto in `config/*.json`. Se ti serve un valore nuovo, aggiungilo alla configurazione.
 2. **Un sistema alla volta.** Fai solo quello che è stato chiesto. Se noti qualcosa che manca, scrivilo alla fine come suggerimento separato.
 3. **Prima di dichiarare finito**, esegui `npm run build`. Se fallisce, non hai finito. E per qualunque cosa si veda a schermo, **provala davvero nel browser** prima di dire che funziona.
-3b. **COMMITTARE NON BASTA: SI SPINGE SUBITO.** In questa sessione la copia di lavoro è tornata indietro a un commit vecchio **otto volte**, e una volta si è portata via un lavoro che era committato ma non ancora spinto — perso per sempre. Un commit locale **non esiste**. Ogni `git commit` è seguito immediatamente da `git push`, nello stesso comando; non si accumulano mai due lavori sul ramo locale. Se un intervento è lungo, si spinge a pezzi mentre lo si fa.
+3b. **COMMITTARE NON BASTA: SI SPINGE SUBITO.** In questa sessione la copia di lavoro è tornata indietro a un commit vecchio **nove volte**, e una volta si è portata via un lavoro che era committato ma non ancora spinto — perso per sempre. Un commit locale **non esiste**. Ogni `git commit` è seguito immediatamente da `git push`, nello stesso comando; non si accumulano mai due lavori sul ramo locale. Se un intervento è lungo, si spinge a pezzi mentre lo si fa.
 4. **Non toccare i valori di bilanciamento** di tua iniziativa quando ti viene chiesta una funzionalità. Bilanciare è un compito separato, con il suo agente e il suo documento.
 5. **"Fai il punto N"** significa il punto N di `docs/ROADMAP.md`: a lavoro finito segnalo come **FATTO** lì.
 6. **Una configurazione incoerente deve fermare il gioco all'avvio** con un errore in italiano che si capisce. Non un'isola vuota e muta. È il modo di questo progetto per non far sopravvivere gli errori.
@@ -47,7 +47,7 @@ L'autore **non sa programmare** e lavora **dal telefono**. Quindi:
 9. **NIENTE PERSONAGGIO DA MUOVERE.** Rifiutato **tre volte** in tre versioni. Il giocatore non è dentro lo schermo: è sopra, e comanda col dito.
 10. **C'È UN OPERAIO SOLO, e non si assume.** L'unica via di crescita è la tecnologia. Se ti viene voglia di risolvere un collo di bottiglia aggiungendo gente, hai sbagliato.
 11. **Le tessere non si devono vedere.** Niente bordi, mai; la variazione del terreno è una macchia tonda sfalsata, non un quadrato più chiaro. Unica eccezione: la tessera sotto il dito si illumina **solo mentre hai qualcosa in mano**.
-12. **NIENTE MAGAZZINO CENTRALE — all'inizio.** Le risorse stanno dentro contenitori che hanno un posto, e qualcuno le deve portare. Niente totale dell'isola, nemmeno scritto in alto: **la distanza deve costare**. *Unica eccezione, ed è a fine gioco: il **terminale** (punto 18), una rete da cui vedi e prendi tutto. È un magazzino centrale ed è voluto — funziona solo perché prima hai passato ore a girare fra le casse. Regalato all'inizio non varrebbe niente.*
+12. **NIENTE MAGAZZINO CENTRALE — all'inizio.** Le risorse stanno dentro contenitori che hanno un posto, e qualcuno le deve portare. Niente totale dell'isola, nemmeno scritto in alto: **la distanza deve costare**. *Unica eccezione, ed è a fine gioco: il **terminale** (punto 22), una rete da cui vedi e prendi tutto. È un magazzino centrale ed è voluto — funziona solo perché prima hai passato ore a girare fra le casse. Regalato all'inizio non varrebbe niente.*
 
 ### Come si aggiunge roba senza rovinare il gioco
 
@@ -55,7 +55,12 @@ L'autore **non sa programmare** e lavora **dal telefono**. Quindi:
 14. **Niente parte se non l'hai preso in mano.** Un tocco sul terreno vuoto, a mani vuote, non fa niente. Un'azione che parte senza che il giocatore l'abbia scelta è sempre sbagliata.
 15. **Uno sblocco dà un verbo nuovo, o restituisce tempo in modo che si senta.** Un +5% non merita di stare in bacheca.
 15b. **UN GRADINO NON È UN NUMERO PIÙ GRANDE: È UNA DOMANDA CHE SPARISCE DALLA TESTA.** Il gioco è fatto di **scale** (`GDD.md` §11b): corrente, magazzino, lavorazione, estrazione. Ogni gradino deve togliere una domanda che il giocatore si stava facendo — *"in quale cassa l'avevo messo?"*, *"devo riempirlo di continuo"*, *"dov'è quella roba?"*. **Se non sai nominare la domanda che toglie, quel gradino non esiste: non costruirlo.** E uno sblocco nuovo deve **creare un collo di bottiglia altrove**, altrimenti è una decorazione.
-15c. **Non c'è una fine.** *"Una sorta di infinito da rifinire sempre."* Niente costruzione finale: il motore è il ciclo dei colli di bottiglia, e salire di gradino è una **ricostruzione**, non un potenziamento.
+15c. **Non c'è una fine.** *"Una sorta di infinito da rifinire sempre."* Niente costruzione finale: il motore è il **ciclo dei colli di bottiglia**. E siccome non c'è un finale, i **tre motori del "per sempre"** (`GDD.md` §11c) non sono roba da endgame — sono l'unico motore che avremo: **un numero al minuto da alzare**, **un modo diverso di fare la stessa cosa**, **potenziamenti che non finiscono**.
+15d. **NON SI SMONTA MAI QUELLO CHE FUNZIONA.** *(Questa regola diceva il contrario fino al 2026-08-14: c'era scritto che salire di gradino è una ricostruzione. Le ricerche sui forum dicono che **il muro della ricostruzione è il punto in cui la gente abbandona questo genere** — arrivano a metà, capiscono che per salire devono demolire dieci ore di lavoro, e non tornano più.)* La macchina nuova **si affianca** alla vecchia; la vecchia continua a servire o si sposta su un altro pezzo della catena. Su un telefono, dove una sessione dura cinque minuti, un lavoro di demolizione è la fine della partita. → `GDD.md` §11b.
+15e. **L'AUTOMAZIONE TOGLIE TOCCHI AL GIOCATORE, MAI TEMPO ALL'OPERAIO.** Se la risorsa scarsa è il suo tempo, un'automazione che glielo cancella invece di **spostarlo** sta cancellando il gioco. Per questo le macchine bruciano combustibile **che carica lui**: più fabbrica hai, più viaggi di rifornimento fai. → `GDD.md` §2.
+15f. **NESSUN SISTEMA PUÒ SPEGNERE TUTTO INSIEME.** Un generatore a secco ferma **solo quello che copre lui**, **avvisa prima**, e **riparte da solo** quando lo rifornisci — niente giro a riaccendere le macchine una per una. Esiste una discussione, con quel titolo esatto, intitolata *"il sistema della corrente mi ha fatto smettere di giocare"*, e il motivo era il fusibile unico. **La mancanza di corrente costa produzione, mai lavoro perso.** → `GDD.md` §10b.
+15g. **UNA MACCHINA SI VEDE LAVORARE. Non è un pannello.** Se produce si muove, se è ferma è visibilmente ferma, e da fuori si distinguono **piena**, **senza materiale** e **senza combustibile**. Aprire il cassetto serve a spostare la roba, non a scoprire cosa succede: se per capire come va la fabbrica bisogna aprire otto pannelli, su un telefono nessuno lo fa. → `GDD.md` §9.
+15h. **Niente ricompense di accesso quotidiano**, e niente serie di giorni da non spezzare. Aprire l'app deve essere una voglia, non un dovere — e con una serie da difendere *"non c'è fretta"* diventerebbe una bugia.
 16. **Una ricetta non produce mai un materiale che consuma**, e non ha più di tre ingredienti. Sono controlli all'avvio, non cose da ricordare.
 17. **Se il gioco rifiuta di fare una cosa, deve dire perché**, con parole normali. Un operaio che si pianta in silenzio sembra un guasto, non una regola.
 18. **Non c'è fretta e non si perde mai.** Niente timer che scadono, niente che marcisce, niente di irreversibile.
