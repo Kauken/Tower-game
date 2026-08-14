@@ -1,6 +1,8 @@
-# Documento di design — v7.0
+# Documento di design — v7.1
 
 **Un'isola da mandare avanti.** Vista dall'alto, si comanda col dito, e ci lavora **un operaio solo**.
+
+> **Cosa è cambiato nella v7.1.** Sei ricerche sui forum dei giochi di riferimento (in `docs/ricerche/`, con la sintesi in `SINTESI.md`) hanno **smentito quattro cose scritte qui dentro**. Sono state corrette, e ogni correzione dice perché: la regola della ricostruzione (§11b) era rovesciata; il blackout totale (§10b) è il sistema che fa smettere di giocare; il terminale (§11b) va reso lento e non solo caro; le macchine (§9) devono vedersi lavorare, non essere pannelli. In più §2 ha adesso la contromisura alla morte della spina dorsale, e §11c i tre motori del "per sempre".
 
 Riferimenti dichiarati, e cosa si prende da ognuno:
 
@@ -31,6 +33,22 @@ C'è **un operaio solo**, e non se ne assumono altri. Quindi tutto quello che fa
 - Una **seconda isola** gli chiede tutto il tempo che ha, e quindi si può aprire **solo** quando la prima sa vivere senza di lui.
 
 **Il gioco è comprare indietro il tempo di una persona sola.** Da qui discende tutto quello che segue.
+
+### Il pericolo della spina dorsale: **si può svuotare**
+
+Se la risorsa scarsa è il tempo dell'operaio, allora c'è un momento preciso in cui il gioco rischia di morire: **quando le macchine gli hanno tolto abbastanza lavoro che il suo tempo non è più scarso.** Da lì in poi tutte le decisioni di spesa perdono il loro peso, perché la valuta con cui le misuravi non costa più niente. È il punto in cui i mod tecnici si sentono dire *"non stai più giocando, stai guardando i mod che giocano al posto tuo"*.
+
+Due ricerche diverse, che non si parlavano, sono arrivate **allo stesso identico rimedio**:
+
+> ### Le macchine consumano combustibile, e a caricarlo è l'operaio.
+>
+> Più fabbrica hai, più combustibile serve, più viaggi di rifornimento devi fare. **L'automazione non azzera il suo tempo: lo sposta.** Smette di scavare e comincia a rifornire.
+
+È la ragione per cui la corrente (§10b) non è un sistema in più: è **il contrappeso** che tiene scarsa la risorsa scarsa quando le trivelle avrebbero smesso di farlo. E il gradino dopo — il nastro che rifornisce il generatore da solo — non è la fine del gioco, perché a quel punto sei sull'isola successiva, dove ricominci a mano.
+
+Ne discende la regola per chiunque aggiunga automazione:
+
+> **L'automazione deve togliere tocchi al giocatore, mai tempo all'operaio.** Un nastro toglie all'operaio un viaggio che facevi *dare tu*: il tocco sparisce, il suo tempo si sposta su qualcos'altro. Una comodità che non sposta il suo tempo da nessuna parte, lo cancella e basta — e sta cancellando il gioco.
 
 ## 3. Le tre economie, e perché sono tre
 
@@ -134,6 +152,18 @@ Non esiste un menù di crafting che funziona ovunque. Si fabbrica **dove c'è ch
 
 Le macchine si sbloccano con un **progetto** (monete) e si costruiscono coi **materiali**. Vedi §3.
 
+### Una macchina si vede lavorare. **Non è un pannello.**
+
+Questa è la regola che le ricerche hanno indicato come il motivo per cui un mod tecnico viene amato invece che solo usato. Il confronto è netto: i mod dove la macchina è **una scatola con dentro un'interfaccia** vengono descritti come efficienti e freddi; quelli dove la macchina è **un aggeggio che gira in mezzo al mondo** vengono descritti come belli da guardare. Il secondo tipo è quello che la gente costruisce anche quando non gli serve.
+
+Da noi, sul canvas, vuol dire tre cose concrete:
+
+1. **Se sta lavorando, si muove.** La lama della segheria gira, la fornace ha la fiamma, la trivella scende e sale. Se è ferma, è visibilmente ferma. **Il movimento è l'indicatore di stato**, non un ornamento.
+2. **Lo stato si legge senza aprire niente.** Guardando l'isola devi capire quali macchine vanno, quali sono piene, quali sono ferme e perché. Un puntino, un'icona, un colore — ma **fuori**. Aprire il cassetto serve a *spostare la roba*, non a *scoprire cosa succede*.
+3. **La macchina piena e la macchina senza materiale non si somigliano.** Sono i due guasti che capitano di continuo, e vanno distinti a colpo d'occhio: una chiede di essere svuotata, l'altra di essere riempita.
+
+Il motivo non è estetico. Su un telefono, se per sapere come va la fabbrica devo aprire otto pannelli, **non lo faccio**: gioco alla cieca, e una fabbrica che non guardi è una fabbrica che non ti dà nessuna soddisfazione.
+
 ## 10. I materiali e le ricette — la parte che va fatta bene subito
 
 ### ⚠️ Il muro: **una ricetta non produce mai un materiale che consuma**
@@ -187,11 +217,23 @@ Le macchine non lavorano senza corrente. Ma la corrente qui **non è una rete di
 
 Su un telefono tirare fili con un dito sarebbe un supplizio, e la parte interessante della corrente non sono i fili: è **la domanda "come faccio ad arrivare fin laggiù?"** — che con i pali resta intatta.
 
-### Acceso o spento, mai a metà
+### Acceso o spento, mai a metà — **ma solo un gruppo per volta, e avvisa prima**
 
 In Factorio, quando la corrente non basta tutto rallenta in proporzione. È elegante e su uno schermo da telefono è **illeggibile**: vedi le macchine andare piano e non sai perché.
 
 Qui è **binario**. Se il generatore ha combustibile, tutto quello che copre lavora a piena velocità. Se il combustibile finisce, quello che copre si ferma — **e c'è scritto perché**. Niente si rompe, niente si perde: si rimette il combustibile e riparte.
+
+Ma "binario" da solo non basta, e questa parte è stata **corretta dopo le ricerche.**
+
+> **Esiste una discussione, con quel titolo esatto, intitolata «Il sistema della corrente mi ha fatto smettere di giocare».** Il motivo non era la difficoltà: era il **fusibile che spegne tutto insieme**. Coffee Stain ha poi dovuto introdurre i gruppi di alimentazione per rimediare. La corrente è il sistema che punisce più a fondo se lo sbagli, perché ti toglie in un colpo un lavoro di ore senza che tu abbia fatto niente di male.
+
+Quindi valgono tre vincoli, e sono vincoli, non preferenze:
+
+1. **Non esiste il blackout totale.** Un generatore che resta a secco ferma **solo le macchine che copre lui**. Il resto dell'isola continua. Non c'è nessun interruttore unico che possa spegnere tutto.
+2. **Avvisa prima di fermarsi.** Quando il combustibile sta per finire il generatore lo dice mentre lavora ancora, con anticipo sufficiente a fare qualcosa. Fermarsi di sorpresa è la parte che fa smettere; fermarsi dopo un avviso ignorato è una decisione tua.
+3. **Non serve riaccendere niente a mano.** Rimetti il combustibile e riparte da solo, con quello che aveva nel cassetto. Nessun giro fra le macchine a rimetterle in moto una per una — su un telefono quello è il modo più veloce di far chiudere l'app.
+
+Detto in positivo: **la mancanza di corrente deve costare produzione, mai lavoro perso.**
 
 ### Il combustibile è **legno**, e più avanti carbone
 
@@ -238,10 +280,22 @@ Questa è la struttura del gioco, e senza una regola diventerebbe **contenuto go
 
 È quello che fa funzionare i modelli di riferimento. In Create, il motore a vapore non è "più potenza" del mulino ad acqua: è *smetti di pensare alla corrente*. In Applied Energistics la rete non è "più spazio" delle casse: è *smetti di ricordarti dove hai messo le cose*.
 
-E la seconda regola, che viene dritta dai modpack tecnici:
+E la seconda regola, che è stata **rovesciata dopo le ricerche** ed è importante capire perché.
 
-> ### Salire di gradino **non è un potenziamento, è una ricostruzione.**
-> La macchina di livello 2 non entra dove stava quella di livello 1, e va rialimentata. È documentato come la cosa che tiene vivi quei giochi per centinaia di ore — ed è la forma concreta del *"rifinire sempre"*.
+> ### Salire di gradino **non ti fa mai smontare quello che funziona.**
+> La macchina nuova si affianca alla vecchia. La vecchia continua a lavorare, oppure si sposta a fare un altro pezzo della catena. **Non si demolisce mai niente per poter salire.**
+
+**Questa regola prima diceva il contrario**, e diceva una cosa sbagliata. C'era scritto che salire di gradino *è* una ricostruzione, e che è quello che tiene vivi i modpack per centinaia di ore. Le ricerche sui forum dicono l'opposto: **il muro della ricostruzione è il punto in cui la gente smette.** Il ritratto ricorrente è sempre lo stesso — uno arriva a metà partita, si accorge che per salire deve demolire la fabbrica che gli è costata dieci ore, si prende una pausa "per ripartire con calma" e non torna più.
+
+Su un telefono, dove una sessione dura cinque minuti, un lavoro di demolizione che richiede mezz'ora di attenzione continua non è un muro: è la fine della partita.
+
+Quindi:
+
+- **La macchina di livello 2 non sostituisce quella di livello 1**: gliela si mette accanto. Se la vecchia diventa inutile, il gradino è progettato male.
+- **Un gradino nuovo si aggiunge in un posto nuovo.** Se l'unico modo di installarlo è liberare lo spazio dove sta la roba che va, il costo vero non sono i materiali: è lo smontaggio.
+- **La ricchezza viene dal fatto che le catene si allungano, non dal fatto che si rifanno.** La segheria che produceva tavole per te continua a produrle, e adesso quelle tavole entrano in una macchina che prima non c'era.
+
+Questo non toglie il *"rifinire sempre"*: rifinire vuol dire **aggiungere un pezzo alla catena e vedere il numero al minuto salire**, non ricominciare.
 
 ### La scala della corrente
 
@@ -265,6 +319,16 @@ Nota il gradino 3: **non è un aggiornamento dritto.** È gratis ma vincolato da
 | **5** | **Il terminale che fabbrica** — chiedi dieci telai e la rete li fa, prendendo i pezzi dove sono | *"quali passaggi servono?"* |
 
 > **Il gradino 4 è un magazzino centrale, e la regola dice di no.** La contraddizione è solo apparente: **la regola vale per l'inizio.** Passi ore a girare fra le casse, e *poi* costruisci la cosa che cancella quella fatica. È il gradino più amato di tutto il Minecraft tecnico, e funziona **esattamente perché prima hai sofferto.** Regalato all'inizio non varrebbe niente.
+
+> ### Il terminale va reso **lento**, non solo caro.
+>
+> Questo è il correttivo che le ricerche hanno aggiunto, e non è un dettaglio di bilanciamento: è la differenza fra un gradino e un tasto che spegne il gioco.
+>
+> Satisfactory ha lo stesso identico problema e lo ha risolto così. Il **Deposito Dimensionale** — prendi materiali da ovunque, cioè "niente più viaggi" — non è solo dietro un muro di ricerca: **ha una portata volutamente miserabile**, uno stack a **15 pezzi al minuto**, e il primo potenziamento arriva a 30. Sui forum qualcuno si lamenta che "non vale la fatica": è esattamente il segno che funziona.
+>
+> Da noi vuol dire che il terminale **non teletrasporta**. Tira dalle casse a una **portata dichiarata al minuto**, che si legge sullo schermo e che **si potenzia con altri progetti**. Se ti serve una cassa intera di tavole *adesso*, l'operaio ci va ancora. Il terminale toglie i viaggi di routine, non l'idea del viaggio.
+>
+> Se il costo fosse l'unico freno, succederebbe la cosa peggiore possibile: paghi caro una volta e da quel momento **metà dei sistemi del gioco — casse, nastri, posizione delle macchine — smettono di contare.** Un gradino che rende inutili quattro sistemi non è un premio: è la fine.
 
 ### La scala della lavorazione
 
@@ -305,6 +369,22 @@ Quello che c'è al posto suo sono **le scale qui sopra, che non finiscono**, e i
 Ne discende una regola per chiunque aggiunga contenuto:
 
 > **Uno sblocco nuovo deve creare un collo di bottiglia altrove.** Se lo aggiungi e non manca niente da nessuna parte, hai aggiunto una decorazione.
+
+### I tre motori del "per sempre", e perché da noi vanno messi **presto**
+
+Nei giochi di riferimento c'è un finale — il razzo, l'ascensore spaziale — e quando arriva la maggioranza smette. Chi resta oltre il finale lo fa per tre motivi soltanto, che esistono già **molto prima** della fine:
+
+| Motore | Cos'è | Da noi |
+| --- | --- | --- |
+| **Un numero da alzare** | ogni catena mostra un **al minuto**, e vederlo salire è la ricompensa | **non ce l'abbiamo** |
+| **Un modo diverso di fare la stessa cosa** | le ricette alternative: non più potenza, ma un'altra strada, che ti fa venire voglia di rifare meglio quello che già funziona | **non ce l'abbiamo** |
+| **Potenziamenti che non finiscono** | costo crescente all'infinito, dichiaratamente per chi resta | **non ce l'abbiamo** |
+
+**Noi il finale non ce l'abbiamo per scelta** (è tutto questo paragrafo). Il che vuol dire che quei tre non sono un contentino per il dopo: **sono l'unico motore che avremo**, e vanno messi presto invece che in fondo.
+
+Il primo è anche il più economico da costruire ed è quello che manca di più: **finché non c'è un numero al minuto da nessuna parte, il giocatore non ha modo di sapere se sta migliorando.** Va messo appena esiste una catena che produce da sola.
+
+Attenzione a una trappola nel secondo motore: *"un modo diverso di fare la stessa cosa"* **non deve diventare un motivo per smontare** (§11b). La ricetta alternativa è interessante se la puoi mettere **accanto** a quella vecchia e confrontarle, non se ti obbliga a demolire la catena che avevi.
 
 ## 11d. Fuori dall'app — **le macchine sì, l'operaio no**
 
@@ -352,6 +432,9 @@ Guardrail, da difendere in ogni decisione futura.
 - **Non c'è fretta.** Niente timer che scadono, niente che marcisce.
 - **Non è un idle da guardare.** Se in una sessione non c'è almeno una decisione, il gioco è rotto lì.
 - **Niente valuta premium, niente pubblicità, niente attese che si pagano.**
+- **Niente ricompense di accesso quotidiano.** Nessun regalo per aver aperto l'app, nessuna serie di giorni da non spezzare. È il modo standard di tenere la gente sui giochi da telefono, e fa esattamente il contrario di quello che vogliamo: trasforma l'apertura in **un dovere da non saltare**, mentre qui aprire deve essere una voglia. E se ci fosse una serie da non spezzare, "non c'è fretta" diventerebbe una bugia scritta due righe più sopra.
+- **Non si smonta mai la fabbrica per poter salire di livello.** Vedi §11b: il muro della ricostruzione è documentato come il punto in cui la gente abbandona questo genere.
+- **Nessun sistema può spegnere tutto insieme.** Vedi §10b.
 
 ## 15. Le domande che reggono tutto
 
