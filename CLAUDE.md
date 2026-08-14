@@ -35,6 +35,7 @@ L'autore **non sa programmare** e lavora **dal telefono**. Quindi:
 1. **Nessun numero nel codice.** Costi, danni, tempi, rese, raggi, curve: tutto in `config/*.json`. Se ti serve un valore nuovo, aggiungilo alla configurazione.
 2. **Un sistema alla volta.** Fai solo quello che è stato chiesto. Se noti qualcosa che manca, scrivilo alla fine come suggerimento separato.
 3. **Prima di dichiarare finito**, esegui `npm run build`. Se fallisce, non hai finito. E per qualunque cosa si veda a schermo, **provala davvero nel browser** prima di dire che funziona.
+3b. **COMMITTARE NON BASTA: SI SPINGE SUBITO.** In questa sessione la copia di lavoro è tornata indietro a un commit vecchio **otto volte**, e una volta si è portata via un lavoro che era committato ma non ancora spinto — perso per sempre. Un commit locale **non esiste**. Ogni `git commit` è seguito immediatamente da `git push`, nello stesso comando; non si accumulano mai due lavori sul ramo locale. Se un intervento è lungo, si spinge a pezzi mentre lo si fa.
 4. **Non toccare i valori di bilanciamento** di tua iniziativa quando ti viene chiesta una funzionalità. Bilanciare è un compito separato, con il suo agente e il suo documento.
 5. **"Fai il punto N"** significa il punto N di `docs/ROADMAP.md`: a lavoro finito segnalo come **FATTO** lì.
 6. **Una configurazione incoerente deve fermare il gioco all'avvio** con un errore in italiano che si capisce. Non un'isola vuota e muta. È il modo di questo progetto per non far sopravvivere gli errori.

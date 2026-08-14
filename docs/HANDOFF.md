@@ -68,4 +68,6 @@ Durante l'ultima sessione la copia di lavoro è **tornata indietro a un commit v
 git fetch origin && git checkout -B <ramo> origin/main
 ```
 
-**Mitigazione adottata: si unisce su `main` alla fine di ogni intervento**, invece di accumulare lavoro sul ramo.
+**Mitigazione adottata: si spinge SUBITO dopo ogni commit**, e si unisce su `main` alla fine di ogni intervento.
+
+> **Un commit locale non esiste.** Il 2026-08-13 un report di ricerca lungo 418 righe è stato committato e non spinto; il rollback se l'è portato via, e non è stato possibile recuperarlo. È la regola 3b di `CLAUDE.md`, e nasce da lì.
