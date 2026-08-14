@@ -85,10 +85,29 @@ Misura **il tempo per fare un tot**, non il tot fatto in un tempo — differenza
 > 2. **Portare la roba a mano dà fastidio quel tanto che basta?** Deve essere una scocciatura che fa desiderare un nastro, non una noia che fa chiudere l'app.
 > 3. **Si sente che l'operaio è uno solo?** Guardarlo fare una cosa per volta deve far venire voglia di un attrezzo migliore, non di un secondo operaio.
 
-> ### ⚠️ Decisione aperta prima dell'Era 1: **le distanze**
-> La ricerca ha dimostrato con una formula che **lo Zaino grande non è mal bilanciato, è matematicamente impossibile**: uno zaino infinito rende al massimo `1/(1−f)`, dove `f` è la frazione di tempo passata a camminare. Da noi `f` vale **0,16 nel bosco e 0,03 sulla vena vicina** — soffitto ×1,20, mentre per ripagarsi servirebbe ×1,32. **Nessun numero sull'oggetto lo può salvare: il problema è che le fonti sono vicine.**
+> ### ⚠️ Decisione aperta prima dell'Era 1: **quanto grande deve essere lo zaino**
+> **Misurata il 2026-08-14, non ragionata.** La ricerca dice che uno zaino infinito rende al massimo `1/(1−f)`, dove `f` è la frazione di tempo passata a camminare. La misura conferma la formula e trova una cosa che nessuno si aspettava.
 >
-> La proposta è: **allontanare le vene e il bosco secondario, lasciando vicino il primo bosco** (perché un'altra ricerca dice che si abbandona nei primi quindici minuti), e portare lo zaino base da 6 a 3 caselle. Va **misurata con `npm run simula`** e poi **decide l'autore**, perché cambia la sensazione delle prime partite. Finché non è decisa, l'Era 1 si può costruire lo stesso.
+> | Caselle di partenza | Quanto rende lo Zaino grande nel bosco | Quanto produce l'isola |
+> | --- | --- | --- |
+> | **6** (adesso) | **×1,00** — cioè niente | 166 monete/min |
+> | 5 | ×1,00 | 166 |
+> | 4 | ×1,00 | 166 |
+> | **3** | **×1,24** | 134 |
+>
+> **Il motivo è che il bosco intero ci sta dentro lo zaino.** Otto alberi non riempiono sei caselle, quindi l'operaio **non torna mai** a scaricare: il viaggio non esiste, e uno zaino più grande non ha niente da moltiplicare. Non è un problema di numeri sull'oggetto — è che manca il viaggio da accorciare.
+>
+> Per questo l'effetto non è graduale ma **a scatto**: da 6 a 4 non cambia niente, a 3 compare tutto insieme.
+>
+> **Il prezzo è dichiarato**: a 3 caselle l'isola produce **il 19% in meno** nei primi minuti, e un'altra ricerca dice che è lì che si perde la gente. Le due cose sono in conflitto e la scelta è dell'autore.
+>
+> Le due strade, e nessuna è ovvia:
+> - **Zaino base a 3 caselle.** Effetto misurato e certo; costo: partenza più lenta del 19%.
+> - **Allontanare le fonti *dopo* la prima** (bosco secondario e vene), lasciando vicino il primo bosco. Non misurata — richiede di ridisegnare la mappa — ma non tocca i primi quindici minuti.
+>
+> **Finché non è decisa, l'Era 1 si costruisce lo stesso**: non dipende da questa.
+>
+> Nota a margine, dalla stessa misura: **la vena di rame "media" ha `f` = 0,019**, cioè è praticamente attaccata al casotto. Su quella vena nessuno zaino e nessuno stivale renderà mai niente, qualunque cosa si decida.
 
 ---
 
