@@ -29,8 +29,6 @@ const VISTA_INIZIALE = {
   contenutoCassa: '',
   pienoCassa: '',
   cassaEIlCasotto: false,
-  valoreCassa: 0,
-  monete: 0,
   slotOperaio: 0,
   inventario: '',
   zainoPieno: false,
@@ -229,8 +227,6 @@ export default function CampoDiGioco() {
     motoreRef.current.prendi('costruzione', id)
     apriCostruzione(false)
   }, [])
-  const vendi = useCallback(() => motoreRef.current.vendi(), [])
-  const compra = useCallback((id) => motoreRef.current.compra(id), [])
   const fabbrica = useCallback((id) => motoreRef.current.fabbrica(id), [])
 
   return (
@@ -263,7 +259,6 @@ export default function CampoDiGioco() {
         lavoriInAttesa={vista.lavoriInAttesa}
         braccantiFermi={vista.braccantiFermi}
         braccantiTotali={vista.braccantiTotali}
-        monete={vista.monete}
         inventario={vista.inventario}
         zainoPieno={vista.zainoPieno}
         statoOperaio={vista.statoOperaio}
@@ -315,15 +310,11 @@ export default function CampoDiGioco() {
           contenuto={vista.contenutoCassa}
           inventarioOperaio={vista.inventario}
           pieno={vista.pienoCassa}
-          valore={vista.valoreCassa}
           eIlCasotto={vista.cassaEIlCasotto}
-          monete={vista.monete}
-          progetti={leggiProgetti(vista.progetti)}
+            progetti={leggiProgetti(vista.progetti)}
           ricette={leggiStati(vista.ricette)}
           onDeposita={deposita}
           onPreleva={preleva}
-          onVendi={vendi}
-          onCompra={compra}
           onFabbrica={fabbrica}
           onChiudi={annulla}
         />

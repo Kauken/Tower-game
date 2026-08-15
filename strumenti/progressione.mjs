@@ -13,18 +13,17 @@
 // Si usa cosi':      npm run progressione
 //
 // COSA SIMULA, DICHIARATO
-// L'operaio raccoglie, porta al casotto, vende, e quando puo' permettersi il
-// progetto piu' economico disponibile lo compra e poi **se lo fabbrica** -
-// perche' comprare il progetto e' solo meta': l'effetto si accende quando la
-// cosa e' fatta davvero.
+// **Non ci sono piu' le monete.** L'operaio raccoglie quello che serve, lo
+// porta al banco e fabbrica. Fabbricare una cosa apre la successiva, e la
+// partita e' quella catena dall'inizio alla fine.
 //
 // COSA NON SIMULA, DICHIARATO ALTRETTANTO
-// - Il giocatore qui e' ordinato e non sbaglia mai: vende tutto, compra sempre
-//   il piu' economico, non cambia idea. Un giocatore vero e' peggio, quindi
+// - Il giocatore qui e' ordinato e non sbaglia mai: sa gia' cosa serve, non
+//   torna indietro, non cambia idea. Un giocatore vero e' peggio, quindi
 //   **i tempi veri saranno piu' lunghi di questi**, mai piu' corti.
-// - Vende tutto quello che raccoglie mentre mette da parte le monete, e poi
-//   torna a raccogliere i materiali per fabbricare. Chi gioca terrebbe da
-//   parte le tavole: e' un altro motivo per cui questi tempi sono un TETTO.
+// - Non mette da parte niente per dopo: raccoglie quello che gli serve
+//   adesso. Chi gioca accumula, ed e' un altro motivo per cui questi tempi
+//   sono un TETTO e non una previsione.
 
 import { createServer } from 'vite'
 
@@ -40,7 +39,6 @@ const mondo = await carica('/src/game/mondo.js')
 const { creaLavori } = await carica('/src/game/lavori.js')
 const { creaCasse } = await carica('/src/game/casse.js')
 const { creaProgetti } = await carica('/src/game/progetti.js')
-const { creaEconomia } = await carica('/src/game/economia.js')
 const { creaBraccianti } = await carica('/src/game/braccianti.js')
 
 const PASSO = config.simulazione.passo_ms
@@ -129,27 +127,15 @@ function pianifica(ingredienti, inventario) {
 
 // --- la partita -----------------------------------------------------------
 
-function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = null } = {}) {
-  if (zaino !== null) config.braccianti.slot = zaino
-  const moneteVere = config.partenzaEconomia.monete
-  if (monete !== null) config.partenzaEconomia.monete = monete
+function partita({ minutiMassimi = 180, zaino = null } = {}) {
   const zainoVero = config.braccianti.slot
+  if (zaino !== null) config.braccianti.slot = zaino
 
-  // Rimettere i costi come stavano dopo ogni prova: la configurazione e' un
-  // oggetto solo, condiviso, e una prova che sporca la successiva darebbe
-  // numeri sbagliati senza dirlo.
-  const costiVeri = config.elencoProgetti.map((p) => p.costo)
-  if (curva !== null) {
-    const ordine = [...config.elencoProgetti].sort((a, b) => a.costo - b.costo)
-    ordine.forEach((p, i) => { p.costo = Math.round(costiVeri[0] * Math.pow(curva, i)) })
-  }
 
   mondo.reimpostaMondo()
   const lavori = creaLavori()
   const casse = creaCasse()
   const progetti = creaProgetti()
-  const economia = creaEconomia()
-  economia.reimposta()
 
   // **Questa riga e' il gioco vero, non un dettaglio.** Fabbricare un attrezzo
   // non basta: qualcuno deve segnarlo come fatto, ed e' solo allora che
@@ -176,13 +162,14 @@ function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = nul
   const passiMassimi = Math.round((minutiMassimi * 60000) / PASSO)
   let passi = 0
 
-  const ordinati = [...config.elencoProgetti].sort((a, b) => a.costo - b.costo)
+  // **L'ordine lo detta la catena, non il prezzo**: un progetto si apre quando
+  // hai fabbricato quello che chiede.
+  const ordinati = [...config.elencoProgetti]
   let obiettivo = null
 
   function prossimoObiettivo() {
     for (const p of ordinati) {
-      if (progetti.hoFatto(p.id)) continue
-      if (progetti.hoComprato(p.id) || progetti.disponibile(p.id)) return p
+      if (!progetti.hoFatto(p.id) && progetti.disponibile(p.id)) return p
     }
     return null
   }
@@ -266,28 +253,12 @@ function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = nul
       const ricetta = config.elencoRicette.find((r) => r.attrezzo === obiettivo.sblocca)
 
       if (progetti.hoFatto(obiettivo.id)) {
-        tappe.push({ nome: obiettivo.nome, costo: obiettivo.costo, minuti: (passi * PASSO) / 60000 })
+        tappe.push({ nome: obiettivo.nome, minuti: (passi * PASSO) / 60000 })
         obiettivo = null
         continue
       }
 
-      if (!progetti.hoComprato(obiettivo.id)) {
-        // FASE MONETE: raccogli, porta al casotto, vendi, finche' non basta
-        if (economia.stato.monete >= obiettivo.costo) {
-          progetti.compra(obiettivo.id)
-          economia.paga(obiettivo.costo)
-        } else if (operaio.inventario.caselleLibere() === 0) {
-          lavori.ordinaScambio('deposita', casotto.tx, casotto.ty, '')
-        } else if (economia.valoreDi(casotto) > 0) {
-          economia.vendiCassa(casse, casotto)
-        } else {
-          let dato = false
-          for (const materiale of ['rame', 'pietra', 'legno']) {
-            if (vaiAPrendere(materiale)) { dato = true; break }
-          }
-          if (!dato) break
-        }
-      } else if (ricetta) {
+      if (ricetta) {
         // FASE MATERIALI: il piano si ricalcola, e non si incastra
         const passo = pianifica(ricetta.ingredienti, operaio.inventario)
         if (!passo) {
@@ -305,7 +276,8 @@ function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = nul
           break
         }
       } else {
-        // un progetto senza ricetta: comprarlo basta
+        // un progetto che non ha una ricetta sua (una costruzione): si conta
+        // aperto appena lo e'
         progetti.segnaFatto(obiettivo.sblocca)
       }
     }
@@ -319,7 +291,6 @@ function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = nul
       console.error(
         (passi * PASSO / 60000).toFixed(1) + "' ob=" + (obiettivo ? obiettivo.id : '-') +
         ' compr=' + (obiettivo ? progetti.hoComprato(obiettivo.id) : '-') +
-        ' monete=' + economia.stato.monete.toFixed(0) +
         ' libere=' + operaio.inventario.caselleLibere() +
         ' inv=' + JSON.stringify(inv) + ' coda=' + lavori.quantiInAttesa()
       )
@@ -330,8 +301,6 @@ function partita({ minutiMassimi = 180, zaino = null, monete = null, curva = nul
   }
 
   const esito = { tappe, minutiTotali: (passi * PASSO) / 60000 }
-  config.elencoProgetti.forEach((p, i) => { p.costo = costiVeri[i] })
-  config.partenzaEconomia.monete = moneteVere
   config.braccianti.slot = zainoVero
   return esito
 }
@@ -342,41 +311,31 @@ const argomenti = process.argv.slice(2)
 const confronto = argomenti.includes('--confronto')
 
 if (confronto) {
-  // **Provare una proposta invece di crederci.** Ogni riga e' un "e se":
-  // e se non regalassimo monete? e se i costi crescessero di una volta e
-  // mezza? Il numero che conta e' l'ultima colonna: quanto dura la partita.
+  // **Provare una proposta invece di crederci.** Da quando le monete non ci
+  // sono piu', l'unica leva che resta e' lo zaino: i costi non esistono, e
+  // quello che c'e' da tarare sono le ricette.
   const prove = [
-    ['com’e’ adesso', {}],
-    ['senza monete regalate', { monete: 0 }],
-    ['curva dei costi ×1,5', { curva: 1.5 }],
-    ['curva ×1,5, niente regalo', { monete: 0, curva: 1.5 }],
-    ['curva ×2, niente regalo', { monete: 0, curva: 2 }],
+    ['com\u2019e\u0300 adesso', {}],
+    ['zaino 8 caselle', { zaino: 8 }],
     ['zaino 4 caselle', { zaino: 4 }],
     ['zaino 3 caselle', { zaino: 3 }]
   ]
-  console.log('\n  E SE… — quanto cambia la partita')
-  console.log('  ' + '─'.repeat(66))
-  console.log('  ' + 'Prova'.padEnd(26) + 'sblocchi'.padStart(10) + 'durata'.padStart(10) + 'primo buco'.padStart(12) + 'ultimo'.padStart(9))
-  console.log('  ' + '─'.repeat(66))
+  console.log('\n  E SE\u2026 \u2014 quanto cambia la partita')
+  console.log('  ' + '\u2500'.repeat(60))
+  console.log('  ' + 'Prova'.padEnd(26) + 'sblocchi'.padStart(10) + 'durata'.padStart(10) + 'ultimo buco'.padStart(13))
+  console.log('  ' + '\u2500'.repeat(60))
   for (const [nome, opzioni] of prove) {
     const e = partita(opzioni)
     const t = e.tappe
     const durata = t.length ? t[t.length - 1].minuti : 0
-    const primo = t.length ? t[0].minuti : 0
     const ultimo = t.length > 1 ? t[t.length - 1].minuti - t[t.length - 2].minuti : 0
     console.log(
-      '  ' + nome.padEnd(26) +
-      String(t.length).padStart(10) +
-      (durata.toFixed(1) + '′').padStart(10) +
-      (primo.toFixed(1) + '′').padStart(12) +
-      (ultimo.toFixed(1) + '′').padStart(9)
+      '  ' + nome.padEnd(26) + String(t.length).padStart(10) +
+      (durata.toFixed(1) + '\u2032').padStart(10) + (ultimo.toFixed(1) + '\u2032').padStart(13)
     )
   }
-  console.log('  ' + '─'.repeat(66))
-  console.log('\n  Il numero che conta e’ la DURATA: oggi tutto il gioco sta in un quarto d’ora.')
-  console.log('  E il PRIMO BUCO: se e’ vicino a zero, il primo sblocco e’ un regalo.')
-  console.log('\n  Se una riga non arriva a 6 sblocchi, quella proposta ROMPE il gioco:')
-  console.log('  la partita si pianta e non si finisce piu’.\n')
+  console.log('  ' + '\u2500'.repeat(60))
+  console.log('\n  Se una riga non arriva a tutti gli sblocchi, quella proposta ROMPE il gioco.\n')
   await vite.close()
   process.exit(0)
 }
@@ -386,7 +345,7 @@ const esito = partita()
 console.log('\n  QUANTO CI METTI AD ARRIVARE A OGNI PROGETTO')
 console.log('  ' + '─'.repeat(64))
 console.log(
-  '  ' + 'Progetto'.padEnd(22) + 'costo'.padStart(7) + 'arriva a'.padStart(11) + 'buco'.padStart(10) + '   forma'
+  '  ' + 'Progetto'.padEnd(24) + 'arriva a'.padStart(11) + 'buco'.padStart(10) + '   forma'
 )
 console.log('  ' + '─'.repeat(64))
 
@@ -398,8 +357,7 @@ for (const t of esito.tappe) {
   const barra = '▇'.repeat(Math.max(1, Math.round(buco / 2)))
   console.log(
     '  ' +
-      t.nome.padEnd(22) +
-      String(t.costo).padStart(7) +
+      t.nome.padEnd(24) +
       (t.minuti.toFixed(1) + '′').padStart(11) +
       (buco.toFixed(1) + '′').padStart(10) +
       '   ' + barra
@@ -430,7 +388,7 @@ if (esito.tappe.length > 0) {
 
 console.log('\n  COME SI LEGGE')
 console.log('  • il "buco" e’ quanto passa fra uno sblocco e il successivo:')
-console.log('    e’ lui la progressione, non il costo scritto in bacheca')
+console.log('    e\u2019 lui la progressione, e adesso e\u0300 fatto solo di materiali')
 console.log('  • un buco che si allarga troppo in fretta e’ un muro')
 console.log('  • due buchi uguali di fila sono due sblocchi che si accavallano')
 console.log('  • questi tempi sono un TETTO: il giocatore qui non sbaglia mai')

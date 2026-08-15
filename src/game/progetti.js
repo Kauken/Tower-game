@@ -1,15 +1,17 @@
 // La bacheca e il banco da lavoro.
 //
-// **Due passi, e sono due economie diverse.** Le monete comprano il
-// **progetto** — il *diritto* di fabbricare una cosa. I materiali fabbricano
-// la **cosa**. Se i progetti si pagassero coi materiali il mercante sarebbe
-// arredamento; se le cose si comprassero con le monete lo sarebbe l'isola.
-// Tenendole separate restano vive tutte e due per tutta la partita.
+// **Non si compra niente.** Le monete sono state tolte: una cosa si sblocca
+// quando ne hai **fabbricata** un'altra. Fabbrichi l'ascia e compare il
+// piccone; fabbrichi il piccone e compare quello dopo.
 //
-// Quindi ci sono **due elenchi**, e la differenza conta:
-//   comprati  i progetti che hai pagato. Aprono una ricetta, e basta.
-//   fatti     gli attrezzi che hai davvero fabbricato. **Solo questi hanno
-//             effetto.** Comprare il progetto dell'ascia non taglia un albero.
+// Prima c'erano due elenchi — quello che avevi *comprato* e quello che avevi
+// *fatto* — e due economie da tenere separate. Adesso l'elenco e' **uno solo**:
+//
+//   fatti     quello che hai davvero fabbricato. E' insieme la prova che
+//             l'effetto e' acceso **e** la chiave che apre il prossimo.
+//
+// E' piu' semplice, e dice una cosa piu' vera: **il diritto di costruire si
+// guadagna costruendo.**
 //
 // Il codice non conosce nessun progetto per nome: sa leggere dei *tipi* di
 // effetto, e sa se un tipo si moltiplica o si somma.
@@ -17,44 +19,38 @@
 import { elencoProgetti, elencoRicette, trovaRicetta } from './config.js'
 
 export function creaProgetti() {
-  const comprati = []
   const fatti = []
 
+  // Resta per compatibilita' con chi la chiama ancora: adesso "comprato" e
+  // "fatto" sono la stessa cosa, perche' non c'e' piu' niente da comprare.
   function hoComprato(id) {
-    return comprati.indexOf(id) >= 0
+    return fatti.indexOf(id) >= 0
   }
 
   function hoFatto(id) {
     return fatti.indexOf(id) >= 0
   }
 
-  // Un progetto si puo' comprare se non ce l'hai gia' e se hai quello che gli
-  // serve: e' cosi' che la bacheca ha dei rami invece che essere una lista.
+  // Un progetto e' aperto se non l'hai gia' fatto e se **hai gia' fabbricato**
+  // quello che gli serve. E' cosi' che la bacheca ha dei rami invece che
+  // essere una lista, adesso senza che passino delle monete.
   function disponibile(id) {
     const dati = elencoProgetti.find((voce) => voce.id === id)
-    if (!dati || hoComprato(id)) {
+    if (!dati || hoFatto(id)) {
       return false
     }
-    return !dati.richiede || hoComprato(dati.richiede)
+    return !dati.richiede || hoFatto(dati.richiede)
   }
 
-  function compra(id) {
-    if (!disponibile(id)) {
-      return false
-    }
-    comprati.push(id)
-    return true
-  }
-
-  // Una ricetta si puo' fare se il progetto che la apre e' stato comprato, e se
-  // non e' un attrezzo che hai gia' addosso. Le ricette dei materiali non
+  // Una ricetta si puo' fare se il progetto che la apre e' aperto, e se non e'
+  // un attrezzo che hai gia' addosso. Le ricette dei materiali non
   // chiedono nessun progetto: sono il pane del banco da lavoro.
   function ricettaAperta(id) {
     const dati = elencoRicette.find((voce) => voce.id === id)
     if (!dati) {
       return false
     }
-    if (dati.richiede_progetto && !hoComprato(dati.richiede_progetto)) {
+    if (dati.richiede_progetto && !disponibile(dati.richiede_progetto) && !hoFatto(dati.richiede_progetto)) {
       return false
     }
     return !(dati.attrezzo && hoFatto(dati.attrezzo))
@@ -138,7 +134,6 @@ export function creaProgetti() {
   }
 
   function svuota() {
-    comprati.length = 0
     fatti.length = 0
   }
 
@@ -149,12 +144,6 @@ export function creaProgetti() {
     if (!dati) {
       return
     }
-    const presi = Array.isArray(dati.comprati) ? dati.comprati : []
-    for (let i = 0; i < presi.length; i++) {
-      if (elencoProgetti.some((voce) => voce.id === presi[i]) && !hoComprato(presi[i])) {
-        comprati.push(presi[i])
-      }
-    }
     const cose = Array.isArray(dati.fatti) ? dati.fatti : []
     for (let i = 0; i < cose.length; i++) {
       if (elencoProgetti.some((voce) => voce.id === cose[i]) && !hoFatto(cose[i])) {
@@ -164,16 +153,14 @@ export function creaProgetti() {
   }
 
   function perSalvare() {
-    return { comprati: comprati.slice(), fatti: fatti.slice() }
+    return { fatti: fatti.slice() }
   }
 
   return {
-    comprati,
     fatti,
     hoComprato,
     hoFatto,
     disponibile,
-    compra,
     ricettaAperta,
     segnaFatto,
     moltiplicatore,

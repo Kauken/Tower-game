@@ -4,7 +4,6 @@
 import isolaJson from '../../config/isola.json'
 import braccantiJson from '../../config/braccianti.json'
 import costruzioniJson from '../../config/costruzioni.json'
-import economiaJson from '../../config/economia.json'
 import progettiJson from '../../config/progetti.json'
 import ricetteJson from '../../config/ricette.json'
 import salvataggioJson from '../../config/salvataggio.json'
@@ -36,8 +35,6 @@ export const elencoRicette = ricetteJson.ricette
 export const costruzioni = costruzioniJson
 export const elencoCostruzioni = costruzioniJson.costruzioni
 
-export const partenzaEconomia = economiaJson.partenza
-export const vendita = economiaJson.vendita
 export const salvataggio = salvataggioJson
 
 export function trovaCostruzione(id) {
@@ -150,12 +147,13 @@ for (let i = 0; i < elencoProgetti.length; i++) {
   if (t.richiede) {
     trovaProgetto(t.richiede)
   }
-  if (!(t.costo > 0)) {
-    throw new Error(`Il progetto "${t.id}" non ha un costo in progetti.json`)
+  // Un progetto che chiede se stesso non si aprirebbe mai, e il gioco
+  // resterebbe fermo senza dire perche'.
+  if (t.richiede === t.id) {
+    throw new Error(`Il progetto "${t.id}" chiede se stesso: non si aprirebbe mai`)
   }
   // Un progetto che non apre niente si comprerebbe senza ottenere niente: le
-  // monete sono il diritto, i materiali sono la cosa. Le cose che puo' aprire
-  // sono due, e sono diverse:
+  // Le cose che puo' aprire sono due, e sono diverse:
   //   una RICETTA     -> un attrezzo che ti fabbrichi al banco
   //   una COSTRUZIONE -> una voce nuova del menu' Costruisci
   if (t.costruzione) {

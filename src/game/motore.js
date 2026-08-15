@@ -46,7 +46,6 @@ import { creaLavori } from './lavori.js'
 import { creaCasse } from './casse.js'
 import { creaMacchine } from './macchine.js'
 import { creaBraccianti } from './braccianti.js'
-import { creaEconomia } from './economia.js'
 import { creaProgetti } from './progetti.js'
 import { creaGestoreEffetti } from './effetti.js'
 import { cancella, leggi, scrivi, tempoPassato } from './salvataggio.js'
@@ -66,7 +65,6 @@ export function creaMotore(canvasGioco) {
   const lavori = creaLavori()
   const casse = creaCasse()
   const macchine = creaMacchine()
-  const economia = creaEconomia()
   const progetti = creaProgetti()
   const effetti = creaGestoreEffetti()
 
@@ -193,15 +191,13 @@ export function creaMotore(canvasGioco) {
   }
 
   const vetrina = {
-    monete: 0,
     slotOperaio: 0,
     inventario: '',
     zainoPieno: false,
     statoOperaio: '',
     // il casotto e' anche il mercato: e' li' che si vende e si studia
     cassaEIlCasotto: false,
-    valoreCassa: 0,
-    // "id:comprato|libero|bloccato|fatto" per ogni progetto
+    // "id:libero|bloccato|fatto" per ogni progetto
     progetti: '',
     // "id:si|no" — se la ricetta e' aperta e se ha gli ingredienti addosso
     ricette: '',
@@ -256,7 +252,6 @@ export function creaMotore(canvasGioco) {
 
   function raccogliDati() {
     return {
-      monete: economia.stato.monete,
       progetti: progetti.perSalvare(),
       mondo: mondoPerSalvare(),
       casse: casse.perSalvare(),
@@ -308,7 +303,6 @@ export function creaMotore(canvasGioco) {
     // i progetti prima dell'operaio: sono gli attrezzi fabbricati a dire
     // quante caselle ha lo zaino
     progetti.daSalvato(dati.progetti)
-    economia.stato.monete = dati.monete || 0
     casse.daSalvato(dati.casse)
     macchine.daSalvato(dati.macchine)
     squadra.daSalvato(dati.operai)
@@ -481,23 +475,6 @@ export function creaMotore(canvasGioco) {
       : 'non si può raccogliere'
   }
 
-  // I progetti si comprano al casotto. **Quello che compri e' il diritto**, non
-  // la cosa: la cosa te la fabbrichi al banco, coi materiali. Con un operaio
-  // solo questa e' l'unica via di crescita — non si assume, si migliora.
-  function compra(idProgetto) {
-    const dati = trovaProgetto(idProgetto)
-    if (!progetti.disponibile(idProgetto)) {
-      esito = 'non ancora'
-      return
-    }
-    if (!economia.paga(dati.costo)) {
-      esito = 'monete non abbastanza'
-      return
-    }
-    progetti.compra(idProgetto)
-    esito = ''
-  }
-
   // Fabbricare: l'ordine si da' dal casotto, e l'operaio ci va. Gli
   // ingredienti li deve avere **addosso**, come per costruire.
   function fabbrica(idRicetta) {
@@ -600,14 +577,6 @@ export function creaMotore(canvasGioco) {
         scambia(comando.tipo, comando.id)
       } else if (comando.tipo === 'annulla') {
         annulla()
-      } else if (comando.tipo === 'vendi') {
-        // il mercante sta al casotto e non ti segue: portarci la roba fa
-        // parte del prezzo
-        if (cassaScelta && cassaScelta.eIlCasotto) {
-          economia.vendiCassa(casse, cassaScelta)
-        }
-      } else if (comando.tipo === 'compra') {
-        compra(comando.id)
       } else if (comando.tipo === 'fabbrica') {
         fabbrica(comando.id)
       }
@@ -726,7 +695,6 @@ export function creaMotore(canvasGioco) {
     vetrina.contenutoCassa = cassaScelta ? scriviInventario(cassaScelta.inventario) : ''
     vetrina.pienoCassa = cassaScelta ? casse.pienaDel(cassaScelta) + ' caselle' : ''
     vetrina.cassaEIlCasotto = !!(cassaScelta && cassaScelta.eIlCasotto)
-    vetrina.valoreCassa = cassaScelta ? economia.valoreDi(cassaScelta) : 0
 
     vetrina.macchinaScelta = !!macchinaScelta
     vetrina.nomeMacchina = macchinaScelta ? macchinaScelta.nome : ''
@@ -737,7 +705,6 @@ export function creaMotore(canvasGioco) {
     vetrina.accettaMacchina = macchinaScelta ? macchine.accetta(macchinaScelta) : ''
     vetrina.costruzioniAperte = costruzioniAperte()
 
-    vetrina.monete = Math.floor(economia.stato.monete)
     const b = operaio()
     vetrina.slotOperaio = squadra.slotAdesso()
     vetrina.inventario = b ? scriviInventario(b.inventario) : ''
@@ -745,18 +712,17 @@ export function creaMotore(canvasGioco) {
     // le caselle occupate. Le pile a meta' non consolano nessuno.
     vetrina.zainoPieno = b ? b.inventario.caselleLibere() === 0 : false
     vetrina.statoOperaio = b ? b.stato : ''
-    // la bacheca: comprato, libero (te lo puoi permettere o no lo dice
-    // l'interfaccia), bloccato da un altro progetto, oppure gia' fabbricato
+    // la bacheca: **fatto**, **libero** (lo puoi fabbricare adesso) oppure
+    // **bloccato** (aspetta che tu ne abbia fabbricato un altro). Non c'e'
+    // piu' nessuno stato "comprato": non si compra niente.
     let bacheca = ''
     for (let i = 0; i < elencoProgetti.length; i++) {
       const t = elencoProgetti[i]
       const stato = progetti.hoFatto(t.id)
         ? 'fatto'
-        : progetti.hoComprato(t.id)
-          ? 'comprato'
-          : progetti.disponibile(t.id)
-            ? 'libero'
-            : 'bloccato'
+        : progetti.disponibile(t.id)
+          ? 'libero'
+          : 'bloccato'
       bacheca += (bacheca ? ',' : '') + t.id + ':' + stato
     }
     vetrina.progetti = bacheca
@@ -794,8 +760,6 @@ export function creaMotore(canvasGioco) {
     deposita: (id) => accodaComando('deposita', 0, 0, id),
     preleva: (id) => accodaComando('preleva', 0, 0, id),
     annulla: () => accodaComando('annulla'),
-    vendi: () => accodaComando('vendi'),
-    compra: (id) => accodaComando('compra', 0, 0, id),
     fabbrica: (id) => accodaComando('fabbrica', 0, 0, id),
     salvaSubito
   }

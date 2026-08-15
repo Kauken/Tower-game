@@ -277,15 +277,11 @@ export function PannelloCassa({
   contenuto,
   inventarioOperaio,
   pieno,
-  valore,
   eIlCasotto,
-  monete,
   progetti,
   ricette,
   onDeposita,
   onPreleva,
-  onVendi,
-  onCompra,
   onFabbrica,
   onChiudi
 }) {
@@ -297,7 +293,7 @@ export function PannelloCassa({
   // un pallino sulla scheda quando c'e' qualcosa da fare li' dentro: senza,
   // una scheda chiusa e' una cosa che non esiste
   const qualcosaDaFare = elencoRicette.some((r) => ricette && ricette[r.id] === 'si')
-  const qualcosaDaComprare = progetti.some((t) => t.stato === 'libero' && monete >= t.costo)
+  const qualcosaDaFareLi = progetti.some((t) => t.stato === 'libero')
   const mostra = eIlCasotto ? scheda : 'cassa'
 
   return (
@@ -305,7 +301,7 @@ export function PannelloCassa({
       titolo={eIlCasotto ? 'Casotto' : 'Cassa'}
       sottotitolo={
         eIlCasotto
-          ? 'Occupate ' + pieno + '. Qui si vende, si fabbrica e si comprano i progetti.'
+          ? 'Occupate ' + pieno + '. Qui c\u2019e\u0300 il banco da lavoro e la bacheca.'
           : 'Occupate ' + pieno
       }
     >
@@ -316,7 +312,7 @@ export function PannelloCassa({
           voci={[
             { id: 'cassa', nome: 'Cassa' },
             { id: 'banco', nome: 'Banco', pallino: qualcosaDaFare },
-            { id: 'progetti', nome: 'Progetti', pallino: qualcosaDaComprare }
+            { id: 'progetti', nome: 'Progetti', pallino: qualcosaDaFareLi }
           ]}
         />
       ) : null}
@@ -345,25 +341,6 @@ export function PannelloCassa({
         />
       </div>
 
-      {/* si vende **solo al casotto**: il mercante sta li', non ti segue in giro
-          per l'isola. Portarci la roba fa parte del prezzo */}
-      {eIlCasotto ? (
-        <Bottone
-          titolo="Vendi tutto"
-          dettaglio={qualcosaDentro ? 'svuota questa cassa' : 'non c’è niente da vendere'}
-          costo={qualcosaDentro ? valore : null}
-          colore={stile.colore_azione}
-          acceso={qualcosaDentro}
-          largo
-          onTocco={onVendi}
-        />
-      ) : (
-        <span
-          style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
-        >
-          Per vendere serve il casotto: il mercante sta lì.
-        </span>
-      )}
         </>
       )}
 
@@ -379,12 +356,12 @@ export function PannelloCassa({
               color: interfaccia.colore_testo_debole
             }}
           >
-            Le monete comprano il <i>diritto</i> di fabbricare una cosa. Poi la
-            cosa te la fabbrichi al <b>banco</b>, coi materiali.
+            Una cosa si sblocca quando ne hai <b>fabbricata</b> un'altra. Qui vedi
+            cosa sai fare adesso, e cosa aspetta il suo turno.
           </span>
 
-          {/* le tecnologie che non ti puoi ancora permettere restano visibili
-              col loro costo: vedere quanto manca al Vivaio e' meta' del motivo
+          {/* quelle che non puoi ancora fare restano visibili, con scritto
+              cosa ti manca: vedere quanto manca al Vivaio e' meta' del motivo
               per tornare. E' l'attesa a creare il desiderio */}
           <div
             style={{
@@ -395,10 +372,9 @@ export function PannelloCassa({
           >
             {progetti.map((t) => {
               const fatto = t.stato === 'fatto'
-              const comprato = t.stato === 'comprato'
-              const presa = fatto || comprato
               const bloccata = t.stato === 'bloccato'
-              const puoi = t.stato === 'libero' && monete >= t.costo
+              const aperto = t.stato === 'libero'
+              const presa = fatto
               const richiesta = bloccata
                 ? progetti.find((altra) => altra.id === t.richiede)
                 : null
@@ -406,8 +382,8 @@ export function PannelloCassa({
                 <button
                   key={t.id}
                   type="button"
-                  disabled={!puoi}
-                  onPointerDown={() => puoi && onCompra(t.id)}
+                  disabled
+                  onPointerDown={undefined}
                   style={{
                     textAlign: 'left',
                     padding: '10px 12px',
@@ -416,9 +392,9 @@ export function PannelloCassa({
                     border:
                       stile.spessore_bordo +
                       'px solid ' +
-                      (presa ? t.colore : puoi ? t.colore : 'transparent'),
+                      (presa || aperto ? t.colore : 'transparent'),
                     background: presa ? t.colore + '33' : stile.colore_spento,
-                    color: presa || puoi ? interfaccia.colore_testo : stile.colore_testo_spento,
+                    color: presa || aperto ? interfaccia.colore_testo : stile.colore_testo_spento,
                     fontFamily: 'inherit',
                     touchAction: 'manipulation',
                     opacity: bloccata ? 0.65 : 1
@@ -437,12 +413,12 @@ export function PannelloCassa({
                         fontWeight: stile.peso_titolo,
                         color: presa
                           ? t.colore
-                          : puoi
+                          : aperto
                             ? interfaccia.colore_accento
                             : stile.colore_testo_spento
                       }}
                     >
-                      {fatto ? 'fatto' : comprato ? 'da fabbricare' : t.costo + ' monete'}
+                      {fatto ? 'fatto' : aperto ? 'da fabbricare' : 'bloccato'}
                     </span>
                   </div>
                   <div
@@ -454,9 +430,9 @@ export function PannelloCassa({
                     }}
                   >
                     {bloccata && richiesta
-                      ? 'prima serve: ' + richiesta.nome
-                      : comprato
-                        ? 'comprato — adesso fabbricalo nella scheda Banco'
+                      ? 'prima devi fabbricare: ' + richiesta.nome
+                      : aperto
+                        ? 'fabbricalo nella scheda Banco'
                         : t.descrizione}
                   </div>
                 </button>

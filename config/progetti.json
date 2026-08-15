@@ -1,6 +1,6 @@
 {
-  "_nota": "La bacheca del casotto. Un progetto si COMPRA in monete, e quello che compri e' il DIRITTO di fabbricare una cosa - non la cosa. Poi la cosa te la fabbrichi al banco, coi materiali. Sono le due economie: se i progetti si pagassero coi materiali il mercante sarebbe arredamento, se le cose si comprassero con le monete lo sarebbe l'isola. Cosi' restano vive tutte e due.",
-  "_nota_desiderio": "I progetti che non ci si puo' ancora permettere restano VISIBILI ma spenti, col loro costo. Vedere quanto manca e' meta' del motivo per tornare: e' l'attesa a creare il desiderio, non la sorpresa. E dopo averlo comprato ne resta ancora meta': adesso ti servono i materiali.",
+  "_nota": "La bacheca del casotto: **l'albero di quello che sai fare**. Non si compra niente: una cosa si sblocca quando ne hai FABBRICATA un'altra. Fabbrichi l'ascia e compare il piccone. E' l'unica economia rimasta - i materiali - e il diritto di costruire si guadagna costruendo, non pagando.",
+  "_nota_desiderio": "I progetti che non puoi ancora fare restano VISIBILI ma spenti, con scritto cosa ti manca. Vedere quanto manca e' meta' del motivo per tornare: e' l'attesa a creare il desiderio, non la sorpresa.",
   "_nota_effetti": "Ogni effetto ha un tipo. tempo_lavoro = quanto ci mette a lavorare (piu' basso e' meglio, e si puo' limitare a un elenco di risorse con 'risorse'). velocita = quanto cammina in fretta. crescita = quanto ci mettono gli alberelli. slot = quante caselle ha lo zaino, e questa si SOMMA invece di moltiplicare. ATTENZIONE a 'risorse': un piccone che nomina solo 'masso' non tocca le VENE di pietra, che sono una risorsa diversa - e il giocatore comprerebbe un attrezzo che non fa niente su quello che scava davvero. L'ha trovato la simulazione headless.",
   "_nota_regola": "REGOLA: un progetto deve dare un VERBO NUOVO o togliere una domanda dalla testa del giocatore - \"devo riempirlo in continuazione\", \"in quale cassa l'avevo messo?\". Un +5% che non si nota non merita di stare in bacheca.",
   "progetti": [
@@ -8,7 +8,6 @@
       "id": "ascia_affilata",
       "nome": "Ascia affilata",
       "descrizione": "Abbatti gli alberi molto piu' in fretta.",
-      "costo": 120,
       "colore": "#7ea653",
       "effetto": {
         "tipo": "tempo_lavoro",
@@ -23,33 +22,32 @@
       "id": "zaino_grande",
       "nome": "Zaino grande",
       "descrizione": "Tre tasche in piu': torni a svuotare molto meno spesso.",
-      "costo": 160,
       "colore": "#c9a45c",
       "effetto": {
         "tipo": "slot",
         "aggiunta": 3
       },
-      "sblocca": "zaino_grande"
+      "sblocca": "zaino_grande",
+      "richiede": "ascia_affilata"
     },
     {
       "id": "stivali",
       "nome": "Stivali buoni",
       "descrizione": "Cammini molto piu' in fretta. Si sente su tutto.",
-      "costo": 210,
       "colore": "#b58c5a",
       "effetto": {
         "tipo": "velocita",
         "moltiplicatore": 1.45
       },
-      "sblocca": "stivali"
+      "sblocca": "stivali",
+      "richiede": "zaino_grande"
     },
     {
       "id": "piccone_pesante",
       "nome": "Piccone pesante",
       "descrizione": "Spacchi pietra e massi in poco piu' della meta' del tempo.",
-      "costo": 260,
       "colore": "#8892a6",
-      "richiede": "ascia_affilata",
+      "richiede": "stivali",
       "effetto": {
         "tipo": "tempo_lavoro",
         "risorse": [
@@ -65,9 +63,8 @@
       "id": "vivaio",
       "nome": "Vivaio",
       "descrizione": "Gli alberelli che pianti diventano alberi in meta' tempo.",
-      "costo": 450,
       "colore": "#4a7031",
-      "richiede": "ascia_affilata",
+      "richiede": "piccone_pesante",
       "effetto": {
         "tipo": "crescita",
         "moltiplicatore": 0.5
@@ -78,9 +75,8 @@
       "id": "carriola",
       "nome": "Carriola",
       "descrizione": "Altre quattro tasche, ma cammini un po' piu' piano.",
-      "costo": 520,
       "colore": "#a0763f",
-      "richiede": "zaino_grande",
+      "richiede": "vivaio",
       "effetto": {
         "tipo": "slot",
         "aggiunta": 4
@@ -95,12 +91,11 @@
       "id": "segheria",
       "nome": "Segheria",
       "descrizione": "La prima macchina che lavora da sola. Tu la riempi, lei sega.",
-      "costo": 800,
       "colore": "#b5793c",
-      "richiede": "ascia_affilata",
+      "richiede": "carriola",
       "sblocca": "segheria",
       "costruzione": "segheria"
     }
   ],
-  "_nota_costruzione": "Un progetto con 'costruzione' non accende un attrezzo: apre una voce del menu' Costruisci. La cosa poi te la fabbrichi coi materiali, come tutto il resto - le monete comprano il diritto, i materiali costruiscono la cosa."
+  "_nota_richiede": "'richiede' nomina un altro progetto, e vuol dire FABBRICATO, non comprato. Un progetto senza 'richiede' e' aperto dall'inizio."
 }

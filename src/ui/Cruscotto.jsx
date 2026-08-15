@@ -15,7 +15,6 @@ import Zaino from './Zaino.jsx'
 // quel legno sta dentro una cassa da qualche parte e qualcuno lo deve andare a
 // prendere. Il solo numero che conta davvero e' quello nello zaino.
 export default function Cruscotto({
-  monete,
   inventario,
   zainoPieno,
   statoOperaio,
@@ -56,7 +55,9 @@ export default function Cruscotto({
         pointerEvents: 'none'
       }}
     >
-      {/* monete e giorno. La barra dice quanto manca a sera */}
+      {/* cosa sta facendo l'operaio. **Niente monete**: sono state tolte,
+          e con loro l'unico numero che il giocatore guardava senza che gli
+          dicesse niente su quanto sta migliorando */}
       <div
         style={{
           padding: '7px 12px',
@@ -66,21 +67,6 @@ export default function Cruscotto({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-          <span
-            style={{
-              fontSize: interfaccia.testo_titolo,
-              fontWeight: 700,
-              color: interfaccia.colore_accento
-            }}
-          >
-            {monete}
-          </span>
-          <span
-            style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
-          >
-            monete
-          </span>
-          <span style={{ flex: 1 }} />
           <span
             style={{
               fontSize: interfaccia.testo_piccolo,

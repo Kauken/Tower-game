@@ -98,7 +98,7 @@ for (let i = 0; i < colonne * filari; i++) {
 // ci metteva in tutto. Zero vuol dire maturo.
 //
 // **Niente ricresce da solo.** Un albero tagliato sparisce, e al suo posto ti
-// resta in mano un alberello: se lo ripianti il bosco continua, se lo vendi no.
+// resta in mano un alberello: se lo ripianti il bosco continua, se no finisce.
 // Il bosco e' una cosa che gestisci, non una che aspetti — ed e' la prima
 // decisione di spesa vera del gioco.
 export const crescitaMs = new Float32Array(colonne * filari)
