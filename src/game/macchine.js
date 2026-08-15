@@ -153,6 +153,21 @@ export function creaMacchine() {
     return (tutto - m.restaMs) / tutto
   }
 
+  // Cosa sa usare: gli ingredienti della sua ricetta, piu' il combustibile.
+  // Serve all'interfaccia, che senza offrirebbe di posare dentro la segheria
+  // dei chiodi — un bottone che promette una cosa che non succede.
+  function accetta(m) {
+    const ricetta = trovaRicetta(m.ricetta)
+    let fuori = ''
+    for (let i = 0; i < ricetta.ingredienti.length; i++) {
+      fuori += (fuori ? ',' : '') + ricetta.ingredienti[i].materiale
+    }
+    if (fuori.split(',').indexOf(m.combustibile) < 0) {
+      fuori += (fuori ? ',' : '') + m.combustibile
+    }
+    return fuori
+  }
+
   function perSalvare() {
     const fuori = []
     for (let i = 0; i < elenco.length; i++) {
@@ -187,5 +202,5 @@ export function creaMacchine() {
     elenco.length = 0
   }
 
-  return { elenco, aggiungi, in: in_, aggiorna, avanzamento, perSalvare, daSalvato, svuota }
+  return { elenco, aggiungi, in: in_, aggiorna, avanzamento, accetta, perSalvare, daSalvato, svuota }
 }

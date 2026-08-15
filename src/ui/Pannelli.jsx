@@ -334,7 +334,7 @@ export function PannelloCassa({
         <Bottone
           titolo="Posa tutto"
           colore={stile.colore_azione}
-          acceso={elencoMateriali.some((m) => (addosso[m.id] || 0) > 0)}
+          acceso={elencoMateriali.some((m) => (soloAccettati[m.id] || 0) > 0)}
           onTocco={() => onDeposita('')}
         />
         <Bottone
@@ -486,7 +486,7 @@ const DICE_LA_MACCHINA = {
   lavora: { testo: 'Sta lavorando', colore: '#7fc45a' },
   senza_materiale: { testo: 'Ferma: le manca il materiale', colore: '#d9a441' },
   senza_combustibile: { testo: 'Ferma: le manca il combustibile', colore: '#e0662f' },
-  uscita_piena: { testo: 'Ferma: il cassetto d\u2019uscita \u00e8 pieno', colore: '#8fa3c4' }
+  uscita_piena: { testo: 'Ferma: il cassetto d’uscita è pieno', colore: '#8fa3c4' }
 }
 
 export function PannelloMacchina({
@@ -495,6 +495,7 @@ export function PannelloMacchina({
   entrata,
   uscita,
   avanzamento,
+  accetta,
   inventarioOperaio,
   onDeposita,
   onPreleva,
@@ -504,9 +505,16 @@ export function PannelloMacchina({
   const fuori = sommaCaselle(uscita)
   const addosso = sommaCaselle(inventarioOperaio)
   const dice = DICE_LA_MACCHINA[stato] || DICE_LA_MACCHINA.senza_materiale
+  const presi = (accetta || '').split(',')
+  const soloAccettati = {}
+  for (const id in addosso) {
+    if (presi.indexOf(id) >= 0) {
+      soloAccettati[id] = addosso[id]
+    }
+  }
 
   return (
-    <Foglio titolo={nome} sottotitolo="Lavora da sola finch\u00e9 ha di che lavorare.">
+    <Foglio titolo={nome} sottotitolo="Lavora da sola finché ha di che lavorare.">
       {/* **Lo stato per primo.** Una macchina ferma che non dice perche'
           sembra un guasto, e la prima cosa che uno guarda aprendo un pannello
           e' la riga in alto. */}
@@ -557,7 +565,10 @@ export function PannelloMacchina({
 
       <p style={{ ...ETICHETTA, margin: '0 0 4px' }}>Entra</p>
       <Griglia inventario={entrata} vuotoDice="Vuoto. Posale del legno." />
-      <Sposta conti={addosso} verso="Posa" onSposta={onDeposita} />
+      {/* si offre di posare **solo quello che sa usare**: un bottone che
+          promette una cosa che poi non succede e' peggio di un bottone che
+          non c'e' */}
+      <Sposta conti={soloAccettati} verso="Posa" onSposta={onDeposita} />
 
       <p style={{ ...ETICHETTA, margin: '10px 0 4px' }}>Esce</p>
       <Griglia inventario={uscita} vuotoDice="Non ha ancora prodotto niente." />

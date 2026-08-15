@@ -270,7 +270,22 @@ export function creaBraccianti({ casse, macchine, progetti, alloScarico, alCambi
       return
     }
     if (lavoro.azione === 'deposita') {
-      travasa(bracciante.inventario, macchina.entrata, lavoro.materiale)
+      // **Una macchina prende solo quello che sa usare.** Senza questo,
+      // "Posa tutto" le infila dentro tavole e chiodi che non c'entrano
+      // niente, il cassetto d'entrata si intasa di roba inutile e la macchina
+      // si ferma per un motivo che il giocatore non puo' indovinare.
+      const ricetta = trovaRicetta(macchina.ricetta)
+      for (let i = 0; i < ricetta.ingredienti.length; i++) {
+        const quale = ricetta.ingredienti[i].materiale
+        if (!lavoro.materiale || lavoro.materiale === quale) {
+          travasa(bracciante.inventario, macchina.entrata, quale)
+        }
+      }
+      if (!ricetta.ingredienti.some((ing) => ing.materiale === macchina.combustibile)) {
+        if (!lavoro.materiale || lavoro.materiale === macchina.combustibile) {
+          travasa(bracciante.inventario, macchina.entrata, macchina.combustibile)
+        }
+      }
     } else {
       travasa(macchina.uscita, bracciante.inventario, lavoro.materiale)
     }

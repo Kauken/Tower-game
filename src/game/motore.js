@@ -232,6 +232,7 @@ export function creaMotore(canvasGioco) {
     entrataMacchina: '',
     uscitaMacchina: '',
     avanzamentoMacchina: 0,
+    accettaMacchina: '',
     // quali costruzioni sono sbloccate: "cassa,segheria"
     costruzioniAperte: ''
   }
@@ -733,6 +734,7 @@ export function creaMotore(canvasGioco) {
     vetrina.entrataMacchina = macchinaScelta ? scriviInventario(macchinaScelta.entrata) : ''
     vetrina.uscitaMacchina = macchinaScelta ? scriviInventario(macchinaScelta.uscita) : ''
     vetrina.avanzamentoMacchina = macchinaScelta ? macchine.avanzamento(macchinaScelta) : 0
+    vetrina.accettaMacchina = macchinaScelta ? macchine.accetta(macchinaScelta) : ''
     vetrina.costruzioniAperte = costruzioniAperte()
 
     vetrina.monete = Math.floor(economia.stato.monete)
