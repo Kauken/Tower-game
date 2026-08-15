@@ -84,7 +84,24 @@ Il valore di riferimento è **×1,5–1,6**. Con quel rapporto una catena a tre 
 | Vivaio | 450 | 1 telaio + 8 tavole |
 | Carriola | 520 | 2 telai + 8 chiodi |
 
-### La curva dei costi dei progetti — **anche lei è un ×1,5**
+### ⚠️ Prima di tutto: **i prezzi non fanno la durata**
+
+> **Il numero di progetti fa le ore. Il prezzo dei progetti fa il ritmo.**
+
+È la regola più importante di questo documento, e va letta prima delle altre perché le altre servono a poco se si sbaglia questa. Se il gioco risulta troppo corto — e **oggi lo è: 13,5 minuti misurati** — la risposta **non** è alzare i costi. Alzare i costi allunga il tempo lasciandolo identico: il giocatore ripete di più le stesse identiche cose. Ha un nome nel settore ed è *padding*.
+
+La durata si allunga in quattro modi, in ordine di valore: **più cose da comprare**, **più verbi**, **costi che salgono insieme a un salto di produzione**, **una ripetizione resa più profonda**. La taratura dei prezzi serve a decidere **quale progetto sembra il prossimo** e **se il salto si sente** — non quanto dura il gioco.
+
+### La soglia del 15%: **sotto, un miglioramento non esiste**
+
+Due ricerche indipendenti arrivano allo stesso numero da strade diverse. Vale in due sensi:
+
+- **un oggetto** che migliora qualcosa di meno del 15% è **invisibile**, non "poco utile". Non si ritocca: si toglie o si ripensa;
+- **fra un progetto e il successivo** si deve aspettare **dal 15% al 20% in più**. Meno, e i due si accavallano; molto di più, e diventa un muro.
+
+Lo Zaino grande, misurato ×1,00, è il caso da manuale: non è caro, **è invisibile**.
+
+### La curva dei costi dei progetti — **×1,5, ma solo insieme alla produzione**
 
 I costi qui sopra (120, 160, 210, 260, 450, 520) sono stati messi a occhio, uno dopo l'altro. La ricerca sui giochi di riferimento dice che la curva giusta è **geometrica, e il passo è di nuovo ×1,5**:
 
@@ -96,11 +113,26 @@ I costi qui sopra (120, 160, 210, 260, 450, 520) sono stati messi a occhio, uno 
 | 4° | **405** |
 | 5° | **608** |
 
+> ### ⚠️ Il ×1,5 da solo non vuol dire niente
+> **Non esiste "la curva dei costi".** Esiste solo il rapporto fra **quanto costa** e **quanto produci**: è quello il tempo che il giocatore aspetta, ed è l'unica cosa che sente.
+>
+> Il ×1,5 vale **se e solo se la produzione cresce di circa ×1,3 a ogni progetto**. Con produzione a ×1,2 lo stesso ×1,5 rende il gioco un muro. **Quando si tocca uno dei due numeri si tocca l'altro**, e si verifica con `npm run progressione`.
+
 Il motivo per cui deve essere geometrica e non a passi liberi è che **la produzione al minuto del giocatore cresce anch'essa in modo geometrico**: ogni macchina moltiplica, non aggiunge. Se i costi crescono a passi lineari mentre la produzione moltiplica, dopo tre sblocchi il quarto arriva da solo mentre stai facendo altro — e il desiderio si spegne.
 
 Il controllo resta quello del §6: **costo del prossimo progetto diviso la produzione attuale al minuto, fra 4 e 12 minuti.** La curva ×1,5 è il modo di restare dentro quella finestra senza doverla ricalcolare a ogni aggiunta.
 
 > **Da tarare, non ancora applicata.** Cambiare sei costi insieme è esattamente quello che il §8 vieta. Va fatta dal `bilanciatore`, misurando con `npm run simula`, e va provata: la curva è più ripida di quella attuale nella parte alta (608 contro 520) e più ripida anche in mezzo (270 contro 210).
+
+### Dopo un oggetto che alza il reddito, il prezzo dopo salta di più
+
+È un difetto che abbiamo davvero, e si vede solo misurando la partita intera:
+
+> Il **Vivaio** (450) arriva dopo 4,6 minuti di attesa. La **Carriola** (520), che costa di più, arriva dopo **2,8**.
+
+Il buco **si accorcia** proprio alla fine, cioè dove dovrebbe stringere. La causa non è il prezzo della Carriola: è che il Vivaio ha alzato il reddito, e il prezzo successivo non ne ha tenuto conto.
+
+> **Regola:** dopo un progetto che aumenta quanto produci al minuto, il costo del progetto seguente deve salire **più del passo normale** — quanto basta a tenere l'attesa dentro il +15-20%. Il controllo non è sul prezzo: è sul **buco misurato**.
 
 ### La forbice che si allarga — perché un potenziamento non regala mai il 100%
 

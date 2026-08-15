@@ -432,6 +432,7 @@ Guardrail, da difendere in ogni decisione futura.
 - **Non c'è fretta.** Niente timer che scadono, niente che marcisce.
 - **Non è un idle da guardare.** Se in una sessione non c'è almeno una decisione, il gioco è rotto lì.
 - **Niente valuta premium, niente pubblicità, niente attese che si pagano.**
+- **Niente attese a tempo messe lì per allungare.** Nessun raccolto che deve maturare, nessuna costruzione con un timer, nessun serbatoio che si riempie da solo mentre guardi. Sono chiamate *cancelli a tempo* e le fonti le descrivono come **il trucco più contro-il-consumatore che esista oggi nei giochi**. Non va confuso col tempo dell'operaio: **lui ci mette del tempo perché sta facendo qualcosa**, e quel tempo lo puoi comprare indietro. Un timer che scorre mentre nessuno lavora non è un costo, è un pedaggio.
 - **Niente ricompense di accesso quotidiano.** Nessun regalo per aver aperto l'app, nessuna serie di giorni da non spezzare. È il modo standard di tenere la gente sui giochi da telefono, e fa esattamente il contrario di quello che vogliamo: trasforma l'apertura in **un dovere da non saltare**, mentre qui aprire deve essere una voglia. E se ci fosse una serie da non spezzare, "non c'è fretta" diventerebbe una bugia scritta due righe più sopra.
 - **Non si smonta mai la fabbrica per poter salire di livello.** Vedi §11b: il muro della ricostruzione è documentato come il punto in cui la gente abbandona questo genere.
 - **Nessun sistema può spegnere tutto insieme.** Vedi §10b.
