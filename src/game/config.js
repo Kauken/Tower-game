@@ -153,12 +153,24 @@ for (let i = 0; i < elencoProgetti.length; i++) {
   if (!(t.costo > 0)) {
     throw new Error(`Il progetto "${t.id}" non ha un costo in progetti.json`)
   }
-  // Un progetto che non apre nessuna ricetta si comprerebbe senza ottenere
-  // niente: le monete sono il diritto, i materiali sono la cosa.
-  if (!elencoRicette.some((r) => r.id === t.sblocca)) {
+  // Un progetto che non apre niente si comprerebbe senza ottenere niente: le
+  // monete sono il diritto, i materiali sono la cosa. Le cose che puo' aprire
+  // sono due, e sono diverse:
+  //   una RICETTA     -> un attrezzo che ti fabbrichi al banco
+  //   una COSTRUZIONE -> una voce nuova del menu' Costruisci
+  if (t.costruzione) {
+    if (!elencoCostruzioni.some((c) => c.id === t.costruzione)) {
+      throw new Error(
+        `Il progetto "${t.id}" apre la costruzione "${t.costruzione}", che non esiste in costruzioni.json`
+      )
+    }
+  } else if (!elencoRicette.some((r) => r.id === t.sblocca)) {
     throw new Error(
       `Il progetto "${t.id}" apre la ricetta "${t.sblocca}", che non esiste in ricette.json`
     )
+  }
+  if (!t.effetto) {
+    continue
   }
   if (t.effetto.risorsa && !risorse[t.effetto.risorsa]) {
     throw new Error(
@@ -188,6 +200,44 @@ for (let i = 0; i < elencoProgetti.length; i++) {
     } else if (!(effetto.moltiplicatore > 0)) {
       throw new Error(`L'effetto "${effetto.tipo}" del progetto "${t.id}" non ha un moltiplicatore`)
     }
+  }
+}
+
+// I CONTROLLI SULLE MACCHINE.
+//
+// Una macchina e' l'unica cosa del gioco che lavora da sola: se e' scritta
+// male non si rompe, semplicemente **non fa niente e non dice perche'**. Ed e'
+// il difetto piu' difficile da trovare giocando.
+for (let i = 0; i < elencoCostruzioni.length; i++) {
+  const c = elencoCostruzioni[i]
+  if (c.tipo !== 'macchina') {
+    continue
+  }
+  const ricetta = elencoRicette.find((r) => r.id === c.ricetta)
+  if (!ricetta) {
+    throw new Error(
+      `La macchina "${c.id}" dice di saper fare la ricetta "${c.ricetta}", che non esiste in ricette.json`
+    )
+  }
+  if (!(c.slot_entrata > 0) || !(c.slot_uscita > 0)) {
+    throw new Error(`La macchina "${c.id}" ha bisogno di slot_entrata e slot_uscita maggiori di zero`)
+  }
+  if (!elencoMateriali.some((m) => m.id === c.combustibile)) {
+    throw new Error(
+      `La macchina "${c.id}" brucia "${c.combustibile}", che non e un materiale dell'isola`
+    )
+  }
+  // **Questo e' il controllo che conta.** Se bruciasse a ogni lavorazione, una
+  // segheria mangerebbe tanto legno quanto ne trasforma: si comprerebbe una
+  // macchina che non fa guadagnare niente, e non si capirebbe perche'.
+  if (!(c.brucia_ogni > 1)) {
+    throw new Error(
+      `La macchina "${c.id}" brucia un pezzo a ogni lavorazione (brucia_ogni = ${c.brucia_ogni}): ` +
+        `cosi non guadagna niente. Deve essere almeno 2.`
+    )
+  }
+  if (ricetta.ingredienti.some((ing) => ing.materiale === ricetta.produce)) {
+    throw new Error(`La macchina "${c.id}" produce un materiale che consuma: sarebbe materia infinita`)
   }
 }
 
