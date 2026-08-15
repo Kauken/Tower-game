@@ -3,7 +3,9 @@
 *Ricerca sul tempo complessivo di una progressione e sul metodo pratico di taratura.
 Le altre tre ricerche parallele parlano di forma della curva, ritmo degli sblocchi e desiderio: qui non se ne parla.*
 
-**Bozza 2 — in aggiornamento.**
+> ⚠️ **Questa è la bozza 2, e resta una bozza.** L'agente ha fatto **18 ricerche** e ha esaurito il limite di sessione **mentre scriveva la versione finale**. Il contenuto c'è tutto; la rifinitura no.
+>
+> Si è salvato **solo perché aveva ordine di scrivere presto e riscrivere spesso** — la regola nata dal report che avevamo perso in un'altra sessione. Questa volta ha funzionato.
 
 ---
 
