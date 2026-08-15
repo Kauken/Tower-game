@@ -6,6 +6,7 @@
 
 import {
   area,
+  elencoCostruzioni,
   elencoMateriali,
   grafica,
   operaio as aspettoOperaio,
@@ -591,18 +592,107 @@ function disegnaMira(ctx, camera, mira) {
   ctx.stroke()
 }
 
+
+// --- le macchine ---
+//
+// **Una macchina si deve vedere lavorare.** E' la regola 15g, e non e'
+// estetica: da fuori si devono distinguere i quattro stati senza aprire
+// niente, perche' su un telefono nessuno apre otto pannelli per sapere come va
+// la fabbrica.
+//
+// Tre segnali, e ognuno dice una cosa diversa:
+//   la LAMA gira      -> sta lavorando adesso
+//   la FIAMMA e' accesa -> sta bruciando adesso
+//   il PALLINO         -> cosa le manca, e il colore dice cosa portare
+function disegnaMacchine(ctx, camera, macchine, lato, scelta) {
+  const stile = grafica.macchina
+  for (let i = 0; i < macchine.length; i++) {
+    const m = macchine[i]
+    camera.versoSchermo(m.tx * tessera + tessera / 2, m.ty * tessera + tessera / 2, punto)
+    const raggio = stile.raggio * lato
+    const lavora = m.stato === 'lavora'
+
+    disegnaSagoma(ctx, m.id, 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento)
+
+    // la fiamma nella bocca del forno, solo mentre lavora: un fuoco acceso su
+    // una macchina ferma sarebbe una bugia
+    if (lavora) {
+      const guizzo = 0.75 + Math.sin(orologio * 9 + i) * 0.25
+      ctx.fillStyle = trovaCostruzione(m.id).colore_fiamma
+      ctx.beginPath()
+      ctx.arc(
+        punto.x + stile.fiamma_x * raggio,
+        punto.y + stile.fiamma_y * raggio,
+        stile.fiamma_raggio * raggio * guizzo,
+        0,
+        Math.PI * 2
+      )
+      ctx.fill()
+    }
+
+    // la lama. Gira **solo** quando lavora, e resta ferma dov'era quando si
+    // ferma: e' il modo piu' diretto di dire "adesso sta facendo qualcosa".
+    ctx.save()
+    ctx.translate(punto.x + stile.lama_x * raggio, punto.y + stile.lama_y * raggio)
+    ctx.rotate(m.giro * Math.PI * 2 * stile.giri_al_secondo)
+    disegnaSagoma(ctx, m.id + '_lama', 0, 0, 0, raggio * stile.lama_raggio * 2 * grafica.sagome.ingrandimento)
+    ctx.restore()
+
+    // il pallino dello stato
+    ctx.fillStyle =
+      m.stato === 'lavora'
+        ? stile.colore_lavora
+        : m.stato === 'senza_combustibile'
+          ? stile.colore_senza_combustibile
+          : m.stato === 'uscita_piena'
+            ? stile.colore_uscita_piena
+            : stile.colore_senza_materiale
+    ctx.beginPath()
+    ctx.arc(
+      punto.x + stile.segnale_x * raggio,
+      punto.y + stile.segnale_y * raggio,
+      stile.segnale_raggio * raggio,
+      0,
+      Math.PI * 2
+    )
+    ctx.fill()
+
+    // quanto e' pieno il cassetto d'uscita: e' il motivo per cui si ferma, e
+    // si deve vedere da lontano come per le casse
+    const quota = m.uscita.stato.attivi > 0 ? m.uscita.occupati() / m.uscita.stato.attivi : 0
+    if (quota > 0) {
+      const barra = stile.barra
+      const larghezza = raggio * 1.6
+      const altezza = barra.altezza * lato
+      const y = punto.y + raggio + barra.margine * lato
+      ctx.fillStyle = barra.colore_fondo
+      ctx.fillRect(punto.x - larghezza / 2, y, larghezza, altezza)
+      ctx.fillStyle = trovaCostruzione(m.id).colore_bordo
+      ctx.fillRect(punto.x - larghezza / 2, y, larghezza * Math.min(1, quota), altezza)
+    }
+
+    if (scelta === m) {
+      ctx.strokeStyle = stile.colore_lavora
+      ctx.lineWidth = 2
+      ctx.strokeRect(punto.x - raggio, punto.y - raggio, raggio * 2, raggio * 2)
+    }
+  }
+}
+
 export function disegnaIsola(
   ctx,
   camera,
   lavori,
   squadra,
   casse,
+  macchine,
   braccianteScelto,
   cassaScelta,
+  macchinaScelta,
   mira
 ) {
   orologio = performance.now() / 1000
-  preparaSagome(risorse, aspettoCassa, aspettoOperaio)
+  preparaSagome(risorse, aspettoCassa, aspettoOperaio, elencoCostruzioni.filter((c) => c.tipo === 'macchina'))
   camera.tessereVisibili(vista)
   disegnaFuori(ctx)
   disegnaTerreno(ctx, camera)
@@ -610,6 +700,7 @@ export function disegnaIsola(
   disegnaMira(ctx, camera, mira)
   disegnaRisorse(ctx, camera)
   disegnaCasse(ctx, camera, casse)
+  disegnaMacchine(ctx, camera, macchine, tessera * camera.stato.zoom, macchinaScelta)
   // gli anelli vanno SOPRA alle cose, e piu' larghi di loro: sotto finivano
   // coperti dalla chioma dell'albero e l'ordine sembrava non essere partito
   disegnaOrdini(ctx, camera, lavori)

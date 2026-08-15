@@ -275,12 +275,98 @@ function cassa(ctx, dati) {
   ctx.fillRect(c - largo * 0.07, c - alto * 0.06, largo * 0.14, alto * 0.2)
 }
 
+
+// --- la segheria ---
+//
+// **Il corpo si cuoce nell'atlante, la lama no.** La lama gira, e una cosa che
+// gira non si puo' cuocere una volta sola: si disegna a parte e la si ruota
+// quando si copia. Costa un `drawImage` con una rotazione — cioe' niente — e
+// in cambio la macchina si vede lavorare, che e' il punto di tutto il §9.
+function segheria(ctx, dati) {
+  const c = LATO / 2
+  const largo = LATO * 0.66
+  const alto = LATO * 0.5
+
+  // l'ombra sotto, che la stacca dal terreno
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'
+  ctx.beginPath()
+  ctx.ellipse(c, c + alto * 0.5, largo * 0.5, alto * 0.16, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // il basamento di pietra
+  ctx.fillStyle = tinta(dati.colore, -0.26)
+  ctx.fillRect(c - largo / 2, c + alto * 0.16, largo, alto * 0.3)
+
+  // il capannone
+  ctx.fillStyle = dati.colore
+  ctx.fillRect(c - largo / 2, c - alto * 0.32, largo, alto * 0.5)
+  ctx.fillStyle = tinta(dati.colore, 0.1)
+  ctx.fillRect(c - largo / 2, c - alto * 0.32, largo, alto * 0.1)
+
+  // le assi verticali: senza, il capannone e' un rettangolo marrone
+  ctx.fillStyle = tinta(dati.colore, -0.12)
+  for (let i = 1; i < 5; i++) {
+    ctx.fillRect(c - largo / 2 + (largo * i) / 5, c - alto * 0.32, LATO * 0.012, alto * 0.5)
+  }
+
+  // il tetto spiovente
+  ctx.fillStyle = dati.colore_bordo
+  ctx.beginPath()
+  ctx.moveTo(c - largo * 0.56, c - alto * 0.32)
+  ctx.lineTo(c, c - alto * 0.62)
+  ctx.lineTo(c + largo * 0.56, c - alto * 0.32)
+  ctx.closePath()
+  ctx.fill()
+
+  // la bocca del forno, dove si vede la fiamma quando lavora
+  ctx.fillStyle = tinta(dati.colore, -0.42)
+  ctx.fillRect(c - largo * 0.4, c + alto * 0.02, largo * 0.24, alto * 0.16)
+
+  // il ceppo su cui appoggia il tronco
+  ctx.fillStyle = tinta(dati.colore_bordo, -0.3)
+  ctx.fillRect(c + largo * 0.1, c + alto * 0.04, largo * 0.3, alto * 0.12)
+}
+
+// La lama, da sola e centrata: si ruota quando si copia.
+function lama(ctx, dati) {
+  const c = LATO / 2
+  const r = LATO * 0.19
+
+  ctx.fillStyle = tinta(dati.colore_lama, -0.35)
+  ctx.beginPath()
+  ctx.arc(c, c, r * 1.06, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.fillStyle = dati.colore_lama
+  ctx.beginPath()
+  ctx.arc(c, c, r, 0, Math.PI * 2)
+  ctx.fill()
+
+  // i denti: sono loro che fanno leggere il movimento quando gira
+  ctx.fillStyle = tinta(dati.colore_lama, -0.45)
+  for (let i = 0; i < 12; i++) {
+    const a = (i / 12) * Math.PI * 2
+    ctx.beginPath()
+    ctx.moveTo(c + Math.cos(a) * r, c + Math.sin(a) * r)
+    ctx.lineTo(c + Math.cos(a + 0.16) * r * 1.16, c + Math.sin(a + 0.16) * r * 1.16)
+    ctx.lineTo(c + Math.cos(a + 0.32) * r, c + Math.sin(a + 0.32) * r)
+    ctx.closePath()
+    ctx.fill()
+  }
+
+  // il mozzo
+  ctx.fillStyle = tinta(dati.colore_lama, -0.2)
+  ctx.beginPath()
+  ctx.arc(c, c, r * 0.22, 0, Math.PI * 2)
+  ctx.fill()
+}
+
 // L'atlante: una tela nascosta con tutte le sagome in fila. Si costruisce una
 // volta sola, al primo disegno.
 let atlante = null
 const posti = {}
 
-function prepara(elencoRisorse, aspettoCassa, aspettoOperaio) {
+function prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine) {
   const voci = []
   for (const nome in elencoRisorse) {
     const dati = elencoRisorse[nome]
@@ -294,6 +380,10 @@ function prepara(elencoRisorse, aspettoCassa, aspettoOperaio) {
   }
   voci.push(['cassa:0', aspettoCassa, 0, cassa])
   voci.push(['operaio:0', aspettoOperaio, 0, null])
+  for (let i = 0; i < aspettiMacchine.length; i++) {
+    voci.push([aspettiMacchine[i].id + ':0', aspettiMacchine[i], 0, segheria])
+    voci.push([aspettiMacchine[i].id + '_lama:0', aspettiMacchine[i], 0, lama])
+  }
 
   const perRiga = Math.ceil(Math.sqrt(voci.length))
   const tela = document.createElement('canvas')
@@ -318,9 +408,9 @@ function prepara(elencoRisorse, aspettoCassa, aspettoOperaio) {
   atlante = tela
 }
 
-export function preparaSagome(elencoRisorse, aspettoCassa, aspettoOperaio) {
+export function preparaSagome(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine) {
   if (!atlante) {
-    prepara(elencoRisorse, aspettoCassa, aspettoOperaio)
+    prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine || [])
   }
 }
 

@@ -640,8 +640,10 @@ export function creaMotore(canvasGioco) {
       lavori,
       squadra.squadra,
       casse.elenco,
+      macchine.elenco,
       braccianteScelto,
       cassaScelta,
+      macchinaScelta,
       mira
     )
     effetti.disegna(ctxGioco)
