@@ -334,7 +334,7 @@ export function PannelloCassa({
         <Bottone
           titolo="Posa tutto"
           colore={stile.colore_azione}
-          acceso={elencoMateriali.some((m) => (soloAccettati[m.id] || 0) > 0)}
+          acceso={elencoMateriali.some((m) => (addosso[m.id] || 0) > 0)}
           onTocco={() => onDeposita('')}
         />
         <Bottone
@@ -578,7 +578,7 @@ export function PannelloMacchina({
         <Bottone
           titolo="Posa tutto"
           colore={stile.colore_azione}
-          acceso={elencoMateriali.some((m) => (addosso[m.id] || 0) > 0)}
+          acceso={elencoMateriali.some((m) => (soloAccettati[m.id] || 0) > 0)}
           onTocco={() => onDeposita('')}
         />
         <Bottone
