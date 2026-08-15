@@ -16,9 +16,38 @@
       "colore_bordo": "#c9a172",
       "colore_pieno": "#e0b878",
       "raggio": 0.36
+    },
+    {
+      "id": "segheria",
+      "nome": "Segheria",
+      "descrizione": "Sega i tronchi al posto tuo: un legno diventa tre tavole invece di due. Brucia legno per far girare la lama.",
+      "tipo": "macchina",
+      "ricetta": "tavola_segheria",
+      "richiede_progetto": "segheria",
+      "costo": [
+        {
+          "materiale": "tavola",
+          "quantita": 6
+        },
+        {
+          "materiale": "chiodo",
+          "quantita": 8
+        }
+      ],
+      "slot_entrata": 3,
+      "slot_uscita": 3,
+      "combustibile": "legno",
+      "_nota_combustibile": "Ogni quante lavorazioni brucia un pezzo di combustibile. Con 4: per tre tavole (valore 6) spende 1,25 legno (valore 3,75), cioe' un rapporto di 1,6 - dentro la finestra di MATERIALI. Se diventasse 1, la macchina non guadagnerebbe niente.",
+      "brucia_ogni": 4,
+      "colore": "#6b5030",
+      "colore_bordo": "#caa06a",
+      "colore_lama": "#d8dde6",
+      "colore_fiamma": "#e8873a",
+      "raggio": 0.44
     }
   ],
   "_nota_prima_cassa": "La cassa del casotto c'e' gia' all'avvio e non si paga: senza, il primo bracciante non saprebbe dove scaricare e sembrerebbe rotto.",
   "slot_casotto": 18,
-  "_nota_slot": "Una cassa e' un inventario a slot, esattamente come quello dell'operaio: ogni slot tiene una pila di un materiale. Cosi' 'quanto ci sta dentro' vuol dire la stessa cosa ovunque, e spostare roba e' sempre lo stesso gesto."
+  "_nota_slot": "Una cassa e' un inventario a slot, esattamente come quello dell'operaio: ogni slot tiene una pila di un materiale. Cosi' 'quanto ci sta dentro' vuol dire la stessa cosa ovunque, e spostare roba e' sempre lo stesso gesto.",
+  "_nota_macchine": "Una MACCHINA e' una costruzione con 'tipo': 'macchina'. Ha due cassetti - entrata e uscita - e lavora da sola finche' ha materiale, combustibile e posto dove mettere quello che produce. Il combustibile si prende dal cassetto d'ENTRATA: sulla prima macchina del gioco uno scomparto separato vorrebbe dire due viaggi di carico invece di uno, e su un telefono e' troppo. Cosi' il legno e' materiale E combustibile, ed e' vero da subito che il legno che bruci non diventa tavole."
 }

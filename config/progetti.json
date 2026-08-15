@@ -90,6 +90,17 @@
         "moltiplicatore": 0.85
       },
       "sblocca": "carriola"
+    },
+    {
+      "id": "segheria",
+      "nome": "Segheria",
+      "descrizione": "La prima macchina che lavora da sola. Tu la riempi, lei sega.",
+      "costo": 800,
+      "colore": "#b5793c",
+      "richiede": "ascia_affilata",
+      "sblocca": "segheria",
+      "costruzione": "segheria"
     }
-  ]
+  ],
+  "_nota_costruzione": "Un progetto con 'costruzione' non accende un attrezzo: apre una voce del menu' Costruisci. La cosa poi te la fabbrichi coi materiali, come tutto il resto - le monete comprano il diritto, i materiali costruiscono la cosa."
 }

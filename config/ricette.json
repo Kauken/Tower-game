@@ -10,7 +10,12 @@
       "produce": "tavola",
       "quantita": 2,
       "tempo_ms": 2000,
-      "ingredienti": [{ "materiale": "legno", "quantita": 1 }]
+      "ingredienti": [
+        {
+          "materiale": "legno",
+          "quantita": 1
+        }
+      ]
     },
     {
       "id": "ghiaia",
@@ -19,7 +24,12 @@
       "produce": "ghiaia",
       "quantita": 2,
       "tempo_ms": 2400,
-      "ingredienti": [{ "materiale": "pietra", "quantita": 1 }]
+      "ingredienti": [
+        {
+          "materiale": "pietra",
+          "quantita": 1
+        }
+      ]
     },
     {
       "id": "chiodo",
@@ -28,7 +38,12 @@
       "produce": "chiodo",
       "quantita": 4,
       "tempo_ms": 2600,
-      "ingredienti": [{ "materiale": "rame", "quantita": 1 }]
+      "ingredienti": [
+        {
+          "materiale": "rame",
+          "quantita": 1
+        }
+      ]
     },
     {
       "id": "telaio",
@@ -38,8 +53,14 @@
       "quantita": 1,
       "tempo_ms": 5000,
       "ingredienti": [
-        { "materiale": "tavola", "quantita": 4 },
-        { "materiale": "chiodo", "quantita": 6 }
+        {
+          "materiale": "tavola",
+          "quantita": 4
+        },
+        {
+          "materiale": "chiodo",
+          "quantita": 6
+        }
       ]
     },
     {
@@ -50,8 +71,14 @@
       "tempo_ms": 4000,
       "richiede_progetto": "ascia_affilata",
       "ingredienti": [
-        { "materiale": "tavola", "quantita": 3 },
-        { "materiale": "chiodo", "quantita": 4 }
+        {
+          "materiale": "tavola",
+          "quantita": 3
+        },
+        {
+          "materiale": "chiodo",
+          "quantita": 4
+        }
       ]
     },
     {
@@ -62,8 +89,14 @@
       "tempo_ms": 4000,
       "richiede_progetto": "zaino_grande",
       "ingredienti": [
-        { "materiale": "tavola", "quantita": 4 },
-        { "materiale": "chiodo", "quantita": 6 }
+        {
+          "materiale": "tavola",
+          "quantita": 4
+        },
+        {
+          "materiale": "chiodo",
+          "quantita": 6
+        }
       ]
     },
     {
@@ -73,7 +106,12 @@
       "attrezzo": "stivali",
       "tempo_ms": 5000,
       "richiede_progetto": "stivali",
-      "ingredienti": [{ "materiale": "telaio", "quantita": 1 }]
+      "ingredienti": [
+        {
+          "materiale": "telaio",
+          "quantita": 1
+        }
+      ]
     },
     {
       "id": "piccone_pesante",
@@ -83,8 +121,14 @@
       "tempo_ms": 6000,
       "richiede_progetto": "piccone_pesante",
       "ingredienti": [
-        { "materiale": "telaio", "quantita": 1 },
-        { "materiale": "ghiaia", "quantita": 6 }
+        {
+          "materiale": "telaio",
+          "quantita": 1
+        },
+        {
+          "materiale": "ghiaia",
+          "quantita": 6
+        }
       ]
     },
     {
@@ -95,8 +139,14 @@
       "tempo_ms": 6000,
       "richiede_progetto": "vivaio",
       "ingredienti": [
-        { "materiale": "telaio", "quantita": 1 },
-        { "materiale": "tavola", "quantita": 8 }
+        {
+          "materiale": "telaio",
+          "quantita": 1
+        },
+        {
+          "materiale": "tavola",
+          "quantita": 8
+        }
       ]
     },
     {
@@ -107,9 +157,31 @@
       "tempo_ms": 7000,
       "richiede_progetto": "carriola",
       "ingredienti": [
-        { "materiale": "telaio", "quantita": 2 },
-        { "materiale": "chiodo", "quantita": 8 }
+        {
+          "materiale": "telaio",
+          "quantita": 2
+        },
+        {
+          "materiale": "chiodo",
+          "quantita": 8
+        }
+      ]
+    },
+    {
+      "id": "tavola_segheria",
+      "nome": "Tavole",
+      "descrizione": "La lama fa il lavoro: da un tronco ne escono tre.",
+      "produce": "tavola",
+      "quantita": 3,
+      "tempo_ms": 3000,
+      "macchina": "segheria",
+      "ingredienti": [
+        {
+          "materiale": "legno",
+          "quantita": 1
+        }
       ]
     }
-  ]
+  ],
+  "_nota_macchina": "Una ricetta con 'macchina' NON compare al banco da lavoro: la sa fare solo quella macchina. E' cosi' che la segheria da' tre tavole dove la mano ne da' due, senza che il giocatore possa farlo a mano."
 }
