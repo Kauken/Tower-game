@@ -471,7 +471,118 @@ export function PannelloCassa({
   )
 }
 
-export function PannelloCostruisci({ inventarioOperaio, inManoId, onPrendi, onChiudi }) {
+// Il pannello di una macchina.
+//
+// **Non e' una cassa con due scomparti.** Una cassa e' un posto dove metti le
+// cose; una macchina e' una cosa che LAVORA, e la prima riga che leggi deve
+// dire se sta lavorando o cosa le manca. Il contenuto viene dopo.
+//
+// E ha un verso: si posa in entrata, si prende dall'uscita. Non c'e' un
+// bottone per rimettere le tavole dentro la segheria, perche' non esiste una
+// ragione per volerlo fare.
+const ETICHETTA = { fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole, textTransform: 'uppercase', letterSpacing: '0.08em' }
+
+const DICE_LA_MACCHINA = {
+  lavora: { testo: 'Sta lavorando', colore: '#7fc45a' },
+  senza_materiale: { testo: 'Ferma: le manca il materiale', colore: '#d9a441' },
+  senza_combustibile: { testo: 'Ferma: le manca il combustibile', colore: '#e0662f' },
+  uscita_piena: { testo: 'Ferma: il cassetto d\u2019uscita \u00e8 pieno', colore: '#8fa3c4' }
+}
+
+export function PannelloMacchina({
+  nome,
+  stato,
+  entrata,
+  uscita,
+  avanzamento,
+  inventarioOperaio,
+  onDeposita,
+  onPreleva,
+  onChiudi
+}) {
+  const dentro = sommaCaselle(entrata)
+  const fuori = sommaCaselle(uscita)
+  const addosso = sommaCaselle(inventarioOperaio)
+  const dice = DICE_LA_MACCHINA[stato] || DICE_LA_MACCHINA.senza_materiale
+
+  return (
+    <Foglio titolo={nome} sottotitolo="Lavora da sola finch\u00e9 ha di che lavorare.">
+      {/* **Lo stato per primo.** Una macchina ferma che non dice perche'
+          sembra un guasto, e la prima cosa che uno guarda aprendo un pannello
+          e' la riga in alto. */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '8px 10px',
+          borderRadius: interfaccia.raggio_angoli,
+          background: '#00000033',
+          marginBottom: interfaccia.spaziatura_stretta
+        }}
+      >
+        <span
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: 5,
+            background: dice.colore,
+            flex: '0 0 auto'
+          }}
+        />
+        <span style={{ fontSize: interfaccia.testo_normale, color: dice.colore, fontWeight: 600 }}>
+          {dice.testo}
+        </span>
+      </div>
+
+      {/* la barra dell'avanzamento: si vede che qualcosa succede anche
+          guardando il pannello e non l'isola */}
+      <div
+        style={{
+          height: 6,
+          borderRadius: 3,
+          background: '#00000055',
+          overflow: 'hidden',
+          marginBottom: interfaccia.spaziatura
+        }}
+      >
+        <div
+          style={{
+            width: Math.round(Math.max(0, Math.min(1, avanzamento)) * 100) + '%',
+            height: '100%',
+            background: dice.colore
+          }}
+        />
+      </div>
+
+      <p style={{ ...ETICHETTA, margin: '0 0 4px' }}>Entra</p>
+      <Griglia inventario={entrata} vuotoDice="Vuoto. Posale del legno." />
+      <Sposta conti={addosso} verso="Posa" onSposta={onDeposita} />
+
+      <p style={{ ...ETICHETTA, margin: '10px 0 4px' }}>Esce</p>
+      <Griglia inventario={uscita} vuotoDice="Non ha ancora prodotto niente." />
+      <Sposta conti={fuori} verso="Prendi" onSposta={onPreleva} />
+
+      <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
+        <Bottone
+          titolo="Posa tutto"
+          colore={stile.colore_azione}
+          acceso={elencoMateriali.some((m) => (addosso[m.id] || 0) > 0)}
+          onTocco={() => onDeposita('')}
+        />
+        <Bottone
+          titolo="Prendi tutto"
+          colore={stile.colore_azione}
+          acceso={elencoMateriali.some((m) => (fuori[m.id] || 0) > 0)}
+          onTocco={() => onPreleva('')}
+        />
+      </div>
+      <Bottone titolo="Chiudi" colore={stile.colore_chiudi} acceso onTocco={onChiudi} />
+    </Foglio>
+  )
+}
+
+export function PannelloCostruisci({ inventarioOperaio, inManoId, aperte, onPrendi, onChiudi }) {
   const conti = sommaCaselle(inventarioOperaio)
 
   return (
@@ -480,7 +591,7 @@ export function PannelloCostruisci({ inventarioOperaio, inManoId, onPrendi, onCh
       sottotitolo="Lo prendi in mano, poi tocchi la mappa dove metterlo. Si paga con quello che l’operaio ha addosso: se il legno è in una cassa lontana, prima va a prenderlo."
     >
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: interfaccia.spaziatura_stretta }}>
-        {elencoCostruzioni.map((voce) => {
+        {elencoCostruzioni.filter((v) => !v.richiede_progetto || (aperte || '').split(',').indexOf(v.id) >= 0).map((voce) => {
           const puoi = voce.costo.every((c) => (conti[c.materiale] || 0) >= c.quantita)
           const costo = voce.costo
             .map((c) => c.quantita + ' ' + c.materiale)

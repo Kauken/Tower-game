@@ -7,7 +7,8 @@ import {
   InMano,
   PannelloBracciante,
   PannelloCassa,
-  PannelloCostruisci
+  PannelloCostruisci,
+  PannelloMacchina
 } from './Pannelli.jsx'
 import { elencoProgetti } from '../game/config.js'
 
@@ -35,7 +36,14 @@ const VISTA_INIZIALE = {
   zainoPieno: false,
   statoOperaio: '',
   progetti: '',
-  ricette: ''
+  ricette: '',
+  macchinaScelta: false,
+  nomeMacchina: '',
+  statoMacchina: '',
+  entrataMacchina: '',
+  uscitaMacchina: '',
+  avanzamentoMacchina: 0,
+  costruzioniAperte: ''
 }
 
 // "ascia_affilata:fatto,vivaio:bloccato" -> due oggetti pronti da mostrare
@@ -276,6 +284,7 @@ export default function CampoDiGioco() {
         <PannelloCostruisci
           inventarioOperaio={vista.inventario}
           inManoId={vista.inManoId}
+          aperte={vista.costruzioniAperte}
           onPrendi={prendiCostruzione}
           onChiudi={() => apriCostruzione(false)}
         />
@@ -285,6 +294,18 @@ export default function CampoDiGioco() {
           stato={vista.statoScelto}
           inventario={vista.inventario}
           slot={vista.slotOperaio}
+          onChiudi={annulla}
+        />
+      ) : vista.macchinaScelta ? (
+        <PannelloMacchina
+          nome={vista.nomeMacchina}
+          stato={vista.statoMacchina}
+          entrata={vista.entrataMacchina}
+          uscita={vista.uscitaMacchina}
+          avanzamento={vista.avanzamentoMacchina}
+          inventarioOperaio={vista.inventario}
+          onDeposita={deposita}
+          onPreleva={preleva}
           onChiudi={annulla}
         />
       ) : vista.cassaScelta ? (
