@@ -14,31 +14,26 @@ Se un punto della roadmap sta per toccare una di queste, **fermati e falla decid
 
 La seconda è decisa (ferro e carbone). Dalla terza in poi è contenuto, e si decide quando la base è viva. Da non progettare adesso: sarebbe progettare al buio.
 
-### A5. Le monete e la vendita: si tengono, si cambiano o si tolgono?
+### A5. Senza mercante, la valuta serve ancora?
 
-Parole dell'autore, 2026-08-15: *"Diamo un senso alla vendita e ai soldi anche. O se serve rimuoviamoli."*
+**Meta' decisa il 2026-08-15**: niente commesse e niente commercianti (vedi fra le decise). Quello che resta e' la conseguenza, ed e' grossa: **le monete entravano solo vendendo al mercante.** Tolto lui, la valuta non ha piu' una sorgente.
 
-**E' una domanda aperta sul serio**, e non va risolta difendendo quello che c'e' gia'. Il `GDD.md` §3 spiega perche' le economie sono tre, ma quella spiegazione dice perche' **tenerle separate**, non perche' la valuta debba esistere.
+L'autore lascia le due strade aperte: *"tramite valuta, o se non serve la valuta facciamo qualcosa"*.
 
-**I due difetti sospettati, da verificare:**
+**Raccomandazione: togliere la valuta.** Le ragioni, in ordine di forza:
 
-1. **La valuta muore.** Le monete hanno una destinazione sola, i progetti. Finito l'ultimo, vendere non serve piu' a niente. Il progetto 38 (Gli affinamenti, potenziamenti infiniti a costo crescente) e' la toppa gia' ipotizzata, e va verificato se basta.
-2. **Vendere non e' una decisione.** Oggi raccogli e vendi tutto, perche' quel materiale non ti serviva per nient'altro in quel momento. Rinunciare a niente non e' una scelta, e la regola 8 dice che allora non c'e' partita.
+1. **Il nostro riferimento numero uno non ce l'ha.** Satisfactory non ha monete: si sbloccano i livelli **consegnando materiali** all'HUB, e le macchine si costruiscono coi materiali. E' esattamente la struttura che l'autore sta chiedendo.
+2. **La valuta e' gia' misurata come rotta.** Raffinare prima di vendere e' sempre una perdita (−4,5 monete a gesto); vendere non e' una decisione perche' non rinunci a niente; e finiti i progetti la valuta muore.
+3. **Toglierla non toglie niente al giocatore**, perche' quello che compravi con le monete lo sblocchera' il cantiere.
 
-**Il sospetto piu' interessante:** nell'Era del Fuoco il legno diventa **anche il combustibile delle macchine**, e da li' ogni tronco venduto e' un tronco che non brucia. Forse la vendita non e' sbagliata: e' solo **arrivata troppo presto**, prima di avere un concorrente. Se e' cosi', la cura non e' togliere le monete ma **dare al materiale un secondo uso**, che e' gia' in roadmap.
+**Cosa la sostituisce:** il **cantiere** — una costruzione grossa e visibile che mangia materiali a fasi e apre l'era dopo. E nasce la decisione vera che oggi manca:
 
-Ricerca in corso: `docs/ricerche/economia-e-vendita.md`.
+> **Ogni tavola che metti nel cantiere e' una tavola che non usi per la tua fabbrica.**
+> Sono due usi che valgono quasi uguale, che e' la condizione che la ricerca ha posto perche' una scelta esista.
 
-### A4. Il gioco ha un finale, o no?
+**Costo dichiarato:** si tolgono `economia.js`, la vendita e i prezzi dall'interfaccia, e il `GDD.md` §3 passa da tre economie a due. Il concetto di *valore* di un materiale resta, ma solo come strumento di bilanciamento — non e' piu' una cosa che il giocatore vede.
 
-L'autore ha chiesto *"la progressione fino al finale del gioco"*. Il `GDD.md` §11c dice **per scelta** che un finale non c'è: niente razzo, niente ascensore, solo scale che non finiscono. **Le due cose non vanno d'accordo**, e va scelto prima di costruire l'Era 4.
-
-La ricerca dice tutte e due le cose, ed è per questo che è una decisione e non una risposta: **dopo il finale la maggioranza smette**, ma **senza un traguardo dichiarato molti non arrivano nemmeno a meta'**.
-
-- **Nessun finale** — come sta scritto adesso. L'ultimo gradino nominabile e' *l'isola che vive senza di te*.
-- **Un finale che non chiude** — una costruzione grossa da completare, che da' un traguardo ma dopo la quale il gioco continua.
-
-Aperta il 2026-08-14, disegnando `PROGETTI.md`.
+**Serve il via libera dell'autore prima di togliere**, perche' cancella roba costruita e funzionante.
 
 ### A3. Quanto grande deve essere lo zaino di partenza?
 
@@ -56,6 +51,21 @@ Si decide al punto 15, insieme ai nastri. **Raccomandazione: sì.** Il cassetto 
 ---
 
 ## Decise
+
+- 2026-08-15: **C'E' UN FINALE, MA NON CHIUDE.** Scelta dell'autore, che chiude la decisione aperta A4. Ci sara' **una costruzione grossa e visibile da completare**, che da' un traguardo dichiarato — ma dopo di essa il gioco continua e le scale restano aperte.
+
+  Ci sono arrivate **tre ricerche di fila**, da tre strade diverse. Il motivo per cui serve un traguardo: senza, molti non arrivano nemmeno a meta'. Il motivo per cui non deve chiudere: Factorio e' la prova che il giorno del razzo *"tutta la fabbrica diventa inutile"* e la gente smette. E la ricerca sul desiderio aggiunge il colpo finale: gli obiettivi devono **finire in momenti diversi**, e un finale che chiude li spegne tutti insieme.
+
+  **Nota sulla forma**, dalla stessa ricerca: la differenza fra chi ama un traguardo grosso e chi molla e' **vederlo crescere**. Stessa quantita' di materiale, giudizio opposto fra la sfera di Dyson (che si guarda mentre si costruisce) e il razzo di Factorio (*"satelliti senza uno scopo apparente"*). Quindi il traguardo **sta sull'isola e si riempie a vista**, non e' una barra dentro un pannello.
+
+- 2026-08-15: **NIENTE COMMESSE E NIENTE COMMERCIANTI.** Parole dell'autore: *"Non voglio commesse e commercianti. Ma un obbiettivo grande per sbloccare ere e altro tramite valuta o se non serve la valuta facciamo qualcosa per procedere nella progressione e avere senso per farmare."*
+
+  Chiude a meta' la decisione A5. Cade la proposta del **mercante che chiede una cosa precisa e la paga di piu'** (modello Anno 1800), a cui due ricerche indipendenti erano arrivate: e' stata offerta all'autore, che l'ha letta come una commessa travestita. **La ricerca aveva ragione sul meccanismo e torto sul progetto**, ed e' il tipo di caso in cui vince il progetto.
+
+  Le commesse erano gia' cadute il 2026-08-12. **Questa e' la seconda volta**, per una strada diversa: va considerata definitiva.
+
+  **Quello che resta aperto e' piu' grosso**: senza mercante, la valuta non ha piu' una sorgente. Vedi A5 qui sotto, riscritta.
+
 
 - 2026-08-14: **SEI RICERCHE HANNO CORRETTO QUATTRO DECISIONI GIÀ PRESE.** Non sono richieste dell'autore: sono ricerche sui forum dei giochi di riferimento, chieste da lui (*"crea tot agenti che servono per fare ricerche specifiche sui forum dei vari giochi"*). Stanno in `docs/ricerche/`, la sintesi in `SINTESI.md`. Le voci qui sotto **restano com'erano scritte** — si corregge aggiungendo, non riscrivendo la storia.
 
