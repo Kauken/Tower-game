@@ -193,10 +193,10 @@
     },
     "macchina": {
       "_nota": "Una macchina si deve VEDERE lavorare, e da fuori si devono distinguere i suoi quattro stati senza aprirla. Se per sapere come va la fabbrica bisogna aprire otto pannelli, su un telefono nessuno lo fa - e la fabbrica smette di dare soddisfazione.",
-      "raggio": 0.46,
-      "lama_raggio": 0.3,
-      "lama_x": 0.16,
-      "lama_y": -0.06,
+      "raggio": 0.54,
+      "lama_raggio": 0.46,
+      "lama_x": 0.2,
+      "lama_y": -0.12,
       "_nota_giri": "Giri al secondo della lama. Volutamente lento: una lama che gira troppo in fretta si legge come sfarfallio, non come lavoro.",
       "giri_al_secondo": 1.1,
       "_nota_stati": "Il pallino in alto a destra. Verde = lavora. Gli altri tre dicono cosa portare, ed e' per questo che sono colori diversi e non un solo rosso.",
@@ -204,17 +204,18 @@
       "colore_senza_materiale": "#d9a441",
       "colore_senza_combustibile": "#e0662f",
       "colore_uscita_piena": "#8fa3c4",
-      "segnale_raggio": 0.13,
-      "segnale_x": 0.3,
-      "segnale_y": -0.34,
-      "fiamma_raggio": 0.09,
+      "segnale_raggio": 0.17,
+      "segnale_x": 0.34,
+      "segnale_y": -0.4,
+      "fiamma_raggio": 0.12,
       "fiamma_x": -0.24,
       "fiamma_y": 0.1,
       "barra": {
         "altezza": 0.12,
         "margine": 0.1,
         "colore_fondo": "#00000077"
-      }
+      },
+      "_nota_dimensioni": "Alzati dopo averli guardati su uno schermo da telefono: alla prima prova la lama e il pallino erano leggibili solo da vicino, e 'si deve vedere lavorare' vuol dire da lontano, senza zoomare."
     }
   },
   "area": {

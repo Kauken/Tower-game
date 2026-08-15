@@ -120,12 +120,16 @@ Misura **il tempo per fare un tot**, non il tot fatto in un tempo — differenza
 
 È l'era che prima non esisteva, e che le ricerche hanno imposto di creare. Serve a far sentire sulla pelle la fatica che la corrente toglierà: **riempire ogni macchina, una per una.**
 
-**8. La segheria — la prima macchina.**
+**8. La segheria — la prima macchina.** — **FATTO** (2026-08-15).
 Cassetto d'entrata, cassetto d'uscita, e in mezzo una fiamma che consuma legno. Lavora da sola finché ha materiale **e** combustibile. **Riempirla e svuotarla è il lavoro.** Qui il legno comincia davvero a moltiplicarsi: 1 tronco → 3 tavole.
 → `GDD.md` §9, §2, `MATERIALI.md` §3.
 
    > **Si deve vedere lavorare.** La lama gira quando produce, si ferma quando è ferma, e da fuori si distingue a colpo d'occhio **piena** da **senza materiale** da **senza combustibile**. Non è estetica: se per sapere come va la fabbrica devo aprire otto pannelli, su un telefono non lo faccio.
    > **Il combustibile lo carica l'operaio**, ed è la contromisura che tiene scarsa la risorsa scarsa quando le macchine avrebbero smesso di farlo. → `GDD.md` §2.
+
+   > **Com'e' venuta.** Un cassetto d'entrata solo, e il combustibile si prende da li': uno scomparto separato, sulla prima macchina del gioco, vorrebbe dire due viaggi di carico invece di uno. Cosi' il legno e' materiale **e** combustibile, ed e' vero da subito che *il legno che bruci non diventa tavole*.
+   > **Brucia 1 legno ogni 4 lavorazioni**, non a ogni giro: bruciando ogni volta mangerebbe tanto legno quanto ne trasforma. Misurato: rapporto **1,60**, dentro la finestra di `MATERIALI.md`. Ed e' un controllo all'avvio — se qualcuno mettesse 1, il gioco si rifiuta di partire.
+   > **Due difetti trovati solo giocandoci**: *Posa tutto* le infilava dentro tavole e chiodi che non sa usare, intasando il cassetto; e il pannello offriva lo stesso quei bottoni. Adesso una macchina prende, e mostra, solo quello che sa usare.
 
 **9. Il numero al minuto.** — Piccolo, economico, e manca da sempre.
 Ogni catena che produce da sola mostra **quanto fa al minuto**. È il primo dei tre motori del "per sempre" (`GDD.md` §11c), ed è quello che manca di più: **finché non c'è un numero da nessuna parte, il giocatore non ha modo di sapere se sta migliorando.**
