@@ -45,7 +45,7 @@ import {
 const puntoDiLavoro = { tx: 0, ty: 0 }
 const meta = { x: 0, y: 0 }
 
-export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo, alFabbricato, alGuadagno }) {
+export function creaBraccianti({ casse, macchine, progetti, alloScarico, alCambioDelMondo, alFabbricato, alGuadagno }) {
   const squadra = []
 
   // Quante tasche puo' arrivare ad avere: le caselle si creano tutte all'avvio
@@ -251,15 +251,30 @@ export function creaBraccianti({ casse, progetti, alloScarico, alCambioDelMondo,
     }
 
     const cassa = casse.in(lavoro.tx, lavoro.ty)
-    if (!cassa) {
+    if (cassa) {
+      if (lavoro.azione === 'deposita') {
+        travasa(bracciante.inventario, cassa.inventario, lavoro.materiale)
+      } else {
+        travasa(cassa.inventario, bracciante.inventario, lavoro.materiale)
+      }
+      alloScarico(cassa)
+      return
+    }
+
+    // Una macchina si carica e si svuota **con lo stesso gesto di una cassa**,
+    // ma ha due cassetti: si POSA in entrata e si PRENDE dall'uscita. Non e'
+    // una scelta da fare ogni volta, e' il verso naturale della macchina —
+    // nessuno vuole rimettere le tavole dentro la segheria.
+    const macchina = macchine && macchine.in(lavoro.tx, lavoro.ty)
+    if (!macchina) {
       return
     }
     if (lavoro.azione === 'deposita') {
-      travasa(bracciante.inventario, cassa.inventario, lavoro.materiale)
+      travasa(bracciante.inventario, macchina.entrata, lavoro.materiale)
     } else {
-      travasa(cassa.inventario, bracciante.inventario, lavoro.materiale)
+      travasa(macchina.uscita, bracciante.inventario, lavoro.materiale)
     }
-    alloScarico(cassa)
+    alCambioDelMondo()
   }
 
   function aggiorna(lavori, passoMs, passoSecondi) {

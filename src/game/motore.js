@@ -30,6 +30,7 @@ import {
   elencoMateriali,
   limiti,
   salvataggio as regoleSalvataggio,
+  elencoCostruzioni,
   elencoProgetti,
   elencoRicette,
   simulazione,
@@ -43,6 +44,7 @@ import { creaPool, primoLibero } from './pool.js'
 import { creaCamera } from './camera.js'
 import { creaLavori } from './lavori.js'
 import { creaCasse } from './casse.js'
+import { creaMacchine } from './macchine.js'
 import { creaBraccianti } from './braccianti.js'
 import { creaEconomia } from './economia.js'
 import { creaProgetti } from './progetti.js'
@@ -63,6 +65,7 @@ export function creaMotore(canvasGioco) {
   const camera = creaCamera()
   const lavori = creaLavori()
   const casse = creaCasse()
+  const macchine = creaMacchine()
   const economia = creaEconomia()
   const progetti = creaProgetti()
   const effetti = creaGestoreEffetti()
@@ -72,6 +75,7 @@ export function creaMotore(canvasGioco) {
   const squadra = creaBraccianti({
     casse,
     progetti,
+    macchine,
     alloScarico: (cassa) => {
       centroTessera(cassa.tx, cassa.ty, centro)
       camera.versoSchermo(centro.x, centro.y, centro)
@@ -105,6 +109,7 @@ export function creaMotore(canvasGioco) {
   const mira = { attiva: false, tx: 0, ty: 0, valida: false }
   let braccianteScelto = -1
   let cassaScelta = null
+  let macchinaScelta = null
   let esito = ''
 
   // L'unico operaio. Sta in un elenco perche' un giorno potrebbero essere due,
@@ -148,11 +153,25 @@ export function creaMotore(canvasGioco) {
 
   // Si puo' piazzare li'? Vale identico per un alberello e per una cassa: e'
   // la stessa domanda, ed e' per questo che il gesto e' uno solo.
+  // Una costruzione che chiede un progetto non si vede finche' quel progetto
+  // non e' tuo. Vedere una voce che non puoi usare, su un menu' da telefono,
+  // e' una riga in piu' da saltare ogni volta.
+  function costruzioniAperte() {
+    let fuori = ''
+    for (let i = 0; i < elencoCostruzioni.length; i++) {
+      const c = elencoCostruzioni[i]
+      if (!c.richiede_progetto || progetti.hoComprato(c.richiede_progetto)) {
+        fuori += (fuori ? ',' : '') + c.id
+      }
+    }
+    return fuori
+  }
+
   function puoPiazzareIn(tx, ty) {
     if (!inMano) {
       return false
     }
-    return piantabile(tx, ty) && !casse.in(tx, ty)
+    return piantabile(tx, ty) && !casse.in(tx, ty) && !macchine.in(tx, ty)
   }
 
   function prendiInMano(tipo, id) {
@@ -205,7 +224,16 @@ export function creaMotore(canvasGioco) {
     // la cassa scelta
     cassaScelta: false,
     contenutoCassa: '',
-    pienoCassa: ''
+    pienoCassa: '',
+    // la macchina scelta
+    macchinaScelta: false,
+    nomeMacchina: '',
+    statoMacchina: '',
+    entrataMacchina: '',
+    uscitaMacchina: '',
+    avanzamentoMacchina: 0,
+    // quali costruzioni sono sbloccate: "cassa,segheria"
+    costruzioniAperte: ''
   }
 
   let ctxGioco = null
@@ -231,6 +259,7 @@ export function creaMotore(canvasGioco) {
       progetti: progetti.perSalvare(),
       mondo: mondoPerSalvare(),
       casse: casse.perSalvare(),
+      macchine: macchine.perSalvare(),
       operai: squadra.perSalvare(),
       lavori: lavori.perSalvare()
     }
@@ -255,8 +284,13 @@ export function creaMotore(canvasGioco) {
     let resta = passatoMs
     const passo = regoleSalvataggio.passo_recupero_ms
     while (resta > 0) {
-      aggiornaMondo(Math.min(passo, resta))
-      resta -= passo
+      const questo = Math.min(passo, resta)
+      aggiornaMondo(questo)
+      // **Questa riga e' la promessa del §11d.** Senza, il commento qui sopra
+      // sarebbe una bugia: riapriresti e troveresti la segheria ferma esattamente
+      // dove l'avevi lasciata, e automatizzare non ti avrebbe comprato niente.
+      macchine.aggiorna(questo)
+      resta -= questo
     }
   }
 
@@ -275,6 +309,7 @@ export function creaMotore(canvasGioco) {
     progetti.daSalvato(dati.progetti)
     economia.stato.monete = dati.monete || 0
     casse.daSalvato(dati.casse)
+    macchine.daSalvato(dati.macchine)
     squadra.daSalvato(dati.operai)
     lavori.daSalvato(dati.lavori)
     recupera(tempoPassato(dati.salvatoIl))
@@ -332,10 +367,18 @@ export function creaMotore(canvasGioco) {
         return
       }
     }
+    if (dati.richiede_progetto && !progetti.hoComprato(dati.richiede_progetto)) {
+      esito = 'il progetto non e\u2019 ancora tuo'
+      return
+    }
     for (let i = 0; i < dati.costo.length; i++) {
       b.inventario.togli(dati.costo[i].materiale, dati.costo[i].quantita)
     }
-    casse.aggiungi(tx, ty, dati.slot, false)
+    if (dati.tipo === 'macchina') {
+      macchine.aggiungi(tx, ty, dati.id)
+    } else {
+      casse.aggiungi(tx, ty, dati.slot, false)
+    }
     esito = ''
   }
 
@@ -376,6 +419,7 @@ export function creaMotore(canvasGioco) {
     if (quale >= 0) {
       braccianteScelto = braccianteScelto === quale ? -1 : quale
       cassaScelta = null
+      macchinaScelta = null
       esito = ''
       return
     }
@@ -383,6 +427,18 @@ export function creaMotore(canvasGioco) {
     const cassa = casse.in(tessereTocco.tx, tessereTocco.ty)
     if (cassa) {
       cassaScelta = cassaScelta === cassa ? null : cassa
+      macchinaScelta = null
+      braccianteScelto = -1
+      esito = ''
+      return
+    }
+
+    // una macchina si apre con lo stesso tocco di una cassa: **un gesto solo
+    // per tutto quello che contiene roba**
+    const macchina = macchine.in(tessereTocco.tx, tessereTocco.ty)
+    if (macchina) {
+      macchinaScelta = macchinaScelta === macchina ? null : macchina
+      cassaScelta = null
       braccianteScelto = -1
       esito = ''
       return
@@ -390,6 +446,7 @@ export function creaMotore(canvasGioco) {
 
     braccianteScelto = -1
     cassaScelta = null
+    macchinaScelta = null
 
     const gia = lavori.trovaSuTessera(tessereTocco.tx, tessereTocco.ty)
     if (gia) {
@@ -475,6 +532,24 @@ export function creaMotore(canvasGioco) {
   // l'operaio ci va, e nel frattempo la roba resta dov'e'. Un materiale vuoto
   // vuol dire "tutto quello che ci sta".
   function scambia(azione, idMateriale) {
+    // **La macchina ha un verso.** Si posa in entrata e si prende dall'uscita,
+    // e non e' una scelta da fare ogni volta: nessuno vuole rimettere le
+    // tavole dentro la segheria.
+    if (macchinaScelta) {
+      const b2 = operaio()
+      if (!b2) {
+        return
+      }
+      const da2 = azione === 'deposita' ? b2.inventario : macchinaScelta.uscita
+      if (idMateriale ? da2.quanti(idMateriale) <= 0 : da2.stato.pezzi <= 0) {
+        esito = azione === 'deposita' ? 'non ha niente da posare' : 'non c\u2019e\u2019 ancora niente'
+        return
+      }
+      esito = lavori.ordinaScambio(azione, macchinaScelta.tx, macchinaScelta.ty, idMateriale)
+        ? ''
+        : 'troppi ordini in coda'
+      return
+    }
     if (!cassaScelta) {
       return
     }
@@ -552,6 +627,7 @@ export function creaMotore(canvasGioco) {
       riponi()
     }
     aggiornaMondo(simulazione.passo_ms)
+    macchine.aggiorna(simulazione.passo_ms)
     squadra.aggiorna(lavori, simulazione.passo_ms, simulazione.passo_ms / 1000)
     effetti.aggiorna(simulazione.passo_ms)
   }
@@ -648,6 +724,14 @@ export function creaMotore(canvasGioco) {
     vetrina.pienoCassa = cassaScelta ? casse.pienaDel(cassaScelta) + ' caselle' : ''
     vetrina.cassaEIlCasotto = !!(cassaScelta && cassaScelta.eIlCasotto)
     vetrina.valoreCassa = cassaScelta ? economia.valoreDi(cassaScelta) : 0
+
+    vetrina.macchinaScelta = !!macchinaScelta
+    vetrina.nomeMacchina = macchinaScelta ? macchinaScelta.nome : ''
+    vetrina.statoMacchina = macchinaScelta ? macchinaScelta.stato : ''
+    vetrina.entrataMacchina = macchinaScelta ? scriviInventario(macchinaScelta.entrata) : ''
+    vetrina.uscitaMacchina = macchinaScelta ? scriviInventario(macchinaScelta.uscita) : ''
+    vetrina.avanzamentoMacchina = macchinaScelta ? macchine.avanzamento(macchinaScelta) : 0
+    vetrina.costruzioniAperte = costruzioniAperte()
 
     vetrina.monete = Math.floor(economia.stato.monete)
     const b = operaio()
