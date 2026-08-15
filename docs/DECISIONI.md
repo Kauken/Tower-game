@@ -52,6 +52,31 @@ Si decide al punto 15, insieme ai nastri. **Raccomandazione: sì.** Il cassetto 
 
 ## Decise
 
+- 2026-08-15: **UNA TECNOLOGIA NUOVA NON PUO' RENDERE INUTILE QUELLA PRIMA.** Parole dell'autore: *"L'importante e' che non escludiamo le tecnologie che riusciamo a raggiungere. Ad esempio se sblocchiamo i treni ed e' un grande traguardo non e' che poi con i droni la tecnologia dei treni e' inutile."*
+
+  E' la regola piu' affilata arrivata dall'autore, ed e' **piu' forte** di quella che avevamo (*"non si smonta mai quello che funziona"*, regola 15d): quella dice che non devi **demolire**, questa dice che il vecchio deve **continuare a essere la scelta giusta da qualche parte**.
+
+  **C'e' gia' una prova a favore, e viene dai nostri stessi riferimenti.** In Factorio i robot logistici hanno reso i nastri in gran parte inutili, e **gli sviluppatori lo considerano un errore loro**: nel Friday Facts #224 raccontano che *"quasi tutti nel team pensano che i robot siano troppo forti, perche' i robot sono semplicemente migliori a livello fondamentale"*, e che sono rimasti nel gioco solo perche' erano gia' rifiniti. **E' esattamente il difetto che l'autore vuole evitare, gia' documentato dal gioco che ci ispira.**
+
+  La forma pratica della regola:
+
+  > **Ogni mezzo deve essere il migliore in una cosa e il peggiore in un'altra.** Se il mezzo nuovo e' migliore in tutto, il vecchio e' morto e hai buttato via un'era di gioco.
+
+- 2026-08-15: **CI SARANNO ANIMALI E COLTURE.** Richiesta diretta dell'autore: *"voglio il farming di animali e culture."* Non e' in discussione **se** farlo; e' da progettare **come**, perche' il rischio noto e' che diventi un secondo gioco appiccicato al primo invece di un ramo dello stesso.
+
+- 2026-08-15: **LE ISOLE SONO VICINE, E I NASTRI LUNGHI NON SI FANNO.** Parole dell'autore: *"altre isole, non troppo distanti, non voglio sprecare tempo a costruire lunghe belt."*
+
+  Chiude una cosa e ne apre un'altra: **il nastro non e' il mezzo delle lunghe distanze**, e quindi la lunga distanza dovra' essere coperta da qualcos'altro fin da subito.
+
+- 2026-08-15: **CI SARANNO TRASPORTI AVANZATI: TRENI, DRONI E ALTRO.** Richiesta dell'autore. **Ma apre una tensione dichiarata**, che va risolta prima di costruire:
+
+  > I treni hanno senso **perche' le distanze sono lunghe**. Se le isole sono vicine e i nastri lunghi non si fanno, **cosa resta da fare a un treno?**
+
+  O si trova un mestiere per il treno che non sia la distanza (il **volume**, per esempio: tanta roba in un colpo solo), o i treni non hanno un posto in questo gioco. E' la prima domanda della ricerca in corso.
+
+- 2026-08-15: **IL CRAFTING DEVE ESSERE BELLO E NON STRESSANTE, MA SEMPRE A CATENA.** Parole dell'autore. Le due meta' tirano in direzioni opposte — una catena lunga e' quello che rende interessante il gioco, ed e' anche quello che lo rende faticoso — quindi va trovato **dove esattamente** la catena smette di essere bella. E' una domanda da ricerca, non da opinione.
+
+
 - 2026-08-15: **C'E' UN FINALE, MA NON CHIUDE.** Scelta dell'autore, che chiude la decisione aperta A4. Ci sara' **una costruzione grossa e visibile da completare**, che da' un traguardo dichiarato — ma dopo di essa il gioco continua e le scale restano aperte.
 
   Ci sono arrivate **tre ricerche di fila**, da tre strade diverse. Il motivo per cui serve un traguardo: senza, molti non arrivano nemmeno a meta'. Il motivo per cui non deve chiudere: Factorio e' la prova che il giorno del razzo *"tutta la fabbrica diventa inutile"* e la gente smette. E la ricerca sul desiderio aggiunge il colpo finale: gli obiettivi devono **finire in momenti diversi**, e un finale che chiude li spegne tutti insieme.
