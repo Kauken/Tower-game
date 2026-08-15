@@ -28,6 +28,9 @@ E una regola nuova che vale per **ogni** punto da qui in avanti, presa da `GDD.m
 > ### Nessun punto di questa lista può richiedere di smontare quello che il giocatore ha già costruito.
 > Se un gradino si installa solo demolendo la fabbrica che funziona, è progettato male. Il muro della ricostruzione è il punto documentato in cui la gente abbandona questo genere — e su un telefono, dove una sessione dura cinque minuti, è la fine della partita.
 
+> ### Un'era si conquista con una consegna, non con un prezzo. E non toglie mai niente.
+> Satisfactory apre i suoi livelli a coppie, ognuna chiusa da **un progetto enorme da costruire**. Il nostro pontile è già così; le altre tre porte hanno solo un prezzo, e vanno rifatte sullo stesso modello. E il salto d'era **apre due o tre cose e non ne chiude nessuna**: in Civilization VII il cambio d'era porta via delle cose, e i giocatori usano la parola *punito*.
+
 > **La lezione delle sei versioni morte:** il progetto è morto ogni volta perché abbiamo costruito il gioco intero prima di sapere se il pezzo centrale era divertente. I **blocchi di verifica** qui sotto non sono una formalità, e questa versione è la più grande di tutte.
 
 ---

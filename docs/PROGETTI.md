@@ -6,6 +6,11 @@ Sei sono costruiti, trentadue no, due sono sotto accusa.
 Serve a decidere **quali teniamo, quali cadono e in che ordine arrivano** — non a costruirli.
 La versione da guardare sul telefono è l'artefatto *L'albero dei progetti*.
 
+> ### ⚠️ I prezzi non sono scritti qui, e non è una dimenticanza
+> Avevo messo una fascia di monete su ogni era (*"600-2.000"*, *"2.500-8.000"*…). **Sono state tolte**: erano numeri a occhio, e contraddicevano la regola di `MATERIALI.md`. Le fasce implicavano un passo di ×1,16-1,28, il documento dei numeri dice ×1,5, e nessuno dei due aveva un motivo dietro.
+>
+> La regola vera, adesso scritta in `MATERIALI.md`, è questa: **fra un progetto e il successivo si deve aspettare dal 15% al 20% in più** — e l'attesa dipende dal costo *e* dalla produzione insieme, non dal costo da solo. I prezzi si ricavano da lì con `npm run progressione`, quando i progetti esistono. **Scriverli adesso sarebbe inventare.**
+
 > ### La regola con cui è stato costruito, e con cui va giudicato
 > Ogni progetto deve **togliere una domanda dalla testa del giocatore**, oppure dargli **un verbo che prima non aveva**. La domanda è scritta accanto a ognuno, fra virgolette.
 >
@@ -16,7 +21,7 @@ La versione da guardare sul telefono è l'artefatto *L'albero dei progetti*.
 
 ---
 
-## Era 0 — Le Mani · 120-520 monete
+## Era 0 — Le Mani · *da 120*
 
 *Tutto si fa a mano. È il problema che tutto il resto risolve.*
 
@@ -30,7 +35,7 @@ La versione da guardare sul telefono è l'artefatto *L'albero dei progetti*.
 | 6 | **Carriola** | *torno a scaricare di continuo* | ⚠️ **doppione del 2** |
 | 7 | **Sentiero battuto** | *il viaggio al bosco è sempre uguale e non posso farci niente* | nuovo — **verbo: dare forma all'isola** |
 
-## Era 1 — Il Fuoco · 600-2.000 monete
+## Era 1 — Il Fuoco
 
 *Le macchine lavorano da sole, ma bruciano legno e le riempi tu. Niente elettricità: non ancora.*
 
@@ -46,7 +51,7 @@ La versione da guardare sul telefono è l'artefatto *L'albero dei progetti*.
 
 > **Il numero al minuto non è un progetto: arriva gratis con la prima macchina.** Finché non c'è, il giocatore non ha modo di sapere se sta migliorando — ed è l'unico motore che questo gioco avrà per sempre. Farlo pagare sarebbe come far pagare il punteggio.
 
-## Era 2 — La Corrente · 2.500-8.000 monete
+## Era 2 — La Corrente
 
 *Un punto solo da rifornire al posto di otto. E il primo nastro.*
 
@@ -62,7 +67,7 @@ La versione da guardare sul telefono è l'artefatto *L'albero dei progetti*.
 | 22 | **Nastro veloce** | *il nastro non ce la fa a stargli dietro* | il collo si sposta sul trasporto |
 | 23 | **Il cassetto** | *in quale cassa l'avevo messo?* | un materiale solo, e da fuori si vede cos'è e quanto |
 
-## Era 3 — La Seconda Isola · 10.000-30.000 monete
+## Era 3 — La Seconda Isola
 
 *Automatizzare smette di essere una comodità e diventa il prezzo del biglietto.*
 
@@ -76,7 +81,7 @@ La versione da guardare sul telefono è l'artefatto *L'albero dei progetti*.
 | 29 | **L'acciaieria** | *il ferro non basta per le cose grosse* | ferro + carbone → acciaio · **è qui che le due isole si incontrano** |
 | 30 | **Trivella pesante** | *dalla vena di ferro non ne esce abbastanza* | di acciaio |
 
-## Era 4 — Le Scale · 40.000 e oltre
+## Era 4 — Le Scale
 
 *Da qui non si aggiunge contenuto: si salgono gradini. E non finiscono.*
 
@@ -90,6 +95,20 @@ La versione da guardare sul telefono è l'artefatto *L'albero dei progetti*.
 | 36 | **Le ricette alternative** | *ho finito i modi di fare le cose* | un'altra strada, che **si affianca** alla vecchia |
 | 37 | **La terza isola** | *ho visto tutto quello che c'era* | da progettare quando la base è viva |
 | 38 | **Gli affinamenti** | *non c'è più niente da comprare* | costo crescente, non finiscono mai |
+
+---
+
+## Come si passa da un'era all'altra
+
+Vale per tutti e quattro i salti, e viene da due ricerche che si confermano a vicenda.
+
+> ### Un'era si conquista con una **consegna**, non con un prezzo. E non toglie mai niente.
+
+**Con una consegna.** Satisfactory apre i suoi nove livelli **a coppie, ognuna chiusa da un progetto enorme** da costruire — non da un numero da raggiungere. Il nostro **pontile** (24) è già esattamente questo: si apre *costruendo* il passaggio. Le altre tre porte — Il Fuoco, La Corrente, Le Scale — oggi hanno solo un prezzo, e vanno rifatte sullo stesso modello.
+
+**E non toglie niente.** In Civilization VII il cambio d'era ti porta via delle cose, e i giocatori usano la parola *punito*. Un salto d'era **apre due o tre cose insieme e non ne chiude nessuna**: la segheria a legna continua a servire anche quando arriva quella elettrica (è la regola 15d di `CLAUDE.md`).
+
+**Ed è il momento più ripido della curva, non il più piatto.** Oggi da noi è l'esatto contrario: il passo *dentro* un'era è più grande del salto *fra* due ere. È il difetto più grosso della struttura, e si vede solo guardando l'albero intero.
 
 ---
 
