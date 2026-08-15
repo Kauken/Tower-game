@@ -92,6 +92,33 @@ Il valore di riferimento è **×1,5–1,6**. Con quel rapporto una catena a tre 
 
 La durata si allunga in quattro modi, in ordine di valore: **più cose da comprare**, **più verbi**, **costi che salgono insieme a un salto di produzione**, **una ripetizione resa più profonda**. La taratura dei prezzi serve a decidere **quale progetto sembra il prossimo** e **se il salto si sente** — non quanto dura il gioco.
 
+### ⚠️ Il buco nella regola dei prezzi: **mancava il tempo dell'operaio**
+
+La regola 1 di questo documento dice che il prezzo di un prodotto deve stare fra la somma degli ingredienti e due volte e mezza quella somma, *"altrimenti lavorare è una perdita e nessuno lavorerà mai"*. **Quella regola guarda solo i prezzi, e in questo gioco è la metà sbagliata del conto.**
+
+Ecco cosa succede davvero, con i numeri di adesso e la resa misurata di **2,77 monete al secondo** a mani nude:
+
+| Lavorazione a mano | vale in più | ci mette | quel tempo varrebbe | **netto** |
+| --- | --- | --- | --- | --- |
+| 1 legno → 2 tavole | +1 | 2,0 s | 5,5 | **−4,5** |
+| 1 pietra → 2 ghiaia | +2 | 2,4 s | 6,6 | **−4,6** |
+| 1 rame → 4 chiodi | +3 | 2,6 s | 7,2 | **−4,2** |
+
+> **Raffinare prima di vendere è sempre una perdita.** Non di poco: si perdono quattro o cinque monete ogni volta. Nei due secondi passati a segare, l'operaio avrebbe raccolto più valore di quanto la segatura ne aggiunga.
+
+Il paradosso è che la regola era scritta con le parole giuste — *"lavorare è una perdita"* — ma controllava la cosa sbagliata. In un gioco la cui lente è **"quanto vale un minuto dell'operaio"**, il documento dei numeri si era dimenticato la lente.
+
+**La regola corretta:**
+
+> ### Una lavorazione a mano deve rendere più del tempo che costa.
+> `guadagno > tempo_lavorazione × monete_al_secondo`. Se non ci arriva, quella ricetta **non è per vendere**: esiste solo per fabbricare qualcos'altro, e va scritto.
+
+**E qui c'è la cosa bella**, perché spiega a cosa servono davvero le macchine:
+
+> La stessa lavorazione fatta da una **macchina** non costa niente all'operaio — lui la carica e se ne va. La segheria (1 legno → **3** tavole, cioè +3 invece di +1) trasforma una lavorazione **in perdita a mano** in una lavorazione **in guadagno da sola**.
+>
+> Non è un dettaglio di bilanciamento: è **il motivo per cui la prima macchina si desidera**. Non fa "la stessa cosa più in fretta" — fa una cosa che a mano *non conveniva fare*.
+
 ### La soglia del 15%: **sotto, un miglioramento non esiste**
 
 Due ricerche indipendenti arrivano allo stesso numero da strade diverse. Vale in due sensi:
