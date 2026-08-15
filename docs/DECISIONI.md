@@ -14,6 +14,21 @@ Se un punto della roadmap sta per toccare una di queste, **fermati e falla decid
 
 La seconda è decisa (ferro e carbone). Dalla terza in poi è contenuto, e si decide quando la base è viva. Da non progettare adesso: sarebbe progettare al buio.
 
+### A5. Le monete e la vendita: si tengono, si cambiano o si tolgono?
+
+Parole dell'autore, 2026-08-15: *"Diamo un senso alla vendita e ai soldi anche. O se serve rimuoviamoli."*
+
+**E' una domanda aperta sul serio**, e non va risolta difendendo quello che c'e' gia'. Il `GDD.md` §3 spiega perche' le economie sono tre, ma quella spiegazione dice perche' **tenerle separate**, non perche' la valuta debba esistere.
+
+**I due difetti sospettati, da verificare:**
+
+1. **La valuta muore.** Le monete hanno una destinazione sola, i progetti. Finito l'ultimo, vendere non serve piu' a niente. Il progetto 38 (Gli affinamenti, potenziamenti infiniti a costo crescente) e' la toppa gia' ipotizzata, e va verificato se basta.
+2. **Vendere non e' una decisione.** Oggi raccogli e vendi tutto, perche' quel materiale non ti serviva per nient'altro in quel momento. Rinunciare a niente non e' una scelta, e la regola 8 dice che allora non c'e' partita.
+
+**Il sospetto piu' interessante:** nell'Era del Fuoco il legno diventa **anche il combustibile delle macchine**, e da li' ogni tronco venduto e' un tronco che non brucia. Forse la vendita non e' sbagliata: e' solo **arrivata troppo presto**, prima di avere un concorrente. Se e' cosi', la cura non e' togliere le monete ma **dare al materiale un secondo uso**, che e' gia' in roadmap.
+
+Ricerca in corso: `docs/ricerche/economia-e-vendita.md`.
+
 ### A4. Il gioco ha un finale, o no?
 
 L'autore ha chiesto *"la progressione fino al finale del gioco"*. Il `GDD.md` §11c dice **per scelta** che un finale non c'è: niente razzo, niente ascensore, solo scale che non finiscono. **Le due cose non vanno d'accordo**, e va scelto prima di costruire l'Era 4.
