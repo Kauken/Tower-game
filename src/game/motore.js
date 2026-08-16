@@ -155,11 +155,20 @@ export function creaMotore(canvasGioco) {
   // Una costruzione che chiede un progetto non si vede finche' quel progetto
   // non e' tuo. Vedere una voce che non puoi usare, su un menu' da telefono,
   // e' una riga in piu' da saltare ogni volta.
+  // **Un progetto che apre una costruzione si fabbrica costruendola.** Non ha
+  // una ricetta al banco: la Segheria *e'* la sua ricetta. Quindi la voce
+  // compare nel menu' appena il progetto e' **aperto**, e si segna fatta quando
+  // la cosa e' davvero sull'isola. Prima si chiedeva che fosse gia' fatta, e
+  // siccome niente poteva farla, Segheria e Fucina non comparivano mai.
+  function progettoAperto(id) {
+    return progetti.hoFatto(id) || progetti.disponibile(id)
+  }
+
   function costruzioniAperte() {
     let fuori = ''
     for (let i = 0; i < elencoCostruzioni.length; i++) {
       const c = elencoCostruzioni[i]
-      if (!c.richiede_progetto || progetti.hoComprato(c.richiede_progetto)) {
+      if (!c.richiede_progetto || progettoAperto(c.richiede_progetto)) {
         fuori += (fuori ? ',' : '') + c.id
       }
     }
@@ -365,7 +374,7 @@ export function creaMotore(canvasGioco) {
         return
       }
     }
-    if (dati.richiede_progetto && !progetti.hoComprato(dati.richiede_progetto)) {
+    if (dati.richiede_progetto && !progettoAperto(dati.richiede_progetto)) {
       esito = 'il progetto non e\u2019 ancora tuo'
       return
     }
@@ -376,6 +385,11 @@ export function creaMotore(canvasGioco) {
       macchine.aggiungi(tx, ty, dati.id)
     } else {
       casse.aggiungi(tx, ty, dati.slot, false, dati.fa)
+    }
+    // averla costruita **e'** averla fabbricata: e' cosi' che il progetto dopo
+    // si apre, esattamente come quando finisci un attrezzo al banco
+    if (dati.richiede_progetto) {
+      progetti.segnaFatto(dati.richiede_progetto)
     }
     esito = ''
   }

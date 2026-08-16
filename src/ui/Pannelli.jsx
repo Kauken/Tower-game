@@ -444,7 +444,9 @@ export function PannelloCassa({
                     {bloccata && richiesta
                       ? 'prima devi fabbricare: ' + richiesta.nome
                       : aperto
-                        ? 'fabbricalo nella scheda Banco'
+                        ? t.costruzione
+                          ? 'prendilo dal pulsante Costruisci e mettilo sull’isola'
+                          : 'fabbricalo nella scheda Banco'
                         : t.descrizione}
                   </div>
                 </button>
