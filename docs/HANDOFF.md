@@ -1,73 +1,163 @@
-# Consegne — stato del progetto
+# Passaggio di consegne
 
-Ultimo aggiornamento: **2026-08-12 (notte)**. Chi riprende parte da qui.
+*Aggiornato il 2026-08-16, alla fine di una sessione lunghissima: 39 commit, 20 ricerche, e il gioco cresciuto da 5.300 a 6.070 righe.*
 
-Poi, in quest'ordine: `GDD.md` (cos'è il gioco) → `ROADMAP.md` (cosa si fa dopo) → `ARCHITETTURA.md` (dove si mettono le mani) → `MATERIALI.md` (i numeri) → `DECISIONI.md` (perché).
+**Se stai riprendendo il progetto da zero, leggi solo questo file.** Ti dice dov'è il gioco, cosa è deciso, cosa no, e dove sono le trappole.
 
 ---
 
-## Il gioco in tre righe
+## 0. Le tre cose da sapere prima di toccare qualsiasi cosa
 
-Un'isola vista dall'alto. **Tocchi le cose e dai ordini**; un operaio solo li esegue, uno per volta. Costruisci attrezzi, macchine e nastri finché la maggior parte del lavoro non la fa più lui — e allora puoi salpare per l'isola dopo.
+### ⚠️ La copia di lavoro torna indietro da sola
+È successo **tredici volte** in una sessione. Il sintomo: `docs/PROGETTI.md` non esiste, oppure `docs/GDD.md` parla di torri e ondate. La cura:
 
-> ### La risorsa scarsa è il **tempo dell'operaio**.
-> Il gioco è comprare indietro il tempo di una persona sola. Ogni decisione si giudica così.
+```
+git fetch origin && git checkout -B claude/torre-guardia-scaffold-5fv3nl origin/claude/torre-guardia-scaffold-5fv3nl
+```
 
-## Le sette regole che non si toccano
+**Da qui discende la regola più importante del progetto:** ogni `git commit` è seguito **subito** da `git push`, nello stesso comando. Un commit locale non esiste — una volta se n'è portato via un lavoro intero.
 
-1. **NIENTE PERSONAGGIO DA GUIDARE.** Rifiutato **tre volte**. C'è un operaio, ma non lo si muove.
-2. **UN OPERAIO SOLO, E NON SI ASSUME.** L'unica crescita è la tecnologia.
-3. **LE TESSERE NON SI DEVONO VEDERE.** Niente bordi, mai. Si illumina solo quella sotto il dito, e solo mentre hai qualcosa in mano.
-4. **NIENTE MAGAZZINO CENTRALE — all'inizio.** Le cose stanno in un posto e la distanza deve costare. *Il **terminale** del punto 22 è un magazzino centrale, ed è voluto: è il premio di fine gioco, e funziona solo perché prima hai passato ore a girare fra le casse.*
-5. **NIENTE SI SPOSTA DA SOLO, NIENTE RICRESCE DA SOLO.** Un'automazione vale quanto la fatica che toglie.
-6. **NIENTE PARTE SE NON L'HAI PRESO IN MANO.** Un tocco sul vuoto, a mani vuote, non fa niente.
-7. **UN GRADINO NON È UN NUMERO PIÙ GRANDE: È UNA DOMANDA CHE SPARISCE.** Se non sai nominare la domanda che toglie, quel gradino non esiste.
+### ⚠️ Vale anche per gli agenti
+Un agente di ricerca deve **scrivere il suo file dopo le prime 4-5 ricerche** e riscriverlo strada facendo. Tre agenti sono morti sul limite di sessione: quelli che avevano già scritto hanno salvato tutto, gli altri hanno perso venti ricerche.
 
-## Dove siamo davvero
+### ⚠️ Come si prova nel browser
+Playwright non è installato nel progetto (e non va aggiunto). Si fa così:
 
-Il **codice** è a un punto onesto: si può giocare, e il giro completo funziona provato nel browser a 390×780.
+```
+cd /tmp && npm init -y && npm install playwright-core --no-save
+```
+e poi `import { chromium } from '/tmp/node_modules/playwright-core/index.mjs'`, con `executablePath: '/opt/pw-browsers/chromium'`.
 
-Il **progetto** è appena stato riscritto: `GDD.md` v7.1 e `ROADMAP.md` v18 descrivono un gioco più grande di quello che c'è. Non è un errore, è l'ordine giusto — ma vuol dire che **una parte dei documenti descrive cose non ancora costruite**, e sono elencate qui sotto.
+**Per provare una partita avanzata**: far girare il gioco una volta, leggere `localStorage.getItem('isola')`, modificarlo, e riseminarlo in un contesto **nuovo** con `addInitScript` — se si usa `reload()` la pagina vecchia riscrive il salvataggio prima che serva. E attenzione: **una casella non tiene più di una pila** (la pietra si ferma a 10), quindi `['pietra', 20]` viene scartato in silenzio.
 
-### Cosa funziona adesso, provato
+---
 
-Ordino otto alberi e l'operaio li fa in fila; nello zaino finiscono 32 legno e 8 alberelli in quattro caselle. Ordino un masso e **non parte** — in alto compare *zaino pieno* in giallo. Tocco la terra libera e pianta un alberello. Costruisco una cassa: si paga con gli 8 legno che ha **addosso**, si libera una casella, e riparte da solo per il masso. Apro il casotto, *Posa tutto*, e la roba ci finisce dentro. Nessun errore in console.
+## 1. Dov'è il gioco, adesso
 
-### Cosa il GDD descrive ma non esiste ancora
+**Funziona ed è pubblicato** su https://kauken.github.io/Tower-game/ — ogni push su `main` lo ripubblica.
 
-| Cosa | Punto |
+### Cosa si può fare giocando
+Tagliare alberi e ripiantarli · scavare vene che non finiscono mai · fabbricare al banco · **costruire casse, banchi, fucine e segherie** · caricare una macchina e guardarla lavorare · sbloccare la catena dei nove progetti.
+
+### La catena dei progetti, e come si sblocca
+> ascia → zaino → stivali → piccone → vivaio → carriola → **segheria** → **fucina** → ascia da boscaiolo
+
+**Non si compra niente.** Una cosa si apre quando ne hai **fabbricata** un'altra.
+
+### I materiali
+legno · pietra · rame · alberello · tavola · ghiaia · chiodo · telaio · **lingotto di rame**
+
+### Le costruzioni
+| | Cosa fa |
 | --- | --- |
-| La **mano** (adesso il tocco sul vuoto pianta di default: è il difetto da togliere per primo) | 1 |
-| Il ciclo del giorno **c'è ancora** e va tolto | 2 |
-| Salvataggio | 3 |
-| Giacimenti e ricchezza | 4 |
-| Crafting, banco da lavoro, `ricette.json` | 5 |
-| I progetti (adesso le tecnologie si pagano solo in monete) | 6 |
-| Macchine, trivella, nastri | 8–11 |
-| Le altre isole | 12 |
+| **Cassa** | contiene roba, e basta |
+| **Banco da lavoro** | ci si fabbrica senza tornare al casotto |
+| **Fucina** | ha **ricette sue**: fonde il rame in lingotti |
+| **Segheria** | l'unica **macchina**: lavora da sola, brucia legno |
 
-## La prossima cosa da fare
+Il **casotto** ha un banco dentro dall'inizio ed è l'unico posto con la **bacheca dei progetti**.
 
-**Il punto 1, la mano.** È piccolo, ed è la fondazione di tutto quello che si piazzerà dopo: alberelli, casse, trivelle, macchine, nastri. Farlo dopo vorrebbe dire rifare ognuna di quelle cose.
+---
 
-Subito dopo il **punto 2** (via il giorno) e il **punto 3** (salvataggio), che insieme fanno una mezza giornata e sbloccano sessioni lunghe — senza le quali le verifiche della roadmap non valgono niente.
+## 2. Cosa è stato deciso, e non si rimette in discussione
 
-## Le semplificazioni note, e non sono difetti
+| Decisione | In breve |
+| --- | --- |
+| **Niente monete, niente vendita, niente mercanti** | una cosa si sblocca fabbricandone un'altra |
+| **C'è un finale, ma non chiude** | dà un traguardo, dopo di lui il gioco continua |
+| **Una tecnologia nuova non rende inutile quella prima** | ogni mezzo è il migliore in una cosa e il peggiore in un'altra |
+| **I nastri si tracciano alla Mini Metro** | tocchi partenza e arrivo, il percorso lo trova il gioco |
+| **Le isole sono vicine, niente nastri lunghi** | e quindi il treno non ha un mestiere: diventa un **carro** |
+| **Ci saranno animali e colture** | non è in discussione *se*, ma *come* |
+| **Niente commesse, niente regali quotidiani, niente attese a timer** | rifiutate due volte ciascuna |
 
-- **L'operaio va in linea retta** e attraversa gli ostacoli. → punto 10.
-- **I massi non tornano**, e sono otto: la pietra vera arriva coi giacimenti. → punto 4.
-- **I numeri delle caselle e delle pile non sono misurati.** Quattro caselle, pile da 12/10/8, circa sette alberi per viaggio: ragionati, non provati. → primo lavoro del bilanciatore dopo il punto 7.
-- **Tutti i numeri di `MATERIALI.md` sono una proposta coerente, non una verità.**
-- **Si vedono righe leggerissime fra le tessere** in alcune zone d'erba. Tocca la regola 3, quindi va guardato: probabilmente sono macchie tonde di tessere vicine che si allineano per caso.
+Tutte con la data e le parole esatte dell'autore in `docs/DECISIONI.md`.
 
-## Un avvertimento pratico
+## 3. Cosa è ancora aperto
 
-Durante l'ultima sessione la copia di lavoro è **tornata indietro a un commit vecchio sette volte**, una volta a metà di un intervento. Se trovi codice del tower defense (`combattenti.js`, `ondate.js`, `percorso.json`), non è un residuo da ripulire: è quello.
+| | Domanda | Perché blocca |
+| --- | --- | --- |
+| **A1** | Quante isole, e cosa porta ognuna | contenuto, non urgente |
+| **A2** | Il generatore si alimenta col nastro? | si decide al punto 15 |
+| **A3** | Quanto grande lo zaino di partenza | **misurato**: 3 caselle rompono il gioco, 4 è il pavimento |
+| **A5** | ~~La valuta serve ancora?~~ | **chiusa**: tolta |
+
+E **due domande all'autore restano senza risposta da tre giorni**, con un 🛑 nella roadmap:
+1. *Guardando la bacheca, c'è un progetto che vuoi?*
+2. *Portare la roba a mano dà fastidio quel tanto che basta?*
+
+---
+
+## 4. Cosa sappiamo, e come lo sappiamo
+
+**Venti ricerche, 6.078 righe**, tutte in `docs/ricerche/`. Le due sintesi da leggere per prime sono `SINTESI.md` e `SINTESI-PROGRESSIONE.md`.
+
+### Le cinque cose più utili che ne sono uscite
+
+> **La durata la fanno i progetti, il prezzo fa il ritmo.** Alzare i costi per allungare il gioco è *padding*, e ha un nome nel settore.
+
+> **Sotto il 15% un miglioramento non esiste.** Non è "poco": è invisibile. Due ricerche indipendenti, stessa soglia.
+
+> **In un gioco di automazione la calma non muore per la profondità: muore per la configurazione ripetuta.** Autonauts ha una discussione intitolata *"è normale sentirsi super stressati?"*.
+
+> **Cozy non è assenza di stress: è assenza di stress più risposta.** Abbiamo fatto tutta la metà del *togliere* e zero della metà del *mettere*.
+
+> **Non si smonta mai quello che funziona.** Il muro della ricostruzione è il punto documentato in cui la gente abbandona questo genere.
+
+### Le tre misure fatte in casa, che valgono più delle ricerche
+
+| Misura | Risultato |
+| --- | --- |
+| **La partita intera** (`npm run progressione`) | **4,8 minuti** per tutti i progetti. Il gioco non c'è ancora |
+| **La prova del grigio** | sette cose stavano dentro **venti livelli su 255**: l'isola era illeggibile. Corretto |
+| **Raffinare prima di vendere** | era **sempre** una perdita: il tempo dell'operaio vale più del margine |
+
+---
+
+## 5. Gli strumenti, e usali
 
 ```
-git fetch origin && git checkout -B <ramo> origin/main
+npm run dev            sviluppo
+npm run build          deve passare, sempre
+npm run simula         quanto vale un minuto dell'operaio
+npm run progressione   gioca la partita intera e misura i buchi fra gli sblocchi
+npm run progressione -- --confronto    prova le proposte invece di crederci
 ```
 
-**Mitigazione adottata: si spinge SUBITO dopo ogni commit**, e si unisce su `main` alla fine di ogni intervento.
+**Gli strumenti di misura hanno trovato quattro difetti veri**, tre dei quali erano errori di chi li ha scritti. Usali prima di discutere di numeri.
 
-> **Un commit locale non esiste.** Il 2026-08-13 un report di ricerca lungo 418 righe è stato committato e non spinto; il rollback se l'è portato via, e non è stato possibile recuperarlo. È la regola 3b di `CLAUDE.md`, e nasce da lì.
+---
+
+## 6. Cosa manca, in ordine di quanto conta
+
+### Il prossimo passo, ed è chiaro
+> **Punto 12: il generatore e i pali.** La corrente con la copertura ad area, niente fili. È il primo pezzo dell'Era 2 e senza di lui i nastri non hanno un'era in cui stare.
+
+### Poi
+- **Punto 15: i nastri**, alla Mini Metro (già deciso)
+- **Il cantiere** — la costruzione grossa che mangia materiali e apre l'era. Serve **anche** a chiudere un buco aperto: da quando le monete non ci sono più, **il materiale che avanza non ha nessuna destinazione**
+
+### Le cose piccole già misurate e non ancora fatte
+| Cosa | Da dove viene |
+| --- | --- |
+| **Il deposito rapido** nelle casse vicine | la comodità più copiata del genere (853.000 scaricamenti per una mod sola) |
+| **Il numero al minuto** | il primo dei tre motori del "per sempre", e manca del tutto |
+| **Il bottone Chiudi** sta in fondo a un contenuto che scorre | con una lista lunga, il modo di uscire è fuori schermo |
+| **La casella premibile** invece delle pastiglie Posa/Prendi | lo standard, e le pastiglie duplicano la griglia |
+| **Il cassetto** che si legge da fuori | il problema che risolve nasce nell'Era 1, non nella 4 |
+| **Il registro** di cosa hai fatto | l'unica riga che **tutti e otto** i giochi esaminati hanno e noi no |
+| **Smontare col rimborso pieno** | la cura del "dito che sbaglia tessera" |
+
+---
+
+## 7. L'avvertimento onesto
+
+A metà sessione è stato fatto un bilancio (`docs/BILANCIO.md`) e il risultato è stato scomodo:
+
+> **6.900 righe scritte sul gioco contro 5.300 righe di gioco.** In una giornata intera di lavoro, dodici commit e **nessuno** che toccasse il gioco.
+
+La ricerca era buona e ha corretto quattro cose sbagliate. Ma **di dieci risultati, solo due erano finiti nel gioco**. L'autore se n'è accorto da solo e l'ha detto.
+
+> **Il progetto non ha bisogno di sapere altro. Ha bisogno di cose che girano.**
+
+Se ti viene voglia di aprire un'altra ricerca prima di aver costruito il punto 12, **rileggi questa riga.**
