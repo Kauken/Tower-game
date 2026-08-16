@@ -52,6 +52,13 @@ Si decide al punto 15, insieme ai nastri. **Raccomandazione: sì.** Il cassetto 
 
 ## Decise
 
+- 2026-08-16: **I NASTRI SI TRACCIANO ALLA MINI METRO: tocchi la partenza, tocchi l'arrivo, il percorso lo trova il gioco.** Scelta dell'autore. Niente trascinamento del dito lungo il percorso.
+
+  I due precedenti sono chiari e opposti. **Shapez su telefono ha tolto il trascinamento** e i giocatori si lamentano (*"troppi tocchi per un nastro semplice"*): e' l'unico gioco di nastri portato su telefono, e va male. **Mini Metro** fa toccare i capolinea e calcola lui la linea, ed e' nominato ai BAFTA e vincitore IGF. La differenza sta tutta li': **in Shapez il dito disegna il percorso, in Mini Metro il dito dice dove si comincia e dove si finisce.**
+
+  E c'e' un motivo tecnico che vale quanto quello di gusto: su una mappa che si sposta col dito, un dito che disegna e un dito che scorre sono lo stesso gesto. Terraria ha dovuto **inserire un ritardo** per distinguerli. Toccando due punti il problema non esiste.
+
+
 - 2026-08-15: **UNA TECNOLOGIA NUOVA NON PUO' RENDERE INUTILE QUELLA PRIMA.** Parole dell'autore: *"L'importante e' che non escludiamo le tecnologie che riusciamo a raggiungere. Ad esempio se sblocchiamo i treni ed e' un grande traguardo non e' che poi con i droni la tecnologia dei treni e' inutile."*
 
   E' la regola piu' affilata arrivata dall'autore, ed e' **piu' forte** di quella che avevamo (*"non si smonta mai quello che funziona"*, regola 15d): quella dice che non devi **demolire**, questa dice che il vecchio deve **continuare a essere la scelta giusta da qualche parte**.
