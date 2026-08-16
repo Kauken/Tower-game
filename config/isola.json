@@ -180,21 +180,24 @@
       "nome": "Legno",
       "colore": "#8a6242",
       "prezzo": 3,
-      "pila": 12
+      "pila": 12,
+      "forma": "tronco"
     },
     {
       "id": "pietra",
       "nome": "Pietra",
       "colore": "#7c8288",
       "prezzo": 4,
-      "pila": 10
+      "pila": 10,
+      "forma": "sasso"
     },
     {
       "id": "rame",
       "nome": "Rame",
       "colore": "#c07a4e",
       "prezzo": 5,
-      "pila": 10
+      "pila": 10,
+      "forma": "pepita"
     },
     {
       "id": "alberello",
@@ -202,35 +205,40 @@
       "colore": "#5f9440",
       "prezzo": 1,
       "pila": 8,
-      "pianta": "albero"
+      "pianta": "albero",
+      "forma": "germoglio"
     },
     {
       "id": "tavola",
       "nome": "Tavola",
       "colore": "#c19a6b",
       "prezzo": 2,
-      "pila": 16
+      "pila": 16,
+      "forma": "asse"
     },
     {
       "id": "ghiaia",
       "nome": "Ghiaia",
       "colore": "#9a9186",
       "prezzo": 3,
-      "pila": 12
+      "pila": 12,
+      "forma": "granelli"
     },
     {
       "id": "chiodo",
       "nome": "Chiodo",
       "colore": "#d99a5e",
       "prezzo": 2,
-      "pila": 24
+      "pila": 24,
+      "forma": "chiodo"
     },
     {
       "id": "telaio",
       "nome": "Telaio",
       "colore": "#a8762f",
       "prezzo": 32,
-      "pila": 4
+      "pila": 4,
+      "forma": "telaio"
     }
   ],
   "telecamera": {
@@ -246,5 +254,6 @@
   "_nota_materiali": "prezzo e' quanto paga il mercante per un pezzo. pila e' quanti ne stanno in UNA CASELLA dell'inventario, come in Minecraft. pianta dice che AVERLO nell'inventario permette di piantare quella risorsa: non si equipaggia niente e non si sceglie nessuno strumento, basta averlo addosso.",
   "_nota_ricrescita": "GLI ALBERI NON RICRESCONO DA SOLI. Tagliandone uno esce anche un alberello, e sei tu a ripiantarlo dove vuoi: il bosco e' una cosa che gestisci, non una che aspetti. tempo_crescita_ms e' quanto ci mette un alberello piantato a diventare un albero adulto.",
   "_nota_pile": "Le pile sono strette apposta. Con pile larghe l'operaio non si riempirebbe mai, il trasporto non si sentirebbe, e i nastri sarebbero un gadget invece che una liberazione. Numeri ragionati, NON misurati: vanno tarati col bilanciatore quando esistera' la simulazione headless (punto 7).",
-  "_nota_vene": "Le vene sono fatte apposta IRREGOLARI: un rettangolo di tessere si legge come una scacchiera anche quando il disegno le fonde. E stanno a distanze diverse dal casotto: la pietra vicina, il rame un po' piu' in la', il rame ricco lontano in cima. E' quello che fa esistere la decisione 'una vena ricca lontana o due povere vicine?'."
+  "_nota_vene": "Le vene sono fatte apposta IRREGOLARI: un rettangolo di tessere si legge come una scacchiera anche quando il disegno le fonde. E stanno a distanze diverse dal casotto: la pietra vicina, il rame un po' piu' in la', il rame ricco lontano in cima. E' quello che fa esistere la decisione 'una vena ricca lontana o due povere vicine?'.",
+  "_nota_forma": "La FORMA di un materiale non e' un abbellimento: e' l'unica cosa che lo distingue per chi non vede bene i colori, e un uomo su otto e' daltonico rosso-verde. La regola scritta e' WCAG 1.4.1 - il colore non puo' essere l'unico mezzo per dire una cosa. Chi aggiunge un materiale gli da' una forma, e se ne serve una nuova la aggiunge a src/ui/Icona.jsx."
 }
