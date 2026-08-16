@@ -512,6 +512,31 @@ function disegnaBraccianti(ctx, camera, squadra) {
 
     disegnaSagoma(ctx, 'operaio', 0, cx, cy, raggio * 2 * grafica.sagome.ingrandimento, grafica.contorno)
 
+    // **La barra del lavoro in corso.** I dati c'erano gia' e la configurazione
+    // pure, ma nessuno la disegnava: si vedeva l'operaio dare i colpi e non si
+    // capiva se stava fabbricando, quanto mancava, o se era impallato. Un
+    // lavoro senza barra sembra un lavoro che non parte.
+    if (bracciante.stato === 'lavora' && bracciante.lavoroTotaleMs > 0) {
+      const barra = stile.barra
+      const larghezza = barra.larghezza * zoom
+      const altezza = barra.altezza * zoom
+      const bx = punto.x - larghezza / 2
+      const by = punto.y - raggio - barra.distanza_sopra * zoom
+      const quota = Math.max(0, Math.min(1, bracciante.lavoroMs / bracciante.lavoroTotaleMs))
+
+      ctx.fillStyle = barra.colore_bordo
+      ctx.fillRect(
+        bx - barra.spessore_bordo,
+        by - barra.spessore_bordo,
+        larghezza + barra.spessore_bordo * 2,
+        altezza + barra.spessore_bordo * 2
+      )
+      ctx.fillStyle = barra.colore_fondo
+      ctx.fillRect(bx, by, larghezza, altezza)
+      ctx.fillStyle = barra.colore_pieno
+      ctx.fillRect(bx, by, larghezza * quota, altezza)
+    }
+
     // il pallino di chi porta qualcosa: si vede a colpo d'occhio chi sta
     // tornando carico invece di andare a lavorare
     if (bracciante.inventario.stato.pezzi > 0) {
