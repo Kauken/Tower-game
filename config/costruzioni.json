@@ -40,6 +40,29 @@
       "raggio": 0.4
     },
     {
+      "id": "fucina",
+      "nome": "Fucina",
+      "descrizione": "Il fuoco che fonde. Qui si fanno cose che al banco non si possono fare.",
+      "tipo": "banco",
+      "fa": "fucina",
+      "richiede_progetto": "fucina",
+      "costo": [
+        {
+          "materiale": "pietra",
+          "quantita": 12
+        },
+        {
+          "materiale": "tavola",
+          "quantita": 6
+        }
+      ],
+      "slot": 6,
+      "colore": "#5e4535",
+      "colore_bordo": "#e08a4a",
+      "colore_pieno": "#ffab5e",
+      "raggio": 0.42
+    },
+    {
       "id": "segheria",
       "nome": "Segheria",
       "descrizione": "Sega i tronchi al posto tuo: un legno diventa tre tavole invece di due. Brucia legno per far girare la lama.",

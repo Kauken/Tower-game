@@ -95,6 +95,30 @@
       "richiede": "carriola",
       "sblocca": "segheria",
       "costruzione": "segheria"
+    },
+    {
+      "id": "fucina",
+      "nome": "Fucina",
+      "descrizione": "Una struttura nuova, e con lei lavorazioni che prima non c'erano: il rame si fonde in lingotti.",
+      "colore": "#e08a4a",
+      "richiede": "segheria",
+      "sblocca": "fucina",
+      "costruzione": "fucina"
+    },
+    {
+      "id": "ascia_boscaiolo",
+      "nome": "Ascia da boscaiolo",
+      "descrizione": "Meglio dell'ascia affilata, e si fa solo alla fucina.",
+      "colore": "#b8763a",
+      "richiede": "fucina",
+      "sblocca": "ascia_boscaiolo",
+      "effetto": {
+        "tipo": "tempo_lavoro",
+        "moltiplicatore": 0.42,
+        "risorse": [
+          "albero"
+        ]
+      }
     }
   ],
   "_nota_richiede": "'richiede' nomina un altro progetto, e vuol dire FABBRICATO, non comprato. Un progetto senza 'richiede' e' aperto dall'inizio."

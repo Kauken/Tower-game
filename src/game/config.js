@@ -239,6 +239,24 @@ for (let i = 0; i < elencoCostruzioni.length; i++) {
   }
 }
 
+// Una ricetta si fa in un posto solo: o dentro una macchina, o a un banco.
+// Dichiarare tutti e due vorrebbe dire che la segheria non serve a niente,
+// perche' quello che fa lei si potrebbe fare a mano.
+for (let i = 0; i < elencoRicette.length; i++) {
+  const r = elencoRicette[i]
+  if (r.macchina && r.dove) {
+    throw new Error(
+      `La ricetta "${r.id}" dice di farsi sia nella macchina "${r.macchina}" sia al banco "${r.dove}": ` +
+        `scegline uno, o la macchina non serve a niente`
+    )
+  }
+  if (r.dove && !elencoCostruzioni.some((c) => c.fa === r.dove)) {
+    throw new Error(
+      `La ricetta "${r.id}" si fa a "${r.dove}", ma nessuna costruzione sa fare "${r.dove}"`
+    )
+  }
+}
+
 // I TRE CONTROLLI SULLE RICETTE.
 //
 // Il primo e' il muro architetturale del progetto, ed e' la ragione per cui

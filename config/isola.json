@@ -239,6 +239,14 @@
       "prezzo": 32,
       "pila": 4,
       "forma": "telaio"
+    },
+    {
+      "id": "lingotto_rame",
+      "nome": "Lingotto di rame",
+      "prezzo": 13,
+      "pila": 8,
+      "colore": "#d98b4a",
+      "forma": "lingotto"
     }
   ],
   "telecamera": {

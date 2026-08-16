@@ -199,6 +199,7 @@ export function creaMotore(canvasGioco) {
     // il casotto e' anche il mercato: e' li' che si vende e si studia
     cassaEIlCasotto: false,
     cassaEBanco: false,
+    cassaFa: '',
     // "id:libero|bloccato|fatto" per ogni progetto
     progetti: '',
     // "id:si|no" — se la ricetta e' aperta e se ha gli ingredienti addosso
@@ -484,12 +485,15 @@ export function creaMotore(canvasGioco) {
   // la pena costruirne altri: la stessa ragione per cui esiste una cassa
   // vicina al lavoro.
   function fabbrica(idRicetta) {
-    if (!cassaScelta || cassaScelta.fa !== 'banco') {
+    if (!cassaScelta || !cassaScelta.fa) {
       return
     }
     const dati = trovaRicetta(idRicetta)
+    // **Ogni ricetta dice dove si fa.** E' il modo in cui costruire una
+    // struttura nuova apre lavorazioni che prima non esistevano: il rame si
+    // fonde solo alla fucina, e la fucina te la costruisci tu.
     if (dati.dove && dati.dove !== cassaScelta.fa) {
-      esito = 'non si fa a questo banco'
+      esito = 'qui non si puo\u2019 fare'
       return
     }
     if (!progetti.ricettaAperta(idRicetta)) {
@@ -706,7 +710,8 @@ export function creaMotore(canvasGioco) {
     vetrina.contenutoCassa = cassaScelta ? scriviInventario(cassaScelta.inventario) : ''
     vetrina.pienoCassa = cassaScelta ? casse.pienaDel(cassaScelta) + ' caselle' : ''
     vetrina.cassaEIlCasotto = !!(cassaScelta && cassaScelta.eIlCasotto)
-    vetrina.cassaEBanco = !!(cassaScelta && cassaScelta.fa === 'banco')
+    vetrina.cassaEBanco = !!(cassaScelta && cassaScelta.fa)
+    vetrina.cassaFa = cassaScelta ? cassaScelta.fa : ''
 
     vetrina.macchinaScelta = !!macchinaScelta
     vetrina.nomeMacchina = macchinaScelta ? macchinaScelta.nome : ''

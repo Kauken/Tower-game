@@ -191,6 +191,40 @@
           "quantita": 1
         }
       ]
+    },
+    {
+      "id": "lingotto_rame",
+      "nome": "Lingotto di rame",
+      "descrizione": "Due pezzi di rame fusi in uno solo. Al banco non si puo' fare: serve il fuoco.",
+      "produce": "lingotto_rame",
+      "quantita": 1,
+      "tempo_ms": 4200,
+      "dove": "fucina",
+      "ingredienti": [
+        {
+          "materiale": "rame",
+          "quantita": 2
+        }
+      ]
+    },
+    {
+      "id": "ascia_boscaiolo",
+      "nome": "Ascia da boscaiolo",
+      "descrizione": "",
+      "attrezzo": "ascia_boscaiolo",
+      "tempo_ms": 6000,
+      "dove": "fucina",
+      "richiede_progetto": "ascia_boscaiolo",
+      "ingredienti": [
+        {
+          "materiale": "lingotto_rame",
+          "quantita": 2
+        },
+        {
+          "materiale": "tavola",
+          "quantita": 4
+        }
+      ]
     }
   ],
   "_nota_macchina": "Una ricetta con 'macchina' NON compare al banco da lavoro: la sa fare solo quella macchina. E' cosi' che la segheria da' tre tavole dove la mano ne da' due, senza che il giocatore possa farlo a mano.",

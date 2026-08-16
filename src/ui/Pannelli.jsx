@@ -180,8 +180,15 @@ function costoRicetta(ricetta) {
 // il legno sta in una cassa lontana, prima lo va a prendere. E' la stessa
 // regola con cui si costruisce, ed e' quella che tiene in piedi il
 // "niente magazzino centrale".
-function Banco({ stati, onFabbrica }) {
-  const aperte = elencoRicette.filter((r) => stati[r.id] !== undefined)
+function Banco({ stati, fa, onFabbrica }) {
+  // **Si vedono solo le ricette che si possono fare QUI.** Mostrare al banco
+  // una lavorazione che vuole la fucina sarebbe una voce da saltare ogni
+  // volta, e su un telefono ogni riga in piu' si paga.
+  const aperte = elencoRicette.filter(
+    // una ricetta con 'macchina' non si fa a mano da nessuna parte: e' il
+    // motivo per cui la segheria vale la pena
+    (r) => stati[r.id] !== undefined && !r.macchina && (!r.dove || r.dove === fa)
+  )
   if (aperte.length === 0) {
     return null
   }
@@ -272,6 +279,7 @@ export function PannelloCassa({
   pieno,
   eIlCasotto,
   eBanco,
+  fa,
   progetti,
   ricette,
   onDeposita,
@@ -286,19 +294,23 @@ export function PannelloCassa({
 
   // un pallino sulla scheda quando c'e' qualcosa da fare li' dentro: senza,
   // una scheda chiusa e' una cosa che non esiste
-  const qualcosaDaFare = elencoRicette.some((r) => ricette && ricette[r.id] === 'si')
+  const qualcosaDaFare = elencoRicette.some(
+    (r) => ricette && ricette[r.id] === 'si' && !r.macchina && (!r.dove || r.dove === fa)
+  )
   const qualcosaDaFareLi = progetti.some((t) => t.stato === 'libero')
   const conSchede = eIlCasotto || eBanco
   const mostra = conSchede ? scheda : 'cassa'
 
   return (
     <Foglio
-      titolo={eIlCasotto ? 'Casotto' : eBanco ? 'Banco da lavoro' : 'Cassa'}
+      titolo={eIlCasotto ? 'Casotto' : fa === 'fucina' ? 'Fucina' : eBanco ? 'Banco da lavoro' : 'Cassa'}
       sottotitolo={
         eIlCasotto
           ? 'Occupate ' + pieno + '. Qui c\u2019\u00e8 il banco da lavoro e la bacheca.'
-          : eBanco
-            ? 'Occupate ' + pieno + '. Si fabbrica qui, senza tornare al casotto.'
+          : fa === 'fucina'
+            ? 'Occupate ' + pieno + '. Il fuoco fonde quello che il banco non sa fare.'
+            : eBanco
+              ? 'Occupate ' + pieno + '. Si fabbrica qui, senza tornare al casotto.'
             : 'Occupate ' + pieno
       }
     >
@@ -345,7 +357,7 @@ export function PannelloCassa({
       )}
 
       {mostra !== 'banco' ? null : (
-        <Banco stati={ricette} onFabbrica={onFabbrica} />
+        <Banco stati={ricette} fa={fa} onFabbrica={onFabbrica} />
       )}
 
       {mostra !== 'progetti' || !eIlCasotto ? null : (

@@ -104,6 +104,15 @@ function disegno(forma, colore) {
           <ellipse cx="16" cy="10" rx="4.4" ry="3" transform="rotate(26 16 10)" fill={chiaro} />
         </>
       )
+    // un lingotto: il trapezio dello stampo, e si riconosce da solo
+    case 'lingotto':
+      return (
+        <>
+          <path d="M4 16 L6 9 L18 9 L20 16 Z" fill={colore} />
+          <path d="M6 9 L18 9 L17 11 L7 11 Z" fill={chiaro} />
+          <path d="M4 16 L20 16 L19.4 18 L4.6 18 Z" fill={scuro} />
+        </>
+      )
     default:
       return <circle cx="12" cy="12" r="7" fill={colore} />
   }

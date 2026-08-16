@@ -30,6 +30,7 @@ const VISTA_INIZIALE = {
   pienoCassa: '',
   cassaEIlCasotto: false,
   cassaEBanco: false,
+  cassaFa: '',
   slotOperaio: 0,
   inventario: '',
   zainoPieno: false,
@@ -313,6 +314,7 @@ export default function CampoDiGioco() {
           pieno={vista.pienoCassa}
           eIlCasotto={vista.cassaEIlCasotto}
           eBanco={vista.cassaEBanco}
+          fa={vista.cassaFa}
             progetti={leggiProgetti(vista.progetti)}
           ricette={leggiStati(vista.ricette)}
           onDeposita={deposita}
