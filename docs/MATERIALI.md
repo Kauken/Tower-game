@@ -202,6 +202,21 @@ Lingotti e fornace **non esistono ancora**, e non è una dimenticanza: fondere �
 
 > **Un macchinario non si vende.** Se si potesse rivendere, la cosa più redditizia sarebbe fabbricare macchine per il mercante invece di usarle — e il gioco diventerebbe una catena di montaggio verso il negozio, non una fabbrica.
 
+### Il combustibile: la fiamma da sola contro il generatore (punto 12, **costruito**)
+
+Un pezzo di combustibile paga **quanti millisecondi di lavoro di una macchina**. È l'unica unità con cui i due modi si possono confrontare, e sta in `costruzioni.json`.
+
+| | Quanto lavoro paga 1 legno | Dove lo carichi |
+| --- | --- | --- |
+| **La fiamma della segheria** | 4 lavorazioni × 3.000 ms = **12.000 ms** | in ogni macchina, una per una |
+| **Il generatore** | **16.000 ms** | in un posto solo, per tutte quelle che copre |
+
+**Il guadagno vero non è il 33% di combustibile**, è la seconda colonna: la domanda che sparisce dalla testa è *"devo riempire ogni macchina una per una"*. Il 33% serve solo perché attaccarsi alla corrente non sia mai un peggioramento.
+
+> ⚠️ **Il gioco lo controlla all'avvio.** Se `ms_per_combustibile` del generatore scendesse sotto quello che una macchina paga da sola, il gioco si rifiuta di partire: sarebbe una cosa che costa tre lingotti e **peggiora** la fabbrica, e nessuno capirebbe perché.
+
+I raggi sono in tessere: **generatore 4**, **palo 3**. Un palo si aggancia da solo se sta nel raggio di un nodo già acceso, e da lì ne accende altri.
+
 ## 4. Il rubinetto — quanto entra sull'isola al minuto
 
 I giacimenti **non si esauriscono**, quindi il limite non è quanto ce n'è: è **quanto ne esce al minuto**. Quel tetto è la cosa che rende la crescita un problema.

@@ -119,7 +119,7 @@ E **due domande all'autore restano senza risposta da tre giorni**, con un 🛑 n
 ```
 npm run dev            sviluppo
 npm run build          deve passare, sempre
-npm run simula         quanto vale un minuto dell'operaio
+npm run simula         ROTTO: cerca economia.js, che non esiste piu' da quando e' caduta la valuta
 npm run progressione   gioca la partita intera e misura i buchi fra gli sblocchi
 npm run progressione -- --confronto    prova le proposte invece di crederci
 ```
@@ -130,8 +130,14 @@ npm run progressione -- --confronto    prova le proposte invece di crederci
 
 ## 6. Cosa manca, in ordine di quanto conta
 
-### Il prossimo passo, ed è chiaro
-> **Punto 12: il generatore e i pali.** La corrente con la copertura ad area, niente fili. È il primo pezzo dell'Era 2 e senza di lui i nastri non hanno un'era in cui stare.
+### Il punto 12 è **FATTO** (2026-08-16)
+> **Il generatore e i pali.** Copertura ad area, nessun filo. Una macchina coperta non brucia più il suo legno: lo brucia il generatore, in un posto solo. Una macchina scoperta **non si ferma**, torna a bruciare il suo.
+> Costruendolo è saltato fuori che **Segheria e Fucina erano irraggiungibili** — un progetto che apre una costruzione non veniva mai segnato come fatto. Corretto: costruire una cosa *è* fabbricarla.
+
+### Il prossimo passo, e ce ne sono due sensati
+> **Punto 10 e 11: il frantoio, la fornace e la trivella.** Sono loro a far mordere il punto 12: finché le macchine da riempire sono una o due, la fatica che la corrente toglie non si è ancora sentita. È anche la verifica 🛑 dopo il punto 11 della roadmap.
+>
+> Oppure **punto 9: il numero al minuto** — piccolo, economico, e manca da sempre.
 
 ### Poi
 - **Punto 15: i nastri**, alla Mini Metro (già deciso)

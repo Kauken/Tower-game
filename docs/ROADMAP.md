@@ -156,12 +156,18 @@ Si piazza su un giacimento e produce da sola nel suo cassetto, ma **il cassetto 
 
 La domanda che quest'era toglie dalla testa è **una sola e va detta ad alta voce**: *"devo riempire ogni macchina una per una."* Un generatore alimenta tutto quello che copre, e da quel momento **il combustibile lo metti in un posto solo.**
 
-**12. Il generatore e i pali.**
+**12. Il generatore e i pali.** — **FATTO** (2026-08-16).
 Un **generatore** brucia legno e alimenta tutto quello che sta nel suo **raggio**; i **pali** allungano la copertura e si agganciano **da soli** per vicinanza. Nessun filo da tracciare — su un telefono tirare fili col dito sarebbe un supplizio, e la parte interessante non sono i fili: è *"come faccio ad arrivare fin laggiù?"*.
 → `GDD.md` §10b.
 
    > **Non spegne mai tutto.** Un generatore a secco ferma **solo le macchine che copre lui**, avvisa **prima** di fermarsi, e riparte da solo quando rimetti il combustibile: niente giro a riaccendere le macchine una per una. Esiste una discussione, con quel titolo esatto, intitolata *"il sistema della corrente mi ha fatto smettere di giocare"*, e il motivo era il fusibile che spegne tutto insieme.
    > **La mancanza di corrente costa produzione, mai lavoro perso.**
+
+   > **Com'è venuta.** La domanda che toglie è **una macchina coperta non brucia più il suo legno**: lo brucia il generatore, in un posto solo, e il legno che porti alla segheria diventa tutto tavole. È l'unica cosa che la corrente cambia dentro una macchina — materiale, tempi e cassetti restano identici.
+   > **E una macchina scoperta non si ferma: torna a bruciare il suo.** Il vincolo *"costa produzione, mai lavoro perso"* preso alla lettera. Misurato: col generatore a secco le due segherie hanno continuato a lavorare col loro fuoco, e riempiendolo hanno ripreso da sole senza toccare niente.
+   > **Il gioco si rifiuta di partire** se il generatore paga un pezzo di combustibile meno di quanto lo paghi la fiamma della macchina: sarebbe una cosa che costa tre lingotti e peggiora la fabbrica.
+   > **Trovato costruendolo, e bloccava tutto:** un progetto che apre una *costruzione* non veniva mai segnato come fatto, quindi **Segheria e Fucina non comparivano nel menù Costruisci** e la catena era interrotta dal punto 8 in poi. Adesso costruire una cosa *è* fabbricarla.
+   > **Quello che il punto 12 da solo non può dare:** con la sola segheria le macchine da riempire sono una o due, e la fatica che la corrente toglie non si è ancora sentita. Sono i **punti 10 e 11** (frantoio, fornace, trivella) a farla mordere.
 
 **13. Le macchine elettriche — che si affiancano, non sostituiscono.**
 La segheria elettrica è più veloce e non ha la sua fiamma da riempire. Ma **quella a legna continua a funzionare e resta utile**: si sposta a fare un altro pezzo della catena. Non si demolisce niente per salire. → `GDD.md` §11b.

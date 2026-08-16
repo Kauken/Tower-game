@@ -49,6 +49,8 @@ config/*.json  ──►  src/game/config.js  ──►  tutto il resto
 | `camera.js` | Dove si guarda, il trascinamento, i due livelli di zoom | Quasi mai |
 | `inventario.js` | **Le caselle con le pile.** Lo usano l'operaio *e* i contenitori | Cambi come si impila la roba |
 | `casse.js` | I contenitori con un posto sull'isola | Aggiungi un tipo di contenitore |
+| `macchine.js` | Le cose che lavorano da sole: due cassetti e una ricetta | Aggiungi una macchina, o cambi come consuma |
+| `corrente.js` | **La rete**: generatori, pali, chi è coperto e chi paga il combustibile | Cambi come si propaga la corrente, o cosa fa una macchina coperta |
 | `lavori.js` | La coda degli ordini e le azioni possibili | **Aggiungi un verbo nuovo** (scavare, riempire, avviare…) |
 | `braccianti.js` | L'operaio: prende un lavoro, ci va, lo fa | Cambi cosa sa fare, o come decide |
 | `tecnologie.js` | Cosa hai sbloccato, e i moltiplicatori/aggiunte che ne derivano | Aggiungi un **tipo** di effetto |
