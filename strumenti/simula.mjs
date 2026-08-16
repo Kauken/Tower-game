@@ -5,8 +5,8 @@
 //
 //     QUANTO VALE UN MINUTO DELL'OPERAIO?
 //
-// C'e' un operaio solo, quindi ogni cosa si misura in monete al minuto del suo
-// tempo. E' l'unico numero che permette di confrontare fra loro cose diverse:
+// C'e' un operaio solo, quindi ogni cosa si misura in **valore** al minuto del
+// suo tempo. E' l'unico numero che permette di confrontare fra loro cose diverse:
 // tagliare alberi, scavare rame vicino, scavare rame ricco lontano, fabbricare
 // tavole. A occhio non si vede, e questo gioco e' una questione di portata.
 //
@@ -31,11 +31,13 @@ const mondo = await carica('/src/game/mondo.js')
 const { creaLavori } = await carica('/src/game/lavori.js')
 const { creaCasse } = await carica('/src/game/casse.js')
 const { creaProgetti } = await carica('/src/game/progetti.js')
-const { creaEconomia } = await carica('/src/game/economia.js')
 const { creaBraccianti } = await carica('/src/game/braccianti.js')
 
 const PASSO = config.simulazione.passo_ms
-const prezzo = (id) => {
+// Il 'prezzo' di un materiale non e' piu' un prezzo — le monete sono state
+// tolte. E' il VALORE, e serve solo qui: a dire se una lavorazione conviene.
+// Il giocatore non lo vede da nessuna parte.
+const valore = (id) => {
   const m = config.elencoMateriali.find((v) => v.id === id)
   return m ? m.prezzo : 0
 }
@@ -54,9 +56,9 @@ function gira({ bersagli, fatti = [], ricetta = null, obiettivo = 90, minutiMass
   const lavori = creaLavori()
   const casse = creaCasse()
   const progetti = creaProgetti()
-  creaEconomia()
+  // **Non si compra piu' niente**: un progetto e' fatto e basta, ed e' quello
+  // che accende il suo effetto.
   for (const id of fatti) {
-    progetti.compra(id)
     progetti.segnaFatto(id)
   }
 
@@ -77,7 +79,7 @@ function gira({ bersagli, fatti = [], ricetta = null, obiettivo = 90, minutiMass
   function valoreFatto() {
     let totale = 0
     for (const m of config.elencoMateriali) {
-      totale += (casotto.inventario.quanti(m.id) + operaio.inventario.quanti(m.id)) * prezzo(m.id)
+      totale += (casotto.inventario.quanti(m.id) + operaio.inventario.quanti(m.id)) * valore(m.id)
     }
     return totale
   }
@@ -121,7 +123,7 @@ function gira({ bersagli, fatti = [], ricetta = null, obiettivo = 90, minutiMass
   }
 
   const minuti = (passi * PASSO) / 60000
-  return { monetePerMinuto: valoreFatto() / minuti, minuti, valore: valoreFatto() }
+  return { valorePerMinuto: valoreFatto() / minuti, minuti, valore: valoreFatto() }
 }
 
 // --- gli scenari ---
@@ -168,13 +170,13 @@ console.log('  ' + '─'.repeat(52))
 const esiti = []
 for (const [nome, esegui] of prove) {
   const esito = esegui()
-  esiti.push([nome, esito.monetePerMinuto])
+  esiti.push([nome, esito.valorePerMinuto])
   console.log(
     '  ' +
       nome.padEnd(32) +
-      esito.monetePerMinuto.toFixed(1).padStart(7) +
-      ' monete/min' +
-      ('   (' + esito.valore.toFixed(0) + ' monete in ' + esito.minuti.toFixed(1) + ' min)').padStart(26)
+      esito.valorePerMinuto.toFixed(1).padStart(7) +
+      ' valore/min' +
+      ('   (' + esito.valore.toFixed(0) + ' di valore in ' + esito.minuti.toFixed(1) + ' min)').padStart(26)
   )
 }
 
@@ -194,7 +196,7 @@ console.log('  • un attrezzo deve ripagarsi in 3-8 minuti, una macchina in 8-2
 console.log('  • se una vena lontana non rende piu’ di una vicina, la distanza non costa')
 console.log('')
 console.log('  QUELLO CHE QUESTO NUMERO NON DICE')
-console.log('  Misura MONETE. Ma tavole, chiodi e telai valgono piu’ del loro prezzo:')
+console.log('  Misura il VALORE, che non e’ una moneta: le monete sono state tolte.')
 console.log('  sono l’unico modo di fabbricare gli attrezzi. Che il banco renda poco')
 console.log('  al minuto e’ giusto — e’ per questo che la segheria si desiderera’.')
 console.log('')

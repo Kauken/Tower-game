@@ -119,7 +119,7 @@ E **due domande all'autore restano senza risposta da tre giorni**, con un 🛑 n
 ```
 npm run dev            sviluppo
 npm run build          deve passare, sempre
-npm run simula         ROTTO: cerca economia.js, che non esiste piu' da quando e' caduta la valuta
+npm run simula         quanto vale un minuto dell'operaio
 npm run progressione   gioca la partita intera e misura i buchi fra gli sblocchi
 npm run progressione -- --confronto    prova le proposte invece di crederci
 ```
