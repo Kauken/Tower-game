@@ -227,9 +227,15 @@ export function creaCorrente() {
       // Quanto lavoro ha fatto la sua rete in questo passo. **Brucia solo
       // mentre qualcosa lavora**: un generatore acceso su una fabbrica ferma
       // non deve mangiarti il bosco per niente.
+      //
+      // Si guarda `restaMs`, non lo stato: fra una lavorazione e l'altra la
+      // macchina passa un giro con lo stato ancora su "lavora" ma senza
+      // consumare niente. Dal vivo sono 16 millisecondi e non si vedono; al
+      // rientro, dove i passi sono da un secondo, diventavano un terzo di
+      // combustibile in piu' bruciato per niente.
       let lavorano = 0
       for (let m = 0; m < macchine.length; m++) {
-        if (macchine[m].rete === i && macchine[m].stato === 'lavora') {
+        if (macchine[m].rete === i && macchine[m].restaMs > 0) {
           lavorano++
         }
       }

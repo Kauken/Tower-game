@@ -247,6 +247,7 @@ export function creaMotore(canvasGioco) {
     uscitaMacchina: '',
     avanzamentoMacchina: 0,
     accettaMacchina: '',
+    alimentataMacchina: false,
     // il generatore scelto
     generatoreScelto: false,
     nomeGeneratore: '',
@@ -826,6 +827,7 @@ export function creaMotore(canvasGioco) {
     vetrina.uscitaMacchina = macchinaScelta ? scriviInventario(macchinaScelta.uscita) : ''
     vetrina.avanzamentoMacchina = macchinaScelta ? macchine.avanzamento(macchinaScelta) : 0
     vetrina.accettaMacchina = macchinaScelta ? macchine.accetta(macchinaScelta) : ''
+    vetrina.alimentataMacchina = !!(macchinaScelta && macchinaScelta.alimentata)
 
     vetrina.generatoreScelto = !!generatoreScelto
     vetrina.nomeGeneratore = generatoreScelto ? generatoreScelto.nome : ''

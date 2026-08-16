@@ -487,6 +487,7 @@ export function PannelloMacchina({
   uscita,
   avanzamento,
   accetta,
+  alimentata,
   inventarioOperaio,
   onDeposita,
   onPreleva,
@@ -553,6 +554,23 @@ export function PannelloMacchina({
           }}
         />
       </div>
+
+      {/* **Attaccata alla corrente si vede scritto.** Da fuori la fiamma
+          spenta e la saetta lo dicono gia', ma qui dentro uno guarda il
+          cassetto e si chiede perche' il legno non cala piu': la riga risponde
+          prima che se lo chieda */}
+      {alimentata ? (
+        <span
+          style={{
+            fontSize: interfaccia.testo_piccolo,
+            color: interfaccia.colore_accento,
+            marginBottom: interfaccia.spaziatura_stretta
+          }}
+        >
+          Attaccata alla corrente: non brucia più il suo. Il legno che le porti
+          diventa tutto lavorato.
+        </span>
+      ) : null}
 
       <p style={{ ...ETICHETTA, margin: '0 0 4px' }}>Entra</p>
       <Griglia inventario={entrata} vuotoDice="Vuoto. Posale del legno." />

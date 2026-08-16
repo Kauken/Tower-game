@@ -45,6 +45,7 @@ const VISTA_INIZIALE = {
   uscitaMacchina: '',
   avanzamentoMacchina: 0,
   accettaMacchina: '',
+  alimentataMacchina: false,
   generatoreScelto: false,
   nomeGeneratore: '',
   statoGeneratore: '',
@@ -312,6 +313,7 @@ export default function CampoDiGioco() {
           uscita={vista.uscitaMacchina}
           avanzamento={vista.avanzamentoMacchina}
           accetta={vista.accettaMacchina}
+          alimentata={vista.alimentataMacchina}
           inventarioOperaio={vista.inventario}
           onDeposita={deposita}
           onPreleva={preleva}
