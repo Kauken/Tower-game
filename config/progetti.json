@@ -119,6 +119,24 @@
           "albero"
         ]
       }
+    },
+    {
+      "id": "generatore",
+      "nome": "Generatore",
+      "descrizione": "Un fuoco solo per tutte le macchine che copre: smetti di riempirle una per una.",
+      "colore": "#c9a172",
+      "richiede": "ascia_boscaiolo",
+      "sblocca": "generatore",
+      "costruzione": "generatore"
+    },
+    {
+      "id": "pali",
+      "nome": "Pali della corrente",
+      "descrizione": "La corrente arriva anche laggiu'. Si agganciano da soli: nessun filo da tirare.",
+      "colore": "#f0c95c",
+      "richiede": "generatore",
+      "sblocca": "pali",
+      "costruzione": "palo"
     }
   ],
   "_nota_richiede": "'richiede' nomina un altro progetto, e vuol dire FABBRICATO, non comprato. Un progetto senza 'richiede' e' aperto dall'inizio."

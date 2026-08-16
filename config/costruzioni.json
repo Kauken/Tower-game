@@ -89,11 +89,68 @@
       "colore_lama": "#d8dde6",
       "colore_fiamma": "#e8873a",
       "raggio": 0.44
+    },
+    {
+      "id": "generatore",
+      "nome": "Generatore",
+      "descrizione": "Brucia legno e da' corrente a tutto quello che sta nel suo raggio. Le macchine coperte smettono di bruciare il loro: il combustibile lo metti in un posto solo.",
+      "tipo": "generatore",
+      "richiede_progetto": "generatore",
+      "costo": [
+        {
+          "materiale": "telaio",
+          "quantita": 2
+        },
+        {
+          "materiale": "lingotto_rame",
+          "quantita": 3
+        },
+        {
+          "materiale": "pietra",
+          "quantita": 10
+        }
+      ],
+      "slot": 4,
+      "combustibile": "legno",
+      "raggio_corrente": 4,
+      "_nota_consumo": "Quanti millisecondi di lavoro di UNA macchina si pagano con un pezzo di combustibile. La segheria da sola brucia 1 legno ogni 4 lavorazioni da 3000 ms, cioe' un pezzo ogni 12000 ms: con 16000 il generatore rende un terzo di piu'. Il guadagno vero pero' non e' questo, e' che riempi un posto solo invece di ogni macchina.",
+      "ms_per_combustibile": 16000,
+      "_nota_avviso": "Quanto lavoro gli resta quando comincia ad avvisare. Deve fermarsi DOPO un avviso ignorato, mai di sorpresa: fermarsi di sorpresa e' la cosa che fa smettere di giocare.",
+      "avviso_ms": 40000,
+      "colore": "#5d5346",
+      "colore_bordo": "#c9a172",
+      "colore_pieno": "#e0b878",
+      "colore_lama": "#c8b48a",
+      "colore_fiamma": "#e8873a",
+      "raggio": 0.5
+    },
+    {
+      "id": "palo",
+      "nome": "Palo della corrente",
+      "descrizione": "Allunga la copertura. Si aggancia da solo a un generatore o a un palo gia' acceso: non si tira nessun filo.",
+      "tipo": "palo",
+      "richiede_progetto": "pali",
+      "costo": [
+        {
+          "materiale": "tavola",
+          "quantita": 3
+        },
+        {
+          "materiale": "lingotto_rame",
+          "quantita": 1
+        }
+      ],
+      "raggio_corrente": 3,
+      "colore": "#8a6f4a",
+      "colore_bordo": "#f0c95c",
+      "colore_pieno": "#e0b878",
+      "raggio": 0.3
     }
   ],
   "_nota_prima_cassa": "La cassa del casotto c'e' gia' all'avvio e non si paga: senza, il primo bracciante non saprebbe dove scaricare e sembrerebbe rotto.",
   "slot_casotto": 18,
   "_nota_slot": "Una cassa e' un inventario a slot, esattamente come quello dell'operaio: ogni slot tiene una pila di un materiale. Cosi' 'quanto ci sta dentro' vuol dire la stessa cosa ovunque, e spostare roba e' sempre lo stesso gesto.",
   "_nota_macchine": "Una MACCHINA e' una costruzione con 'tipo': 'macchina'. Ha due cassetti - entrata e uscita - e lavora da sola finche' ha materiale, combustibile e posto dove mettere quello che produce. Il combustibile si prende dal cassetto d'ENTRATA: sulla prima macchina del gioco uno scomparto separato vorrebbe dire due viaggi di carico invece di uno, e su un telefono e' troppo. Cosi' il legno e' materiale E combustibile, ed e' vero da subito che il legno che bruci non diventa tavole.",
+  "_nota_corrente": "Un GENERATORE ha 'tipo': 'generatore'. Brucia combustibile e alimenta tutto quello che sta nel suo raggio_corrente; i PALI ('tipo': 'palo') allungano la copertura e si agganciano DA SOLI per vicinanza - non si traccia nessun filo, perche' su un telefono tirare fili col dito sarebbe un supplizio. Tre vincoli che non sono preferenze: (1) un generatore a secco ferma solo quello che copre lui, mai tutta l'isola; (2) avvisa PRIMA di fermarsi; (3) rimetti il combustibile e riparte da solo. E una macchina coperta che resta senza corrente torna a bruciare il suo: la mancanza di corrente costa produzione, mai lavoro perso.",
   "_nota_banchi": "Un BANCO e' dove si fabbrica. All'inizio ce n'e' uno dentro il casotto, perche' la prima volta non puo' fallire - ma non deve restare l'unico posto: un banco vicino al bosco ti risparmia tutta la strada, esattamente come una cassa vicina. E' il motivo per cui vale la pena costruirne altri. Le ricette possono chiedere un banco PRECISO con 'dove': e' cosi' che un banco nuovo sblocca lavorazioni nuove."
 }

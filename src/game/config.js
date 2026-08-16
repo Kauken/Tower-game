@@ -239,6 +239,68 @@ for (let i = 0; i < elencoCostruzioni.length; i++) {
   }
 }
 
+// I CONTROLLI SULLA CORRENTE.
+//
+// Un generatore scritto male e' peggio di una macchina scritta male: non fa
+// niente **e** ti fa credere che le macchine che copre siano a posto. E un
+// generatore che rende meno del fuoco che sostituisce e' arredamento — si
+// costruirebbe una cosa che peggiora la fabbrica, senza capire perche'.
+const generatori = elencoCostruzioni.filter((c) => c.tipo === 'generatore')
+const pali = elencoCostruzioni.filter((c) => c.tipo === 'palo')
+
+for (let i = 0; i < generatori.length; i++) {
+  const g = generatori[i]
+  if (!elencoMateriali.some((m) => m.id === g.combustibile)) {
+    throw new Error(
+      `Il generatore "${g.id}" brucia "${g.combustibile}", che non e un materiale dell'isola`
+    )
+  }
+  if (!(g.raggio_corrente > 0)) {
+    throw new Error(
+      `Il generatore "${g.id}" ha raggio_corrente ${g.raggio_corrente}: non coprirebbe niente`
+    )
+  }
+  if (!(g.ms_per_combustibile > 0)) {
+    throw new Error(
+      `Il generatore "${g.id}" non dice quanto lavoro paga un pezzo di combustibile (ms_per_combustibile)`
+    )
+  }
+  if (!(g.avviso_ms > 0)) {
+    throw new Error(
+      `Il generatore "${g.id}" non ha avviso_ms: si fermerebbe di sorpresa, ed e' la cosa che fa smettere di giocare`
+    )
+  }
+  // **Il controllo che conta.** Se un pezzo di combustibile nel generatore
+  // valesse meno di quanto vale nella fiamma della macchina, attaccarsi alla
+  // corrente sarebbe un peggioramento pagato con tre lingotti.
+  for (let m = 0; m < elencoCostruzioni.length; m++) {
+    const macchina = elencoCostruzioni[m]
+    if (macchina.tipo !== 'macchina' || macchina.combustibile !== g.combustibile) {
+      continue
+    }
+    const daSola = elencoRicette.find((r) => r.id === macchina.ricetta).tempo_ms * macchina.brucia_ogni
+    if (g.ms_per_combustibile < daSola) {
+      throw new Error(
+        `Il generatore "${g.id}" paga ${g.ms_per_combustibile} ms di lavoro con un pezzo di ${g.combustibile}, ` +
+          `ma la "${macchina.id}" da sola ne paga ${daSola}: attaccarla alla corrente la farebbe consumare di piu'.`
+      )
+    }
+  }
+}
+
+for (let i = 0; i < pali.length; i++) {
+  if (!(pali[i].raggio_corrente > 0)) {
+    throw new Error(
+      `Il palo "${pali[i].id}" ha raggio_corrente ${pali[i].raggio_corrente}: non allungherebbe niente`
+    )
+  }
+}
+if (pali.length > 0 && generatori.length === 0) {
+  throw new Error(
+    'Ci sono dei pali in costruzioni.json ma nessun generatore: un palo da solo non porta nessuna corrente'
+  )
+}
+
 // Una ricetta si fa in un posto solo: o dentro una macchina, o a un banco.
 // Dichiarare tutti e due vorrebbe dire che la segheria non serve a niente,
 // perche' quello che fa lei si potrebbe fare a mano.

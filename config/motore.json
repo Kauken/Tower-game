@@ -221,6 +221,55 @@
       },
       "_nota_dimensioni": "Alzati dopo averli guardati su uno schermo da telefono: alla prima prova la lama e il pallino erano leggibili solo da vicino, e 'si deve vedere lavorare' vuol dire da lontano, senza zoomare."
     },
+    "corrente": {
+      "_nota": "La corrente si vede come una MACCHIA TONDA sul terreno, mai come un reticolo di tessere: le tessere non si devono vedere, e un'area quadrata le disegnerebbe. La macchia sta molto bassa mentre giochi e si accende quando hai qualcosa in mano - e' li' che la domanda diventa 'ci arrivo fin laggiu'?'.",
+      "copertura": {
+        "colore": "#f0c95c",
+        "opacita": 0.07,
+        "opacita_in_mano": 0.16,
+        "colore_bordo": "#f0c95c",
+        "opacita_bordo": 0.22,
+        "spessore_bordo": 2
+      },
+      "generatore": {
+        "_nota_stati": "Verde = sta dando corrente. Giallo = in riserva, e sta ancora lavorando: e' l'avviso che deve arrivare PRIMA. Arancio = a secco.",
+        "colore_alimenta": "#7fc45a",
+        "colore_riserva": "#d9a441",
+        "colore_secco": "#e0662f",
+        "volano_raggio": 0.42,
+        "volano_x": 0.22,
+        "volano_y": -0.08,
+        "_nota_giri": "Giri al secondo del volano. Piu' lento della lama della segheria: un volano pesante non sfarfalla.",
+        "giri_al_secondo": 0.7,
+        "fiamma_raggio": 0.13,
+        "fiamma_x": -0.26,
+        "fiamma_y": 0.16,
+        "segnale_raggio": 0.16,
+        "segnale_x": 0.34,
+        "segnale_y": -0.4,
+        "_nota_lampeggio": "Quante volte al secondo lampeggia il pallino quando e' in riserva. Un pallino fermo si confonde con gli altri stati; uno che lampeggia si vede con la coda dell'occhio.",
+        "lampeggi_al_secondo": 1.6,
+        "barra": {
+          "altezza": 0.12,
+          "margine": 0.1,
+          "colore_fondo": "#00000077"
+        }
+      },
+      "palo": {
+        "colore_acceso": "#f0c95c",
+        "colore_spento": "#6d7565",
+        "scintilla_raggio": 0.14,
+        "scintilla_y": -0.46
+      },
+      "spina": {
+        "_nota": "Il segno su una macchina attaccata alla rete: non brucia piu' il suo legno. Sta dall'altra parte rispetto al pallino di stato, cosi' i due non si confondono.",
+        "raggio": 0.15,
+        "x": -0.34,
+        "y": -0.4,
+        "colore": "#f0c95c",
+        "colore_bordo": "#0b0f0b"
+      }
+    },
     "contorno": {
       "_nota": "Il contorno scuro che stacca una cosa dal terreno. Lo SPESSORE e' in pixel di SCHERMO, non in tessere: se si rimpicciolisse con la sagoma, da lontano - cioe' quando serve di piu' - non esisterebbe. Misurato prima: 0,6 punti da lontano.",
       "spessore": 2,
