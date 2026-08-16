@@ -17,12 +17,16 @@ import { colonne, filari, indiceDi, sopra } from './mondo.js'
 export function creaCasse() {
   const elenco = []
 
-  function aggiungi(tx, ty, slot, eIlCasotto) {
+  function aggiungi(tx, ty, slot, eIlCasotto, fa) {
     const cassa = {
       tx,
       ty,
       slot,
       eIlCasotto: !!eIlCasotto,
+      // **Cosa sa fare, oltre a contenere roba.** Il casotto ha un banco
+      // dentro; un banco piazzato sull'isola e' un banco e basta. Una cassa
+      // normale non fa niente, e va benissimo cosi'.
+      fa: eIlCasotto ? 'banco' : fa || '',
       inventario: creaInventario(slot, slot)
     }
     elenco.push(cassa)
@@ -97,6 +101,7 @@ export function creaCasse() {
       ty: cassa.ty,
       slot: cassa.slot,
       casotto: cassa.eIlCasotto,
+      fa: cassa.fa,
       dentro: cassa.inventario.perSalvare()
     }))
   }
@@ -112,10 +117,11 @@ export function creaCasse() {
       if (!voce || !(voce.slot > 0)) {
         continue
       }
-      const cassa = aggiungi(voce.tx, voce.ty, voce.slot, voce.casotto)
+      const cassa = aggiungi(voce.tx, voce.ty, voce.slot, voce.casotto, voce.fa)
       cassa.inventario.daSalvato(voce.dentro)
     }
-    // senza il casotto non ci sarebbe piu' nessun posto dove vendere
+    // senza il casotto non ci sarebbe piu' nessun banco, e il gioco si
+    // fermerebbe alla prima ricetta
     if (!elenco.some((cassa) => cassa.eIlCasotto)) {
       reimposta()
     }

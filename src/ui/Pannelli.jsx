@@ -278,6 +278,7 @@ export function PannelloCassa({
   inventarioOperaio,
   pieno,
   eIlCasotto,
+  eBanco,
   progetti,
   ricette,
   onDeposita,
@@ -294,26 +295,32 @@ export function PannelloCassa({
   // una scheda chiusa e' una cosa che non esiste
   const qualcosaDaFare = elencoRicette.some((r) => ricette && ricette[r.id] === 'si')
   const qualcosaDaFareLi = progetti.some((t) => t.stato === 'libero')
-  const mostra = eIlCasotto ? scheda : 'cassa'
+  const conSchede = eIlCasotto || eBanco
+  const mostra = conSchede ? scheda : 'cassa'
 
   return (
     <Foglio
-      titolo={eIlCasotto ? 'Casotto' : 'Cassa'}
+      titolo={eIlCasotto ? 'Casotto' : eBanco ? 'Banco da lavoro' : 'Cassa'}
       sottotitolo={
         eIlCasotto
-          ? 'Occupate ' + pieno + '. Qui c\u2019e\u0300 il banco da lavoro e la bacheca.'
-          : 'Occupate ' + pieno
+          ? 'Occupate ' + pieno + '. Qui c\u2019\u00e8 il banco da lavoro e la bacheca.'
+          : eBanco
+            ? 'Occupate ' + pieno + '. Si fabbrica qui, senza tornare al casotto.'
+            : 'Occupate ' + pieno
       }
     >
-      {eIlCasotto ? (
+      {conSchede ? (
         <Schede
           quale={scheda}
           cambia={cambiaScheda}
           voci={[
             { id: 'cassa', nome: 'Cassa' },
             { id: 'banco', nome: 'Banco', pallino: qualcosaDaFare },
-            { id: 'progetti', nome: 'Progetti', pallino: qualcosaDaFareLi }
-          ]}
+          ].concat(
+            // la bacheca resta **solo al casotto**: e' il posto dove si guarda
+            // avanti, e averla in tasca dappertutto la svuoterebbe
+            eIlCasotto ? [{ id: 'progetti', nome: 'Progetti', pallino: qualcosaDaFareLi }] : []
+          )}
         />
       ) : null}
 
@@ -348,7 +355,7 @@ export function PannelloCassa({
         <Banco stati={ricette} onFabbrica={onFabbrica} />
       )}
 
-      {mostra !== 'progetti' ? null : (
+      {mostra !== 'progetti' || !eIlCasotto ? null : (
         <>
           <span
             style={{

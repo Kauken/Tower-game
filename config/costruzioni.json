@@ -18,6 +18,28 @@
       "raggio": 0.36
     },
     {
+      "id": "banco",
+      "nome": "Banco da lavoro",
+      "descrizione": "Si fabbrica qui invece che tornare al casotto. Mettine uno vicino al bosco e risparmi il viaggio.",
+      "tipo": "banco",
+      "fa": "banco",
+      "costo": [
+        {
+          "materiale": "legno",
+          "quantita": 6
+        },
+        {
+          "materiale": "pietra",
+          "quantita": 4
+        }
+      ],
+      "slot": 6,
+      "colore": "#7a5b33",
+      "colore_bordo": "#c9a172",
+      "colore_pieno": "#e0b878",
+      "raggio": 0.4
+    },
+    {
       "id": "segheria",
       "nome": "Segheria",
       "descrizione": "Sega i tronchi al posto tuo: un legno diventa tre tavole invece di due. Brucia legno per far girare la lama.",
@@ -49,5 +71,6 @@
   "_nota_prima_cassa": "La cassa del casotto c'e' gia' all'avvio e non si paga: senza, il primo bracciante non saprebbe dove scaricare e sembrerebbe rotto.",
   "slot_casotto": 18,
   "_nota_slot": "Una cassa e' un inventario a slot, esattamente come quello dell'operaio: ogni slot tiene una pila di un materiale. Cosi' 'quanto ci sta dentro' vuol dire la stessa cosa ovunque, e spostare roba e' sempre lo stesso gesto.",
-  "_nota_macchine": "Una MACCHINA e' una costruzione con 'tipo': 'macchina'. Ha due cassetti - entrata e uscita - e lavora da sola finche' ha materiale, combustibile e posto dove mettere quello che produce. Il combustibile si prende dal cassetto d'ENTRATA: sulla prima macchina del gioco uno scomparto separato vorrebbe dire due viaggi di carico invece di uno, e su un telefono e' troppo. Cosi' il legno e' materiale E combustibile, ed e' vero da subito che il legno che bruci non diventa tavole."
+  "_nota_macchine": "Una MACCHINA e' una costruzione con 'tipo': 'macchina'. Ha due cassetti - entrata e uscita - e lavora da sola finche' ha materiale, combustibile e posto dove mettere quello che produce. Il combustibile si prende dal cassetto d'ENTRATA: sulla prima macchina del gioco uno scomparto separato vorrebbe dire due viaggi di carico invece di uno, e su un telefono e' troppo. Cosi' il legno e' materiale E combustibile, ed e' vero da subito che il legno che bruci non diventa tavole.",
+  "_nota_banchi": "Un BANCO e' dove si fabbrica. All'inizio ce n'e' uno dentro il casotto, perche' la prima volta non puo' fallire - ma non deve restare l'unico posto: un banco vicino al bosco ti risparmia tutta la strada, esattamente come una cassa vicina. E' il motivo per cui vale la pena costruirne altri. Le ricette possono chiedere un banco PRECISO con 'dove': e' cosi' che un banco nuovo sblocca lavorazioni nuove."
 }

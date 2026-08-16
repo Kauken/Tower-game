@@ -36,7 +36,8 @@ import {
   simulazione,
   tessera,
   trovaCostruzione,
-  trovaProgetto
+  trovaProgetto,
+  trovaRicetta
 } from './config.js'
 import { disegnaIsola } from './disegno.js'
 import { adattaCanvas } from './schermo.js'
@@ -197,6 +198,7 @@ export function creaMotore(canvasGioco) {
     statoOperaio: '',
     // il casotto e' anche il mercato: e' li' che si vende e si studia
     cassaEIlCasotto: false,
+    cassaEBanco: false,
     // "id:libero|bloccato|fatto" per ogni progetto
     progetti: '',
     // "id:si|no" — se la ricetta e' aperta e se ha gli ingredienti addosso
@@ -372,7 +374,7 @@ export function creaMotore(canvasGioco) {
     if (dati.tipo === 'macchina') {
       macchine.aggiungi(tx, ty, dati.id)
     } else {
-      casse.aggiungi(tx, ty, dati.slot, false)
+      casse.aggiungi(tx, ty, dati.slot, false, dati.fa)
     }
     esito = ''
   }
@@ -477,8 +479,17 @@ export function creaMotore(canvasGioco) {
 
   // Fabbricare: l'ordine si da' dal casotto, e l'operaio ci va. Gli
   // ingredienti li deve avere **addosso**, come per costruire.
+  // **Si fabbrica a qualunque banco**, non solo dentro il casotto. Un banco
+  // vicino al bosco ti risparmia tutta la strada, ed e' il motivo per cui vale
+  // la pena costruirne altri: la stessa ragione per cui esiste una cassa
+  // vicina al lavoro.
   function fabbrica(idRicetta) {
-    if (!cassaScelta || !cassaScelta.eIlCasotto) {
+    if (!cassaScelta || cassaScelta.fa !== 'banco') {
+      return
+    }
+    const dati = trovaRicetta(idRicetta)
+    if (dati.dove && dati.dove !== cassaScelta.fa) {
+      esito = 'non si fa a questo banco'
       return
     }
     if (!progetti.ricettaAperta(idRicetta)) {
@@ -695,6 +706,7 @@ export function creaMotore(canvasGioco) {
     vetrina.contenutoCassa = cassaScelta ? scriviInventario(cassaScelta.inventario) : ''
     vetrina.pienoCassa = cassaScelta ? casse.pienaDel(cassaScelta) + ' caselle' : ''
     vetrina.cassaEIlCasotto = !!(cassaScelta && cassaScelta.eIlCasotto)
+    vetrina.cassaEBanco = !!(cassaScelta && cassaScelta.fa === 'banco')
 
     vetrina.macchinaScelta = !!macchinaScelta
     vetrina.nomeMacchina = macchinaScelta ? macchinaScelta.nome : ''
