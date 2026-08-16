@@ -3,6 +3,7 @@ import {
   elencoCostruzioni,
   elencoMateriali,
   elencoRicette,
+  grafica,
   interfaccia
 } from '../game/config.js'
 import Bottone from './Bottone.jsx'
@@ -575,6 +576,125 @@ export function PannelloMacchina({
           titolo="Prendi tutto"
           colore={stile.colore_azione}
           acceso={elencoMateriali.some((m) => (fuori[m.id] || 0) > 0)}
+          onTocco={() => onPreleva('')}
+        />
+      </div>
+      <Bottone titolo="Chiudi" colore={stile.colore_chiudi} acceso onTocco={onChiudi} />
+    </Foglio>
+  )
+}
+
+// Il pannello del generatore.
+//
+// **Non e' una cassa col legno dentro.** La prima riga dice se sta dando
+// corrente e a quante macchine; la seconda dice **quanto lavoro gli resta**,
+// non quanti pezzi ha. Pezzi e minuti non sono la stessa cosa, e il numero con
+// cui uno decide se fare un viaggio adesso e' il secondo.
+//
+// E ci va **solo il suo combustibile**: offrire di infilarci dei chiodi
+// sarebbe un bottone che promette una cosa che non succede.
+const COLORI = grafica.corrente.generatore
+
+const DICE_IL_GENERATORE = {
+  alimenta: { testo: 'Dà corrente', colore: COLORI.colore_alimenta },
+  riserva: { testo: 'In riserva: sta per finire', colore: COLORI.colore_riserva },
+  secco: { testo: 'A secco', colore: COLORI.colore_secco }
+}
+
+export function PannelloGeneratore({
+  nome,
+  stato,
+  dentro,
+  combustibile,
+  autonomia,
+  macchineAlimentate,
+  inventarioOperaio,
+  onDeposita,
+  onPreleva,
+  onChiudi
+}) {
+  const addosso = sommaCaselle(inventarioOperaio)
+  const serbatoio = sommaCaselle(dentro)
+  const dice = DICE_IL_GENERATORE[stato] || DICE_IL_GENERATORE.secco
+  const soloCombustibile = {}
+  if ((addosso[combustibile] || 0) > 0) {
+    soloCombustibile[combustibile] = addosso[combustibile]
+  }
+  const nomeCombustibile = (
+    elencoMateriali.find((m) => m.id === combustibile) || { nome: combustibile }
+  ).nome.toLowerCase()
+
+  return (
+    <Foglio
+      titolo={nome}
+      sottotitolo={
+        'Alimenta tutto quello che sta nel suo raggio. Le macchine coperte smettono di bruciare il loro ' +
+        nomeCombustibile +
+        ': lo bruci qui, in un posto solo.'
+      }
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '8px 10px',
+          borderRadius: interfaccia.raggio_angoli,
+          background: '#00000033'
+        }}
+      >
+        <span
+          style={{ width: 10, height: 10, borderRadius: 5, background: dice.colore, flex: '0 0 auto' }}
+        />
+        <span style={{ fontSize: interfaccia.testo_normale, color: dice.colore, fontWeight: 600 }}>
+          {dice.testo}
+        </span>
+        <span style={{ flex: 1 }} />
+        <span style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}>
+          {macchineAlimentate === 1 ? '1 macchina' : macchineAlimentate + ' macchine'}
+        </span>
+      </div>
+
+      {/* **Quanto lavoro gli resta.** E' il numero che dice se conviene fare
+          un viaggio adesso o se si può aspettare. */}
+      <span
+        style={{
+          fontSize: interfaccia.testo_piccolo,
+          color: stato === 'alimenta' ? interfaccia.colore_testo_debole : dice.colore,
+          marginBottom: interfaccia.spaziatura_stretta
+        }}
+      >
+        {stato === 'secco'
+          ? 'Senza ' +
+            nomeCombustibile +
+            ': le macchine che copriva sono tornate a bruciare il loro. Non si è fermato niente.'
+          : 'Gli resta ' + autonomia + '.'}
+      </span>
+
+      {macchineAlimentate === 0 && stato !== 'secco' ? (
+        <span
+          style={{ fontSize: interfaccia.testo_piccolo, color: interfaccia.colore_testo_debole }}
+        >
+          Non copre nessuna macchina: finché è così non consuma niente. Avvicinalo,
+          oppure allunga la copertura con un palo.
+        </span>
+      ) : null}
+
+      <Griglia inventario={dentro} vuotoDice={'Vuoto. Posagli del ' + nomeCombustibile + '.'} />
+      <Sposta conti={soloCombustibile} verso="Posa" onSposta={onDeposita} />
+      <Sposta conti={serbatoio} verso="Prendi" onSposta={onPreleva} />
+
+      <div style={{ display: 'flex', gap: interfaccia.spaziatura_stretta }}>
+        <Bottone
+          titolo="Posa tutto"
+          colore={stile.colore_azione}
+          acceso={(soloCombustibile[combustibile] || 0) > 0}
+          onTocco={() => onDeposita('')}
+        />
+        <Bottone
+          titolo="Prendi tutto"
+          colore={stile.colore_azione}
+          acceso={(serbatoio[combustibile] || 0) > 0}
           onTocco={() => onPreleva('')}
         />
       </div>

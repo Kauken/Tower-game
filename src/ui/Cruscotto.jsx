@@ -24,7 +24,8 @@ export default function Cruscotto({
   lavoriInAttesa,
   braccantiFermi,
   braccantiTotali,
-  esito
+  esito,
+  avvisoCorrente
 }) {
   const staLavorando = braccantiTotali - braccantiFermi > 0
   // Un operaio che si pianta deve dire perche'. "In arrivo" mentre e' fermo
@@ -76,6 +77,25 @@ export default function Cruscotto({
           >
             {dice}
           </span>
+          {/* **L'avviso della corrente arriva mentre il generatore lavora
+              ancora.** Fermarsi di sorpresa e' la cosa che fa smettere di
+              giocare; fermarsi dopo un avviso ignorato e' una decisione tua.
+              E non c'e' niente da riaccendere: si rimette il legno e riparte */}
+          {avvisoCorrente ? (
+            <>
+              <span style={{ flex: 1 }} />
+              <span
+                style={{
+                  fontSize: interfaccia.testo_piccolo,
+                  fontWeight: 700,
+                  color: interfaccia.colore_accento,
+                  textAlign: 'right'
+                }}
+              >
+                {avvisoCorrente}
+              </span>
+            </>
+          ) : null}
         </div>
       </div>
 

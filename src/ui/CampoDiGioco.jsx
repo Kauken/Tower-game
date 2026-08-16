@@ -8,6 +8,7 @@ import {
   PannelloBracciante,
   PannelloCassa,
   PannelloCostruisci,
+  PannelloGeneratore,
   PannelloMacchina
 } from './Pannelli.jsx'
 import { elencoProgetti } from '../game/config.js'
@@ -44,6 +45,14 @@ const VISTA_INIZIALE = {
   uscitaMacchina: '',
   avanzamentoMacchina: 0,
   accettaMacchina: '',
+  generatoreScelto: false,
+  nomeGeneratore: '',
+  statoGeneratore: '',
+  dentroGeneratore: '',
+  combustibileGeneratore: '',
+  autonomiaGeneratore: '',
+  macchineAlimentate: 0,
+  avvisoCorrente: '',
   costruzioniAperte: ''
 }
 
@@ -268,6 +277,7 @@ export default function CampoDiGioco() {
         inManoId={vista.inManoId}
         onPrendi={prendiMateriale}
         esito={vista.esito}
+        avvisoCorrente={vista.avvisoCorrente}
       />
 
       {/* i fogli e gli avvisi stanno sopra alla riga dei pulsanti, mai sotto:
@@ -302,6 +312,19 @@ export default function CampoDiGioco() {
           uscita={vista.uscitaMacchina}
           avanzamento={vista.avanzamentoMacchina}
           accetta={vista.accettaMacchina}
+          inventarioOperaio={vista.inventario}
+          onDeposita={deposita}
+          onPreleva={preleva}
+          onChiudi={annulla}
+        />
+      ) : vista.generatoreScelto ? (
+        <PannelloGeneratore
+          nome={vista.nomeGeneratore}
+          stato={vista.statoGeneratore}
+          dentro={vista.dentroGeneratore}
+          combustibile={vista.combustibileGeneratore}
+          autonomia={vista.autonomiaGeneratore}
+          macchineAlimentate={vista.macchineAlimentate}
           inventarioOperaio={vista.inventario}
           onDeposita={deposita}
           onPreleva={preleva}
