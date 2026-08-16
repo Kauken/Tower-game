@@ -636,9 +636,34 @@ function disegnaMacchine(ctx, camera, macchine, lato, scelta) {
     const m = macchine[i]
     camera.versoSchermo(m.tx * tessera + tessera / 2, m.ty * tessera + tessera / 2, punto)
     const raggio = stile.raggio * lato
-    const lavora = m.stato === 'lavora'
+    // **Attaccata alla corrente la fiamma si spegne**, e non e' un dettaglio:
+    // e' il modo in cui si vede, senza aprire niente, che quella macchina non
+    // sta piu' mangiando il tuo legno. Al suo posto compare la spina.
+    const lavora = m.stato === 'lavora' && !m.alimentata
 
     disegnaSagoma(ctx, m.id, 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento, grafica.contorno)
+
+    if (m.alimentata) {
+      const spina = grafica.corrente.spina
+      ctx.fillStyle = spina.colore
+      ctx.strokeStyle = spina.colore_bordo
+      ctx.lineWidth = 2
+      const sx = punto.x + spina.x * raggio
+      const sy = punto.y + spina.y * raggio
+      const r = spina.raggio * raggio
+      // un lampo, non un pallino: fra quattro pallini colorati uno in piu' non
+      // si distingue, una saetta si
+      ctx.beginPath()
+      ctx.moveTo(sx + r * 0.35, sy - r)
+      ctx.lineTo(sx - r * 0.55, sy + r * 0.12)
+      ctx.lineTo(sx + r * 0.02, sy + r * 0.12)
+      ctx.lineTo(sx - r * 0.35, sy + r)
+      ctx.lineTo(sx + r * 0.6, sy - r * 0.18)
+      ctx.lineTo(sx - r * 0.02, sy - r * 0.18)
+      ctx.closePath()
+      ctx.stroke()
+      ctx.fill()
+    }
 
     // la fiamma nella bocca del forno, solo mentre lavora: un fuoco acceso su
     // una macchina ferma sarebbe una bugia
@@ -705,6 +730,179 @@ function disegnaMacchine(ctx, camera, macchine, lato, scelta) {
   }
 }
 
+// --- la corrente ---
+//
+// **La copertura e' una macchia tonda sul terreno, mai un reticolo.** Le
+// tessere non si devono vedere, e un'area disegnata a quadrati le disegnerebbe
+// tutte insieme: sarebbe esattamente la scacchiera che l'autore ha rifiutato.
+//
+// I cerchi si mettono in **un tracciato solo** e si riempiono una volta: cosi'
+// dove due coperture si sovrappongono il colore non raddoppia, e la rete si
+// legge come una macchia unica invece che come tante bolle.
+//
+// Sta bassa mentre giochi e **si accende quando hai qualcosa in mano**, che e'
+// il momento in cui la domanda diventa *"ci arrivo, fin laggiu'?"*.
+function disegnaCopertura(ctx, camera, corrente, lato, conLaMano) {
+  const stile = grafica.corrente.copertura
+  let qualcosa = false
+
+  ctx.beginPath()
+  for (let i = 0; i < corrente.generatori.length; i++) {
+    const g = corrente.generatori[i]
+    if (!g.acceso) {
+      continue
+    }
+    camera.versoSchermo(g.tx * tessera + tessera / 2, g.ty * tessera + tessera / 2, punto)
+    ctx.moveTo(punto.x + g.raggio * lato, punto.y)
+    ctx.arc(punto.x, punto.y, g.raggio * lato, 0, Math.PI * 2)
+    qualcosa = true
+  }
+  for (let i = 0; i < corrente.pali.length; i++) {
+    const p = corrente.pali[i]
+    if (p.rete < 0) {
+      continue
+    }
+    camera.versoSchermo(p.tx * tessera + tessera / 2, p.ty * tessera + tessera / 2, punto)
+    ctx.moveTo(punto.x + p.raggio * lato, punto.y)
+    ctx.arc(punto.x, punto.y, p.raggio * lato, 0, Math.PI * 2)
+    qualcosa = true
+  }
+  if (!qualcosa) {
+    return
+  }
+
+  ctx.globalAlpha = conLaMano ? stile.opacita_in_mano : stile.opacita
+  ctx.fillStyle = stile.colore
+  ctx.fill()
+  ctx.globalAlpha = 1
+
+  // Il bordo **solo mentre stai piazzando**: li' i cerchi uno per uno servono a
+  // capire quanto arriva ogni palo. Mentre giochi sarebbero rumore.
+  if (conLaMano) {
+    ctx.globalAlpha = stile.opacita_bordo
+    ctx.strokeStyle = stile.colore_bordo
+    ctx.lineWidth = stile.spessore_bordo
+    ctx.stroke()
+    ctx.globalAlpha = 1
+  }
+}
+
+// I pali e i generatori. Un palo dice **da fuori** se la corrente ci arriva:
+// senza, un palo piazzato dieci centimetri troppo in la' e' identico a uno
+// attaccato, e la fabbrica ferma non si spiega.
+function disegnaCorrente(ctx, camera, corrente, lato, scelta) {
+  const stile = grafica.corrente
+
+  for (let i = 0; i < corrente.pali.length; i++) {
+    const p = corrente.pali[i]
+    camera.versoSchermo(p.tx * tessera + tessera / 2, p.ty * tessera + tessera / 2, punto)
+    const raggio = trovaCostruzione(p.id).raggio * lato
+
+    disegnaOmbra(ctx, punto.x, punto.y + raggio * 0.5, raggio * 0.6)
+    disegnaSagoma(ctx, p.id, 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento, grafica.contorno)
+
+    ctx.fillStyle = p.rete >= 0 ? stile.palo.colore_acceso : stile.palo.colore_spento
+    ctx.beginPath()
+    ctx.arc(
+      punto.x,
+      punto.y + stile.palo.scintilla_y * raggio,
+      stile.palo.scintilla_raggio * raggio,
+      0,
+      Math.PI * 2
+    )
+    ctx.fill()
+  }
+
+  for (let i = 0; i < corrente.generatori.length; i++) {
+    const g = corrente.generatori[i]
+    const dati = trovaCostruzione(g.id)
+    camera.versoSchermo(g.tx * tessera + tessera / 2, g.ty * tessera + tessera / 2, punto)
+    const raggio = dati.raggio * lato
+
+    disegnaSagoma(ctx, g.id, 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento, grafica.contorno)
+
+    // la fiamma nella bocca: accesa **solo mentre sta davvero bruciando per
+    // qualcuno**. Un fuoco acceso su una rete ferma sarebbe una bugia.
+    const brucia = g.stato !== 'secco' && g.quanteMacchine > 0
+    if (brucia) {
+      const guizzo = 0.75 + Math.sin(orologio * 9 + i) * 0.25
+      ctx.fillStyle = dati.colore_fiamma
+      ctx.beginPath()
+      ctx.arc(
+        punto.x + stile.generatore.fiamma_x * raggio,
+        punto.y + stile.generatore.fiamma_y * raggio,
+        stile.generatore.fiamma_raggio * raggio * guizzo,
+        0,
+        Math.PI * 2
+      )
+      ctx.fill()
+    }
+
+    // il volano: gira quando la rete lavora, e resta fermo dov'era quando si
+    // ferma. E' il modo piu' diretto di dire "adesso sta spingendo qualcosa".
+    ctx.save()
+    ctx.translate(
+      punto.x + stile.generatore.volano_x * raggio,
+      punto.y + stile.generatore.volano_y * raggio
+    )
+    ctx.rotate(g.giro * Math.PI * 2 * stile.generatore.giri_al_secondo)
+    disegnaSagoma(
+      ctx,
+      g.id + '_volano',
+      0,
+      0,
+      0,
+      raggio * stile.generatore.volano_raggio * 2 * grafica.sagome.ingrandimento
+    )
+    ctx.restore()
+
+    // Il pallino dello stato. In riserva **lampeggia**: e' l'avviso che deve
+    // arrivare prima che si fermi, e un pallino fermo in mezzo ad altri
+    // pallini fermi non lo vede nessuno.
+    let colore = stile.generatore.colore_alimenta
+    if (g.stato === 'secco') {
+      colore = stile.generatore.colore_secco
+    } else if (g.stato === 'riserva') {
+      colore = stile.generatore.colore_riserva
+    }
+    ctx.globalAlpha =
+      g.stato === 'riserva'
+        ? 0.45 + 0.55 * Math.abs(Math.sin(orologio * Math.PI * stile.generatore.lampeggi_al_secondo))
+        : 1
+    ctx.fillStyle = colore
+    ctx.beginPath()
+    ctx.arc(
+      punto.x + stile.generatore.segnale_x * raggio,
+      punto.y + stile.generatore.segnale_y * raggio,
+      stile.generatore.segnale_raggio * raggio,
+      0,
+      Math.PI * 2
+    )
+    ctx.fill()
+    ctx.globalAlpha = 1
+
+    // quanto combustibile gli resta, come il pieno di una cassa: si deve
+    // vedere da lontano, perche' e' il motivo per cui si fermera'
+    const barra = stile.generatore.barra
+    const quota = g.slot > 0 ? g.inventario.occupati() / g.slot : 0
+    if (quota > 0) {
+      const larghezza = raggio * 1.6
+      const altezza = barra.altezza * lato
+      const y = punto.y + raggio + barra.margine * lato
+      ctx.fillStyle = barra.colore_fondo
+      ctx.fillRect(punto.x - larghezza / 2, y, larghezza, altezza)
+      ctx.fillStyle = dati.colore_pieno
+      ctx.fillRect(punto.x - larghezza / 2, y, larghezza * Math.min(1, quota), altezza)
+    }
+
+    if (scelta === g) {
+      ctx.strokeStyle = stile.generatore.colore_alimenta
+      ctx.lineWidth = 2
+      ctx.strokeRect(punto.x - raggio, punto.y - raggio, raggio * 2, raggio * 2)
+    }
+  }
+}
+
 export function disegnaIsola(
   ctx,
   camera,
@@ -712,21 +910,34 @@ export function disegnaIsola(
   squadra,
   casse,
   macchine,
+  corrente,
   braccianteScelto,
   cassaScelta,
   macchinaScelta,
-  mira
+  mira,
+  conLaMano
 ) {
   orologio = performance.now() / 1000
-  preparaSagome(risorse, aspettoCassa, aspettoOperaio, elencoCostruzioni.filter((c) => c.tipo === 'macchina'))
+  preparaSagome(
+    risorse,
+    aspettoCassa,
+    aspettoOperaio,
+    elencoCostruzioni.filter((c) => c.tipo === 'macchina'),
+    elencoCostruzioni.filter((c) => c.tipo === 'generatore' || c.tipo === 'palo')
+  )
+  const lato = tessera * camera.stato.zoom
   camera.tessereVisibili(vista)
   disegnaFuori(ctx)
   disegnaTerreno(ctx, camera)
+  // la copertura e' un segno **sul terreno**, sotto a tutto il resto: e' una
+  // proprieta' del posto, non un'etichetta appiccicata sopra alle cose
+  disegnaCopertura(ctx, camera, corrente, lato, conLaMano)
   // la mira sta sotto alle cose: e' un segno sul terreno, non un'etichetta
   disegnaMira(ctx, camera, mira)
   disegnaRisorse(ctx, camera)
   disegnaCasse(ctx, camera, casse)
-  disegnaMacchine(ctx, camera, macchine, tessera * camera.stato.zoom, macchinaScelta)
+  disegnaCorrente(ctx, camera, corrente, lato, macchinaScelta)
+  disegnaMacchine(ctx, camera, macchine, lato, macchinaScelta)
   // gli anelli vanno SOPRA alle cose, e piu' larghi di loro: sotto finivano
   // coperti dalla chioma dell'albero e l'ordine sembrava non essere partito
   disegnaOrdini(ctx, camera, lavori)

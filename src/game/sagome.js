@@ -361,12 +361,137 @@ function lama(ctx, dati) {
   ctx.fill()
 }
 
+// --- il generatore ---
+//
+// Una caldaia tozza di pietra e metallo, con la bocca del fuoco davanti e il
+// camino dietro. **Il volano sta a parte**, come la lama della segheria: gira,
+// e una cosa che gira non si puo' cuocere una volta sola.
+//
+// Deve leggersi come **una cosa che spinge**, non come una cassa: e' il pezzo
+// da cui dipendono tutte le macchine intorno, e in mezzo a tre segherie deve
+// saltare all'occhio quale dei quattro aggeggi e' quello che tiene su gli
+// altri tre.
+function generatore(ctx, dati) {
+  const c = LATO / 2
+  const largo = LATO * 0.6
+  const alto = LATO * 0.46
+
+  // l'ombra che la stacca dal terreno
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'
+  ctx.beginPath()
+  ctx.ellipse(c, c + alto * 0.52, largo * 0.5, alto * 0.17, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // il basamento di pietra
+  ctx.fillStyle = tinta(dati.colore, -0.28)
+  ctx.fillRect(c - largo / 2, c + alto * 0.2, largo, alto * 0.32)
+
+  // il camino, dietro a sinistra
+  ctx.fillStyle = tinta(dati.colore, -0.16)
+  ctx.fillRect(c - largo * 0.42, c - alto * 0.86, largo * 0.16, alto * 0.6)
+  ctx.fillStyle = dati.colore_bordo
+  ctx.fillRect(c - largo * 0.46, c - alto * 0.9, largo * 0.24, alto * 0.1)
+
+  // il corpo della caldaia: un cilindro sdraiato, non un rettangolo
+  ctx.fillStyle = dati.colore
+  ctx.beginPath()
+  ctx.roundRect(c - largo / 2, c - alto * 0.34, largo, alto * 0.56, alto * 0.2)
+  ctx.fill()
+  // la luce sopra, che fa leggere il tondo
+  ctx.fillStyle = tinta(dati.colore, 0.12)
+  ctx.beginPath()
+  ctx.roundRect(c - largo * 0.44, c - alto * 0.3, largo * 0.88, alto * 0.16, alto * 0.08)
+  ctx.fill()
+
+  // le due fasce di rame: sono loro a dire "questa e' la cosa della corrente"
+  ctx.fillStyle = dati.colore_bordo
+  ctx.fillRect(c - largo * 0.3, c - alto * 0.34, largo * 0.07, alto * 0.56)
+  ctx.fillRect(c + largo * 0.06, c - alto * 0.34, largo * 0.07, alto * 0.56)
+
+  // la bocca del fuoco: qui si vede la fiamma quando sta dando corrente
+  ctx.fillStyle = tinta(dati.colore, -0.45)
+  ctx.beginPath()
+  ctx.arc(c - largo * 0.26, c + alto * 0.16, alto * 0.14, 0, Math.PI * 2)
+  ctx.fill()
+}
+
+// Il volano, da solo e centrato: si ruota quando si copia. I raggi sono quello
+// che fa leggere il movimento — un disco liscio che gira sembra fermo.
+function volano(ctx, dati) {
+  const c = LATO / 2
+  const r = LATO * 0.17
+  const metallo = dati.colore_lama || dati.colore_bordo
+
+  ctx.fillStyle = tinta(metallo, -0.4)
+  ctx.beginPath()
+  ctx.arc(c, c, r * 1.08, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.fillStyle = metallo
+  ctx.beginPath()
+  ctx.arc(c, c, r, 0, Math.PI * 2)
+  ctx.fill()
+
+  // il vuoto in mezzo, cosi' i raggi si vedono
+  ctx.fillStyle = tinta(metallo, -0.3)
+  ctx.beginPath()
+  ctx.arc(c, c, r * 0.78, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.strokeStyle = tinta(metallo, 0.16)
+  ctx.lineWidth = LATO * 0.02
+  ctx.beginPath()
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2
+    ctx.moveTo(c, c)
+    ctx.lineTo(c + Math.cos(a) * r * 0.82, c + Math.sin(a) * r * 0.82)
+  }
+  ctx.stroke()
+
+  ctx.fillStyle = tinta(metallo, 0.1)
+  ctx.beginPath()
+  ctx.arc(c, c, r * 0.22, 0, Math.PI * 2)
+  ctx.fill()
+}
+
+// --- il palo ---
+//
+// Un palo di legno con la traversa e due isolatori di rame. Alto e sottile:
+// fra macchine larghe e casse quadrate si riconosce dalla forma, prima ancora
+// che dal colore.
+function palo(ctx, dati) {
+  const c = LATO / 2
+  const alto = LATO * 0.52
+  const largo = LATO * 0.075
+
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'
+  ctx.beginPath()
+  ctx.ellipse(c, c + alto * 0.5, largo * 1.6, alto * 0.1, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // il palo
+  ctx.fillStyle = dati.colore
+  ctx.fillRect(c - largo / 2, c - alto * 0.5, largo, alto)
+  ctx.fillStyle = tinta(dati.colore, -0.14)
+  ctx.fillRect(c + largo * 0.1, c - alto * 0.5, largo * 0.4, alto)
+
+  // la traversa
+  const traversa = LATO * 0.3
+  ctx.fillStyle = tinta(dati.colore, 0.06)
+  ctx.fillRect(c - traversa / 2, c - alto * 0.42, traversa, largo * 0.7)
+
+  // gli isolatori di rame, alle due punte
+  ctx.fillStyle = dati.colore_bordo
+  cerchio(ctx, c - traversa / 2 + largo * 0.2, c - alto * 0.46, largo * 0.55)
+  cerchio(ctx, c + traversa / 2 - largo * 0.2, c - alto * 0.46, largo * 0.55)
+}
+
 // L'atlante: una tela nascosta con tutte le sagome in fila. Si costruisce una
 // volta sola, al primo disegno.
 let atlante = null
 const posti = {}
 
-function prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine) {
+function prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine, aspettiCorrente) {
   const voci = []
   for (const nome in elencoRisorse) {
     const dati = elencoRisorse[nome]
@@ -383,6 +508,15 @@ function prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine) {
   for (let i = 0; i < aspettiMacchine.length; i++) {
     voci.push([aspettiMacchine[i].id + ':0', aspettiMacchine[i], 0, segheria])
     voci.push([aspettiMacchine[i].id + '_lama:0', aspettiMacchine[i], 0, lama])
+  }
+  for (let i = 0; i < aspettiCorrente.length; i++) {
+    const voce = aspettiCorrente[i]
+    if (voce.tipo === 'palo') {
+      voci.push([voce.id + ':0', voce, 0, palo])
+      continue
+    }
+    voci.push([voce.id + ':0', voce, 0, generatore])
+    voci.push([voce.id + '_volano:0', voce, 0, volano])
   }
 
   const perRiga = Math.ceil(Math.sqrt(voci.length))
@@ -408,9 +542,21 @@ function prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine) {
   atlante = tela
 }
 
-export function preparaSagome(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine) {
+export function preparaSagome(
+  elencoRisorse,
+  aspettoCassa,
+  aspettoOperaio,
+  aspettiMacchine,
+  aspettiCorrente
+) {
   if (!atlante) {
-    prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine || [])
+    prepara(
+      elencoRisorse,
+      aspettoCassa,
+      aspettoOperaio,
+      aspettiMacchine || [],
+      aspettiCorrente || []
+    )
   }
 }
 
