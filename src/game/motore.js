@@ -46,6 +46,7 @@ import { creaCamera } from './camera.js'
 import { creaLavori } from './lavori.js'
 import { creaCasse } from './casse.js'
 import { creaMacchine } from './macchine.js'
+import { creaCorrente } from './corrente.js'
 import { creaBraccianti } from './braccianti.js'
 import { creaProgetti } from './progetti.js'
 import { creaGestoreEffetti } from './effetti.js'
@@ -66,6 +67,7 @@ export function creaMotore(canvasGioco) {
   const lavori = creaLavori()
   const casse = creaCasse()
   const macchine = creaMacchine()
+  const corrente = creaCorrente()
   const progetti = creaProgetti()
   const effetti = creaGestoreEffetti()
 
@@ -75,6 +77,7 @@ export function creaMotore(canvasGioco) {
     casse,
     progetti,
     macchine,
+    corrente,
     alloScarico: (cassa) => {
       centroTessera(cassa.tx, cassa.ty, centro)
       camera.versoSchermo(centro.x, centro.y, centro)
@@ -109,6 +112,7 @@ export function creaMotore(canvasGioco) {
   let braccianteScelto = -1
   let cassaScelta = null
   let macchinaScelta = null
+  let generatoreScelto = null
   let esito = ''
 
   // L'unico operaio. Sta in un elenco perche' un giorno potrebbero essere due,
@@ -179,7 +183,7 @@ export function creaMotore(canvasGioco) {
     if (!inMano) {
       return false
     }
-    return piantabile(tx, ty) && !casse.in(tx, ty) && !macchine.in(tx, ty)
+    return piantabile(tx, ty) && !casse.in(tx, ty) && !macchine.in(tx, ty) && !corrente.in(tx, ty)
   }
 
   function prendiInMano(tipo, id) {
@@ -191,6 +195,8 @@ export function creaMotore(canvasGioco) {
     inMano = { tipo, id }
     braccianteScelto = -1
     cassaScelta = null
+    macchinaScelta = null
+    generatoreScelto = null
     esito = ''
   }
 
@@ -241,6 +247,17 @@ export function creaMotore(canvasGioco) {
     uscitaMacchina: '',
     avanzamentoMacchina: 0,
     accettaMacchina: '',
+    // il generatore scelto
+    generatoreScelto: false,
+    nomeGeneratore: '',
+    statoGeneratore: '',
+    dentroGeneratore: '',
+    combustibileGeneratore: '',
+    autonomiaGeneratore: '',
+    macchineAlimentate: 0,
+    // **l'avviso che arriva prima che si fermi.** Vuoto quando non c'e' niente
+    // da dire: un avviso che c'e' sempre non e' un avviso
+    avvisoCorrente: '',
     // quali costruzioni sono sbloccate: "cassa,segheria"
     costruzioniAperte: ''
   }
@@ -268,6 +285,7 @@ export function creaMotore(canvasGioco) {
       mondo: mondoPerSalvare(),
       casse: casse.perSalvare(),
       macchine: macchine.perSalvare(),
+      corrente: corrente.perSalvare(),
       operai: squadra.perSalvare(),
       lavori: lavori.perSalvare()
     }
@@ -294,6 +312,10 @@ export function creaMotore(canvasGioco) {
     while (resta > 0) {
       const questo = Math.min(passo, resta)
       aggiornaMondo(questo)
+      // la corrente **prima** delle macchine: e' lei a dire quali sono
+      // alimentate, e una macchina che lo scopre un passo dopo brucerebbe un
+      // pezzo di legno che il generatore aveva gia' pagato
+      corrente.aggiorna(questo, macchine.elenco)
       // **Questa riga e' la promessa del §11d.** Senza, il commento qui sopra
       // sarebbe una bugia: riapriresti e troveresti la segheria ferma esattamente
       // dove l'avevi lasciata, e automatizzare non ti avrebbe comprato niente.
@@ -317,6 +339,9 @@ export function creaMotore(canvasGioco) {
     progetti.daSalvato(dati.progetti)
     casse.daSalvato(dati.casse)
     macchine.daSalvato(dati.macchine)
+    // un salvataggio di prima della corrente non ha questa voce: si riparte
+    // senza generatori, che e' esattamente com'era
+    corrente.daSalvato(dati.corrente)
     squadra.daSalvato(dati.operai)
     lavori.daSalvato(dati.lavori)
     recupera(tempoPassato(dati.salvatoIl))
@@ -356,6 +381,8 @@ export function creaMotore(canvasGioco) {
     riponi()
     braccianteScelto = -1
     cassaScelta = null
+    macchinaScelta = null
+    generatoreScelto = null
   }
 
   // Si costruisce con quello che l'operaio ha **addosso**, non con la somma di
@@ -383,6 +410,14 @@ export function creaMotore(canvasGioco) {
     }
     if (dati.tipo === 'macchina') {
       macchine.aggiungi(tx, ty, dati.id)
+      // una macchina nuova puo' nascere gia' dentro una copertura: la rete si
+      // deve riguardare, altrimenti resterebbe scollegata finche' non succede
+      // qualcos'altro
+      corrente.segnaCambiata()
+    } else if (dati.tipo === 'generatore') {
+      corrente.aggiungiGeneratore(tx, ty, dati.id)
+    } else if (dati.tipo === 'palo') {
+      corrente.aggiungiPalo(tx, ty, dati.id)
     } else {
       casse.aggiungi(tx, ty, dati.slot, false, dati.fa)
     }
@@ -451,14 +486,42 @@ export function creaMotore(canvasGioco) {
     if (macchina) {
       macchinaScelta = macchinaScelta === macchina ? null : macchina
       cassaScelta = null
+      generatoreScelto = null
       braccianteScelto = -1
       esito = ''
+      return
+    }
+
+    // **Il generatore si apre come una macchina**: dentro c'e' un cassetto, e
+    // riempirlo e' il lavoro. Stesso gesto per tutto quello che contiene roba.
+    const generatore = corrente.generatoreIn(tessereTocco.tx, tessereTocco.ty)
+    if (generatore) {
+      generatoreScelto = generatoreScelto === generatore ? null : generatore
+      macchinaScelta = null
+      cassaScelta = null
+      braccianteScelto = -1
+      esito = ''
+      return
+    }
+
+    // Un palo non ha niente dentro, ma **deve saper dire se la corrente ci
+    // arriva**: un palo piazzato troppo lontano e' identico a uno attaccato, e
+    // guardare una fabbrica ferma senza capire perche' e' il difetto peggiore
+    // di tutto questo sistema.
+    const palo = corrente.paloIn(tessereTocco.tx, tessereTocco.ty)
+    if (palo) {
+      braccianteScelto = -1
+      cassaScelta = null
+      macchinaScelta = null
+      generatoreScelto = null
+      esito = palo.rete >= 0 ? 'il palo porta corrente' : 'a questo palo la corrente non arriva'
       return
     }
 
     braccianteScelto = -1
     cassaScelta = null
     macchinaScelta = null
+    generatoreScelto = null
 
     const gia = lavori.trovaSuTessera(tessereTocco.tx, tessereTocco.ty)
     if (gia) {
@@ -539,6 +602,32 @@ export function creaMotore(canvasGioco) {
   // l'operaio ci va, e nel frattempo la roba resta dov'e'. Un materiale vuoto
   // vuol dire "tutto quello che ci sta".
   function scambia(azione, idMateriale) {
+    // Il generatore ha un cassetto solo, e ci va **solo il suo combustibile**:
+    // offrire di infilarci dei chiodi sarebbe un bottone che promette una cosa
+    // che non succede. Riprendersi il legno invece si puo': l'hai messo tu.
+    if (generatoreScelto) {
+      const b3 = operaio()
+      if (!b3) {
+        return
+      }
+      const materiale = idMateriale || generatoreScelto.combustibile
+      if (materiale !== generatoreScelto.combustibile) {
+        esito = 'il generatore brucia solo ' + generatoreScelto.combustibile
+        return
+      }
+      const da3 = azione === 'deposita' ? b3.inventario : generatoreScelto.inventario
+      if (da3.quanti(materiale) <= 0) {
+        esito =
+          azione === 'deposita'
+            ? 'non ha ' + materiale + ' addosso'
+            : 'il generatore è vuoto'
+        return
+      }
+      esito = lavori.ordinaScambio(azione, generatoreScelto.tx, generatoreScelto.ty, materiale)
+        ? ''
+        : 'troppi ordini in coda'
+      return
+    }
     // **La macchina ha un verso.** Si posa in entrata e si prende dall'uscita,
     // e non e' una scelta da fare ogni volta: nessuno vuole rimettere le
     // tavole dentro la segheria.
@@ -626,6 +715,7 @@ export function creaMotore(canvasGioco) {
       riponi()
     }
     aggiornaMondo(simulazione.passo_ms)
+    corrente.aggiorna(simulazione.passo_ms, macchine.elenco)
     macchine.aggiorna(simulazione.passo_ms)
     squadra.aggiorna(lavori, simulazione.passo_ms, simulazione.passo_ms / 1000)
     effetti.aggiorna(simulazione.passo_ms)
@@ -640,10 +730,12 @@ export function creaMotore(canvasGioco) {
       squadra.squadra,
       casse.elenco,
       macchine.elenco,
+      corrente,
       braccianteScelto,
       cassaScelta,
-      macchinaScelta,
-      mira
+      macchinaScelta || generatoreScelto,
+      mira,
+      !!inMano
     )
     effetti.disegna(ctxGioco)
   }
@@ -734,6 +826,21 @@ export function creaMotore(canvasGioco) {
     vetrina.uscitaMacchina = macchinaScelta ? scriviInventario(macchinaScelta.uscita) : ''
     vetrina.avanzamentoMacchina = macchinaScelta ? macchine.avanzamento(macchinaScelta) : 0
     vetrina.accettaMacchina = macchinaScelta ? macchine.accetta(macchinaScelta) : ''
+
+    vetrina.generatoreScelto = !!generatoreScelto
+    vetrina.nomeGeneratore = generatoreScelto ? generatoreScelto.nome : ''
+    vetrina.statoGeneratore = generatoreScelto ? generatoreScelto.stato : ''
+    vetrina.dentroGeneratore = generatoreScelto ? scriviInventario(generatoreScelto.inventario) : ''
+    vetrina.combustibileGeneratore = generatoreScelto ? generatoreScelto.combustibile : ''
+    // **Quanto lavoro gli resta**, non quanti pezzi ha: pezzi e minuti non
+    // sono la stessa cosa, e il numero che serve per decidere se fare un
+    // viaggio adesso e' il secondo.
+    vetrina.autonomiaGeneratore = generatoreScelto
+      ? Math.max(0, Math.round(corrente.autonomiaDi(generatoreScelto) / 1000)) + ' s di lavoro'
+      : ''
+    vetrina.macchineAlimentate = generatoreScelto ? generatoreScelto.quanteMacchine : 0
+    vetrina.avvisoCorrente = corrente.avviso(macchine.elenco)
+
     vetrina.costruzioniAperte = costruzioniAperte()
 
     const b = operaio()

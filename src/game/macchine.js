@@ -51,6 +51,14 @@ export function creaMacchine() {
       // quante lavorazioni dall'ultimo pezzo di combustibile bruciato
       dallUltimoFuoco: 0,
       stato: SENZA_MATERIALE,
+      // **Attaccata alla corrente?** Lo decide `corrente.js`, non lei. Una
+      // macchina alimentata non brucia piu' il suo combustibile: lo brucia il
+      // generatore, in un posto solo. E se la corrente manca **torna a bruciare
+      // il suo** invece di fermarsi: restare senza corrente costa produzione,
+      // mai lavoro perso.
+      alimentata: false,
+      // a quale generatore, -1 se a nessuno
+      rete: -1,
       // gira da 0 a 1 e ricomincia: serve solo al disegno della lama
       giro: 0
     }
@@ -74,6 +82,13 @@ export function creaMacchine() {
     return m.dallUltimoFuoco + 1 >= m.bruciaOgni
   }
 
+  // Se e' attaccata alla corrente il combustibile lo mette il generatore, e lei
+  // non ne chiede piu'. E' l'unica cosa che la corrente cambia dentro una
+  // macchina: tutto il resto — materiale, tempi, cassetti — resta identico.
+  function deveBruciare(m) {
+    return !m.alimentata && tocaBruciare(m)
+  }
+
   // **Si guarda tutto prima di toccare qualsiasi cosa.** L'ordine conta: se il
   // materiale manca lo stato e' quello, non "uscita piena", perche' il
   // giocatore deve sapere cosa portare.
@@ -85,7 +100,7 @@ export function creaMacchine() {
       let quanti = ing.quantita
       // il combustibile esce dallo stesso cassetto: se e' il giro in cui si
       // brucia, di quel materiale ne serve uno in piu'
-      if (tocaBruciare(m) && ing.materiale === m.combustibile) {
+      if (deveBruciare(m) && ing.materiale === m.combustibile) {
         quanti += 1
         servito++
       }
@@ -96,7 +111,7 @@ export function creaMacchine() {
       }
     }
     // il combustibile potrebbe non essere fra gli ingredienti
-    if (tocaBruciare(m) && servito === 0 && m.entrata.quanti(m.combustibile) < 1) {
+    if (deveBruciare(m) && servito === 0 && m.entrata.quanti(m.combustibile) < 1) {
       return SENZA_COMBUSTIBILE
     }
     if (m.uscita.spazioPer(ricetta.produce) < ricetta.quantita) {
@@ -110,11 +125,16 @@ export function creaMacchine() {
     for (let i = 0; i < ricetta.ingredienti.length; i++) {
       m.entrata.togli(ricetta.ingredienti[i].materiale, ricetta.ingredienti[i].quantita)
     }
-    if (tocaBruciare(m)) {
-      m.entrata.togli(m.combustibile, 1)
-      m.dallUltimoFuoco = 0
-    } else {
-      m.dallUltimoFuoco++
+    // Con la corrente il conto del fuoco **non avanza nemmeno**: il pezzo lo
+    // paga il generatore. Se domani stacchi la corrente, la macchina riparte
+    // da dove era rimasta invece di dover subito un pezzo.
+    if (!m.alimentata) {
+      if (tocaBruciare(m)) {
+        m.entrata.togli(m.combustibile, 1)
+        m.dallUltimoFuoco = 0
+      } else {
+        m.dallUltimoFuoco++
+      }
     }
     m.uscita.metti(ricetta.produce, ricetta.quantita)
   }

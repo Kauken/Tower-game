@@ -45,7 +45,7 @@ import {
 const puntoDiLavoro = { tx: 0, ty: 0 }
 const meta = { x: 0, y: 0 }
 
-export function creaBraccianti({ casse, macchine, progetti, alloScarico, alCambioDelMondo, alFabbricato, alGuadagno }) {
+export function creaBraccianti({ casse, macchine, corrente, progetti, alloScarico, alCambioDelMondo, alFabbricato, alGuadagno }) {
   const squadra = []
 
   // Quante tasche puo' arrivare ad avere: le caselle si creano tutte all'avvio
@@ -267,6 +267,20 @@ export function creaBraccianti({ casse, macchine, progetti, alloScarico, alCambi
     // nessuno vuole rimettere le tavole dentro la segheria.
     const macchina = macchine && macchine.in(lavoro.tx, lavoro.ty)
     if (!macchina) {
+      // **Il generatore si riempie con lo stesso viaggio di una cassa.** Ed e'
+      // il viaggio che tiene scarsa la risorsa scarsa: la corrente toglie
+      // tocchi al giocatore, non tempo all'operaio. Piu' fabbrica hai, piu'
+      // spesso lo mandi qui.
+      const generatore = corrente && corrente.generatoreIn(lavoro.tx, lavoro.ty)
+      if (!generatore) {
+        return
+      }
+      if (lavoro.azione === 'deposita') {
+        travasa(bracciante.inventario, generatore.inventario, generatore.combustibile)
+      } else {
+        travasa(generatore.inventario, bracciante.inventario, generatore.combustibile)
+      }
+      alCambioDelMondo()
       return
     }
     if (lavoro.azione === 'deposita') {
