@@ -330,7 +330,8 @@ function disegnaRisorse(ctx, camera) {
         macchia[indice] + (indice % grafica.sagome.varianti),
         punto.x,
         punto.y,
-        raggio * 2 * grafica.sagome.ingrandimento
+        raggio * 2 * grafica.sagome.ingrandimento,
+        grafica.contorno
       )
       ctx.globalAlpha = 1
     }
@@ -428,7 +429,7 @@ function disegnaCasse(ctx, camera, casse) {
     const raggio = stile.raggio * lato
 
     disegnaOmbra(ctx, punto.x, punto.y + raggio * 0.5, raggio)
-    disegnaSagoma(ctx, 'cassa', 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento)
+    disegnaSagoma(ctx, 'cassa', 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento, grafica.contorno)
 
     // la barra del pieno: una cassa piena e' il motivo per cui l'operaio si
     // ferma, e si deve vedere da lontano senza aprirla
@@ -509,7 +510,7 @@ function disegnaBraccianti(ctx, camera, squadra) {
     ctx.ellipse(punto.x, punto.y + raggio * 0.8, raggio, raggio * 0.4, 0, 0, Math.PI * 2)
     ctx.fill()
 
-    disegnaSagoma(ctx, 'operaio', 0, cx, cy, raggio * 2 * grafica.sagome.ingrandimento)
+    disegnaSagoma(ctx, 'operaio', 0, cx, cy, raggio * 2 * grafica.sagome.ingrandimento, grafica.contorno)
 
     // il pallino di chi porta qualcosa: si vede a colpo d'occhio chi sta
     // tornando carico invece di andare a lavorare
@@ -612,7 +613,7 @@ function disegnaMacchine(ctx, camera, macchine, lato, scelta) {
     const raggio = stile.raggio * lato
     const lavora = m.stato === 'lavora'
 
-    disegnaSagoma(ctx, m.id, 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento)
+    disegnaSagoma(ctx, m.id, 0, punto.x, punto.y, raggio * 2 * grafica.sagome.ingrandimento, grafica.contorno)
 
     // la fiamma nella bocca del forno, solo mentre lavora: un fuoco acceso su
     // una macchina ferma sarebbe una bugia

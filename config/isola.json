@@ -49,17 +49,17 @@
   "terreni": {
     "_nota": "I fondi. Colori piu' caldi e saturi della prima versione: e' un gioco cozy, non un gestionale militare. Il colore di base piu' una variazione tonda, cosi' il terreno non e' una tinta piatta e non si legge come una griglia.",
     "acqua": {
-      "colore": "#2b6b7d",
+      "colore": "#1c4652",
       "variazione": "#357f92",
       "calpestabile": false
     },
     "sabbia": {
-      "colore": "#d8c48a",
+      "colore": "#a39468",
       "variazione": "#dfcd96",
       "calpestabile": true
     },
     "erba": {
-      "colore": "#5b8a3c",
+      "colore": "#44682d",
       "variazione": "#63913f",
       "calpestabile": true
     }
@@ -69,8 +69,8 @@
     "albero": {
       "nome": "Albero",
       "tempo_lavoro_ms": 3200,
-      "colore": "#2f5a22",
-      "colore_chioma": "#5aa03c",
+      "colore": "#203d17",
+      "colore_chioma": "#549538",
       "colore_tronco": "#6b4a2a",
       "raggio": 0.4,
       "blocca": true,
@@ -90,8 +90,8 @@
     "masso": {
       "nome": "Masso",
       "tempo_lavoro_ms": 5200,
-      "colore": "#6a7078",
-      "colore_chioma": "#98a1aa",
+      "colore": "#8f97a2",
+      "colore_chioma": "#b3bdc8",
       "colore_tronco": "#4a5058",
       "raggio": 0.36,
       "blocca": true,
@@ -106,8 +106,8 @@
     "frana": {
       "nome": "Frana",
       "tempo_lavoro_ms": 8000,
-      "colore": "#7a6a52",
-      "colore_chioma": "#a08a68",
+      "colore": "#9c8869",
+      "colore_chioma": "#c4a980",
       "colore_tronco": "#584c3c",
       "raggio": 0.44,
       "blocca": true,
@@ -122,8 +122,8 @@
     "casotto": {
       "nome": "Casotto",
       "tempo_lavoro_ms": 0,
-      "colore": "#8a5a34",
-      "colore_chioma": "#c98a52",
+      "colore": "#714a2b",
+      "colore_chioma": "#d89458",
       "colore_tronco": "#5c3a1e",
       "raggio": 0.42,
       "blocca": true,
@@ -141,8 +141,8 @@
       "lavorabile": true,
       "blocca": true,
       "raggio": 0.44,
-      "colore": "#77808c",
-      "colore_chioma": "#c3ccd6",
+      "colore": "#9da9b9",
+      "colore_chioma": "#cad3de",
       "colore_tronco": "#5a636e"
     },
     "giacimento_rame": {
@@ -155,8 +155,8 @@
       "lavorabile": true,
       "blocca": true,
       "raggio": 0.44,
-      "colore": "#8a6448",
-      "colore_chioma": "#e08a4a",
+      "colore": "#9a6f50",
+      "colore_chioma": "#ffa35c",
       "colore_tronco": "#63452f"
     },
     "giacimento_rame_ricco": {
@@ -169,8 +169,8 @@
       "lavorabile": true,
       "blocca": true,
       "raggio": 0.44,
-      "colore": "#966b48",
-      "colore_chioma": "#ffab5e",
+      "colore": "#b48056",
+      "colore_chioma": "#ffc175",
       "colore_tronco": "#6b4a30"
     }
   },
@@ -255,5 +255,6 @@
   "_nota_ricrescita": "GLI ALBERI NON RICRESCONO DA SOLI. Tagliandone uno esce anche un alberello, e sei tu a ripiantarlo dove vuoi: il bosco e' una cosa che gestisci, non una che aspetti. tempo_crescita_ms e' quanto ci mette un alberello piantato a diventare un albero adulto.",
   "_nota_pile": "Le pile sono strette apposta. Con pile larghe l'operaio non si riempirebbe mai, il trasporto non si sentirebbe, e i nastri sarebbero un gadget invece che una liberazione. Numeri ragionati, NON misurati: vanno tarati col bilanciatore quando esistera' la simulazione headless (punto 7).",
   "_nota_vene": "Le vene sono fatte apposta IRREGOLARI: un rettangolo di tessere si legge come una scacchiera anche quando il disegno le fonde. E stanno a distanze diverse dal casotto: la pietra vicina, il rame un po' piu' in la', il rame ricco lontano in cima. E' quello che fa esistere la decisione 'una vena ricca lontana o due povere vicine?'.",
-  "_nota_forma": "La FORMA di un materiale non e' un abbellimento: e' l'unica cosa che lo distingue per chi non vede bene i colori, e un uomo su otto e' daltonico rosso-verde. La regola scritta e' WCAG 1.4.1 - il colore non puo' essere l'unico mezzo per dire una cosa. Chi aggiunge un materiale gli da' una forma, e se ne serve una nuova la aggiunge a src/ui/Icona.jsx."
+  "_nota_forma": "La FORMA di un materiale non e' un abbellimento: e' l'unica cosa che lo distingue per chi non vede bene i colori, e un uomo su otto e' daltonico rosso-verde. La regola scritta e' WCAG 1.4.1 - il colore non puo' essere l'unico mezzo per dire una cosa. Chi aggiunge un materiale gli da' una forma, e se ne serve una nuova la aggiunge a src/ui/Icona.jsx.",
+  "_nota_colori": "**LA SCALA DEL GRIGIO, e non e' un gusto.** Il 2026-08-16 una misura ha trovato che sette cose dell'isola stavano dentro venti livelli di grigio su 255 - erba 122, masso 111, frana 108, rame 106, rame ricco 114, pietra 127 - e in bianco e nero l'isola era una poltiglia. La prova del bianco e nero e' il controllo standard che si fa prima di parlare di colori. Adesso: il TERRENO sta in basso e sta zitto (erba 92), e tutto quello che ci sta sopra e' piu' chiaro di lui, ognuno in una fascia sua. Chi aggiunge una cosa nuova le da' una fascia libera e RIFA' la prova del grigio: due cose nella stessa fascia non si distinguono, per quanto diversi siano i loro colori."
 }

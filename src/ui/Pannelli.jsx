@@ -7,6 +7,7 @@ import {
 } from '../game/config.js'
 import Bottone from './Bottone.jsx'
 import { Casella, leggiCaselle, sommaCaselle } from './Zaino.jsx'
+import Icona from './Icona.jsx'
 
 const stile = interfaccia.pannello
 
@@ -71,15 +72,7 @@ function Sposta({ conti, verso, onSposta }) {
             touchAction: 'manipulation'
           }}
         >
-          <span
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 5,
-              background: materiale.colore,
-              flexShrink: 0
-            }}
-          />
+          <Icona materiale={materiale.id} lato={20} />
           <span style={{ fontWeight: stile.peso_titolo }}>{verso}</span>
           <span style={{ flex: 1, textAlign: 'right', color: interfaccia.colore_testo_debole }}>
             {materiale.nome} {conti[materiale.id]}
@@ -239,7 +232,7 @@ function Schede({ quale, cambia, voci }) {
             onPointerDown={() => cambia(voce.id)}
             style={{
               flex: 1,
-              minHeight: 42,
+              minHeight: interfaccia.altezza_minima_tocco,
               borderRadius: interfaccia.raggio_angoli,
               border:
                 stile.spessore_bordo +

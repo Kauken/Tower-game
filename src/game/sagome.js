@@ -416,10 +416,41 @@ export function preparaSagome(elencoRisorse, aspettoCassa, aspettoOperaio, aspet
 
 // Copia una sagoma. E' l'operazione piu' veloce che una tela sappia fare, e
 // dentro il ciclo di disegno non alloca niente.
-export function disegnaSagoma(ctx, chiave, variante, x, y, dimensione) {
+// **Il contorno si disegna qui, non dentro la sagoma.** Prima era cotto nel
+// disegno, e quindi rimpiccioliva insieme a lui: da lontano un contorno di
+// mezzo pixel non esiste, ed e' esattamente quando serve di piu'. Adesso e' una
+// copia in piu' della stessa sagoma, tutta scura, spostata di qualche pixel
+// **di schermo** — costa un `drawImage` per oggetto e non si assottiglia mai.
+function contorno(ctx, posto, x, y, dimensione, spessore, colore) {
+  ctx.save()
+  ctx.globalCompositeOperation = 'source-over'
+  ctx.filter = 'brightness(0)'
+  ctx.globalAlpha = colore
+  for (let a = 0; a < 4; a++) {
+    const dx = a === 0 ? -spessore : a === 1 ? spessore : 0
+    const dy = a === 2 ? -spessore : a === 3 ? spessore : 0
+    ctx.drawImage(
+      atlante,
+      posto.x,
+      posto.y,
+      LATO,
+      LATO,
+      x - dimensione / 2 + dx,
+      y - dimensione / 2 + dy,
+      dimensione,
+      dimensione
+    )
+  }
+  ctx.restore()
+}
+
+export function disegnaSagoma(ctx, chiave, variante, x, y, dimensione, bordo) {
   const posto = posti[chiave + ':' + (variante % VARIANTI)] || posti[chiave + ':0']
   if (!posto || !atlante) {
     return false
+  }
+  if (bordo && bordo.spessore > 0) {
+    contorno(ctx, posto, x, y, dimensione, bordo.spessore, bordo.forza)
   }
   ctx.drawImage(
     atlante,

@@ -1,5 +1,6 @@
 import React from 'react'
 import { elencoMateriali, interfaccia } from '../game/config.js'
+import Icona from './Icona.jsx'
 
 // Lo zaino dell'operaio, sempre sotto gli occhi. **Ed e' anche la mano:**
 // toccare una casella che contiene qualcosa di piazzabile te lo mette in mano,
@@ -86,14 +87,11 @@ export function Casella({ casella, inMano, onTocco }) {
     >
       {casella ? (
         <>
-          <span
-            style={{
-              width: 11,
-              height: 11,
-              borderRadius: 6,
-              background: colori[casella.materiale]
-            }}
-          />
+          {/* **Un'icona, non un pallino colorato.** Il pallino da 11 px era
+              l'unico punto in cui il colore portava l'informazione da solo, e
+              un uomo su otto non distingue il rosso dal verde — mentre tre
+              nostri materiali stanno tutti sul marrone-arancio. */}
+          <Icona materiale={casella.materiale} lato={interfaccia.icona_materiale} />
           <span
             style={{
               fontSize: interfaccia.testo_piccolo,
@@ -138,7 +136,7 @@ export default function Zaino({ inventario, pieno, inManoTipo, inManoId, onPrend
           const questaInMano =
             !!casella && inManoTipo === 'materiale' && inManoId === casella.materiale
           return (
-            <div key={indice} style={{ flex: 1, minWidth: 0, aspectRatio: '1 / 1', maxWidth: 40 }}>
+            <div key={indice} style={{ flex: 1, minWidth: 0, aspectRatio: '1 / 1', maxWidth: interfaccia.lato_casella }}>
               <Casella
                 casella={casella}
                 inMano={questaInMano}

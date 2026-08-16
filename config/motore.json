@@ -38,7 +38,10 @@
       "colore_testo_spento": "#6d7565"
     },
     "spazio_cruscotto": 74,
-    "colore_accento": "#f0c95c"
+    "colore_accento": "#f0c95c",
+    "_nota_tocco": "altezza_minima_tocco e' 64 e non e' un gusto: Apple dice 44 punti, Google 48, e su un gioco che si comanda col pollice mentre cammini conviene stare sopra a tutti e due. Il 2026-08-16 una misura ha trovato che le caselle dello zaino stavano a 40 e le schede a 42: sotto Apple, sotto Google, e sotto questo stesso numero che avevamo scritto noi.",
+    "lato_casella": 52,
+    "icona_materiale": 26
   },
   "grafica": {
     "colore_fuori_area": "#123642",
@@ -113,13 +116,13 @@
     },
     "bracciante": {
       "_nota": "Chi lavora. Un cerchio col colore del mestiere. La barra sopra la testa dice a che punto e' il lavoro: e' l'unico modo per capire che sta facendo qualcosa invece di essere impallato.",
-      "raggio": 13,
+      "raggio": 19,
       "spessore_bordo": 3,
       "ombra": "#00000045",
       "barra": {
-        "larghezza": 32,
+        "larghezza": 40,
         "altezza": 6,
-        "distanza_sopra": 12,
+        "distanza_sopra": 16,
         "colore_fondo": "#00000099",
         "colore_pieno": "#f0c95c",
         "colore_bordo": "#0b0f0b",
@@ -131,7 +134,8 @@
         "passo_velocita": 9,
         "colpo_ampiezza": 5,
         "colpo_velocita": 7
-      }
+      },
+      "_nota_raggio": "Alzato da 13 a 19 il 2026-08-16. Una misura ha trovato che l'operaio era la cosa PIU' PICCOLA dell'isola - 11 punti da vicino, 6 da lontano - mentre il GDD dice che guardarlo lavorare e' meta' del gioco. La cosa piu' importante dello schermo non puo' essere la piu' piccola."
     },
     "effetti": {
       "_nota": "Feedback visivi: anelli che si allargano e sfumano.",
@@ -216,6 +220,11 @@
         "colore_fondo": "#00000077"
       },
       "_nota_dimensioni": "Alzati dopo averli guardati su uno schermo da telefono: alla prima prova la lama e il pallino erano leggibili solo da vicino, e 'si deve vedere lavorare' vuol dire da lontano, senza zoomare."
+    },
+    "contorno": {
+      "_nota": "Il contorno scuro che stacca una cosa dal terreno. Lo SPESSORE e' in pixel di SCHERMO, non in tessere: se si rimpicciolisse con la sagoma, da lontano - cioe' quando serve di piu' - non esisterebbe. Misurato prima: 0,6 punti da lontano.",
+      "spessore": 2,
+      "forza": 0.5
     }
   },
   "area": {
