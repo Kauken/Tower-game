@@ -8,14 +8,32 @@
 
 ## 0. Le tre cose da sapere prima di toccare qualsiasi cosa
 
-### ⚠️ La copia di lavoro torna indietro da sola
-È successo **tredici volte** in una sessione. Il sintomo: `docs/PROGETTI.md` non esiste, oppure `docs/GDD.md` parla di torri e ondate. La cura:
+### ⚠️ La copia di lavoro torna indietro da sola — ma adesso si ripara da sola
+È successo **sedici volte**. Il sintomo: `docs/PROGETTI.md` non esiste, oppure `docs/GDD.md` parla di torri e ondate.
 
+**Il perché, indagato il 21 agosto e dimostrato.** Il computer su cui gira Claude è temporaneo: quando la sessione resta ferma viene spento, e al ritorno **la cartella del progetto viene ricostruita da una fotografia vecchia**. Le prove:
+
+- una volta è stato colto sul fatto con **`uptime: 0 minuti`** — macchina riavviata, disco tornato indietro nello stesso istante;
+- il diario locale di git **salta dal 6 agosto a oggi**: i commit in mezzo non sono scritti da nessuna parte su questo disco;
+- cade **sempre esattamente sullo stesso commit**, `33f084a` del 6 agosto. Un errore di git cadrebbe ogni volta altrove; una fotografia cade sempre nello stesso posto.
+
+**Cosa sopravvive e cosa no** (misurato):
+
+| | Sopravvive al riavvio |
+| --- | --- |
+| `/home/user/Tower-game` — il progetto | **no**, torna al 6 agosto |
+| `/root/.claude` — fuori dal progetto | **sì** |
+
+**La cura è automatica.** `.claude/hooks/session-start.sh` parte da solo a ogni avvio di sessione e riallinea il disco con GitHub. Si copia in `/root/.claude/hooks/` e si registra là fuori da solo — perché il primo tentativo, che stava solo dentro il progetto, **spariva insieme al lavoro che doveva proteggere**.
+
+Non cancella mai niente che non sia già su GitHub: se trova commit locali non spinti si ferma e avvisa, e le modifiche non salvate le mette da parte con `stash`. Provato su quattro casi: allineato, indietro, avanti, sporco.
+
+Se serve a mano:
 ```
-git fetch origin && git checkout -B claude/torre-guardia-scaffold-5fv3nl origin/claude/torre-guardia-scaffold-5fv3nl
+git fetch origin && git reset --hard origin/claude/torre-guardia-scaffold-5fv3nl
 ```
 
-**Da qui discende la regola più importante del progetto:** ogni `git commit` è seguito **subito** da `git push`, nello stesso comando. Un commit locale non esiste — una volta se n'è portato via un lavoro intero.
+**La regola più importante del progetto resta valida lo stesso:** ogni `git commit` è seguito **subito** da `git push`. Il guardrail protegge quello che è su GitHub — quello che non ci è mai arrivato non lo può salvare nessuno.
 
 ### ⚠️ Vale anche per gli agenti
 Un agente di ricerca deve **scrivere il suo file dopo le prime 4-5 ricerche** e riscriverlo strada facendo. Tre agenti sono morti sul limite di sessione: quelli che avevano già scritto hanno salvato tutto, gli altri hanno perso venti ricerche.
