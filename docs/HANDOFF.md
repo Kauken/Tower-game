@@ -17,23 +17,25 @@
 - il diario locale di git **salta dal 6 agosto a oggi**: i commit in mezzo non sono scritti da nessuna parte su questo disco;
 - cade **sempre esattamente sullo stesso commit**, `33f084a` del 6 agosto. Un errore di git cadrebbe ogni volta altrove; una fotografia cade sempre nello stesso posto.
 
-**Cosa sopravvive e cosa no** (misurato):
+**Cosa sopravvive e cosa no** (verificato, e la prima risposta era sbagliata):
 
 | | Sopravvive al riavvio |
 | --- | --- |
 | `/home/user/Tower-game` — il progetto | **no**, torna al 6 agosto |
-| `/root/.claude` — fuori dal progetto | **sì** |
+| `/root/.claude` — fuori dal progetto | **no**: quello che ci scrivi tu sparisce. Restano solo i file che il sistema riscrive da sé |
 
-**La cura è automatica.** `.claude/hooks/session-start.sh` parte da solo a ogni avvio di sessione e riallinea il disco con GitHub. Si copia in `/root/.claude/hooks/` e si registra là fuori da solo — perché il primo tentativo, che stava solo dentro il progetto, **spariva insieme al lavoro che doveva proteggere**.
+**Su questa macchina non esiste nessun posto che sopravviva**, quindi *nessun* guardrail interno può ripararsi da solo: quando il ritorno indietro avviene, si è portato via anche il guardrail. Il primo tentativo si basava proprio su quella deduzione sbagliata (il diario della sessione sembrava conservato — in realtà è **ripristinato** dal sistema).
 
-Non cancella mai niente che non sia già su GitHub: se trova commit locali non spinti si ferma e avvisa, e le modifiche non salvate le mette da parte con `stash`. Provato su quattro casi: allineato, indietro, avanti, sporco.
+**Quello che c'è comunque**, e serve: `.claude/hooks/session-start.sh` parte a ogni avvio e riallinea il disco con GitHub **quando il disco è ancora buono ma GitHub è andato avanti** — il caso di una sessione ripresa. Non cancella mai niente che non sia già su GitHub: se trova commit locali non spinti si ferma e avvisa, e le modifiche non salvate le mette da parte con `stash`. Provato su quattro casi: allineato, indietro, avanti, sporco.
+
+**La cura vera è fuori da qui**, nelle impostazioni dell'ambiente su claude.ai/code: l'ambiente riparte sempre dalla stessa immagine del 6 agosto. Rifarlo da capo lo riporta all'oggi.
 
 Se serve a mano:
 ```
 git fetch origin && git reset --hard origin/claude/torre-guardia-scaffold-5fv3nl
 ```
 
-**La regola più importante del progetto resta valida lo stesso:** ogni `git commit` è seguito **subito** da `git push`. Il guardrail protegge quello che è su GitHub — quello che non ci è mai arrivato non lo può salvare nessuno.
+**Da qui discende la regola più importante del progetto:** ogni `git commit` è seguito **subito** da `git push`. GitHub è l'unica memoria vera — quello che non ci arriva non lo salva nessuno.
 
 ### ⚠️ Vale anche per gli agenti
 Un agente di ricerca deve **scrivere il suo file dopo le prime 4-5 ricerche** e riscriverlo strada facendo. Tre agenti sono morti sul limite di sessione: quelli che avevano già scritto hanno salvato tutto, gli altri hanno perso venti ricerche.

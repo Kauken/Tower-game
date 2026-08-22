@@ -9,13 +9,14 @@
 # "uptime: 0 minuti": macchina riavviata, disco tornato indietro.
 # La memoria vera del progetto e' GitHub. Questo disco e' un foglio di brutta.
 #
-# DOVE VIVE, E PERCHE' IN DUE POSTI
-#   1. nel progetto, .claude/hooks/     -> la copia buona, versionata su GitHub
-#   2. in /root/.claude/hooks/          -> la copia che SOPRAVVIVE al riavvio
-# La fotografia vecchia si porta via anche questo file: se il guardrail stesse
-# solo dentro il progetto, sparirebbe insieme al lavoro che deve proteggere.
-# La copia 2 e' fuori dal disco che torna indietro, quindi c'e' sempre. Ripara
-# il progetto, e poi si riaggiorna da sola dalla copia 1 appena ripristinata.
+# QUELLO CHE QUESTO SCRIPT NON PUO' FARE — leggilo prima di fidarti
+# Se il ritorno indietro e' gia' avvenuto, questo file non esiste piu': la
+# fotografia vecchia si porta via anche il guardrail. Provato: una copia messa
+# in /root/.claude/ NON sopravvive al riavvio (verificato il 21-08-2026, sparita
+# insieme al resto). Su questa macchina non c'e' NESSUN posto che sopravviva.
+# Quindi questo script serve solo quando il disco e' gia' buono: riallinea se
+# GitHub e' andato avanti, e tiene a posto le dipendenze. La vera cura sta nelle
+# impostazioni dell'ambiente su claude.ai, fuori da qui.
 #
 # LA REGOLA DI SICUREZZA
 # Non cancella mai niente che non sia gia' su GitHub. Se trova lavoro locale che
@@ -89,34 +90,6 @@ if [ ! -d node_modules ] || [ package-lock.json -nt node_modules ]; then
   npm install --silent >/dev/null 2>&1 \
     && echo "Dipendenze a posto." \
     || echo "ATTENZIONE: npm install non e' riuscito, 'npm run build' potrebbe fallire."
-fi
-
-# --------------------------------------------- 3. il guardrail si reinstalla
-
-# Adesso che il progetto e' ripristinato, la copia fuori si riallinea a quella
-# versionata. Cosi' una correzione fatta qui arriva anche alla copia salva-vita.
-sorgente="$progetto/.claude/hooks/session-start.sh"
-copia="$fuori/hooks/session-start.sh"
-if [ -f "$sorgente" ] && ! cmp -s "$sorgente" "$copia"; then
-  mkdir -p "$fuori/hooks" && cp "$sorgente" "$copia" && chmod +x "$copia"
-fi
-
-# E si assicura di essere registrato la' fuori, dove il riavvio non arriva.
-impostazioni="$fuori/settings.json"
-if [ ! -f "$impostazioni" ] || ! grep -q 'hooks/session-start.sh' "$impostazioni" 2>/dev/null; then
-  cat > "$impostazioni" <<'FINE'
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          { "type": "command", "command": "/root/.claude/hooks/session-start.sh" }
-        ]
-      }
-    ]
-  }
-}
-FINE
 fi
 
 exit 0
