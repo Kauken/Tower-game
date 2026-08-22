@@ -84,11 +84,84 @@
       "combustibile": "legno",
       "_nota_combustibile": "Ogni quante lavorazioni brucia un pezzo di combustibile. Con 4: per tre tavole (valore 6) spende 1,25 legno (valore 3,75), cioe' un rapporto di 1,6 - dentro la finestra di MATERIALI. Se diventasse 1, la macchina non guadagnerebbe niente.",
       "brucia_ogni": 4,
+      "parte_mobile": "lama",
       "colore": "#6b5030",
       "colore_bordo": "#caa06a",
       "colore_lama": "#d8dde6",
       "colore_fiamma": "#e8873a",
       "raggio": 0.44
+    },
+    {
+      "id": "frantoio",
+      "nome": "Frantoio",
+      "descrizione": "Macina la pietra al posto tuo: ne escono tre ghiaie invece di due. Brucia legno per far girare il rullo.",
+      "tipo": "macchina",
+      "ricetta": "ghiaia_frantoio",
+      "richiede_progetto": "frantoio",
+      "costo": [
+        {
+          "materiale": "pietra",
+          "quantita": 12
+        },
+        {
+          "materiale": "tavola",
+          "quantita": 6
+        },
+        {
+          "materiale": "chiodo",
+          "quantita": 8
+        }
+      ],
+      "slot_entrata": 3,
+      "slot_uscita": 3,
+      "combustibile": "legno",
+      "_nota_combustibile": "Come la segheria: un pezzo ogni 4 lavorazioni. 4 x 3200 = 12800 ms pagati da un legno, sotto i 16000 del generatore - cosi' attaccarla alla corrente resta un guadagno, ed e' un controllo all'avvio.",
+      "brucia_ogni": 4,
+      "parte_mobile": "rullo",
+      "colore": "#6a6259",
+      "colore_bordo": "#a89c8c",
+      "colore_lama": "#b9c0c9",
+      "colore_fiamma": "#e8873a",
+      "raggio": 0.44
+    },
+    {
+      "id": "fornace",
+      "nome": "Fornace",
+      "descrizione": "Fonde il rame da sola, e meglio della fucina: tre rami danno due lingotti invece di uno e mezzo. Tu la riempi, lei cuoce.",
+      "tipo": "macchina",
+      "ricetta": "lingotto_fornace",
+      "richiede_progetto": "fornace",
+      "costo": [
+        {
+          "materiale": "pietra",
+          "quantita": 16
+        },
+        {
+          "materiale": "lingotto_rame",
+          "quantita": 4
+        },
+        {
+          "materiale": "telaio",
+          "quantita": 2
+        }
+      ],
+      "slot_entrata": 3,
+      "slot_uscita": 3,
+      "combustibile": "legno",
+      "_nota_combustibile": "Brucia un pezzo ogni 3, non ogni 4: la sua lavorazione e' lunga (4200 ms) e con 4 un legno pagherebbe 16800 ms, piu' dei 16000 del generatore. Attaccarla alla corrente la farebbe consumare di piu', e il gioco si rifiuterebbe di partire.",
+      "brucia_ogni": 3,
+      "_nota_parte_mobile": "Una fornace non ha niente che gira, e non gliene ho inventato uno. Ma senza parte mobile, attaccata alla corrente (dove la fiamma si spegne apposta) sarebbe identica da ferma e mentre lavora - trovato guardandola davvero a schermo. Al suo posto la bocca PULSA: il calore e' il suo movimento.",
+      "fiamma_raggio": 0.2,
+      "fiamma_x": 0.0,
+      "fiamma_y": 0.16,
+      "colore": "#6f5c4e",
+      "colore_bordo": "#b09274",
+      "colore_fiamma": "#ffa23e",
+      "raggio": 0.44,
+      "colore_bagliore": "#ffcf7a",
+      "bagliore_raggio": 0.17,
+      "bagliore_x": 0.0,
+      "bagliore_y": 0.16
     },
     {
       "id": "generatore",
@@ -152,5 +225,6 @@
   "_nota_slot": "Una cassa e' un inventario a slot, esattamente come quello dell'operaio: ogni slot tiene una pila di un materiale. Cosi' 'quanto ci sta dentro' vuol dire la stessa cosa ovunque, e spostare roba e' sempre lo stesso gesto.",
   "_nota_macchine": "Una MACCHINA e' una costruzione con 'tipo': 'macchina'. Ha due cassetti - entrata e uscita - e lavora da sola finche' ha materiale, combustibile e posto dove mettere quello che produce. Il combustibile si prende dal cassetto d'ENTRATA: sulla prima macchina del gioco uno scomparto separato vorrebbe dire due viaggi di carico invece di uno, e su un telefono e' troppo. Cosi' il legno e' materiale E combustibile, ed e' vero da subito che il legno che bruci non diventa tavole.",
   "_nota_corrente": "Un GENERATORE ha 'tipo': 'generatore'. Brucia combustibile e alimenta tutto quello che sta nel suo raggio_corrente; i PALI ('tipo': 'palo') allungano la copertura e si agganciano DA SOLI per vicinanza - non si traccia nessun filo, perche' su un telefono tirare fili col dito sarebbe un supplizio. Tre vincoli che non sono preferenze: (1) un generatore a secco ferma solo quello che copre lui, mai tutta l'isola; (2) avvisa PRIMA di fermarsi; (3) rimetti il combustibile e riparte da solo. E una macchina coperta che resta senza corrente torna a bruciare il suo: la mancanza di corrente costa produzione, mai lavoro perso.",
-  "_nota_banchi": "Un BANCO e' dove si fabbrica. All'inizio ce n'e' uno dentro il casotto, perche' la prima volta non puo' fallire - ma non deve restare l'unico posto: un banco vicino al bosco ti risparmia tutta la strada, esattamente come una cassa vicina. E' il motivo per cui vale la pena costruirne altri. Le ricette possono chiedere un banco PRECISO con 'dove': e' cosi' che un banco nuovo sblocca lavorazioni nuove."
+  "_nota_banchi": "Un BANCO e' dove si fabbrica. All'inizio ce n'e' uno dentro il casotto, perche' la prima volta non puo' fallire - ma non deve restare l'unico posto: un banco vicino al bosco ti risparmia tutta la strada, esattamente come una cassa vicina. E' il motivo per cui vale la pena costruirne altri. Le ricette possono chiedere un banco PRECISO con 'dove': e' cosi' che un banco nuovo sblocca lavorazioni nuove.",
+  "_nota_parte_mobile": "Il pezzo che GIRA quando la macchina lavora. 'lama' per la segheria, 'rullo' per il frantoio, niente per la fornace. E' il modo piu' diretto di dire 'sta facendo qualcosa' senza aprire il pannello; se una macchina non ne ha uno, deve dirlo con qualcos'altro - la fornace lo dice con la fiamma."
 }

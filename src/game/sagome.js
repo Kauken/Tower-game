@@ -361,6 +361,140 @@ function lama(ctx, dati) {
   ctx.fill()
 }
 
+// --- il frantoio ---
+//
+// **Deve leggersi come una cosa pesante**, il contrario del capannone di legno
+// della segheria: base larga di pietra, tramoggia che si stringe verso il basso,
+// e il rullo che gira di lato. Se due macchine hanno la stessa silhouette, da
+// lontano la fabbrica diventa una fila di macchie uguali e non si capisce piu'
+// niente — che e' esattamente il difetto che la prova del grigio aveva trovato.
+function frantoio(ctx, dati) {
+  const c = LATO / 2
+  const largo = LATO * 0.62
+  const alto = LATO * 0.46
+
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'
+  ctx.beginPath()
+  ctx.ellipse(c, c + alto * 0.54, largo * 0.5, alto * 0.16, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // il blocco di pietra: basso e squadrato
+  ctx.fillStyle = tinta(dati.colore, -0.24)
+  ctx.fillRect(c - largo / 2, c + alto * 0.04, largo, alto * 0.46)
+  ctx.fillStyle = dati.colore
+  ctx.fillRect(c - largo / 2, c - alto * 0.1, largo, alto * 0.16)
+
+  // la tramoggia, che si stringe: e' lei a dire "qui dentro ci butti la roba"
+  ctx.fillStyle = tinta(dati.colore_bordo, -0.1)
+  ctx.beginPath()
+  ctx.moveTo(c - largo * 0.42, c - alto * 0.62)
+  ctx.lineTo(c + largo * 0.42, c - alto * 0.62)
+  ctx.lineTo(c + largo * 0.2, c - alto * 0.1)
+  ctx.lineTo(c - largo * 0.2, c - alto * 0.1)
+  ctx.closePath()
+  ctx.fill()
+  ctx.fillStyle = tinta(dati.colore_bordo, 0.12)
+  ctx.fillRect(c - largo * 0.42, c - alto * 0.62, largo * 0.84, alto * 0.08)
+
+  // la bocca del fuoco, in basso a sinistra come sulla segheria
+  ctx.fillStyle = tinta(dati.colore, -0.46)
+  ctx.fillRect(c - largo * 0.4, c + alto * 0.14, largo * 0.24, alto * 0.18)
+
+  // la bocca d'uscita da cui cade la ghiaia
+  ctx.fillStyle = tinta(dati.colore, -0.38)
+  ctx.fillRect(c + largo * 0.06, c + alto * 0.34, largo * 0.3, alto * 0.14)
+}
+
+// Il rullo dentato: gira come la lama, ma e' cicciotto invece che affilato.
+function rullo(ctx, dati) {
+  const c = LATO / 2
+  const r = LATO * 0.17
+
+  ctx.fillStyle = tinta(dati.colore_lama, -0.4)
+  ctx.beginPath()
+  ctx.arc(c, c, r * 1.1, 0, Math.PI * 2)
+  ctx.fill()
+
+  ctx.fillStyle = dati.colore_lama
+  ctx.beginPath()
+  ctx.arc(c, c, r, 0, Math.PI * 2)
+  ctx.fill()
+
+  // sei denti grossi: pochi e larghi, cosi' il movimento si legge anche piccolo
+  ctx.fillStyle = tinta(dati.colore_lama, -0.5)
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2
+    ctx.save()
+    ctx.translate(c + Math.cos(a) * r * 0.86, c + Math.sin(a) * r * 0.86)
+    ctx.rotate(a)
+    ctx.fillRect(-r * 0.3, -r * 0.16, r * 0.6, r * 0.32)
+    ctx.restore()
+  }
+
+  ctx.fillStyle = tinta(dati.colore_lama, -0.12)
+  ctx.beginPath()
+  ctx.arc(c, c, r * 0.26, 0, Math.PI * 2)
+  ctx.fill()
+}
+
+// --- la fornace ---
+//
+// Una cupola di pietra col camino: la forma piu' riconoscibile delle tre, e
+// serve che lo sia, perche' **e' l'unica senza niente che gira**. Quando lavora
+// lo dice la fiamma nella bocca, che qui e' larga e sta in mezzo apposta.
+function fornace(ctx, dati) {
+  const c = LATO / 2
+  const largo = LATO * 0.58
+  const alto = LATO * 0.5
+
+  ctx.fillStyle = 'rgba(0,0,0,0.18)'
+  ctx.beginPath()
+  ctx.ellipse(c, c + alto * 0.5, largo * 0.5, alto * 0.15, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  // il camino, dietro e di lato
+  ctx.fillStyle = tinta(dati.colore, -0.3)
+  ctx.fillRect(c + largo * 0.24, c - alto * 0.86, largo * 0.16, alto * 0.5)
+  ctx.fillStyle = tinta(dati.colore, -0.14)
+  ctx.fillRect(c + largo * 0.2, c - alto * 0.9, largo * 0.24, alto * 0.08)
+
+  // la cupola
+  ctx.fillStyle = dati.colore
+  ctx.beginPath()
+  ctx.moveTo(c - largo / 2, c + alto * 0.44)
+  ctx.lineTo(c - largo * 0.44, c - alto * 0.1)
+  ctx.quadraticCurveTo(c, c - alto * 0.78, c + largo * 0.44, c - alto * 0.1)
+  ctx.lineTo(c + largo / 2, c + alto * 0.44)
+  ctx.closePath()
+  ctx.fill()
+
+  // i corsi di mattoni: senza, la cupola e' una macchia
+  ctx.fillStyle = tinta(dati.colore, -0.16)
+  for (let i = 0; i < 3; i++) {
+    const y = c - alto * 0.06 + i * alto * 0.17
+    ctx.fillRect(c - largo * 0.46 + i * LATO * 0.004, y, largo * 0.92 - i * LATO * 0.008, LATO * 0.012)
+  }
+
+  // il basamento
+  ctx.fillStyle = tinta(dati.colore, -0.34)
+  ctx.fillRect(c - largo * 0.54, c + alto * 0.36, largo * 1.08, alto * 0.14)
+
+  // la bocca ad arco, larga e in mezzo: e' qui che si vede la fiamma
+  ctx.fillStyle = tinta(dati.colore, -0.55)
+  ctx.beginPath()
+  ctx.moveTo(c - largo * 0.22, c + alto * 0.36)
+  ctx.lineTo(c - largo * 0.22, c + alto * 0.04)
+  ctx.quadraticCurveTo(c, c - alto * 0.2, c + largo * 0.22, c + alto * 0.04)
+  ctx.lineTo(c + largo * 0.22, c + alto * 0.36)
+  ctx.closePath()
+  ctx.fill()
+
+  // il bordo chiaro della bocca, che la stacca dalla cupola
+  ctx.strokeStyle = dati.colore_bordo
+  ctx.lineWidth = LATO * 0.012
+  ctx.stroke()
+}
+
 // --- il generatore ---
 //
 // Una caldaia tozza di pietra e metallo, con la bocca del fuoco davanti e il
@@ -505,9 +639,17 @@ function prepara(elencoRisorse, aspettoCassa, aspettoOperaio, aspettiMacchine, a
   }
   voci.push(['cassa:0', aspettoCassa, 0, cassa])
   voci.push(['operaio:0', aspettoOperaio, 0, null])
+  // Ogni macchina ha il **suo** corpo: due macchine con la stessa silhouette,
+  // da lontano, sono due macchie uguali. E la parte che gira la nomina la
+  // configurazione — la fornace non ne ha nessuna, e va bene cosi'.
+  const corpi = { segheria, frantoio, fornace }
+  const partiMobili = { lama, rullo }
   for (let i = 0; i < aspettiMacchine.length; i++) {
-    voci.push([aspettiMacchine[i].id + ':0', aspettiMacchine[i], 0, segheria])
-    voci.push([aspettiMacchine[i].id + '_lama:0', aspettiMacchine[i], 0, lama])
+    const m = aspettiMacchine[i]
+    voci.push([m.id + ':0', m, 0, corpi[m.id] || segheria])
+    if (partiMobili[m.parte_mobile]) {
+      voci.push([m.id + '_mobile:0', m, 0, partiMobili[m.parte_mobile]])
+    }
   }
   for (let i = 0; i < aspettiCorrente.length; i++) {
     const voce = aspettiCorrente[i]

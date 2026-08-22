@@ -135,9 +135,15 @@ Cassetto d'entrata, cassetto d'uscita, e in mezzo una fiamma che consuma legno. 
 Ogni catena che produce da sola mostra **quanto fa al minuto**. È il primo dei tre motori del "per sempre" (`GDD.md` §11c), ed è quello che manca di più: **finché non c'è un numero da nessuna parte, il giocatore non ha modo di sapere se sta migliorando.**
 Va subito dopo la prima macchina, perché prima non c'è niente da misurare e dopo è già tardi.
 
-**10. Il frantoio e la fornace — la catena si allunga.**
+**10. Il frantoio e la fornace — la catena si allunga.** — **FATTO** (2026-08-21).
 Masso → ghiaia → lingotto. Adesso ci sono **tre macchine da rifornire**, ed è esattamente lì che deve cominciare a dare fastidio.
 → `MATERIALI.md` §3.
+
+   > **Il frantoio** macina 1 pietra in **3 ghiaie** (a mano ne fai 2), **la fornace** fonde 3 rame in **2 lingotti** (alla fucina, a mano, per due lingotti te ne servono 4). Tutte e due bruciano legno e si attaccano alla corrente come la segheria.
+   > **La fucina non diventa inutile**: resta l'unico posto dove si fa l'ascia da boscaiolo. È la regola del §11b applicata alla lettera — una cosa nuova non manda in pensione quella di prima.
+   > **I due progetti sono stati messi PRIMA del generatore**, non in coda. È tutto il senso dell'Era 1: il generatore toglie la fatica di riempire ogni macchina una per una, e quella fatica devi averla già sentita. Con una macchina sola non è una liberazione, è una complicazione.
+   > **Il controllo all'avvio ha fatto il suo lavoro subito:** la fornace con `brucia_ogni: 4` avrebbe pagato 16.800 ms di lavoro con un legno, più dei 16.000 del generatore — attaccarla alla corrente l'avrebbe **peggiorata**, e il gioco si sarebbe rifiutato di partire. È a 3.
+   > **Trovato solo guardandola a schermo:** la fornace non ha niente che gira, e da alimentata la fiamma si spegne apposta — quindi da ferma e mentre lavorava era **identica**. Adesso la bocca pulsa: per una fornace il calore *è* il movimento. Ogni macchina ha anche il **suo corpo**: capannone, tramoggia col rullo, cupola col camino. Tre macchie uguali da lontano erano lo stesso difetto che la prova del grigio aveva già trovato una volta.
 
 **11. La trivella a combustibile.** — Il gradino 2 dell'estrazione, quello che nessuno deve saltare.
 Si piazza su un giacimento e produce da sola nel suo cassetto, ma **il cassetto lo svuoti tu**: non si collega a niente. È il *Portable Miner* di Satisfactory, ed è lui che farà sentire il nastro come una liberazione.

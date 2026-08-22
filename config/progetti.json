@@ -121,11 +121,29 @@
       }
     },
     {
+      "id": "frantoio",
+      "nome": "Frantoio",
+      "descrizione": "La seconda macchina. Macina la pietra da sola: tre ghiaie invece di due.",
+      "colore": "#8d9299",
+      "richiede": "ascia_boscaiolo",
+      "sblocca": "frantoio",
+      "costruzione": "frantoio"
+    },
+    {
+      "id": "fornace",
+      "nome": "Fornace",
+      "descrizione": "Fonde il rame senza di te, e rende piu' della fucina. Adesso le macchine da riempire sono tre.",
+      "colore": "#d9803c",
+      "richiede": "frantoio",
+      "sblocca": "fornace",
+      "costruzione": "fornace"
+    },
+    {
       "id": "generatore",
       "nome": "Generatore",
       "descrizione": "Un fuoco solo per tutte le macchine che copre: smetti di riempirle una per una.",
       "colore": "#c9a172",
-      "richiede": "ascia_boscaiolo",
+      "richiede": "fornace",
       "sblocca": "generatore",
       "costruzione": "generatore"
     },
@@ -139,5 +157,6 @@
       "costruzione": "palo"
     }
   ],
-  "_nota_richiede": "'richiede' nomina un altro progetto, e vuol dire FABBRICATO, non comprato. Un progetto senza 'richiede' e' aperto dall'inizio."
+  "_nota_richiede": "'richiede' nomina un altro progetto, e vuol dire FABBRICATO, non comprato. Un progetto senza 'richiede' e' aperto dall'inizio.",
+  "_nota_ordine": "L'ordine della catena non e' estetico. Il generatore sta DOPO frantoio e fornace apposta: toglie la fatica di riempire ogni macchina una per una, e quella fatica devi averla gia' sentita. Con una macchina sola non e' una liberazione, e' una complicazione."
 }

@@ -225,6 +225,36 @@
           "quantita": 4
         }
       ]
+    },
+    {
+      "id": "ghiaia_frantoio",
+      "nome": "Ghiaia",
+      "descrizione": "Il rullo macina: da una pietra ne escono tre.",
+      "produce": "ghiaia",
+      "quantita": 3,
+      "tempo_ms": 3200,
+      "macchina": "frantoio",
+      "ingredienti": [
+        {
+          "materiale": "pietra",
+          "quantita": 1
+        }
+      ]
+    },
+    {
+      "id": "lingotto_fornace",
+      "nome": "Lingotto di rame",
+      "descrizione": "Tre rami fusi insieme danno due lingotti: alla fucina, a mano, te ne servirebbero quattro.",
+      "produce": "lingotto_rame",
+      "quantita": 2,
+      "tempo_ms": 4200,
+      "macchina": "fornace",
+      "ingredienti": [
+        {
+          "materiale": "rame",
+          "quantita": 3
+        }
+      ]
     }
   ],
   "_nota_macchina": "Una ricetta con 'macchina' NON compare al banco da lavoro: la sa fare solo quella macchina. E' cosi' che la segheria da' tre tavole dove la mano ne da' due, senza che il giocatore possa farlo a mano.",

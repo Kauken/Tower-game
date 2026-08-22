@@ -665,29 +665,57 @@ function disegnaMacchine(ctx, camera, macchine, lato, scelta) {
       ctx.fill()
     }
 
+    // Ogni macchina puo' scostarsi dallo stile comune: la bocca della fornace
+    // sta in mezzo ed e' larga, quella della segheria sta di lato. Se manca,
+    // vale il valore comune.
+    const dati = trovaCostruzione(m.id)
+
     // la fiamma nella bocca del forno, solo mentre lavora: un fuoco acceso su
     // una macchina ferma sarebbe una bugia
     if (lavora) {
       const guizzo = 0.75 + Math.sin(orologio * 9 + i) * 0.25
-      ctx.fillStyle = trovaCostruzione(m.id).colore_fiamma
+      ctx.fillStyle = dati.colore_fiamma
       ctx.beginPath()
       ctx.arc(
-        punto.x + stile.fiamma_x * raggio,
-        punto.y + stile.fiamma_y * raggio,
-        stile.fiamma_raggio * raggio * guizzo,
+        punto.x + (dati.fiamma_x !== undefined ? dati.fiamma_x : stile.fiamma_x) * raggio,
+        punto.y + (dati.fiamma_y !== undefined ? dati.fiamma_y : stile.fiamma_y) * raggio,
+        (dati.fiamma_raggio !== undefined ? dati.fiamma_raggio : stile.fiamma_raggio) * raggio * guizzo,
         0,
         Math.PI * 2
       )
       ctx.fill()
     }
 
-    // la lama. Gira **solo** quando lavora, e resta ferma dov'era quando si
-    // ferma: e' il modo piu' diretto di dire "adesso sta facendo qualcosa".
-    ctx.save()
-    ctx.translate(punto.x + stile.lama_x * raggio, punto.y + stile.lama_y * raggio)
-    ctx.rotate(m.giro * Math.PI * 2 * stile.giri_al_secondo)
-    disegnaSagoma(ctx, m.id + '_lama', 0, 0, 0, raggio * stile.lama_raggio * 2 * grafica.sagome.ingrandimento)
-    ctx.restore()
+    // Il pezzo che gira. Gira **solo** quando lavora, e resta fermo dov'era
+    // quando si ferma: e' il modo piu' diretto di dire "adesso sta facendo
+    // qualcosa". **Non tutte le macchine ne hanno uno** — una fornace non ha
+    // niente che gira, e inventarglielo sarebbe una bugia: lei lo dice con la
+    // fiamma, che infatti e' piu' grande.
+    if (dati.parte_mobile) {
+      ctx.save()
+      ctx.translate(punto.x + stile.lama_x * raggio, punto.y + stile.lama_y * raggio)
+      ctx.rotate(m.giro * Math.PI * 2 * stile.giri_al_secondo)
+      disegnaSagoma(ctx, m.id + '_mobile', 0, 0, 0, raggio * stile.lama_raggio * 2 * grafica.sagome.ingrandimento)
+      ctx.restore()
+    } else if (m.alimentata && m.stato === 'lavora' && dati.colore_bagliore) {
+      // **La fornace attaccata alla corrente sarebbe immobile.** Non ha niente
+      // che gira, e la fiamma da alimentata si spegne apposta — quindi da ferma
+      // e mentre lavora era identica. Trovato guardandola davvero a schermo.
+      // La bocca pulsa: per una fornace il calore *e'* il movimento.
+      const battito = 0.7 + Math.sin(orologio * 4) * 0.3
+      ctx.globalAlpha = 0.55 + battito * 0.45
+      ctx.fillStyle = dati.colore_bagliore
+      ctx.beginPath()
+      ctx.arc(
+        punto.x + dati.bagliore_x * raggio,
+        punto.y + dati.bagliore_y * raggio,
+        dati.bagliore_raggio * raggio * battito,
+        0,
+        Math.PI * 2
+      )
+      ctx.fill()
+      ctx.globalAlpha = 1
+    }
 
     // il pallino dello stato
     ctx.fillStyle =
